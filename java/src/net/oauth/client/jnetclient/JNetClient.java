@@ -56,10 +56,8 @@ System.err.println("URL: " + request.url.toExternalForm());
 //           HttpURLConnection.setFollowRedirects(Boolean.parseBoolean(value));
 //        }else
           if (READ_TIMEOUT.equals(name)) {
-System.err.println("Read Timeout: " + Integer.parseInt(value));
              conn.setReadTimeout(Integer.parseInt(value));
           }else if (CONNECT_TIMEOUT.equals(name)) {
-System.err.println("Connect Timeout: " + Integer.parseInt(value));
              conn.setConnectTimeout(Integer.parseInt(value));
           }
        }
@@ -77,50 +75,5 @@ System.err.println("Connect Timeout: " + Integer.parseInt(value));
        writer.close();
        return new JNetResponseMessage(request, excerpt, conn);
    }
-/*
-    private static final HttpClientPool SHARED_CLIENT = new SingleClient();
-
-    private static final boolean isGaeUsed = true; // DEBUG DEBUG DEBUG
-
-    private static class SingleClient implements HttpClientPool {
-        SingleClient() {
-           HttpClient client;
-           HttpParams params;
-           if (isGaeUsed) {
-              client = new DefaultHttpClient();
-              params = client.getParams();
-              ClientConnectionManager connectionManager = new GAEConnectionManager();
-              client = new DefaultHttpClient(connectionManager, params);
-
-//            ClientConnectionManager connectionManager = new GAEConnectionManager();
-//            params = new BasicHttpParams();
-//            HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-//            HttpProtocolParams.setContentCharset(params, HTTP.DEFAULT_CONTENT_CHARSET);
-//            HttpProtocolParams.setUseExpectContinue(params, true);
-//            HttpConnectionParams.setTcpNoDelay(params, true);
-//            HttpConnectionParams.setSocketBufferSize(params, 8192);
-//            client = new DefaultHttpClient(connectionManager, params);
-           }else {
-              client = new DefaultHttpClient();
-              ClientConnectionManager mgr = client.getConnectionManager();
-              if (!(mgr instanceof ThreadSafeClientConnManager)) {
-                 params = client.getParams();
-                 client = new DefaultHttpClient(
-                    new ThreadSafeClientConnManager(
-                       params, mgr.getSchemeRegistry()
-                    ),
-                    params
-                 );
-              }
-           }
-           this.client = client;
-        }
-
-        private final HttpClient client;
-
-        public HttpClient getHttpClient(URL server) {
-            return client;
-        }
-    }
-*/
 }
+/*===========================================================================*/
