@@ -19,7 +19,7 @@
       <include name="*.jar"/>
     </fileset>
   </path>
-  
+
   <!-- Compile library sources -->
   <target name="compile" description="Compile Java sources">
      <mkdir dir="bin"/>
@@ -28,7 +28,7 @@
        <classpath refid="compile.classpath"/>
        <src path="java/src"/>
      </javac>
- 
+
      <!-- unpack library classes to build dir so we can make one big
           happy JAR file -->
      <unzip dest="bin">
@@ -37,15 +37,15 @@
         </fileset>
      </unzip>
      <delete dir="bin/META-INF" />
- 
+
      <jar destfile="dist/${jar.name}">
         <fileset dir="bin" />
      </jar>
   </target>
 
-  <!-- Make the binary distribution package consisting of the JAR, 
+  <!-- Make the binary distribution package consisting of the JAR,
       the documentation, the samples, etc -->
-  <target name="bindist" description="Make binary distribution ZIP" 
+  <target name="bindist" description="Make binary distribution ZIP"
                                 depends="compile,javadoc">
      <zip destfile="dist/${zip.bin.name}">
         <zipfileset dir="samples" prefix="samples/" />
@@ -55,9 +55,9 @@
         <zipfileset dir="doc" prefix="doc/" />
      </zip>
   </target>
-  
+
   <!-- Make the full distribution package consisting source code -->
-  <target name="fulldist" description="Make full distribution ZIP" 
+  <target name="fulldist" description="Make full distribution ZIP"
                                 depends="compile,javadoc">
      <zip destfile="dist/${zip.full.name}">
         <zipfileset dir="samples" prefix="samples/" />
@@ -73,20 +73,20 @@
   </target>
 
   <!-- Make the javadocs -->
-  <target name="javadoc" depends="compile" 
+  <target name="javadoc" depends="compile"
                         description="Create Javadoc API documentation">
      <mkdir dir="doc"/>
      <delete>
         <fileset dir="doc"/>
      </delete>
-     <javadoc doctitle="Orkut Client Library" bottom="${javadoc.bottom}" 
-              access="public" stylesheetfile="${javadoc.css}" 
-              overview="${javadoc.overview}" sourcepath="java/src" 
+     <javadoc doctitle="Orkut Client Library" bottom="${javadoc.bottom}"
+              access="public" stylesheetfile="${javadoc.css}"
+              overview="${javadoc.overview}" sourcepath="java/src"
               destdir="doc" packagenames="*">
         <classpath refid="compile.classpath"/>
      </javadoc>
   </target>
-  
+
   <!-- Clean up -->
   <target name="clean" description="clean up" >
     <delete dir="bin"/>
