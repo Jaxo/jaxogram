@@ -6,7 +6,8 @@ import net.oauth.OAuthAccessor;
 import net.oauth.OAuth;
 import net.oauth.OAuthMessage;
 import net.oauth.client.OAuthClient;
-import net.oauth.client.httpclient4.HttpClient4;
+// import net.oauth.client.httpclient4.HttpClient4;  // USE JNET instead
+import net.oauth.client.jnetclient.JNetClient;
 
 import com.google.orkut.client.transport.HttpRequest;
 import com.google.orkut.client.transport.OrkutHttpRequestFactory;
@@ -33,12 +34,12 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
                 "https://www.google.com/accounts/OAuthGetRequestToken";
    protected static final String OAUTH_AUTHORIZATION_URL =
                 "https://www.google.com/accounts/OAuthAuthorizeToken";
-   protected static final String OAUTH_ACCESS_URL = 
+   protected static final String OAUTH_ACCESS_URL =
                 "https://www.google.com/accounts/OAuthGetAccessToken";
-   protected static final String OAUTH_SCOPE = 
+   protected static final String OAUTH_SCOPE =
                 "http://orkut.gmodules.com/social";
    protected static final String SERVER_URL_SANDBOX =
-                "http://sandbox.orkut.com/social/rpc";
+                "http://prod.sandbox.orkut.com/social/rpc";  // prod.
    protected static final String SERVER_URL_PROD =
                 "http://www.orkut.com/social/rpc";
 
@@ -65,7 +66,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
             new ScrapTxFactory();
    protected final VideoTxFactory    videoTxFactory =
             new VideoTxFactory();
-   
+
 
    @Override
    public ActivityTxFactory getActivityTF() { return activityTxFactory; }
@@ -86,8 +87,8 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
    @Override
    public VideoTxFactory getVideoTF() { return videoTxFactory; }
 
-   
-   protected void say(String s) { 
+
+   protected void say(String s) {
       if (debugListener != null)
          debugListener.printOrkutAdapterMessage("[orkut-adapter]: " + s);
    }
@@ -130,14 +131,15 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
          say("Setting up oauth consumer.");
          consumer = new OAuthConsumer(null,
                    consumerKey, consumerSecret, new OAuthServiceProvider(
-                   OAUTH_REQUEST_URL, OAUTH_AUTHORIZATION_URL, 
+                   OAUTH_REQUEST_URL, OAUTH_AUTHORIZATION_URL,
                    OAUTH_ACCESS_URL));
          consumer.setProperty(OAuthClient.PARAMETER_STYLE,
                    net.oauth.ParameterStyle.QUERY_STRING);
-         
+
          say("Setting up oauth accessor and client.");
          accessor = new OAuthAccessor(consumer);
-         client = new OAuthClient(new HttpClient4());
+//       client = new OAuthClient(new HttpClient4());  // USE JNET instead
+         client = new OAuthClient(new JNetClient());
       }
       catch (Exception ex) {
          throw new OrkutAdapterException(
@@ -168,15 +170,15 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
                 OAuth.OAUTH_CALLBACK, callbackURL,
                 "scope", OAUTH_SCOPE);
 
-      OAuthMessage response = 
+      OAuthMessage response =
                 client.getRequestTokenResponse(accessor,null,callback);
-      
+
       say("Response obtained.");
       String authorizationURL = OAuth.addParameters(
                 accessor.consumer.serviceProvider.userAuthorizationURL,
                 OAuth.OAUTH_TOKEN, accessor.requestToken,
                 "scope", OAUTH_SCOPE);
-      
+
       if (response.getParameter(OAuth.OAUTH_CALLBACK_CONFIRMED) == null) {
          say("No callback confirm - service provider is using 1.0, not 1.0a.");
          say("Adding callback as bare parameter.");
@@ -188,7 +190,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
                 OAuth.OAUTH_TOKEN, accessor.requestToken,
                 "scope", OAUTH_SCOPE);
       }
-      
+
       say("Request token: " + accessor.requestToken);
       say("Authorization URL: " + authorizationURL);
       return authorizationURL;
@@ -219,7 +221,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
    public String getAccessPass() {
       return accessor.accessToken + " " + accessor.tokenSecret;
    }
-   
+
    @Override
    public void setAccessPass(String accessPass) {
       say("Access pass provided: '" + accessPass + "'");
@@ -256,17 +258,18 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
          byte[] body       = req.getRequestBody();
          String method     = req.getMethod();
          String baseURL    = req.getRequestBaseUrl();
-
          Collection reqParams = req.getParameters();
          ArrayList<Map.Entry<String,String>> oauthParams = null;
          if (reqParams != null && reqParams.size() > 0) {
             oauthParams = new ArrayList<Map.Entry<String,String>>();
             Iterator it = reqParams.iterator();
             while (it.hasNext()) {
-               HttpRequest.Parameter parameter = 
-                                (HttpRequest.Parameter) it.next();
-               oauthParams.add(new OAuth.Parameter(parameter.getKey(),
-                   parameter.getValue()));
+               HttpRequest.Parameter parameter = (
+                  (HttpRequest.Parameter)it.next()
+               );
+               oauthParams.add(
+                  new OAuth.Parameter(parameter.getKey(), parameter.getValue())
+               );
             }
          }
 
@@ -277,34 +280,40 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
             Iterator it = reqHeaders.iterator();
             while (it.hasNext()) {
                HttpRequest.Header header = (HttpRequest.Header) it.next();
-               oauthHeaders.add(new OAuth.Parameter(header.getName(),
-                                        header.getValue()));
+               oauthHeaders.add(
+                  new OAuth.Parameter(header.getName(), header.getValue())
+               );
             }
          }
 
-         OAuthMessage msg = new PostOAuthMessage(method, baseURL, 
-                                        oauthParams, body);
+         OAuthMessage msg = new PostOAuthMessage(
+            method, baseURL, oauthParams, body
+         );
          msg.addRequiredParameters(accessor);
          Iterator it = oauthHeaders.iterator();
-         while (it.hasNext()) msg.getHeaders().add(
-                (Map.Entry)it.next());
-
+         while (it.hasNext()) {
+            msg.getHeaders().add((Map.Entry)it.next());
+         }
          Object accepted = accessor.consumer.getProperty(
-                                        OAuthConsumer.ACCEPT_ENCODING);
-         if (accepted != null)
-            msg.getHeaders().add(new OAuth.Parameter(
-                net.oauth.http.HttpMessage.ACCEPT_ENCODING, 
-                accepted.toString()));
-
-         OAuthMessage resp = client.invoke(msg, 
-                                net.oauth.ParameterStyle.QUERY_STRING);
-
+             OAuthConsumer.ACCEPT_ENCODING
+         );
+         if (accepted != null) {
+            msg.getHeaders().add(
+               new OAuth.Parameter(
+                  net.oauth.http.HttpMessage.ACCEPT_ENCODING,
+                  accepted.toString()
+               )
+            );
+         }
+         OAuthMessage resp = client.invoke(
+            msg, net.oauth.ParameterStyle.QUERY_STRING
+         );
          String respBody = resp.readBodyAsString();
          btx.setResponse(respBody);
-      }
-      catch (Exception ex) {
-         throw new OrkutAdapterException("OrkutAdapter: error sending " +
-              "transaction batch.", ex);
+      }catch (Exception ex) {
+         throw new OrkutAdapterException(
+            "OrkutAdapter: error sending transaction batch.", ex
+         );
       }
    }
 
@@ -322,7 +331,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
          String url = "http://www.orkut.com" + er.captchaUrl();
          OAuthMessage msg = new OAuthMessage("GET", url, null);
          msg.addRequiredParameters(accessor);
-         OAuthMessage resp = client.invoke(msg, 
+         OAuthMessage resp = client.invoke(msg,
                                 net.oauth.ParameterStyle.QUERY_STRING);
          java.io.InputStream is = resp.getBodyAsStream();
          if (is == null)
@@ -345,9 +354,9 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
    }
 
    @Override
-   public void submitBatchWithCaptcha(BatchTransaction btx, 
+   public void submitBatchWithCaptcha(BatchTransaction btx,
                                       OrkutError error, String answer) {
-      Transaction tx = 
+      Transaction tx =
                 captchaTxFactory.answerCaptcha(error.captchaToken(),answer);
       btx.add(tx);
       submitBatch(btx);
