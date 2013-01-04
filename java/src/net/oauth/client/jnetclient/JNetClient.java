@@ -38,9 +38,6 @@ public class JNetClient implements net.oauth.http.HttpClient
       HttpMessage request,
       Map<String, Object> parameters
    ) throws IOException {
-System.err.println("-------------- execute");
-System.err.println("MTH: " + request.method);
-System.err.println("URL: " + request.url.toExternalForm());
        if (!request.method.equalsIgnoreCase(POST)) {
           throw new IOException("Only POST is implemented");
        }
