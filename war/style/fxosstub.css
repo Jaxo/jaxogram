@@ -1,0 +1,420 @@
+html, body {
+  font-size: 10px;
+  width: 100%;
+  /* height: 100%;  bouh */
+  padding: 0;
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+  background-image: url(../images/bgpat.png); /* #8491a2; (* #54646e; */
+  /* background: #8491a2; (* #54646e; */
+  overflow: hidden;
+}
+
+header {
+  background: #e66000;  /* was: 0095dd */
+  background:-moz-linear-gradient(top,#ff9500 0%,#e66000 100%);
+  background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#ff9500),color-stop(100%,#e66000));
+  background:-webkit-linear-gradient(top,#ff9500 0%,#e66000 100%);
+  background:-o-linear-gradient(top,#ff9500 0%,#e66000 100%);
+  background:-ms-linear-gradient(top,#ff9500 0%,#e66000 100%);
+  background:linear-gradient(top,#ff9500 0%,#e66000 100%);
+  color: #FFFFFF;
+  height: 4.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+header #btnMain {
+  background: transparent;
+  position: absolute;
+  left: 0;
+  text-align: center;
+  width: 4rem;
+  border: none;
+  height: 100%;
+  margin: 0;
+}
+
+header #btnMain:active img {
+  background-color: #0095dd; /* was e66000 */
+}
+
+header #btnMain img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.25);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
+  background-position: center center;
+  width: 2rem;
+  height: 100%;
+  z-index: -1;
+}
+
+header h1 {
+  background: url("images/mainsepa.png") no-repeat scroll left top;
+  display: block;
+  font-weight: normal;
+  font-size: 2.2rem;
+  line-height: 4.9rem;
+  height: 100%;
+  margin: 0 0 0 2rem;
+  padding: 0 0 0 1rem;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+header table {
+  margin: 0px;
+  padding: 0px;
+  float: right;
+  height: 100%;
+  border: none;
+  border-collapse: collapse;
+}
+
+header td {
+  background: url("images/separator.png") no-repeat scroll left top;
+  min-width: 6rem;
+  padding: 0rem 0.5rem 0rem 0.5rem;
+  text-align: center;
+  width: auto;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+header td img {
+  vertical-align: middle;
+}
+
+header td:active {
+  background-color: #0095dd; /* was e66000 */
+}
+
+#main {
+  position: fixed;
+  left: 0px;
+  right: 0;
+  top: 5rem;
+  bottom: 5rem;
+  transition: linear 0.2s;
+}
+
+.body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 1rem;
+  bottom: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  opacity: 0;
+  transition: opacity linear 0.2s;
+  z-index: -1;
+}
+
+.body[aria-expanded=true] {
+   opacity: 1;
+   z-index: 1;
+}
+
+.body#sidebar {
+   left: 0;
+   right: 100%;
+   top: 6rem;
+   bottom: 6rem;
+   margin-right: 0rem;
+   opacity: 1;
+   transition: linear 0.2s;
+   overflow-y: auto;
+}
+
+#glasspane {
+  background: #FF0;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  opacity: 0.2;
+  z-index: 2;
+  visibility: hidden;
+}
+
+#glasspane #title{
+  margin: 1.5rem 2rem 1rem 2rem;
+  border-bottom: 1px solid #000;
+  padding: 0rem 1rem 1rem 1rem;
+  font-family: "Open Sans",Sans-serif;
+  font-size: 2rem;
+}
+
+#glasspane #msg{
+  margin: 0rem 2rem 5rem 2rem;
+  padding: 0rem 1rem 1rem 1rem;
+  font-size: 1.8rem;
+}
+
+#progresspane {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+  visibility: hidden;
+}
+
+#progress {
+  background: url("images/progress.png") no-repeat scroll left top transparent;
+  height: 66px;
+  width: 66px;
+  /* animation: 1s steps(12, end) 0s normal none infinite moveSpinner; */
+  animation-name: moveSpinner;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: steps(12, end);
+  animation-delay: 0s;
+  -webkit-animation-name: moveSpinner;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: steps(23, end);
+  -webkit-animation-delay: 0s;
+  position: relative;
+  left: -33px;
+  top: -33px;
+  border: medium none;
+}
+
+@keyframes moveSpinner {
+  from { background-position: 0 top; }
+  to { background-position: -792px top; }
+}
+@-webkit-keyframes moveSpinner { /* Safari and Chrome */
+  from { background-position: 0 top; }
+  to { background-position: -792px top; }
+}
+/* #progresspane progress::-moz-progress-bar {      */  /* firefox */
+/*   background: none;                              */
+/* }                                                */
+/* #progresspane progress::-webkit-progress-value { */  /* chrome and safari */
+/*    background: none;                             */
+/* }                                                */
+
+footer {
+  background:#6a7b86;
+  background:-moz-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+  background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#6a7b86),color-stop(100%,#424f5a));
+  background:-webkit-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+  background:-o-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+  background:-ms-linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+  background:linear-gradient(top,#6a7b86 0%,#424f5a 100%);
+  color: #FFFFFF;
+  position: absolute;
+  width:100%;
+  height:5rem;
+  bottom:0;
+}
+
+footer table {
+  table-layout: fixed;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height:100%;
+  border: none;
+  border-collapse: collapse;
+}
+
+footer td {
+  border: none;
+  border-right:1px solid #445;
+  width: 100%;
+  margin:0;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+footer td img {
+  vertical-align: middle;
+}
+
+footer td[aria-selected=true] {
+  background:#b4beca;
+  background:-moz-linear-gradient(top,#b4beca 0%,#e1e5eB 100%);
+  background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#b4beca),color-stop(100%,#e1e5eB));
+  background:-webkit-linear-gradient(top,#b4beca 0%,#e1e5eB 100%);
+  background:-o-linear-gradient(top,#b4beca 0%,#e1e5eB 100%);
+  background:-ms-linear-gradient(top,#b4beca 0%,#e1e5eB 100%);
+  background:linear-gradient(top,#b4beca 0%,#e1e5eB 100%);
+}
+
+footer td:active {
+  background-color: #0095dd; /* was #e66000; */
+  color: #555;
+}
+
+footer td:last-child {
+  border:none;
+}
+
+.buttonLike {
+  -moz-appearance: button;
+  -webkit-appearance: button;
+  appearance: button;
+  display: inline-table;
+  /* outline: transparent; */
+  padding: 0 1.5rem;
+  margin: 0;
+  line-height: 3.8rem;
+  text-decoration: none;
+  vertical-align: top;
+  color: ButtonText;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button {
+  height: 3.8rem;
+  padding: 0 1.5rem;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@font-face {
+  font-family: "GeneralEnclosedFoundicons";
+  src: url(font/general_enclosed_foundicons.ttf) format("truetype");
+}
+
+.menuList {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #555;
+  /* background: rgba(0, 5, 18, 0.40);  */ /* Desktop only */
+  background-color: #32373b;               /* Mobile only */
+}
+.menuList ul  {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  font-size: 75%;
+  display: none;
+  color: #555;
+  background-color: #32373b;               /* Mobile only */
+}
+.menuList li {
+  border-bottom: solid 1px #222;
+  padding:0.5em;
+  padding-right: 2em;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.menuList li:before {
+  font-family: "GeneralEnclosedFoundicons";
+  font-weight: normal;
+  font-style: normal;
+  position: absolute;
+  right: 0.5em;
+  font-size: 130%;
+  line-height:1em;
+}
+.menuList li[role=listbox]:before {
+  content: "\f003";
+}
+.menuList li[role=listbox][aria-expanded=true]:before {
+  content: "\f004";
+}
+.menuList li[aria-selected=true]:before {
+  content: "\f005";
+}
+.menuList li:before {
+  content: "\f006";
+}
+[role=radiogroup] li[aria-selected=true]:before {
+  content: "\f015";
+}
+[role=radiogroup] li:before {
+  content: " ";
+}
+li[aria-selected=true], li[role=listbox] {
+  color: #eee;
+}
+.menuList li ul li, .menuList li ul li:first-child {
+  border: none;
+}
+.menuList li:first-child {
+  border-top: solid 1px #888;
+}
+/* .menuList li:hover {               */  /* Desktop only! */
+/*   background: rgba(0, 0, 0, 0.50); */
+/* }                                  */
+.menuList li:active {
+  background-color: #0095dd;
+  color:#222;
+}
+
+/*-- Styles specific to Blabzilla --*/
+.body textarea {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: hidden;
+  display: block;
+  position: relative;
+  resize: none;
+  height: 100%;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  /* border: 1px solid #D1D1D1; */
+  border: none;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+  font-family: "Open Sans",Sans-serif;
+  font-size: 1.6rem;
+}
+
+.body textarea[disabled] {
+   color: #016696;
+}
+
+.imgbox {
+  background-color:#fff;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  display: block;
+  /* position: absolute; */
+  overflow: hidden;
+  border: 1px solid #D1D1D1;
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* Alas, FF 17 does not implement it yet...   */
+/* So, I did a JS work-around: fitImages()    */
+/* .imgbox tr td img {                        */
+/*    width: 100%;                            */
+/*    height:100%;                            */
+/*    object-fit:contain;                     */
+/*    -moz-object-fit:contain;                */
+/*    -ms-object-fit:contain;                 */
+/*    -o-object-fit:contain;                  */
+/*    -webkit-object-fit:contain;             */
+/* }                                          */

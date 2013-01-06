@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<HTML>
+<HEAD>
+   <META charset="utf-8">
+   <META name="viewport" content="width=device-width">
+   <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
+   <SCRIPT type="text/javascript" src="js/fxosstub.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/localStorage.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/jaxogram.js"></SCRIPT>
+   <TITLE>Shoot Up</title>
+</HEAD>
+<BODY onload="init();">
+   <HEADER>
+     <DIV id="btnMain" onclick="toggleSidebarView();"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
+     <TABLE><TR>
+        <TD id="btnInstall">Install</TD>
+     </TR></TABLE>
+     <H1>Jaxogram</H1>
+   </HEADER>
+   <DIV id="main">
+     <DIV id="p1" class="body" aria-expanded = "true">
+        <DIV class="imgbox" id="boxImageOut">
+           <IMG alt="Bar Image" id="imageOut" src="images/unknown.png"/>
+        </DIV>
+        <!-- BUTTON onclick="alert('Aouch. You pressed me');">Press me...</BUTTON -->
+        <!-- <A class="buttonLike" href="nowhere">Anchor to nowhere</A> -->
+     </DIV>
+   </DIV>
+   <DIV id="sidebar" class="body">
+      <UL class="menuList" onclick="menuListClicked(event);">
+        <LI role="listbox">are you vegetarian?
+           <UL role="radiogroup">
+              <LI>Yes</LI>
+              <LI>No</LI>
+              <LI aria-selected="true">Sometimes</LI>
+           </UL>
+        </LI>
+      </UL>
+   </DIV>
+   <!--
+   <DIV id="glasspane">
+      <DIV id="title">Glass Pane Title</DIV>
+      <DIV id="msg">Message in the glass pane (for notifications, etc)</DIV>
+   </DIV>
+   -->
+   <DIV id="progresspane"><DIV id=progress></DIV></DIV>
+
+   <!-- Fallback if "no "Pick" MozActivity -->
+   <FORM
+      id='upldForm' action='#' enctype="multipart/form-data"
+      style="position:absolute;top:-20px"
+   ><INPUT style='opacity:0' type='file' name='upldFile'/>
+   </FORM>
+   <!-- -->
+
+   <FOOTER>
+      <TABLE onclick="expandSidebarView(-1);">
+        <!-- TR role="listbox" onclick="menuListClicked(event);" -->
+        <TR>
+          <TD aria-owns="p1" onclick="pickAndUploadImage();">Pick and Upload</TD>
+          <TD onclick="queryFor('whoAmI');">Who Am I?</TD>
+          <TD onclick="queryFor('listAlbums');">List Albums</TD>
+        </TR>
+      </TABLE>
+   </FOOTER>
+</BODY>
+</HTML>

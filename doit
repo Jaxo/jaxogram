@@ -1,0 +1,3 @@
+#!/bin/csh
+javac -classpath .:/home/pgr/fxos/jaxogram/war/WEB-INF/lib/orkut-os-client-2.0.02.jar Sample.java
+java -classpath .:/home/pgr/fxos/jaxogram/war/WEB-INF/lib/orkut-os-client-2.0.02.jar Sample
