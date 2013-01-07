@@ -1,4 +1,4 @@
-<project name="Orkut Client Library" default="compile" basedir=".">
+<project name="Orkut Client Library" default="build" basedir=".">
   <description>Orkut Client Library. </description>
 
   <property name="app.name" value="orkut-os-client"/>
@@ -21,7 +21,7 @@
   </path>
 
   <!-- Compile library sources -->
-  <target name="compile" description="Compile Java sources">
+  <target name="build" description="Compile Java sources">
      <mkdir dir="bin"/>
      <mkdir dir="dist"/>
      <javac destdir="bin" debug="true" debuglevel="lines,vars,source">
@@ -29,8 +29,7 @@
        <src path="java/src"/>
      </javac>
 
-     <!-- unpack library classes to build dir so we can make one big
-          happy JAR file -->
+     <!-- unpack library classes to build dir so we can make one big JAR file -->
      <unzip dest="bin">
         <fileset dir="lib">
            <include name="*.jar" />
@@ -41,12 +40,20 @@
      <jar destfile="dist/${jar.name}">
         <fileset dir="bin" />
      </jar>
+     <!--
+     <echo message="cp dist/${jar.name} ~/jaxoapps/jaxogram/war/WEB-INF/lib/"/>
+     -->
+     <copy
+        file="dist/${jar.name}"
+        todir="../../jaxoapps/jaxogram/war/WEB-INF/lib/"
+        preservelastmodified="true"
+     />
   </target>
 
   <!-- Make the binary distribution package consisting of the JAR,
       the documentation, the samples, etc -->
   <target name="bindist" description="Make binary distribution ZIP"
-                                depends="compile,javadoc">
+                                depends="build,javadoc">
      <zip destfile="dist/${zip.bin.name}">
         <zipfileset dir="samples" prefix="samples/" />
         <zipfileset dir="." includes="LICENSE" />
@@ -58,7 +65,7 @@
 
   <!-- Make the full distribution package consisting source code -->
   <target name="fulldist" description="Make full distribution ZIP"
-                                depends="compile,javadoc">
+                                depends="build,javadoc">
      <zip destfile="dist/${zip.full.name}">
         <zipfileset dir="samples" prefix="samples/" />
         <zipfileset dir="java/src" prefix="java/src/" />
@@ -73,7 +80,7 @@
   </target>
 
   <!-- Make the javadocs -->
-  <target name="javadoc" depends="compile"
+  <target name="javadoc" depends="build"
                         description="Create Javadoc API documentation">
      <mkdir dir="doc"/>
      <delete>
