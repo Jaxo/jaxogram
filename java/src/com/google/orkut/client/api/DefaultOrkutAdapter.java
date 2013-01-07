@@ -158,37 +158,40 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
       try {
          return requestAuthURL_inner();
       }
-      catch (Exception ex) {
+      catch (Exception e) {
+         e.printStackTrace();
          throw new OrkutAdapterException(
-              "OrkutAdapter: Error requesting OAuth authorization URL", ex);
+            "OrkutAdapter: Error requesting OAuth authorization URL", e
+         );
       }
    }
 
    private String requestAuthURL_inner() throws Exception {
       say("Getting oauth request token.");
       List<OAuth.Parameter> callback = OAuth.newList(
-                OAuth.OAUTH_CALLBACK, callbackURL,
-                "scope", OAUTH_SCOPE);
-
-      OAuthMessage response =
-                client.getRequestTokenResponse(accessor,null,callback);
-
+        OAuth.OAUTH_CALLBACK, callbackURL,
+        "scope", OAUTH_SCOPE
+      );
+      OAuthMessage response = client.getRequestTokenResponse(
+         accessor, null, callback
+      );
       say("Response obtained.");
       String authorizationURL = OAuth.addParameters(
-                accessor.consumer.serviceProvider.userAuthorizationURL,
-                OAuth.OAUTH_TOKEN, accessor.requestToken,
-                "scope", OAUTH_SCOPE);
+         accessor.consumer.serviceProvider.userAuthorizationURL,
+         OAuth.OAUTH_TOKEN, accessor.requestToken,
+         "scope", OAUTH_SCOPE
+      );
 
       if (response.getParameter(OAuth.OAUTH_CALLBACK_CONFIRMED) == null) {
          say("No callback confirm - service provider is using 1.0, not 1.0a.");
          say("Adding callback as bare parameter.");
          authorizationURL = OAuth.addParameters(authorizationURL, callback);
-      }
-      else {
+      }else {
          authorizationURL = OAuth.addParameters(
-                accessor.consumer.serviceProvider.userAuthorizationURL,
-                OAuth.OAUTH_TOKEN, accessor.requestToken,
-                "scope", OAUTH_SCOPE);
+            accessor.consumer.serviceProvider.userAuthorizationURL,
+            OAuth.OAUTH_TOKEN, accessor.requestToken,
+            "scope", OAUTH_SCOPE
+         );
       }
 
       say("Request token: " + accessor.requestToken);
@@ -196,23 +199,44 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
       return authorizationURL;
    }
 
+   public OAuthAccessor getAccessor() {
+      return accessor;
+   }
+
    @Override
    public void authenticate(String verifier) {
       say("Trying to authenticate with verifier: " + verifier);
       try {
          authenticate_inner(verifier);
-      }
-      catch (Exception ex) {
+      }catch (Exception e) {
          throw new OrkutAdapterException(
-                "Orkut Adapter: Error authenticating.", ex);
+           "Orkut Adapter: Error authenticating.", e
+         );
       }
+   }
+
+   public String authenticate(String verifier, OAuthAccessor givenAccessor)
+   throws Exception
+   {
+      say("Verifier and Accessor provided: " + verifier);
+      say("Obtaining access token...");
+      client.getAccessToken(
+         givenAccessor, null,
+         OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
+      );
+      say("Got access token   : " + givenAccessor.accessToken);
+      say("Access token secret: " + givenAccessor.tokenSecret);
+      return givenAccessor.accessToken + " " + givenAccessor.tokenSecret;
    }
 
    private void authenticate_inner(String verifier) throws Exception {
       say("Verifier code provided: " + verifier);
       say("Obtaining access token...");
-      client.getAccessToken(accessor, null,
-           OAuth.newList(OAuth.OAUTH_VERIFIER, verifier));
+
+      client.getAccessToken(
+         accessor, null,
+         OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
+      );
       say("Got access token   : " + accessor.accessToken);
       say("Access token secret: " + accessor.tokenSecret);
    }
