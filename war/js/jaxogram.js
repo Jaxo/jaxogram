@@ -11,7 +11,11 @@ function init() {
       },
       false
    );
-   // document.getElementById("p1").setAttribute("aria-expanded", "true");
+   var params = getQueryParams();
+   if (params.OP === "backCall") {
+      alert("Access Pass: \"" + params.ap);
+   }
+// document.getElementById("p1").setAttribute("aria-expanded", "true");
 // window.onerror = function(msg, url, linenumber){
 //    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
 //    return true;
@@ -42,10 +46,45 @@ function fitImage(img) {
    img.setAttribute("style", s);
 }
 
+function getQueryParams() {
+   var query = window.location.search.substr(1).split('&');
+   if (query == "") return {};
+   var params = {};
+   for (var i=0; i < query.length; ++i) {
+       var param = query[i].split('=');
+       if (param.length == 2) {
+          params[param[0]] = decodeURIComponent(param[1].replace(/\+/g, " "));
+       }
+   }
+   return params;
+}
+
+function authorize() {
+   var request = new XMLHttpRequest();
+   request.onreadystatechange = whenRequestStateChanged;
+   // 1st is to get the URL to which the user will grant our access
+   request.open("GET", "jaxogram?OP=getUrl", true);
+   request.onreadystatechange = function() {
+      if (request.readyState == 4) {
+         if (this.status == 200) {
+            // window.open(
+            //    request.responseText,
+            //    'popUpWindow',
+            //    'resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes'
+            // );
+            window.location.href = request.responseText;
+         }else {
+            alert(this.responseText);
+         }
+      }
+   }
+   request.send();
+}
+
 function queryFor(what) {
    var request = new XMLHttpRequest();
    request.onreadystatechange = whenRequestStateChanged;
-   request.open("GET", "jaxogram?OP=" + what, false);
+   request.open("GET", "jaxogram?OP=" + what, true);  // ???
    request.send();
 }
 

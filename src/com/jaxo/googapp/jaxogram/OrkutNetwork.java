@@ -37,7 +37,7 @@ import com.google.orkut.client.api.UpdateProfileTx;
 import com.google.orkut.client.api.UploadPhotoTx;
 import com.google.orkut.client.api.WriteScrapTx;
 
-// import com.google.orkut.client.api.OrkutAdapterDebugListener;
+import com.google.orkut.client.api.OrkutAdapterDebugListener;
 
 /*-- class OrkutNetwork --+
 *//**
@@ -47,12 +47,13 @@ import com.google.orkut.client.api.WriteScrapTx;
 */
 public class OrkutNetwork extends DefaultOrkutAdapter {
    static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.OrkutNetwork");
-   static final String CALLBACK_URL = "http://orkut-os-client-test.appspot.com/debugcallback";
+   public static final String CALLBACK_URL =
+      "http://jaxogram.appspot.com/jaxogram/?OP=backCall";
    static final String consumerKey = "www.jaxo.com";
    static final String consumerSecret = "JYd4FdgQyQBvbgbq0rdDP44C";
 
-   public OrkutNetwork() throws Exception { // TEMP
-      this("1/xIAb6VHjqaCWsP3H0CzQtNpCa3DxxLe2T8O8waWBsPE frZt1CQaX-5fKkbaGJ-VmYfq");
+   public OrkutNetwork() throws Exception {
+      this(null);
    }
 
    public OrkutNetwork(String accessPass) throws Exception {
@@ -68,28 +69,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter {
          //    }
          // }
       );
-      if (accessPass == null) {
-         log("Requesting authorization URL from adapter.");
-         String authURL = requestAuthURL();
-
-         log("");
-         log("Authorization URL: " + authURL);
-         log("");
-         log("Now launch a browser with this URL, log in, let it redirect to");
-         log("the callback URL, look for the oauth_verifier parameter and ");
-         log("copy it here to proceed with authentication.");
-         log("");
-
-         log("Input verifier code: ");
-         String verifier = "???????"; // readline();
-
-         log("Authenticating.");
-         authenticate(verifier);
-
-         log("Got access pass: " + getAccessPass());
-      }else {
-         setAccessPass(accessPass);
-      }
+      if (accessPass != null) setAccessPass(accessPass);
    }
 
    public String whoAmI() throws Exception {

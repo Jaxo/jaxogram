@@ -14,13 +14,16 @@ package com.jaxo.googapp.jaxogram;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.Enumeration;
-//*/ import java.util.logging.Level;
 //*/ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import net.oauth.OAuthAccessor;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -62,8 +65,47 @@ public class JaxogramServlet extends HttpServlet
       PrintWriter writer = resp.getWriter();
 
       try {
-         if (op.equals("whoAmI")) {
-            writer.println(new OrkutNetwork().whoAmI());
+         if (op.equals("getUrl")) {
+            try {
+               HttpSession session = req.getSession(true);
+               OrkutNetwork orknet = new OrkutNetwork();
+               String authorizeUrl = orknet.requestAuthURL();
+               session.setAttribute("accessor", orknet.getAccessor());
+               writer.print(authorizeUrl);
+            }catch (Exception e) {
+               resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+               writer.println("Error:\n" + e);
+            }
+
+         }else if (op.equals("backCall")) {
+            try {
+               HttpSession session = req.getSession(true);
+               OrkutNetwork orknet = new OrkutNetwork();
+               String ap =  orknet.authenticate(
+                  req.getParameter("oauth_verifier"),
+                  (OAuthAccessor)session.getAttribute("accessor")
+               );
+               session.setAttribute("accesspass", ap);
+               // redirect...
+               resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
+               resp.setHeader(
+                  "Location",
+                  "/?OP=backCall&ap=" + URLEncoder.encode(ap, "UTF-8")
+               );
+               // writer.println("Access Pass =\n" + orknet.getAccessPass());
+            }catch (Exception e) {
+               resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+               writer.println("Error:\n" + e);
+            }
+
+         }else if (op.equals("whoAmI")) {
+            HttpSession session = req.getSession(true);
+//*/        logger.info("Access Pass is " + session.getAttribute("accesspass"));
+            writer.println(
+               new OrkutNetwork(
+                  (String)session.getAttribute("accesspass")
+               ).whoAmI()
+            );
 
          }else if (op.equals("listAlbums")) {
             writer.println(new OrkutNetwork().listAlbums());
@@ -131,12 +173,5 @@ public class JaxogramServlet extends HttpServlet
          writer.println("Error:\n" + e.getMessage());
       }
    }
-
-// static class LogFormatter extends java.util.logging.Formatter {
-//    public String format(LogRecord rec) {
-//       StringBuilder sb = new StringBuilder();
-//    }
-// }
-
 }
 /*===========================================================================*/
