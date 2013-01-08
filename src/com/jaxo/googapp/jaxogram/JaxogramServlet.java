@@ -68,7 +68,7 @@ public class JaxogramServlet extends HttpServlet
          if (op.equals("getUrl")) {
             try {
                HttpSession session = req.getSession(true);
-               OrkutNetwork orknet = new OrkutNetwork();
+               OrkutNetwork orknet = makeNullOrkutNetwork(req);
                String authorizeUrl = orknet.requestAuthURL();
                session.setAttribute("accessor", orknet.getAccessor());
                writer.print(authorizeUrl);
@@ -80,7 +80,7 @@ public class JaxogramServlet extends HttpServlet
          }else if (op.equals("backCall")) {
             try {
                HttpSession session = req.getSession(true);
-               OrkutNetwork orknet = new OrkutNetwork();
+               OrkutNetwork orknet = makeNullOrkutNetwork(req);
                String ap =  orknet.authenticate(
                   req.getParameter("oauth_verifier"),
                   (OAuthAccessor)session.getAttribute("accessor")
@@ -99,16 +99,10 @@ public class JaxogramServlet extends HttpServlet
             }
 
          }else if (op.equals("whoAmI")) {
-            HttpSession session = req.getSession(true);
-//*/        logger.info("Access Pass is " + session.getAttribute("accesspass"));
-            writer.println(
-               new OrkutNetwork(
-                  (String)session.getAttribute("accesspass")
-               ).whoAmI()
-            );
+            writer.println(makeOrkutNetwork(req).whoAmI());
 
          }else if (op.equals("listAlbums")) {
-            writer.println(new OrkutNetwork().listAlbums());
+            writer.println(makeOrkutNetwork(req).listAlbums());
 
          }else if (op.startsWith("postImage")) {
             String imgType = "jpg";
@@ -159,8 +153,9 @@ public class JaxogramServlet extends HttpServlet
                }
             }
             if (image != null) {
-               OrkutNetwork orknet = new OrkutNetwork();
-               orknet.uploadPhoto(albumId, imgTitle, image, imgType);
+               makeOrkutNetwork(req).uploadPhoto(
+                  albumId, imgTitle, image, imgType
+               );
                writer.println("Successfully uploaded to album #" + albumId);
             }else {
                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -173,5 +168,43 @@ public class JaxogramServlet extends HttpServlet
          writer.println("Error:\n" + e.getMessage());
       }
    }
+
+   /*--------------------------------------------------------makeOrkutNetwork-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public static OrkutNetwork makeOrkutNetwork(HttpServletRequest req)
+   throws Exception {
+      HttpSession session = req.getSession(true);
+      return new OrkutNetwork(
+         (String)session.getAttribute("accesspass"),
+         getBaseUrl(req) + "/jaxogram?OP=backCall"    // callback URL
+      );
+   }
+
+   /*----------------------------------------------------makeNullOrkutNetwork-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public static OrkutNetwork makeNullOrkutNetwork(HttpServletRequest req)
+   throws Exception {
+      return new OrkutNetwork(
+         null,                                        // no access password
+         getBaseUrl(req) + "/jaxogram?OP=backCall"    // callback URL
+      );
+   }
+
+   /*--------------------------------------------------------------getBaseUrl-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public static String getBaseUrl(HttpServletRequest req) {
+      int port = req.getServerPort();
+      StringBuilder sb = new StringBuilder(50);
+      sb.append(req.getScheme()).append("://").append(req.getServerName());
+      if ((port != 80) && (port != 443)) sb.append(':').append(port);
+      return sb.toString();
+   }
+
 }
 /*===========================================================================*/

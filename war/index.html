@@ -28,11 +28,14 @@
    </DIV>
    <DIV id="sidebar" class="body">
       <UL class="menuList" onclick="menuListClicked(event);">
-        <LI role="listbox">are you vegetarian?
+        <LI role="listbox">Login as:
            <UL role="radiogroup">
-              <LI>Yes</LI>
-              <LI>No</LI>
-              <LI aria-selected="true">Sometimes</LI>
+              <LI aria-selected="true">New User</LI>
+           </UL>
+        </LI>
+        <LI role="listbox">Remove User Access
+           <UL role="radiogroup">
+              <LI aria-selected="true">[None]</LI>
            </UL>
         </LI>
       </UL>
@@ -55,7 +58,6 @@
 
    <FOOTER>
       <TABLE onclick="expandSidebarView(-1);">
-        <!-- TR role="listbox" onclick="menuListClicked(event);" -->
         <TR>
           <TD aria-owns="p1" onclick="pickAndUploadImage();">Pick and Upload</TD>
           <TD onclick="queryFor('whoAmI');">Who Am I?</TD>

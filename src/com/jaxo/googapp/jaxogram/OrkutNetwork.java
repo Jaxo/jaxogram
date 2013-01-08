@@ -45,31 +45,34 @@ import com.google.orkut.client.api.OrkutAdapterDebugListener;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class OrkutNetwork extends DefaultOrkutAdapter {
+public class OrkutNetwork extends DefaultOrkutAdapter
+{
+   static final boolean IS_DEBUG = false;
    static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.OrkutNetwork");
-   public static final String CALLBACK_URL =
-      "http://jaxogram.appspot.com/jaxogram/?OP=backCall";
    static final String consumerKey = "www.jaxo.com";
    static final String consumerSecret = "JYd4FdgQyQBvbgbq0rdDP44C";
 
-   public OrkutNetwork() throws Exception {
-      this(null);
-   }
-
-   public OrkutNetwork(String accessPass) throws Exception {
+   public OrkutNetwork(String accessPass, String callbackUrl) throws Exception {
       super(
          consumerKey,
          consumerSecret,
-         CALLBACK_URL,
+         callbackUrl,
          true, // false  [is prod]
-         null
-         // new OrkutAdapterDebugListener() {
-         //    public void printOrkutAdapterMessage(String s) {
-         //       log(s);
-         //    }
-         // }
+         makeDebugListener()
       );
       if (accessPass != null) setAccessPass(accessPass);
+   }
+
+   public static OrkutAdapterDebugListener makeDebugListener() {
+      if (IS_DEBUG) {
+         return new OrkutAdapterDebugListener() {
+            public void printOrkutAdapterMessage(String s) {
+               log(s);
+            }
+         };
+      }else {
+         return null;
+      }
    }
 
    public String whoAmI() throws Exception {

@@ -12,9 +12,10 @@ function init() {
       false
    );
    var params = getQueryParams();
-   if (params.OP === "backCall") {
-      alert("Access Pass: \"" + params.ap);
-   }
+// if (params.OP === "backCall") {
+//    alert("Access Pass: \"" + params.ap);
+// }
+
 // document.getElementById("p1").setAttribute("aria-expanded", "true");
 // window.onerror = function(msg, url, linenumber){
 //    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
