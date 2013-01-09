@@ -6,6 +6,8 @@
    <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
    <SCRIPT type="text/javascript" src="js/fxosstub.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/localStorage.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/jgusers.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/i18n.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/jaxogram.js"></SCRIPT>
    <TITLE>Jaxogram</title>
 </HEAD>
@@ -28,12 +30,8 @@
    </DIV>
    <DIV id="sidebar" class="body">
       <UL class="menuList" onclick="menuListClicked(event);">
-        <LI role="listbox">Login as:
-           <UL role="radiogroup">
-              <LI aria-selected="true">New User</LI>
-           </UL>
-        </LI>
-        <LI role="listbox">Remove User Access
+        <LI role="listbox" id="jgUsersIn"></LI>
+        <LI role="listbox">Revoke Access
            <UL role="radiogroup">
               <LI aria-selected="true">[None]</LI>
            </UL>
@@ -62,7 +60,6 @@
           <TD aria-owns="p1" onclick="pickAndUploadImage();">Pick and Upload</TD>
           <TD onclick="queryFor('whoAmI');">Who Am I?</TD>
           <TD onclick="queryFor('listAlbums');">List Albums</TD>
-          <TD onclick="authorize();">Authorize</TD>
         </TR>
       </TABLE>
    </FOOTER>

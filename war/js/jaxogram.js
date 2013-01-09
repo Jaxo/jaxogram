@@ -1,5 +1,6 @@
+var users;
+
 function init() {
-   createLocalStorageIfNeeded();
    setInstallButton("btnInstall");
 // document.getElementById('fdflt').click();
    fitImage(document.getElementById('imageOut'));
@@ -11,17 +12,64 @@ function init() {
       },
       false
    );
+
+   users = new JgUsers();
+   users.cleanUp(); // TEMP???
    var params = getQueryParams();
-// if (params.OP === "backCall") {
-//    alert("Access Pass: \"" + params.ap);
-// }
+   if (params.OP === "backCall") {
+      var name = prompt(i18n('enterUserName'), i18n("defaultUserName"));
+      users.addUser(name, params.ap, "orkut");
+   }
+   if (users.hasSome()) {
+      var html = "";
+      var selName = null;
+      users.forEach(
+         function(name, pass, net, selected) {
+            html += "<LI";
+            if (selected) {
+               selName = name;
+               html += " aria-selected='true'";
+            }
+            html += ">" + name + "</LI>"
+         }
+      );
+      document.getElementById("jgUsersIn").innerHTML = (
+         i18n("loginAs") + ": <i id='jgUserName'>" + selName +
+         "</i><UL role='radiogroup' onclick='changeLogin(this, event);'>" +
+         "<LI onclick='authorize();event.stopPropagation()'>" +
+         i18n("newLogin") + "</LI>" + html + "</UL>"
+      );
+   }else {
+      if (
+        confirm(
+           "Orkut requires your authorization \n" +
+           "to let Jaxogram access your data.\n" +
+           "Proceed to granting?"
+        )
+      ) {
+         authorize();
+      }else {
+         elt.innerHTML = (
+            "<BUTTON onclick='authorize();event.stopPropagation();' >" +
+            i18n("newLogin") + "</BUTTON>"
+         );
+      }
+   }
+}
+
+function changeLogin(elt, event) {
+   var clicked = event.target;
+   document.getElementById('jgUserName').innerHTML = clicked.innerHTML;
+   var index = -1;
+   while (clicked=clicked.previousSibling) ++index;
+   users.selectUserAt(index);
+}
 
 // document.getElementById("p1").setAttribute("aria-expanded", "true");
 // window.onerror = function(msg, url, linenumber){
 //    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
 //    return true;
 // }
-}
 
 function p1Expanded(isExpanded) {
    // var style = document.getElementById("btnSecond").style;
@@ -94,12 +142,9 @@ function uploadFile() {
    var elt = formElt.firstChild;
    elt.onchange= function() {
       if (typeof window.FileReader !== 'function') {
-         alert("The file API isn't supported on this browser yet.");
+         alert(i18n("noFileApi"));
       }else if (!this.files) {
-         alert(
-           "Your browser doesn't seem to support" +
-           " the `files` property of file inputs."
-         );
+         alert(i18n("noFileApiProp"));
       }else if (!this.files[0]) {
          alert("No file selected");
       }else {
@@ -141,7 +186,7 @@ function pickAndUploadImage()
         img.src = url;
         img.onload = function() { URL.revokeObjectURL(url); };
       };
-      a.onerror = function() { alert('Failure at picking an image'); };
+      a.onerror = function() { alert(i18n('pickImageError')); };
    }catch (err) {
       uploadFile();
       return;
