@@ -13,8 +13,6 @@ function JgUsers() {
       );
    }
    this.getAccessPass = function() {
-// users[selectedIndex].p = "1/rSneb94I1UFBGoUvtHXw2i0boKcOucNtddGTRl51uTg WBIsSFiFzzkRHgBwMmGJGnD7";
-// rewriteUsers();
       return users[selectedIndex].p;
    }
    this.hasSome = function() {
