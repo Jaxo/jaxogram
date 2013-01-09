@@ -1,7 +1,7 @@
 {
   "version": "0.0.01",
   "name": "Jaxogram",
-  "description": "Jaxo's Firefox OS Photo App",
+  "description": "Jaxo's Photo Sharing App",
   "icons": {
     "16": "/applogos/logo16.png",
     "32": "/applogos/logo32.png",
@@ -10,7 +10,7 @@
     "128": "/applogos/logo128.png"
   },
   "developer": {
-    "name": "Pierre G. Richard",
+    "name": "Jaxo, Inc.",
     "url": "http://www.jaxo.com"
   },
   "installs_allowed_from": ["*"],
