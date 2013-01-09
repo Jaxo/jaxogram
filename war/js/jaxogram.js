@@ -39,6 +39,7 @@ function init() {
          "<LI onclick='authorize();event.stopPropagation()'>" +
          i18n("newLogin") + "</LI>" + html + "</UL>"
       );
+      tellAccessPass();
    }else {
       if (
         confirm(
@@ -63,6 +64,7 @@ function changeLogin(elt, event) {
    var index = -1;
    while (clicked=clicked.previousSibling) ++index;
    users.selectUserAt(index);
+   tellAccessPass();
 }
 
 // document.getElementById("p1").setAttribute("aria-expanded", "true");
@@ -128,6 +130,20 @@ function authorize() {
       }
    }
    request.send();
+}
+
+function tellAccessPass()
+{
+   var request = new XMLHttpRequest();
+   request.open("POST", "jaxogram?OP=postAccPss", true);
+   request.onreadystatechange = function () {
+      if (request.readyState == 4) {
+         if (this.status != 200) {
+            alert('HTTP error ' + this.status);
+         }
+      }
+   }
+   request.send(users.getAccessPass());
 }
 
 function queryFor(what) {

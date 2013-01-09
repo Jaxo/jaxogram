@@ -65,7 +65,13 @@ public class JaxogramServlet extends HttpServlet
       PrintWriter writer = resp.getWriter();
 
       try {
-         if (op.equals("getUrl")) {
+         if (op.equals("postAccPss")) {
+            InputStream in = req.getInputStream();
+            req.getSession(true).setAttribute("accesspass", IOUtils.toString(in));
+//*/        logger.info("Access Pass: " + req.getSession(true).getAttribute("accesspass"));
+            IOUtils.closeQuietly(in);
+
+         }else if (op.equals("getUrl")) {
             try {
                HttpSession session = req.getSession(true);
                OrkutNetwork orknet = makeNullOrkutNetwork(req);
@@ -76,7 +82,6 @@ public class JaxogramServlet extends HttpServlet
                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                writer.println("Error:\n" + e);
             }
-
          }else if (op.equals("backCall")) {
             try {
                HttpSession session = req.getSession(true);
