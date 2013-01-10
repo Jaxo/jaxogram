@@ -83,6 +83,7 @@ public class JaxogramServlet extends HttpServlet
                writer.println("Error:\n" + e);
             }
          }else if (op.equals("backCall")) {
+            String redirect;
             try {
                HttpSession session = req.getSession(true);
                OrkutNetwork orknet = makeNullOrkutNetwork(req);
@@ -91,17 +92,13 @@ public class JaxogramServlet extends HttpServlet
                   (OAuthAccessor)session.getAttribute("accessor")
                );
                session.setAttribute("accesspass", ap);
-               // redirect...
-               resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
-               resp.setHeader(
-                  "Location",
-                  "/?OP=backCall&ap=" + URLEncoder.encode(ap, "UTF-8")
-               );
-               // writer.println("Access Pass =\n" + orknet.getAccessPass());
+               redirect = "/?OP=granted&ap=" + URLEncoder.encode(ap, "UTF-8");
             }catch (Exception e) {
-               resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-               writer.println("Error:\n" + e);
+               redirect = "/?OP=denied&msg=" + e;
             }
+            // redirect...
+            resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
+            resp.setHeader("Location", redirect);
 
          }else if (op.equals("whoAmI")) {
             writer.println(makeOrkutNetwork(req).whoAmI());

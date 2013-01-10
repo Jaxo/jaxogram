@@ -16,9 +16,11 @@ function init() {
    users = new JgUsers();
    users.cleanUp(); // TEMP???
    var params = getQueryParams();
-   if (params.OP === "backCall") {
+   if (params.OP === "granted") {
       var name = prompt(i18n('enterUserName'), i18n("defaultUserName"));
       users.addUser(name, params.ap, "orkut");
+   }else if (params.OP === "denied") {
+      alert(i18n("authDenied") + "\n\n(" + params.msg + ")");
    }
    if (users.hasSome()) {
       var html = "";
@@ -113,17 +115,19 @@ function getQueryParams() {
 function authorize() {
    var request = new XMLHttpRequest();
    request.onreadystatechange = whenRequestStateChanged;
-   // 1st is to get the URL to which the user will grant our access
+   // obtain the URL at which the user will grant us access
    request.open("GET", "jaxogram?OP=getUrl", true);
    request.onreadystatechange = function() {
       if (request.readyState == 4) {
+alert("[1] " + this.responseText);
          if (this.status == 200) {
-            // window.open(
-            //    request.responseText,
-            //    'popUpWindow',
-            //    'resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes'
-            // );
+            // navigate to it...
             window.location.href = request.responseText;
+//          window.open(
+//             request.responseText,
+//             'popUpWindow',
+//             'resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes'
+//          );
          }else {
             alert(this.responseText);
          }

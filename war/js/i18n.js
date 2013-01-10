@@ -37,6 +37,11 @@ var localeValues = {
       'en_US':"User",
       'fr_FR':"Utilisateur",
       'pt_BR':"User"
+   },   
+   authDenied: {
+      'en_US':"Authorization denied",
+      'fr_FR':"Autorisation refusée",
+      'pt_BR':"Authorization denied"
    },
    pickImageError: {
       'en_US':"Failure at picking an image",
