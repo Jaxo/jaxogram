@@ -39,25 +39,20 @@ function init() {
          i18n("loginAs") + ": <i id='jgUserName'>" + selName +
          "</i><UL role='radiogroup' onclick='changeLogin(this, event);'>" +
          "<LI onclick='authorize();event.stopPropagation()'>" +
-         i18n("newLogin") + "</LI>" + html + "</UL>"
+         "<SPAN class='i18n' id='newLogin'></SPAN></LI>" + html + "</UL>"
       );
       tellAccessPass();
    }else {
-      if (
-        confirm(
-           "Orkut requires your authorization \n" +
-           "to let Jaxogram access your data.\n" +
-           "Proceed to granting?"
-        )
-      ) {
+      if (confirm(i18n("requestAuth"))) {
          authorize();
       }else {
          elt.innerHTML = (
             "<BUTTON onclick='authorize();event.stopPropagation();' >" +
-            i18n("newLogin") + "</BUTTON>"
+            "<SPAN class='i18n' id='newLogin'></SPAN></BUTTON>"
          );
       }
    }
+   translateBody();
 }
 
 function changeLogin(elt, event) {
@@ -119,7 +114,6 @@ function authorize() {
    request.open("GET", "jaxogram?OP=getUrl", true);
    request.onreadystatechange = function() {
       if (request.readyState == 4) {
-alert("[1] " + this.responseText);
          if (this.status == 200) {
             // navigate to it...
             window.location.href = request.responseText;

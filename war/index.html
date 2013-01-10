@@ -15,7 +15,7 @@
    <HEADER>
      <DIV id="btnMain" onclick="toggleSidebarView();"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
      <TABLE><TR>
-        <TD id="btnInstall">Install</TD>
+        <TD id="btnInstall"><SPAN class="i18n" id="m0"></SPAN></TD>
      </TR></TABLE>
      <H1>Jaxogram</H1>
    </HEADER>
@@ -31,7 +31,7 @@
    <DIV id="sidebar" class="body">
       <UL class="menuList" onclick="menuListClicked(event);">
         <LI role="listbox" id="jgUsersIn"></LI>
-        <LI role="listbox">Revoke Access
+        <LI role="listbox"><SPAN class="i18n" id="revokeAccess"></SPAN>
            <UL role="radiogroup">
               <LI aria-selected="true">[None]</LI>
            </UL>
@@ -57,9 +57,9 @@
    <FOOTER>
       <TABLE onclick="expandSidebarView(-1);">
         <TR>
-          <TD aria-owns="p1" onclick="pickAndUploadImage();">Pick and Upload</TD>
-          <TD onclick="queryFor('whoAmI');">Who Am I?</TD>
-          <TD onclick="queryFor('listAlbums');">List Albums</TD>
+          <TD aria-owns="p1" onclick="pickAndUploadImage();"><SPAN class="i18n" id="m1"></SPAN></TD>
+          <TD onclick="queryFor('whoAmI');"><SPAN class="i18n" id="m2"></SPAN></TD>
+          <TD onclick="queryFor('listAlbums');"><SPAN class="i18n" id="m3"></SPAN></TD>
           <!-- <TD onclick="authorize();">Authorize</TD> -->
         </TR>
       </TABLE>
