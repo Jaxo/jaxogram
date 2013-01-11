@@ -17,7 +17,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
-import net.oauth.client.ExcerptInputStream;
 import net.oauth.http.HttpMessage;
 import net.oauth.http.HttpResponseMessage;
 
@@ -39,7 +38,6 @@ public class JNetClient implements net.oauth.http.HttpClient
       Map<String, Object> parameters
    ) throws IOException {
       if (request.method.equalsIgnoreCase(POST)) {
-         byte[] excerpt = null;
          InputStream body = request.getBody();
          long bodyLen = 0;
          if (body != null) {
@@ -67,17 +65,14 @@ public class JNetClient implements net.oauth.http.HttpClient
          conn.setRequestMethod("POST");
          OutputStream output = conn.getOutputStream();
          if (body != null) {
-//          ExcerptInputStream input = new ExcerptInputStream(body);
-//          excerpt = input.getExcerpt();
             int ch;
             while ((ch = body.read()) != -1) output.write(ch);
             body.close();
          }
          output.close();
-         return new JNetResponseMessage(request, excerpt, conn);
+         return new JNetResponseMessage(request, conn);
 
       }else if (request.method.equalsIgnoreCase(GET)) {
-         byte[] excerpt = null;
          HttpURLConnection conn = (HttpURLConnection)request.url.openConnection();
          for (Map.Entry<String, String> header : request.headers) {
             conn.addRequestProperty(header.getKey(), header.getValue());
@@ -94,7 +89,7 @@ public class JNetClient implements net.oauth.http.HttpClient
             }
          }
          conn.setRequestMethod("GET");
-         return new JNetResponseMessage(request, excerpt, conn);
+         return new JNetResponseMessage(request, conn);
 
       }else {
          throw new IOException("Handling of " + request.method + " not implemented");

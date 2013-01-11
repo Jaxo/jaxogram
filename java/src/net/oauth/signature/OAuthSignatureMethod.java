@@ -30,7 +30,6 @@ import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
 import net.oauth.OAuthException;
 import net.oauth.OAuthMessage;
-import net.oauth.OAuthProblemException;
 
 /**
  * A pair of algorithms for computing and verifying an OAuth digital signature.
@@ -39,8 +38,8 @@ import net.oauth.OAuthProblemException;
  */
 public abstract class OAuthSignatureMethod {
 
-    /** Add a signature to the message. 
-     * @throws URISyntaxException 
+    /** Add a signature to the message.
+     * @throws URISyntaxException
      * @throws IOException */
     public void sign(OAuthMessage message)
     throws OAuthException, IOException, URISyntaxException {
@@ -50,10 +49,9 @@ public abstract class OAuthSignatureMethod {
 
     /**
      * Check whether the message has a valid signature.
-     * @throws URISyntaxException 
+     * @throws URISyntaxException
      *
-     * @throws OAuthProblemException
-     *             the signature is invalid
+     * @throws OAuthException the signature is invalid
      */
     public void validate(OAuthMessage message)
     throws IOException, OAuthException, URISyntaxException {
@@ -61,13 +59,7 @@ public abstract class OAuthSignatureMethod {
         String signature = message.getSignature();
         String baseString = getBaseString(message);
         if (!isValid(signature, baseString)) {
-            OAuthProblemException problem = new OAuthProblemException(
-                    "signature_invalid");
-            problem.setParameter("oauth_signature", signature);
-            problem.setParameter("oauth_signature_base_string", baseString);
-            problem.setParameter("oauth_signature_method", message
-                    .getSignatureMethod());
-            throw problem;
+           throw new OAuthException(OAuth.Problems.SIGNATURE_INVALID);
         }
     }
 
@@ -208,28 +200,23 @@ public abstract class OAuthSignatureMethod {
     }
 
     /** The factory for signature methods. */
-    public static OAuthSignatureMethod newMethod(String name,
-            OAuthAccessor accessor) throws OAuthException {
-        try {
-            Class methodClass = NAME_TO_CLASS.get(name);
-            if (methodClass != null) {
-                OAuthSignatureMethod method = (OAuthSignatureMethod) methodClass
-                .newInstance();
-                method.initialize(name, accessor);
-                return method;
-            }
-            OAuthProblemException problem = new OAuthProblemException(OAuth.Problems.SIGNATURE_METHOD_REJECTED);
-            String acceptable = OAuth.percentEncode(NAME_TO_CLASS.keySet());
-            if (acceptable.length() > 0) {
-                problem.setParameter("oauth_acceptable_signature_methods",
-                        acceptable.toString());
-            }
-            throw problem;
-        } catch (InstantiationException e) {
-            throw new OAuthException(e);
-        } catch (IllegalAccessException e) {
-            throw new OAuthException(e);
-        }
+    public static OAuthSignatureMethod newMethod(
+       String name,
+       OAuthAccessor accessor
+    ) throws OAuthException {
+       try {
+          Class methodClass = NAME_TO_CLASS.get(name);
+          if (methodClass != null) {
+             OAuthSignatureMethod method = (OAuthSignatureMethod)methodClass.newInstance();
+             method.initialize(name, accessor);
+             return method;
+          }
+          throw new OAuthException(OAuth.Problems.SIGNATURE_METHOD_REJECTED);
+       }catch (InstantiationException e) {
+          throw new OAuthException(e);
+       }catch (IllegalAccessException e) {
+          throw new OAuthException(e);
+       }
     }
 
     /**

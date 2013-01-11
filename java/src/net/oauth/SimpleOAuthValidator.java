@@ -85,7 +85,7 @@ public class SimpleOAuthValidator implements OAuthValidator {
     protected final double maxVersion;
     protected final long timestampWindow;
 
-    /** {@inherit} 
+    /** {@inherit}
      * @throws URISyntaxException */
     public void validateMessage(OAuthMessage message, OAuthAccessor accessor)
     throws OAuthException, IOException, URISyntaxException {
@@ -114,59 +114,55 @@ public class SimpleOAuthValidator implements OAuthValidator {
             }
         }
         if (repeated) {
-            Collection<OAuth.Parameter> rejected = new ArrayList<OAuth.Parameter>();
-            for (Map.Entry<String, Collection<String>> p : nameToValues.entrySet()) {
-                String name = p.getKey();
-                Collection<String> values = p.getValue();
-                if (values.size() > 1) {
-                    for (String value : values) {
-                        rejected.add(new OAuth.Parameter(name, value));
-                    }
-                }
-            }
-            OAuthProblemException problem = new OAuthProblemException(OAuth.Problems.PARAMETER_REJECTED);
-            problem.setParameter(OAuth.Problems.OAUTH_PARAMETERS_REJECTED, OAuth.formEncode(rejected));
-            throw problem;
+//         Collection<OAuth.Parameter> rejected = new ArrayList<OAuth.Parameter>();
+//         for (Map.Entry<String, Collection<String>> p : nameToValues.entrySet()) {
+//            String name = p.getKey();
+//            Collection<String> values = p.getValue();
+//            if (values.size() > 1) {
+//               for (String value : values) {
+//                  rejected.add(new OAuth.Parameter(name, value));
+//               }
+//            }
+//         }
+           throw new OAuthException(OAuth.Problems.PARAMETER_REJECTED);
         }
     }
 
     protected void validateVersion(OAuthMessage message)
     throws OAuthException, IOException {
-        String versionString = message.getParameter(OAuth.OAUTH_VERSION);
-        if (versionString != null) {
-            double version = Double.parseDouble(versionString);
-            if (version < minVersion || maxVersion < version) {
-                OAuthProblemException problem = new OAuthProblemException(OAuth.Problems.VERSION_REJECTED);
-                problem.setParameter(OAuth.Problems.OAUTH_ACCEPTABLE_VERSIONS, minVersion + "-" + maxVersion);
-                throw problem;
-            }
-        }
+       String versionString = message.getParameter(OAuth.OAUTH_VERSION);
+       if (versionString != null) {
+          double version = Double.parseDouble(versionString);
+          if ((version < minVersion) || (maxVersion < version)) {
+             throw new OAuthException(OAuth.Problems.VERSION_REJECTED);
+          }
+       }
     }
 
     /** This implementation doesn't check the nonce value. */
     protected void validateTimestampAndNonce(OAuthMessage message)
-    throws IOException, OAuthProblemException {
-        message.requireParameters(OAuth.OAUTH_TIMESTAMP, OAuth.OAUTH_NONCE);
-        long timestamp = Long.parseLong(message.getParameter(OAuth.OAUTH_TIMESTAMP)) * 1000L;
-        long now = currentTimeMsec();
-        long min = now - timestampWindow;
-        long max = now + timestampWindow;
-        if (timestamp < min || max < timestamp) {
-            OAuthProblemException problem = new OAuthProblemException(OAuth.Problems.TIMESTAMP_REFUSED);
-            problem.setParameter(OAuth.Problems.OAUTH_ACCEPTABLE_TIMESTAMPS, min + "-" + max);
-            throw problem;
-        }
+    throws IOException, OAuthException {
+       message.requireParameters(OAuth.OAUTH_TIMESTAMP, OAuth.OAUTH_NONCE);
+       long timestamp = Long.parseLong(message.getParameter(OAuth.OAUTH_TIMESTAMP)) * 1000L;
+       long now = currentTimeMsec();
+       long min = now - timestampWindow;
+       long max = now + timestampWindow;
+       if (timestamp < min || max < timestamp) {
+           throw new OAuthException(OAuth.Problems.TIMESTAMP_REFUSED);
+       }
     }
 
     protected void validateSignature(OAuthMessage message, OAuthAccessor accessor)
     throws OAuthException, IOException, URISyntaxException {
-        message.requireParameters(OAuth.OAUTH_CONSUMER_KEY,
-                OAuth.OAUTH_SIGNATURE_METHOD, OAuth.OAUTH_SIGNATURE);
-        OAuthSignatureMethod.newSigner(message, accessor).validate(message);
+       message.requireParameters(
+          OAuth.OAUTH_CONSUMER_KEY,
+          OAuth.OAUTH_SIGNATURE_METHOD,
+          OAuth.OAUTH_SIGNATURE
+       );
+       OAuthSignatureMethod.newSigner(message, accessor).validate(message);
     }
 
     protected long currentTimeMsec() {
-        return System.currentTimeMillis();
+       return System.currentTimeMillis();
     }
-
 }
