@@ -24,7 +24,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,10 +64,12 @@ public class OAuthMessage {
    private static final Pattern AUTHORIZATION = Pattern.compile("\\s*(\\w*)\\s+(.*)");
    private static final Pattern NVP = Pattern.compile("(\\S*)\\s*\\=\\s*\"([^\"]*)\"");
 
+   @SuppressWarnings("rawtypes")
    public OAuthMessage(String method, String URL, Collection<? extends Map.Entry> parameters) {
       this(method, URL, parameters, null);
    }
 
+   @SuppressWarnings("rawtypes")
    public OAuthMessage(
       String method,
       String URL,
@@ -335,6 +336,7 @@ public class OAuthMessage {
     * Construct a WWW-Authenticate or Authentication header value, containing
     * the given realm plus all the parameters whose names begin with "oauth_".
     */
+   @SuppressWarnings("rawtypes")
    public String getAuthorizationHeader(String realm) throws IOException {
        StringBuilder into = new StringBuilder();
        if (realm != null) {

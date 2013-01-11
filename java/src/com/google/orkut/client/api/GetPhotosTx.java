@@ -28,6 +28,7 @@ import java.util.Vector;
 public class GetPhotosTx extends Transaction {
   private static final int DEFAULT_NUM_PHOTOS = 20;
 
+  @SuppressWarnings("rawtypes")
   private Vector photos;
   private int totalResults;
 

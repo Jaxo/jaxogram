@@ -30,6 +30,7 @@ import java.util.Vector;
 public class GetPhotoCommentsTx extends Transaction {
 
   private static final int DEFAULT_NUM_COMMENTS = 10;
+  @SuppressWarnings("rawtypes")
   private Vector comments;
   private int totalResults;
 

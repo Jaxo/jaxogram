@@ -28,7 +28,7 @@ import java.util.Vector;
 public class GetActivitiesTx extends Transaction {
   private static final int DEFAULT_NUM_ACTIVITIES = 10;
   // Maximum number of activity we allow to be fetched for a user.
-  private static final int MAX_START_INDEX = 70;
+  @SuppressWarnings("rawtypes")
   private Vector activities;
 
   GetActivitiesTx(String personId) {

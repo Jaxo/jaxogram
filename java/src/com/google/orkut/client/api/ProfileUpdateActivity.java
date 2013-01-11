@@ -98,6 +98,7 @@ public class ProfileUpdateActivity extends ActivityEntry {
     public static final String ABOUT_YOU = "about_you";
   }
 
+  @SuppressWarnings("rawtypes")
   private Vector profileFields;
 
   public ProfileUpdateActivity(JSONObject json) {

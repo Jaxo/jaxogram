@@ -18,6 +18,7 @@ package com.google.orkut.client.api;
 
 import org.json.me.JSONObject;
 
+@SuppressWarnings("serial")
 public class RequiredFieldNotFoundException extends RuntimeException {
   private final String fieldName;
   private final JSONObject obj;

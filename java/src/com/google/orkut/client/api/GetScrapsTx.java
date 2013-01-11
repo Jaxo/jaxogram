@@ -28,6 +28,7 @@ import java.util.Vector;
 public class GetScrapsTx extends Transaction {
   private static final String MESSAGE_FORMAT = "messageFormat";
   private static final int DEFAULT_NUM_SCRAPS = 10;
+  @SuppressWarnings("rawtypes")
   private Vector scraps = new Vector();
 
   public static class MessageFormat {

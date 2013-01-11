@@ -39,10 +39,8 @@ public class JNetClient implements net.oauth.http.HttpClient
    ) throws IOException {
       if (request.method.equalsIgnoreCase(POST)) {
          InputStream body = request.getBody();
-         long bodyLen = 0;
          if (body != null) {
-            String length = request.removeHeaders(HttpMessage.CONTENT_LENGTH);
-            if (length != null) bodyLen = Long.parseLong(length);
+            request.removeHeaders(HttpMessage.CONTENT_LENGTH);
          }
          HttpURLConnection conn = (HttpURLConnection)request.url.openConnection();
          for (Map.Entry<String, String> header : request.headers) {

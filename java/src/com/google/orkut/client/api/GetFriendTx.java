@@ -31,6 +31,7 @@ import java.util.Vector;
 public class GetFriendTx extends Transaction {
   private static final int DEFAULT_NUM_FRIENDS = 20;
 
+  @SuppressWarnings("rawtypes")
   private Vector friends;
   private int totalResults;
 
@@ -93,6 +94,7 @@ public class GetFriendTx extends Transaction {
     return this;
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   protected void setResponseData(JSONObject data) {
     totalResults = data.optInt(Fields.TOTAL_RESULTS);
     friends = new Vector();

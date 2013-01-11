@@ -85,13 +85,15 @@ public class JSONArray {
     /**
      * The Vector where the JSONArray's properties are kept.
      */
-    private Vector myArrayList;
+    @SuppressWarnings("rawtypes")
+	private Vector myArrayList;
 
 
     /**
      * Construct an empty JSONArray.
      */
-    public JSONArray() {
+    @SuppressWarnings("rawtypes")
+	public JSONArray() {
         this.myArrayList = new Vector();
     }
 
@@ -100,7 +102,8 @@ public class JSONArray {
      * @param x A JSONTokener
      * @throws JSONException If there is a syntax error.
      */
-    public JSONArray(JSONTokener x) throws JSONException {
+    @SuppressWarnings("unchecked")
+	public JSONArray(JSONTokener x) throws JSONException {
         this();
         if (x.nextClean() != '[') {
             throw x.syntaxError("A JSONArray text must start with '['");
@@ -150,7 +153,8 @@ public class JSONArray {
      * Construct a JSONArray from a Collection.
      * @param collection     A Collection.
      */
-    public JSONArray(Vector collection) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public JSONArray(Vector collection) {
         if (collection == null) {
             this.myArrayList = new Vector();
         } else {
@@ -232,7 +236,6 @@ public class JSONArray {
      *  if the value cannot be converted to a number.
      */
     public int getInt(int index) throws JSONException {
-        Object o = get(index);
         return (int)getDouble(index);
     }
 
@@ -280,7 +283,6 @@ public class JSONArray {
      *  be converted to a number.
      */
     public long getLong(int index) throws JSONException {
-        Object o = get(index);
         return (long)getDouble(index);
     }
 
@@ -543,7 +545,8 @@ public class JSONArray {
      * @param value	A Collection value.
      * @return		this.
      */
-    public JSONArray put(Vector value) {
+    @SuppressWarnings("rawtypes")
+	public JSONArray put(Vector value) {
         put(new JSONArray(value));
         return this;
     }
@@ -594,7 +597,8 @@ public class JSONArray {
      * @param value	A Map value.
      * @return		this.
      */
-    public JSONArray put(Hashtable value) {
+    @SuppressWarnings("rawtypes")
+	public JSONArray put(Hashtable value) {
         put(new JSONObject(value));
         return this;
     }
@@ -607,7 +611,8 @@ public class JSONArray {
      *  JSONObject.NULL object.
      * @return this.
      */
-    public JSONArray put(Object value) {
+    @SuppressWarnings("unchecked")
+	public JSONArray put(Object value) {
         this.myArrayList.addElement(value);
         return this;
     }
@@ -637,7 +642,8 @@ public class JSONArray {
      * @throws JSONException If the index is negative or if the value is
      * not finite.
      */
-    public JSONArray put(int index, Vector value) throws JSONException {
+    @SuppressWarnings("rawtypes")
+	public JSONArray put(int index, Vector value) throws JSONException {
         put(index, new JSONArray(value));
         return this;
     }
@@ -698,7 +704,8 @@ public class JSONArray {
      * @throws JSONException If the index is negative or if the the value is
      *  an invalid number.
      */
-    public JSONArray put(int index, Hashtable value) throws JSONException {
+    @SuppressWarnings("rawtypes")
+	public JSONArray put(int index, Hashtable value) throws JSONException {
         put(index, new JSONObject(value));
         return this;
     }
@@ -716,7 +723,8 @@ public class JSONArray {
      * @throws JSONException If the index is negative or if the the value is
      *  an invalid number.
      */
-    public JSONArray put(int index, Object value) throws JSONException {
+    @SuppressWarnings("unchecked")
+	public JSONArray put(int index, Object value) throws JSONException {
         JSONObject.testValidity(value);
         if (index < 0) {
             throw new JSONException("JSONArray[" + index + "] not found.");

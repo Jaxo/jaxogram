@@ -86,6 +86,7 @@ public class Util {
   }
 
 
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   static Vector forEachItemInList(JSONObject data, String key, Converter processor) {
     Vector items = new Vector();
     try {
@@ -129,7 +130,6 @@ public class Util {
    public static byte[] readAllFrom(java.io.InputStream is) 
                         throws java.io.IOException {
       byte[] buf = new byte[8192];
-      int i = 0;
       int n = 0, r;
       final int SIZE = 4096;
 

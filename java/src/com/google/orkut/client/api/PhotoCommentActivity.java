@@ -27,7 +27,9 @@ import java.util.Vector;
  */
 public class PhotoCommentActivity extends ActivityEntry {
 
+  @SuppressWarnings("rawtypes")
   private Vector mediaItems;
+  @SuppressWarnings("rawtypes")
   private Vector comments;
 
   PhotoCommentActivity(JSONObject json) {

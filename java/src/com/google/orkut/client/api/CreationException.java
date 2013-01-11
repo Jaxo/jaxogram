@@ -21,6 +21,7 @@ package com.google.orkut.client.api;
  *
  * @author Shishir Birmiwal
  */
+@SuppressWarnings("serial")
 public class CreationException extends RuntimeException {
   public CreationException(String msg) {
     super(msg);

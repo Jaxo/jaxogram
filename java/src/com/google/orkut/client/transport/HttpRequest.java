@@ -77,11 +77,13 @@ public interface HttpRequest {
   /**
    * Returns Collection of {@link Parameter} to be sent with the HTTP request.
    */
+  @SuppressWarnings("rawtypes")
   Collection getParameters();
 
   /**
    * Returns Colleciton of {@link Header} to be sent with the HTTP request.
    */
+  @SuppressWarnings("rawtypes")
   Collection getHeaders();
 
   /**

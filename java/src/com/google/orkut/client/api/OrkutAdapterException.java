@@ -7,6 +7,7 @@ package com.google.orkut.client.api;
  *  means of exceptions but instead as a flag on each transaction.
  *  For more information on this, please see the {@link Transaction}
  *  and {@link BatchTransaction} classes. */
+@SuppressWarnings("serial")
 public class OrkutAdapterException extends RuntimeException {
    public OrkutAdapterException(String msg, Throwable cause) {
       super(msg,cause);

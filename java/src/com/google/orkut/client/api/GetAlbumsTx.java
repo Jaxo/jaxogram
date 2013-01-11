@@ -31,6 +31,7 @@ import java.util.Vector;
 public class GetAlbumsTx extends Transaction {
   private static final int DEFAULT_NUM_ALBUMS = 20;
 
+  @SuppressWarnings("rawtypes")
   Vector albums;
   private int totalResults;
 

@@ -188,6 +188,7 @@ public class JsonComparator {
     return true;
   }
 
+  @SuppressWarnings("rawtypes")
   private boolean isEqualsJsonObject(JSONObject a, JSONObject b) {
     if (policy == STRICT) {
       if (a.length() != b.length()) {

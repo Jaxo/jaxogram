@@ -28,6 +28,7 @@ import java.util.Vector;
  */
 public class VideoShareActivity extends ActivityEntry {
 
+  @SuppressWarnings("rawtypes")
   private Vector mediaItems;
 
   VideoShareActivity(JSONObject json) {

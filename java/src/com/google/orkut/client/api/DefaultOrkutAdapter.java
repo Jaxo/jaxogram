@@ -275,6 +275,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
        }
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public void submitBatch(BatchTransaction btx) {
       try {
@@ -388,7 +389,8 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
 
    class PostOAuthMessage extends OAuthMessage {
       private final byte[] body;
-      public PostOAuthMessage(String method, String url,
+      @SuppressWarnings("rawtypes")
+	  public PostOAuthMessage(String method, String url,
                    Collection<? extends Map.Entry> parameters, byte[] body) {
          super(method, url, parameters);
          this.body = body;

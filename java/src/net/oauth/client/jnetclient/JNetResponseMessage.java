@@ -31,7 +31,6 @@ import net.oauth.http.HttpResponseMessage;
 public class JNetResponseMessage extends HttpResponseMessage
 {
    private HttpURLConnection m_conn;
-   private HttpMessage m_request;
 
    /*-----------------------------------------------------JNetResponseMessage-+
    *//**
@@ -42,7 +41,6 @@ public class JNetResponseMessage extends HttpResponseMessage
       HttpMessage request, HttpURLConnection conn
    ) {
       super(request.method, request.url);
-      m_request = request;
       m_conn = conn;
       headers.addAll(getHeaders());
    }

@@ -53,8 +53,10 @@ public abstract class ActivityEntry {
   protected JSONObject json;
   protected JSONArray relevantUserIds;
   protected JSONArray relevantProfiles;
+  @SuppressWarnings("rawtypes")
   private final HashMap relevantProfileMap = new HashMap();
 
+  @SuppressWarnings("unchecked")
   ActivityEntry(JSONObject json) {
     this.json = json;
     if (!json.has(Params.RELEVANT_USER_IDS)) {

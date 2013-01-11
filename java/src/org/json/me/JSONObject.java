@@ -126,7 +126,8 @@ public class JSONObject {
     /**
      * The hash map where the JSONObject's properties are kept.
      */
-    private Hashtable myHashMap;
+    @SuppressWarnings("rawtypes")
+	private Hashtable myHashMap;
 
 
     /**
@@ -141,7 +142,8 @@ public class JSONObject {
     /**
      * Construct an empty JSONObject.
      */
-    public JSONObject() {
+    @SuppressWarnings("rawtypes")
+	public JSONObject() {
         this.myHashMap = new Hashtable();
     }
 
@@ -227,7 +229,8 @@ public class JSONObject {
      * @param map A map object that can be used to initialize the contents of
      *  the JSONObject.
      */
-    public JSONObject(Hashtable map) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public JSONObject(Hashtable map) {
         if (map == null) {
             this.myHashMap = new Hashtable();
         } else {
@@ -546,7 +549,8 @@ public class JSONObject {
      *
      * @return An iterator of the keys.
      */
-    public Enumeration keys() {
+    @SuppressWarnings("rawtypes")
+	public Enumeration keys() {
         return this.myHashMap.keys();
     }
 
@@ -567,7 +571,8 @@ public class JSONObject {
      * @return A JSONArray containing the key strings, or null if the JSONObject
      * is empty.
      */
-    public JSONArray names() {
+    @SuppressWarnings("rawtypes")
+	public JSONArray names() {
         JSONArray ja = new JSONArray();
         Enumeration  keys = keys();
         while (keys.hasMoreElements()) {
@@ -656,7 +661,8 @@ public class JSONObject {
      * @return		this.
      * @throws JSONException
      */
-    public JSONObject put(String key, Vector value) throws JSONException {
+    @SuppressWarnings("rawtypes")
+	public JSONObject put(String key, Vector value) throws JSONException {
         put(key, new JSONArray(value));
         return this;
     }
@@ -881,7 +887,8 @@ public class JSONObject {
      * @return		this.
      * @throws JSONException
      */
-    public JSONObject put(String key, Hashtable value) throws JSONException {
+    @SuppressWarnings("rawtypes")
+	public JSONObject put(String key, Hashtable value) throws JSONException {
         put(key, new JSONObject(value));
         return this;
     }
@@ -898,7 +905,8 @@ public class JSONObject {
      * @throws JSONException If the value is non-finite number
      *  or if the key is null.
      */
-    public JSONObject put(String key, Object value) throws JSONException {
+    @SuppressWarnings("unchecked")
+	public JSONObject put(String key, Object value) throws JSONException {
         if (key == null) {
             throw new JSONException("Null key.");
         }
@@ -1058,7 +1066,8 @@ public class JSONObject {
      *  with <code>{</code>&nbsp;<small>(left brace)</small> and ending
      *  with <code>}</code>&nbsp;<small>(right brace)</small>.
      */
-    public String toString() {
+    @SuppressWarnings("rawtypes")
+	public String toString() {
         try {
             Enumeration keys = keys();
             StringBuffer sb = new StringBuffer("{");
@@ -1110,7 +1119,8 @@ public class JSONObject {
      *  with <code>}</code>&nbsp;<small>(right brace)</small>.
      * @throws JSONException If the object contains an invalid number.
      */
-    String toString(int indentFactor, int indent) throws JSONException {
+    @SuppressWarnings("rawtypes")
+	String toString(int indentFactor, int indent) throws JSONException {
         int          i;
         int          n = length();
         if (n == 0) {
@@ -1255,7 +1265,8 @@ public class JSONObject {
       * @return The writer.
       * @throws JSONException
       */
-     public Writer write(Writer writer) throws JSONException {
+     @SuppressWarnings("rawtypes")
+	 public Writer write(Writer writer) throws JSONException {
         try {
             boolean  b = false;
             Enumeration keys = keys();

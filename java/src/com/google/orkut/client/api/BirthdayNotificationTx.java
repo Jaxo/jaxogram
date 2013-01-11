@@ -28,6 +28,7 @@ import java.util.Vector;
  */
 public class BirthdayNotificationTx extends Transaction {
 
+  @SuppressWarnings("rawtypes")
   private Vector entries;
 
   BirthdayNotificationTx() {

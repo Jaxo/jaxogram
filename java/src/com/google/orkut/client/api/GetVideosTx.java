@@ -30,6 +30,7 @@ public class GetVideosTx extends Transaction {
   private int numVideos;
   private int currStartIndex;
 
+  @SuppressWarnings("rawtypes")
   Vector videos;
 
   GetVideosTx() {

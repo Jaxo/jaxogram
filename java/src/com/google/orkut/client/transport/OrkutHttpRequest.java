@@ -28,11 +28,14 @@ import java.util.Collection;
 public class OrkutHttpRequest implements HttpRequest {
 
   private final byte[] body;
+  @SuppressWarnings("rawtypes")
   private final ArrayList params;
+  @SuppressWarnings("rawtypes")
   private final ArrayList headers;
   private String method;
   private String requestBaseUrl;
 
+  @SuppressWarnings("rawtypes")
   public OrkutHttpRequest(byte[] body) {
     this.body = body;
     this.params = new ArrayList();
@@ -49,6 +52,7 @@ public class OrkutHttpRequest implements HttpRequest {
   /* (non-Javadoc)
    * @see com.google.orkut.client.transport.HttpRequest#getParameters()
    */
+  @SuppressWarnings("rawtypes")
   public Collection getParameters() {
     return params;
   }
@@ -56,15 +60,18 @@ public class OrkutHttpRequest implements HttpRequest {
   /* (non-Javadoc)
    * @see com.google.orkut.client.transport.HttpRequest#getHeaders()
    */
+  @SuppressWarnings("rawtypes")
   public Collection getHeaders() {
     return headers;
   }
 
+  @SuppressWarnings("unchecked")
   public HttpRequest addParam(String key, String value) {
     params.add(new Parameter(key, value));
     return this;
   }
 
+  @SuppressWarnings("unchecked")
   public HttpRequest addHeader(String name, String value) {
     headers.add(new Header(name, value));
     return this;

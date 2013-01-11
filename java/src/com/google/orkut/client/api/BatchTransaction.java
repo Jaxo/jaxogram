@@ -53,13 +53,14 @@ public class BatchTransaction {
   private static final String UTF_8 = "UTF-8";
   private static final String APPLICATION_JSON = "application/json";
   private static final String CONTENT_TYPE = "Content-Type";
-  private static final String REQUEST_METHOD = "POST";
 
   /**
    * Map of request-id to transaction. Used to de-mux responses to appropriate
    * transaction
    */
+  @SuppressWarnings("rawtypes")
   private final HashMap transactions = new HashMap();
+  @SuppressWarnings("rawtypes")
   private final ArrayList transactionsV = new ArrayList();
 
   /**
@@ -102,6 +103,7 @@ public class BatchTransaction {
    * @param transaction transaction to be added to the batch.
    * @return this to facilitate chaining
    */
+  @SuppressWarnings("unchecked")
   public BatchTransaction add(Transaction transaction) {
     if (transaction == null) {
       throw new NullPointerException("transaction cannot be null ");
@@ -150,6 +152,7 @@ public class BatchTransaction {
     return request;
   }
 
+  @SuppressWarnings("rawtypes")
   private boolean hasUpload() {
     Iterator it = transactions.values().iterator();
     while (it.hasNext()) {
@@ -161,6 +164,7 @@ public class BatchTransaction {
     return false;
   }
 
+  @SuppressWarnings("rawtypes")
   private void addBody(MultipartBuilder builder) throws IOException {
     Iterator it = transactions.values().iterator();
     while (it.hasNext()) {

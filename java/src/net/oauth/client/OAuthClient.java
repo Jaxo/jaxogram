@@ -142,6 +142,7 @@ public class OAuthClient {
     * @throws OAuthException
     *            the HTTP response status code was not 200 (OK)
     */
+   @SuppressWarnings("rawtypes")
    public void getRequestToken(
       OAuthAccessor accessor,
       String httpMethod,
@@ -170,6 +171,7 @@ public class OAuthClient {
     * @throws OAuthException
     *             the HTTP response status code was not 200 (OK)
     */
+   @SuppressWarnings("rawtypes")
    public OAuthMessage getRequestTokenResponse(
       OAuthAccessor accessor,
       String httpMethod,
@@ -222,6 +224,7 @@ public class OAuthClient {
     * @throws OAuthException
     *            the HTTP response status code was not 200 (OK)
     */
+   @SuppressWarnings("rawtypes")
    public OAuthMessage getAccessToken(
       OAuthAccessor accessor,
       String httpMethod,
@@ -264,6 +267,7 @@ public class OAuthClient {
     * @throws OAuthException
     *            the HTTP response status code was not 200 (OK)
     */
+   @SuppressWarnings("rawtypes")
    public OAuthMessage invoke(OAuthAccessor accessor, String httpMethod,
            String url, Collection<? extends Map.Entry> parameters)
    throws IOException, OAuthException, URISyntaxException {
@@ -302,6 +306,7 @@ public class OAuthClient {
     * @throws OAuthException
     *                 the HTTP response status code was not 200 (OK)
     */
+   @SuppressWarnings("rawtypes")
    public OAuthMessage invoke(
       OAuthAccessor accessor,
       String url,
