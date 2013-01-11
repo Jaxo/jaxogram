@@ -144,9 +144,32 @@ function tellAccessPass()
    request.send(users.getAccessPass());
 }
 
+function queryWhoAmI() {
+   queryFor('whoAmI');
+}
+function queryListAlbums() {
+   queryFor('listAlbums');
+}
+
 function queryFor(what) {
    var request = new XMLHttpRequest();
-   request.onreadystatechange = whenRequestStateChanged;
+   request.onreadystatechange = function() {
+      switch (this.readyState) {
+      case 1: // OPENED
+         document.getElementById("progresspane").style.visibility='visible';
+         break;
+      case 4: // DONE
+         document.getElementById("progresspane").style.visibility='hidden';
+         if (this.status == 200) {
+            var val = JSON.parse(this.responseText)
+            console.log(val);
+            alert(dump(val));
+         }else {
+            alert(this.responseText);
+         }
+         break;
+      }
+   }
    request.open("GET", "jaxogram?OP=" + what, true);  // ???
    request.send();
 }

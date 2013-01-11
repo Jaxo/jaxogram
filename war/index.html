@@ -9,6 +9,7 @@
    <SCRIPT type="text/javascript" src="js/jgusers.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/i18n.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/jaxogram.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/debug.js"></SCRIPT>
    <TITLE>Jaxogram</title>
 </HEAD>
 <BODY onload="init();">
@@ -58,8 +59,8 @@
       <TABLE onclick="expandSidebarView(-1);">
         <TR>
           <TD aria-owns="p1" onclick="pickAndUploadImage();"><SPAN class="i18n" id="m1"></SPAN></TD>
-          <TD onclick="queryFor('whoAmI');"><SPAN class="i18n" id="m2"></SPAN></TD>
-          <TD onclick="queryFor('listAlbums');"><SPAN class="i18n" id="m3"></SPAN></TD>
+          <TD onclick="queryWhoAmI();"><SPAN class="i18n" id="m2"></SPAN></TD>
+          <TD onclick="queryListAlbums();"><SPAN class="i18n" id="m3"></SPAN></TD>
           <!-- <TD onclick="authorize();">Authorize</TD> -->
         </TR>
       </TABLE>

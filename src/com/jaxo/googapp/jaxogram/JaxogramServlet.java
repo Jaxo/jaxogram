@@ -101,10 +101,10 @@ public class JaxogramServlet extends HttpServlet
             resp.setHeader("Location", redirect);
 
          }else if (op.equals("whoAmI")) {
-            writer.println(makeOrkutNetwork(req).whoAmI());
+            writer.println(makeOrkutNetwork(req).whoIsAsJson(null));
 
          }else if (op.equals("listAlbums")) {
-            writer.println(makeOrkutNetwork(req).listAlbums());
+            writer.println(makeOrkutNetwork(req).listAlbumsAsJson());
 
          }else if (op.startsWith("postImage")) {
             String imgType = "jpg";

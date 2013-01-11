@@ -75,6 +75,58 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
+   public String whoIsAsJson(String id) throws Exception {
+      BatchTransaction btx = newBatch();
+      GetProfileTx tx;
+      if (id == null) {
+         tx = getProfileTF().getSelfProfile();
+      }else {
+         tx = getProfileTF().getProfileOf(id);
+      }
+      tx.alsoGetName();
+      tx.alsoGetThumbnailUrl();
+      tx.alsoGetProfileUrl();
+      tx.alsoGetStatus();
+      tx.alsoGetEmails();
+      tx.alsoGetGender();
+      tx.alsoGetPhoneNumbers();
+      tx.alsoGetBirthday();
+      tx.alsoGetAddress();
+      btx.add(tx);
+      submitBatch(btx);
+      if (tx.hasError()) {
+         throw new Exception("Error fetching full profile:" + tx.getError());
+      }else {
+         OrkutPerson person = tx.getProfile();
+         if (person == null) {
+            throw new Exception("No profile data returned.");
+         }else {
+            return person.toJsonString();
+         }
+      }
+   }
+
+   public String listAlbumsAsJson() throws Exception {
+      GetAlbumsTx tx = getAlbumsTF().getSelfAlbums();
+      tx.setCount(5);  // get first 5 albums
+      BatchTransaction btx = newBatch();
+      btx.add(tx);
+      submitBatch(btx);
+
+      if (tx.hasError()) {
+         throw new Exception("Error listing albums: " + tx.getError());
+      }else {
+         StringBuilder sb = new StringBuilder();
+         sb.append('[');
+         for (int i=0, count=tx.getAlbumCount(); i < count; ++i) {
+            if (i > 0) sb.append(',');
+            sb.append(tx.getAlbum(i).toJsonString());
+         }
+         sb.append(']');
+         return sb.toString();
+      }
+   }
+
    public String whoAmI() throws Exception {
       BatchTransaction btx = newBatch();
       GetProfileTx profile = getProfileTF().getSelfProfile();
@@ -183,7 +235,6 @@ public class OrkutNetwork extends DefaultOrkutAdapter
             }else {
                log("Address                  : [not returned]");
             }
-            ;
             log("E-Mails:");
             for (int i=0, count=person.getEmailCount(); i < count; ++i) {
                log("  - " + nullsafe(person.getEmail(i)));
