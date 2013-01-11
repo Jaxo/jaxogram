@@ -30,12 +30,14 @@
      </javac>
 
      <!-- unpack library classes to build dir so we can make one big JAR file -->
+     <!--
      <unzip dest="bin">
         <fileset dir="lib">
            <include name="*.jar" />
         </fileset>
      </unzip>
      <delete dir="bin/META-INF" />
+     -->
 
      <jar destfile="dist/${jar.name}">
         <fileset dir="bin" />
