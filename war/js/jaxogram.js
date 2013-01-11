@@ -36,7 +36,8 @@ function init() {
          }
       );
       document.getElementById("jgUsersIn").innerHTML = (
-         i18n("loginAs") + ": <i id='jgUserName'>" + selName +
+         "<SPAN class='i18n' id='loginAs'></SPAN>: <i id='jgUserName'>" +
+         selName +
          "</i><UL role='radiogroup' onclick='changeLogin(this, event);'>" +
          "<LI onclick='authorize();event.stopPropagation()'>" +
          "<SPAN class='i18n' id='newLogin'></SPAN></LI>" + html + "</UL>"
@@ -52,7 +53,10 @@ function init() {
          );
       }
    }
-   translateBody();
+   var dfltLocale = navigator.language || navigator.userLanguage;
+   dfltLocale = "pt_BR"; // FIXME (remove)
+   translateBody(dfltLocale);
+   document.getElementById('usedLang').innerHTML = i18n(dfltLocale);
 }
 
 function changeLogin(elt, event) {
@@ -62,6 +66,12 @@ function changeLogin(elt, event) {
    while (clicked=clicked.previousSibling) ++index;
    users.selectUserAt(index);
    tellAccessPass();
+}
+
+function changeLanguage(elt, event) {
+   var clicked = event.target;
+   translateBody(clicked.id);
+   document.getElementById('usedLang').innerHTML = clicked.innerHTML;
 }
 
 // document.getElementById("p1").setAttribute("aria-expanded", "true");

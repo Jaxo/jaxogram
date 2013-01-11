@@ -1,4 +1,4 @@
-var locale = "pt_BR"; // FIXME navigator.language || navigator.userLanguage;
+var locale = "en_US";
 var localeValues = {
    m0: {
       'en_US':"Install",
@@ -56,10 +56,30 @@ var localeValues = {
       'en_US':"Revoke Access",
       'fr_FR':"Refuser l'accès",
       'pt_BR':"Revogar o acesso"
+   }, language: {
+      'en_US':"Language",
+      'fr_FR':"Langage",
+      'pt_BR':"Revogar o acesso"
    }, pickImageError: {
       'en_US':"Failure at picking an image",
       'fr_FR':"Erreur à la prise de l'image",
       'pt_BR':"O fracasso em escolher uma imagem"
+   }, language: {
+      'en_US':"Language",
+      'fr_FR':"Langage",
+      'pt_BR':"Língua"
+   }, en_US: {
+      'en_US':"US English",
+      'fr_FR':"Anglais",
+      'pt_BR':"Inglês"
+   }, fr_FR: {
+      'en_US':"French",
+      'fr_FR':"Français",
+      'pt_BR':"Francês"
+   }, pt_BR: {
+      'en_US':"Portuguese",
+      'fr_FR':"Portugais",
+      'pt_BR':"Português"
    }
 }
 /*----------------- end of strings requiring translation --------------------*/
@@ -76,7 +96,8 @@ function i18n(msgName) {
    }
    return value;
 }
-function translateBody() {
+function translateBody(newLocale) {
+   locale = newLocale;
    var elts = document.getElementsByClassName('i18n');
    for (var i=0, max=elts.length; i < max; ++i) {
       var elt = elts[i];
