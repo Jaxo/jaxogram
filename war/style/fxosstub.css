@@ -5,19 +5,21 @@ html, body {
   padding: 0;
   margin: 0;
   font-family: "Open Sans", sans-serif;
-  background-image: url(../images/bgpat.png); /* #8491a2; (* #54646e; */
-  /* background: #8491a2; (* #54646e; */
+  background-image: url("images/pattern.png");
+  background-color: #35393b;
   overflow: hidden;
 }
 
 header {
-  background: #e66000;  /* was: 0095dd */
-  background:-moz-linear-gradient(top,#ff9500 0%,#e66000 100%);
-  background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#ff9500),color-stop(100%,#e66000));
-  background:-webkit-linear-gradient(top,#ff9500 0%,#e66000 100%);
-  background:-o-linear-gradient(top,#ff9500 0%,#e66000 100%);
-  background:-ms-linear-gradient(top,#ff9500 0%,#e66000 100%);
-  background:linear-gradient(top,#ff9500 0%,#e66000 100%);
+  /* background: #e66000;   0095dd */
+  /* background:-moz-linear-gradient(top,#ff9500 0%,#e66000 100%);                                             */
+  /* background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#ff9500),color-stop(100%,#e66000)); */
+  /* background:-webkit-linear-gradient(top,#ff9500 0%,#e66000 100%);                                          */
+  /* background:-o-linear-gradient(top,#ff9500 0%,#e66000 100%);                                               */
+  /* background:-ms-linear-gradient(top,#ff9500 0%,#e66000 100%);                                              */
+  /* background:linear-gradient(top,#ff9500 0%,#e66000 100%);                                                  */
+  background-image: url("images/header.png");
+  background-repeat: repeat-x;
   color: #FFFFFF;
   height: 4.9rem;
   position: relative;
@@ -56,7 +58,7 @@ header h1 {
   background: url("images/mainsepa.png") no-repeat scroll left top;
   display: block;
   font-weight: normal;
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   line-height: 4.9rem;
   height: 100%;
   margin: 0 0 0 2rem;
@@ -304,9 +306,11 @@ button {
   padding: 0;
   font-size: 2rem;
   cursor: pointer;
-  color: #555;
+  /* color: #555; */
   /* background: rgba(0, 5, 18, 0.40);  */ /* Desktop only */
-  background-color: #32373b;               /* Mobile only */
+  /* background-color: #32373b;         */ /* Mobile only */
+  background-image: url("images/pattern.png");
+  background-color: #555d65;            /* Mobile only */
 }
 .menuList ul  {
   position: relative;
@@ -314,8 +318,9 @@ button {
   padding: 0;
   font-size: 75%;
   display: none;
-  color: #555;
-  background-color: #32373b;               /* Mobile only */
+  color: #aaa;
+  background-image: url("images/pattern.png");
+  background-color: #61666c;               /* Mobile only */
 }
 .menuList li {
   border-bottom: solid 1px #222;
@@ -354,7 +359,8 @@ button {
   content: " ";
 }
 li[aria-selected=true], li[role=listbox] {
-  color: #eee;
+   /* color: #eee; */
+  color: #fff;
 }
 .menuList li ul li, .menuList li ul li:first-child {
   border: none;
