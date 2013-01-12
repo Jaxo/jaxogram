@@ -1,6 +1,6 @@
 var locale = "en_US";
 var localeValues = {
-   m0: {
+   btnInstall: {
       'en_US':"Install",
       'fr_FR':"Installer",
       'pt_BR':"Instalar"
@@ -16,6 +16,14 @@ var localeValues = {
       'en_US':"My albums",
       'fr_FR':"Mes albums",
       'pt_BR':"Meus álbuns"
+   }, installFailure: {
+      'en_US':"Install has failed",
+      'fr_FR':"Echec de l'installation",
+      'pt_BR':"Instalação falhou" 
+   }, safariInstall: {
+      'en_US':"To install, press the forward arrow in Safari and touch \"Add to Home Screen\"",
+      'fr_FR':"Pour installer, appuyez sur la flèche droite dans Safari, puis \"Ajouter à l'écran d'accueil\"",
+      'pt_BR':"Para instalar, pressione a seta para a frente no Safari e toque \"Adicionar à Tela Início\"" 
    }, requestAuth: {
        'en_US':"Orkut requires your authorization\nto let Jaxogram access your data.\nProceed to granting?",
        'fr_FR':"Orkut va demander votre autorisation\npour accèder à vos données.\nEtes vous d'accord?",

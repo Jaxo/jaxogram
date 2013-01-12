@@ -3,7 +3,7 @@ var users;
 function init() {
    setInstallButton("btnInstall");
 // document.getElementById('fdflt').click();
-   fitImage(document.getElementById('imageOut'));
+   fitImage(document.getElementById('photoImage'));
    window.addEventListener("resize", fitImages, false);
    document.getElementById("p1").addEventListener(
       'transitionend',
@@ -14,7 +14,8 @@ function init() {
    );
 
    users = new JgUsers();
-   users.cleanUp(); // TEMP???
+   // users.cleanUp();
+   // users.destroy();
    var params = getQueryParams();
    if (params.OP === "granted") {
       var name = prompt(i18n('enterUserName'), i18n("defaultUserName"));
@@ -47,7 +48,7 @@ function init() {
       if (confirm(i18n("requestAuth"))) {
          authorize();
       }else {
-         elt.innerHTML = (
+         document.getElementById("jgUsersIn").innerHTML = (
             "<BUTTON onclick='authorize();event.stopPropagation();' >" +
             "<SPAN class='i18n' id='newLogin'></SPAN></BUTTON>"
          );
@@ -89,10 +90,10 @@ function p1Expanded(isExpanded) {
    // }
 }
 
-function fitImages(img) {
+function fitImages() {
    // workaround, until "object-fit:contain;" gets implemented
    // fitImage(document.getElementById('barImageIn'));
-   fitImage(document.getElementById('imageOut'));
+   fitImage(document.getElementById('photoImage'));
 }
 function fitImage(img) {
    var elt = document.getElementById("p1");
@@ -206,7 +207,7 @@ function uploadFile() {
          request.send(formData);
          var reader = new FileReader();
          reader.onload = function (event) {
-            document.getElementById("imageOut").src = event.target.result;
+            document.getElementById("photoImage").src = event.target.result;
          };
          reader.readAsDataURL(file);
       }
@@ -229,7 +230,7 @@ function pickAndUploadImage()
         request.onreadystatechange = whenRequestStateChanged;
         request.send(a.result.blob);
         var url = URL.createObjectURL(a.result.blob);
-        var img = document.getElementById('imageOut');
+        var img = document.getElementById('photoImage');
         img.src = url;
         img.onload = function() { URL.revokeObjectURL(url); };
       };

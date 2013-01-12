@@ -79,6 +79,11 @@ function JgUsers() {
       localStorage.setItem("jgSelectAt", index);
       selectedIndex = index;
    }
+   this.destroy = function() {
+      localStorage.removeItem("jgUsers");
+      localStorage.removeItem("jgSelectAt");
+      readUsers();
+   }
 }
 
 function JgUserItem(userName, userPass, userNet) {

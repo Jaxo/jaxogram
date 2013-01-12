@@ -116,17 +116,15 @@ function setInstallButton(buttonId) {
                (install.state == "uninstalled")? "table-cell" : "none"
             );
             if (install.state == "failed") {
-               alert("Install failed:\n" + install.error);
+               alert(i18n("installFailure"));
             }
          }
       );
       install.on(
          "showiOSInstall",
          function() {
-            alert(
-               "To install, press the forward arrow in Safari " +
-               "and touch \"Add to Home Screen\""
-            );
+            buttonElt.style.display = "none";
+            alert(i18n("safariInstall"));
          }
       );
       buttonElt.addEventListener(
