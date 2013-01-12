@@ -48,7 +48,6 @@ public class Album {
     public static final String UPDATE = "update";
   }
 
-
   /**
    * An entry in an {@link AccessControlList}.
    *
@@ -347,5 +346,9 @@ public class Album {
 
   void setThumbnailUrl(String url) {
     Util.putJsonValue(json, Fields.THUMBNAIL_URL, url);
+  }
+
+  public String toJsonString() {
+     return json.toString();
   }
 }

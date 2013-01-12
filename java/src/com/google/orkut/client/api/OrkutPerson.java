@@ -160,4 +160,8 @@ public class OrkutPerson {
   public String getId() {
     return Util.JSONUtil.getRequiredStringField("id", getJSONbject());
   }
+
+  public String toJsonString() {
+     return json.toString();
+  }
 }
