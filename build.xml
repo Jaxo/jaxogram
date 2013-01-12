@@ -70,9 +70,7 @@
      description="Create Javadoc API documentation"
   >
      <mkdir dir="doc"/>
-     <delete>
-        <fileset dir="doc"/>
-     </delete>
+     <delete><fileset dir="doc"/></delete>
      <javadoc
         doctitle="Orkut Client Library"
         bottom="${javadoc.bottom}"
@@ -82,9 +80,7 @@
         sourcepath="java/src"
         destdir="doc"
         packagenames="*"
-     >
-        <classpath refid="compile.classpath"/>
-     </javadoc>
+     />
   </target>
 
   <!-- Clean up -->
