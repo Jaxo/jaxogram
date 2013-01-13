@@ -5,15 +5,11 @@ function JgUsers() {
    var users = [];
    readUsers();
 
-   this.cleanUp = function() {
-      removeIf(
-         function(user, at, users) {
-            return ((user.n == null) || (user.p == null));
-         }
-      );
-   }
    this.getAccessPass = function() {
       return users[selectedIndex].p;
+   }
+   this.getUserName = function() {
+      return users[selectedIndex].n;
    }
    this.hasSome = function() {
       return users.length != 0;
@@ -47,6 +43,18 @@ function JgUsers() {
          }
       );
    }
+   this.cleanUp = function() {
+      removeIf(
+         function(user, at, users) {
+            return ((user.n == null) || (user.p == null));
+         }
+      );
+   }
+   this.destroy = function() {
+      localStorage.removeItem("jgUsers");
+      localStorage.removeItem("jgSelectAt");
+      readUsers();
+   }
    function removeIf(ifFunction) {
       var oldCount = users.length;
       newUsers = [];
@@ -58,6 +66,7 @@ function JgUsers() {
       if (oldCount != newUsers.length) {
          users = newUsers;
          rewriteUsers();
+         rewriteSelectedIndex(selectedIndex);
       }
    };
    function readUsers() {
@@ -78,11 +87,6 @@ function JgUsers() {
       }
       localStorage.setItem("jgSelectAt", index);
       selectedIndex = index;
-   }
-   this.destroy = function() {
-      localStorage.removeItem("jgUsers");
-      localStorage.removeItem("jgSelectAt");
-      readUsers();
    }
 }
 
