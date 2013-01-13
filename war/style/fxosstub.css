@@ -359,6 +359,22 @@ button {
 [role=radiogroup] li:before {
   content: " ";
 }
+span[role=trasher] {
+   font-family:GeneralEnclosedFoundicons;
+   font-weight: normal;
+   font-style: normal;
+   font-size: 130%;
+   color: #FC2200;
+   position:relative;
+   top:0.4rem;
+   left:-0.7rem;
+   padding:0.6rem;
+   line-height:0;
+}
+span[role=trasher]:active {
+   background-color: #FC2200;
+   color:white;
+}
 li[aria-selected=true], li[role=listbox] {
    /* color: #eee; */
   color: #fff;
