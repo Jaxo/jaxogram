@@ -12,7 +12,6 @@ function init() {
       },
       false
    );
-
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
@@ -23,6 +22,19 @@ function init() {
    }else if (params.OP === "denied") {
       alert(i18n("authDenied") + "\n\n(" + params.msg + ")");
    }
+   var dfltLocale = navigator.language || navigator.userLanguage;
+   formatUsersList();
+   dfltLocale = "pt_BR"; // FIXME (remove)
+   translateBody(dfltLocale);
+   document.getElementById('usedLang').textContent = i18n(dfltLocale);
+// document.getElementById("p1").setAttribute("aria-expanded", "true");
+// window.onerror = function(msg, url, linenumber){
+//    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
+//    return true;
+// }
+}
+
+function formatUsersList() {
    if (users.hasSome()) {
       var html = "";
       var selName = null;
@@ -33,15 +45,19 @@ function init() {
                selName = name;
                html += " aria-selected='true'";
             }
-            html += ">" + name + "</LI>"
+            html += "><span role='trasher'>&#xF018;</span>" + name + "</LI>";
          }
       );
       document.getElementById("jgUsersIn").innerHTML = (
-         "<SPAN class='i18n' id='loginAs'></SPAN>: <i id='jgUserName'>" +
+         "<SPAN class='i18n' id='loginAs'>" +
+         i18n('loginAs') +
+         "</SPAN>: <i id='jgUserName'>" +
          selName +
          "</i><UL role='radiogroup' onclick='changeLogin(this, event);'>" +
          "<LI onclick='authorize();event.stopPropagation()'>" +
-         "<SPAN class='i18n' id='newLogin'></SPAN></LI>" + html + "</UL>"
+         "<SPAN class='i18n' id='newLogin'>" +
+         i18n('newLogin') +
+         "</SPAN></LI>" + html + "</UL>"
       );
       tellAccessPass();
    }else {
@@ -50,36 +66,47 @@ function init() {
       }else {
          document.getElementById("jgUsersIn").innerHTML = (
             "<BUTTON onclick='authorize();event.stopPropagation();' >" +
-            "<SPAN class='i18n' id='newLogin'></SPAN></BUTTON>"
+            "<SPAN class='i18n' id='newLogin'>" + i18n('newLogin') +
+            "</SPAN></BUTTON>"
          );
       }
    }
-   var dfltLocale = navigator.language || navigator.userLanguage;
-   dfltLocale = "pt_BR"; // FIXME (remove)
-   translateBody(dfltLocale);
-   document.getElementById('usedLang').innerHTML = i18n(dfltLocale);
 }
 
 function changeLogin(elt, event) {
-   var clicked = event.target;
-   document.getElementById('jgUserName').innerHTML = clicked.innerHTML;
+   /*
+   | TEMPORARY fix?
+   | I am interested in list items, direct children of UL's, or TR's),
+   | The list items descendants (IMG, SPAN, etc...) are phony.
+   | I should probably add "role=listitem" for all such items.
+   */
+   var liElt = event.target;
+   while ((liElt.nodeName != "TD") && (liElt.nodeName != "LI")) {
+      if ((liElt = liElt.parentNode) == null) {
+         // event.stopPropagation();
+         return;
+      }
+   }
    var index = -1;
-   while (clicked=clicked.previousSibling) ++index;
-   users.selectUserAt(index);
-   tellAccessPass();
+   while (liElt=liElt.previousSibling) ++index;
+
+   if (event.target.getAttribute("role") == "trasher") {
+      if (confirm(i18n("revokeAccess", event.target.nextSibling.textContent))) {
+         users.deleteUserAt(index);
+         formatUsersList();
+      }
+   }else {
+      users.selectUserAt(index);
+      document.getElementById('jgUserName').textContent = users.getUserName();
+      tellAccessPass();
+   }
 }
 
 function changeLanguage(elt, event) {
    var clicked = event.target;
    translateBody(clicked.id);
-   document.getElementById('usedLang').innerHTML = clicked.innerHTML;
+   document.getElementById('usedLang').textContent = clicked.textContent;
 }
-
-// document.getElementById("p1").setAttribute("aria-expanded", "true");
-// window.onerror = function(msg, url, linenumber){
-//    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
-//    return true;
-// }
 
 function p1Expanded(isExpanded) {
    // var style = document.getElementById("btnSecond").style;
@@ -163,6 +190,10 @@ function queryListAlbums() {
 }
 
 function queryFor(what) {
+   if (!users.hasSome()) {
+      formatUsersList();
+      return;
+   }
    var request = new XMLHttpRequest();
    request.onreadystatechange = function() {
       switch (this.readyState) {
@@ -202,7 +233,6 @@ function uploadFile() {
          formData.append("IMG", file.name.substr(-3));
          var request = new XMLHttpRequest();
          request.onreadystatechange = whenRequestStateChanged;
-//       request.open("POST", "decodeFile", true);
          request.open("POST", "jaxogram?OP=postImageFile", true);
          request.send(formData);
          var reader = new FileReader();
@@ -217,6 +247,10 @@ function uploadFile() {
 
 function pickAndUploadImage()
 {
+   if (!users.hasSome()) {
+      formatUsersList();
+      return;
+   }
    try {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
       a.onsuccess = function(e) {
