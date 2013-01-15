@@ -183,13 +183,43 @@ function tellAccessPass()
 }
 
 function queryWhoAmI() {
-   queryFor('whoAmI');
+   queryFor(
+      'whoAmI',
+       function(person) {
+          value = person.name.givenName;
+          if (value == null) value = "?";
+          document.getElementById("p2_givenName").textContent = value;
+          value = person.name.familyName;
+          if (value == null) value = "?";
+          document.getElementById("p2_familyName").textContent = value;
+//        document.getElementById("p2_thumbnail").setAttribute(
+//           "src", person.thumbnailUrl
+//        );
+          value = person.gender;
+          if (value == null) value = "?";
+          document.getElementById("p2_gender").textContent = value;
+          value = person.birthday;
+          if (value == null) {
+             value = "?";
+          }else {
+             var date = new Date(value);
+             value = date.getDay() + " " + i18n('months')[date.getMonth()];
+          }
+          document.getElementById("p2_birthday").textContent = value;
+          expandPage("p2");
+      }
+   );
 }
 function queryListAlbums() {
-   queryFor('listAlbums');
+   queryFor(
+      'listAlbums',
+       function(albums) {
+          alert(dump(albums));
+      }
+   );
 }
 
-function queryFor(what) {
+function queryFor(what, whenDone) {
    if (!users.hasSome()) {
       formatUsersList();
       return;
@@ -204,8 +234,7 @@ function queryFor(what) {
          document.getElementById("progresspane").style.visibility='hidden';
          if (this.status == 200) {
             var val = JSON.parse(this.responseText)
-            console.log(val);
-            alert(dump(val));
+            whenDone(val);
          }else {
             alert(this.responseText);
          }
@@ -216,7 +245,7 @@ function queryFor(what) {
    request.send();
 }
 
-function uploadFile() {
+function uploadFile(albumId) {
    var formElt = document.getElementById('upldForm');
    var elt = formElt.firstChild;
    elt.onchange= function() {
@@ -231,6 +260,8 @@ function uploadFile() {
          var formData = new FormData(formElt);
          formData.append("MAX_FILE_SIZE", "1000000");
          formData.append("IMG", file.name.substr(-3));
+         formData.append("AID", albumId);
+//       formData.append("TIT", "a title");
          var request = new XMLHttpRequest();
          request.onreadystatechange = whenRequestStateChanged;
          request.open("POST", "jaxogram?OP=postImageFile", true);
@@ -251,13 +282,15 @@ function pickAndUploadImage()
       formatUsersList();
       return;
    }
+   var albumId = prompt("[TEMPORARY]\nAlbum ID, please?", "5830280253747333482");
+   if (!albumId) return;
    try {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
       a.onsuccess = function(e) {
         var request = new XMLHttpRequest();
         request.open(
            "POST",
-           "jaxogram?OP=postImageData",
+           "jaxogram?OP=postImageData&AID="+albumId,
            true
         );
         request.setRequestHeader("Content-Type", 'image/jpeg');
@@ -270,7 +303,7 @@ function pickAndUploadImage()
       };
       a.onerror = function() { alert(i18n('pickImageError')); };
    }catch (err) {
-      uploadFile();
+      uploadFile(albumId);
       return;
    }
 }
@@ -282,11 +315,10 @@ function whenRequestStateChanged() {
       break;
    case 4: // DONE
       document.getElementById("progresspane").style.visibility='hidden';
-//    if (this.status == 200) {
-//       document.getElementById('barDataOut').innerHTML = this.responseText;
-//    }else {
-         alert(this.responseText);
-//    }
+      alert(this.responseText);
+      if (this.status == 200) {
+         expandPage("p1");
+      }
       break;
    }
 }

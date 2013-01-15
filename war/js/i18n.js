@@ -110,6 +110,23 @@ var localeValues = {
       'fr_FR':"Espagnol",
       'pt_BR':"Espanhol",
       'es_ES':"Español"
+   }, months: {
+      'en_us': [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+      ],
+      'fr_FR': [
+          "janvier", "février", "mars", "avril", "mai", "juin",
+          "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+      ],
+      'pt_BR': [
+          "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+          "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+      ],
+      'es_ES': [
+          "enero", "febrero", "marzo", "abril", "mayo", "junio",
+          "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+      ]
    }
 }
 /*----------------- end of strings requiring translation --------------------*/

@@ -221,3 +221,14 @@ function menuListClicked(event) {
       }
    }
 }
+function expandPage(id) {
+   var elt = document.getElementById(id);
+   var siblings = elt.parentNode.children;
+   for (var i=0; i < siblings.length; ++i) {
+      var sib = siblings[i];
+      if (sib != elt) {
+         sib.setAttribute("aria-expanded", "false");
+      }
+   }
+   elt.setAttribute("aria-expanded", "true");
+}

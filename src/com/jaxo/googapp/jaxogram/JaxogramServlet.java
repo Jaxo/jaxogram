@@ -155,6 +155,7 @@ public class JaxogramServlet extends HttpServlet
                }
             }
             if (image != null) {
+//*/           logger.info("album id: " + albumId);
                makeOrkutNetwork(req).uploadPhoto(
                   albumId, imgTitle, image, imgType
                );

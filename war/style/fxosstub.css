@@ -441,3 +441,27 @@ li[aria-selected=true], li[role=listbox] {
 /*    -o-object-fit:contain;                  */
 /*    -webkit-object-fit:contain;             */
 /* }                                          */
+
+/* ------ Page 2 ------*/
+#p2 table {        /*   */
+   background-color:#ccc;
+   width:100%;
+   height:100%;
+}
+#p2 table, tr, td {
+   font-size:1.5rem;
+}
+#p2 td {
+   padding:1rem;
+}
+#p2 tr:first-child td {
+   vertical-align: top;
+   color: black;
+   font-size: 2.8rem;
+   height:100%;
+}
+#p2 legend {
+   color: #999;
+   font-size:1rem;
+}
+

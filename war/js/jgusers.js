@@ -15,9 +15,11 @@ function JgUsers() {
       return users.length != 0;
    }
    this.addUser = function(userName, userPass, userNet) {
-      selectedIndex = users.length;
-      users.push(new JgUserItem(userName, userPass, userNet));
-      rewriteUsers();
+      if (userName != null) {
+         selectedIndex = users.length;
+         users.push(new JgUserItem(userName, userPass, userNet));
+         rewriteUsers();
+      }
    };
    this.deleteUser = function(userName, userPass, userNet) {
       removeIf(

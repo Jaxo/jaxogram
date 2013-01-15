@@ -18,13 +18,40 @@
      <TABLE><TR>
         <TD id="btnInstall" class="i18n"></TD>
      </TR></TABLE>
-     <H1>Jaxogram</H1>
+     <!-- See: appengine-web.xml -->
+     <H1>Jaxogram <span style="font-size:1.2rem;text-shadow:none">v5.1</span></H1>
    </HEADER>
    <DIV id="main">
-     <DIV id="p1" class="body" aria-expanded = "true">
+     <DIV id="p1" class="body" aria-expanded="true">
         <DIV class="imgbox">
            <IMG alt="Photo" id="photoImage" src="images/unknown.png"/>
         </DIV>
+     </DIV>
+     <DIV id="p2" class="body">
+        <TABLE border="0">
+           <TR>
+             <!--
+             <TD rowspan="3">
+               <IMG id="p2_thumbnail" src="images/nophoto64.gif"/>
+             </TD>
+             -->
+             <TD colspan="2">
+                <SPAN id="p2_givenName"></SPAN>
+                <SPAN id="p2_familyName"></SPAN>
+             </TD>
+           </TR><TR>
+             <TD><FIELDSET>
+                <LEGEND>email</LEGEND><SPAN id="p2_email"></SPAN>
+             </FIELDSET></TD><TD><FIELDSET>
+                <LEGEND>phone</LEGEND><SPAN id="p2_phone"></SPAN>
+           </TR><TR>
+             <TD><FIELDSET>
+                <LEGEND>gender</LEGEND><SPAN id="p2_gender"></SPAN>
+             </FIELDSET></TD><TD><FIELDSET>
+                <LEGEND>birthday</LEGEND><SPAN id="p2_birthday"></SPAN>
+             </FIELDSET></TD>
+           </TR>
+        </TABLE>
      </DIV>
    </DIV>
    <DIV id="sidebar" class="body">
