@@ -214,7 +214,19 @@ function queryListAlbums() {
    queryFor(
       'listAlbums',
        function(albums) {
-          alert(dump(albums));
+          var html = "";
+          for (var i=0, max=albums.length; i < max; ++i) {
+             var album = albums[i];
+             html += (
+                "<LI id='" + album.id +
+                "'><IMG src='" + album.thumbnailUrl + "'/><DIV>" +
+                album.title +
+                "<BR/><SMALL>" + album.description + "</SMALL></DIV></LI>"
+             );
+          }
+          document.getElementById("p3_list").innerHTML = html;
+          expandPage("p3");
+          // alert(dump(albums));
       }
    );
 }
@@ -276,13 +288,28 @@ function uploadFile(albumId) {
    elt.click();
 }
 
-function pickAndUploadImage()
+function pickAndUploadImage(event)
 {
    if (!users.hasSome()) {
       formatUsersList();
       return;
    }
-   var albumId = prompt("[TEMPORARY]\nAlbum ID, please?", "5830280253747333482");
+   // var albumId = prompt("[TEMPORARY]\nAlbum ID, please?", "5830280253747333482");
+   /*
+   | TEMPORARY fix?
+   | I am interested in list items, direct children of UL's, or TR's),
+   | The list items descendants (IMG, SPAN, etc...) are phony.
+   | I should probably add "role=listitem" for all such items.
+   */
+   var liElt = event.target;
+   while ((liElt.nodeName != "TD") && (liElt.nodeName != "LI")) {
+      if ((liElt = liElt.parentNode) == null) {
+         // event.stopPropagation();
+         return;
+      }
+   }
+   var albumId = liElt.id;
+   // alert("AlbumId:" + albumId);
    if (!albumId) return;
    try {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});

@@ -15,11 +15,6 @@ var localeValues = {
       'fr_FR':"Qui suis-je ?",
       'pt_BR':"Quem sou eu?",
       'es_ES':"¿Quién soy yo?"
-   }, m3: {
-      'en_US':"My albums",
-      'fr_FR':"Mes albums",
-      'pt_BR':"Meus álbuns",
-      'es_ES':"Mis álbumes"
    }, installFailure: {
       'en_US':"Install has failed",
       'fr_FR':"Echec de l'installation",
@@ -85,6 +80,11 @@ var localeValues = {
       'fr_FR':"Erreur à la prise de l'image",
       'pt_BR':"O fracasso em escolher uma imagem",
       'es_ES':"El fracaso en una imagen en"
+   }, chooseAlbum: {
+      'en_US':"Target an album",
+      'fr_FR':"Ciblez un album",
+      'pt_BR':"Alvo de um álbum",
+      'es_ES':"Objetivo un álbum"
    }, language: {
       'en_US':"Language",
       'fr_FR':"Langage",

@@ -19,7 +19,7 @@
         <TD id="btnInstall" class="i18n"></TD>
      </TR></TABLE>
      <!-- See: appengine-web.xml -->
-     <H1>Jaxogram <span style="font-size:1.2rem;text-shadow:none">v5.1</span></H1>
+     <H1>Jaxogram <span style="font-size:1.2rem;text-shadow:none">v5.2</span></H1>
    </HEADER>
    <DIV id="main">
      <DIV id="p1" class="body" aria-expanded="true">
@@ -32,7 +32,7 @@
            <TR>
              <!--
              <TD rowspan="3">
-               <IMG id="p2_thumbnail" src="images/nophoto64.gif"/>
+               <IMG id="p2_thumbnail" src="images/unknown.png"/>
              </TD>
              -->
              <TD colspan="2">
@@ -52,6 +52,20 @@
              </FIELDSET></TD>
            </TR>
         </TABLE>
+     </DIV>
+     <DIV id="p3" class="body">
+        <DIV
+           class="mainlist"
+           onclick="menuListClicked(event);"
+        >
+           <H1 class="i18n" id="chooseAlbum"></H1>
+           <UL
+              class="menuList" id="p3_list"
+              role="radiogroup"
+              onclick="pickAndUploadImage(event);"
+           >
+           </UL>
+        </DIV>
      </DIV>
    </DIV>
    <DIV id="sidebar" class="body">
@@ -87,10 +101,14 @@
    <FOOTER>
       <TABLE onclick="expandSidebarView(-1);">
         <TR>
+          <TD onclick="queryListAlbums();"><SPAN class="i18n" id="m1"></SPAN></TD>
+          <TD onclick="queryWhoAmI();"><SPAN class="i18n" id="m2"></SPAN></TD>
+          <!--
           <TD aria-owns="p1" onclick="pickAndUploadImage();"><SPAN class="i18n" id="m1"></SPAN></TD>
           <TD onclick="queryWhoAmI();"><SPAN class="i18n" id="m2"></SPAN></TD>
           <TD onclick="queryListAlbums();"><SPAN class="i18n" id="m3"></SPAN></TD>
-          <!-- <TD onclick="authorize();">Authorize</TD> -->
+          <TD onclick="authorize();">Authorize</TD>
+          -->
         </TR>
       </TABLE>
    </FOOTER>

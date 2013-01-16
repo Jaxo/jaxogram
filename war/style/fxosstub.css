@@ -393,7 +393,63 @@ li[aria-selected=true], li[role=listbox] {
   color:#222;
 }
 
-/*-- Styles specific to Blabzilla --*/
+div.mainlist {
+   position:absolute;
+   top:0;
+   bottom:3rem;
+   width:100%;
+}
+.mainlist h1 {
+   display: inline-block;
+   color:white;
+   font-style: normal;
+   font-size: 2rem;
+   font-weight: normal;
+   height:1.8rem;
+   line-height: 1.5rem;
+   overflow: hidden;
+   margin:0;
+   text-align: left;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+   width: 100%;
+}
+.mainlist ul {
+   display:block;
+   font-size:2.5rem;
+   max-height:100%;
+   width:100%;
+   overflow-y:auto;
+   overflow-x: hidden;
+}
+.mainlist li:before {  /* set ".menulist li:before" to same value? */
+   right: 0.2em;
+}
+.mainlist li {
+   padding: 0.5rem;
+   height: 7rem;
+}
+.mainlist li img {
+   border:1px solid #333;
+   width:6rem;
+   position: absolute;
+   clip:rect(0, 6.2rem, 7rem, 0);                  /* T, R, B, L */
+}
+.mainlist li small {
+  font-size:1.5rem;
+}
+.mainlist li div {
+   display:inline-block;
+   vertical-align: top;
+   position: absolute;
+   left: 8rem;
+   right: 2em;
+   overflow-x: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+}
+
+/*-- Styles specific to jaxogram --*/
 .body textarea {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
