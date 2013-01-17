@@ -159,7 +159,7 @@ public class JaxogramServlet extends HttpServlet
                makeOrkutNetwork(req).uploadPhoto(
                   albumId, imgTitle, image, imgType
                );
-               writer.println("Successfully uploaded to album #" + albumId);
+//*/           writer.println("Successfully uploaded to album #" + albumId);
             }else {
                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                writer.println("Error:\nImage data not found");

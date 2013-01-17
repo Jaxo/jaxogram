@@ -263,7 +263,7 @@ function pickAndUploadImage(event) {
    }
 }
 
-function uploadPick() {
+function uploadPick(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
    a.onsuccess = function(e) {
      var request = new XMLHttpRequest();
