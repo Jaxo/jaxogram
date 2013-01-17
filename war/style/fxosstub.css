@@ -500,24 +500,64 @@ div.mainlist {
 
 /* ------ Page 2 ------*/
 #p2 table {        /*   */
-   background-color:#ccc;
-   width:100%;
-   height:100%;
+   background-color: #ccc;
+   width: 100%;
+   height: 100%;
 }
 #p2 table, tr, td {
    font-size:1.5rem;
 }
 #p2 td {
-   padding:1rem;
+   padding: 1rem;
 }
 #p2 tr:first-child td {
    vertical-align: top;
    color: black;
    font-size: 2.8rem;
-   height:100%;
+   height: 100%;
 }
 #p2 legend {
-   color: #999;
-   font-size:1rem;
+   color: #444;
+   font-size: 1rem;
 }
 
+/* ------ Page 0 ------*/
+#p0 {
+   text-shadow:#aaa 0px 1px 0, #000 0 -1px 0;
+}
+#p0_top {
+   position: absolute;
+   width: 100%;
+   right:0;top:5rem;
+   text-align: center;
+   font-size: 3rem;
+   color: white;
+}
+#p0_top ul {
+   margin-top: 5rem;
+   text-align: left;
+   font-size: 1.5rem;
+   text-shadow: none;
+}
+#engineeredBy {
+    position: absolute;
+    height: 9.5rem;
+    right: 21rem;
+    bottom: 2rem;
+    font-size: 2rem;
+    color: #555;
+}
+#p0_bot_1 {
+    position: absolute;
+    width: 20rem;
+    height: 10rem;
+    right: 2rem;
+    bottom: 2rem;
+}
+#p0_copy {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size:1.1rem;
+    color:white;
+}

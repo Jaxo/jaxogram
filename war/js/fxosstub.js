@@ -166,19 +166,8 @@ function getAttribute(node, attrName) {  // helper
 }
 
 function menuListClicked(event) {
-   var liElt = event.target;        // the item that was clicked
-   /*
-   | TEMPORARY fix?
-   | I am interested in list items, direct children of UL's, or TR's),
-   | The list items descendants (IMG, SPAN, etc...) are phony.
-   | I should probably add "role=listitem" for all such items.
-   */
-   while ((liElt.nodeName != "TD") && (liElt.nodeName != "LI")) {
-      if ((liElt = liElt.parentNode) == null) {
-         // event.stopPropagation();
-         return;
-      }
-   }
+   var liElt = getRealTarget(event);
+   if (liElt == null) return;
    if (liElt.getAttribute("role") == "listbox") {
       var ulChildElt = liElt.getElementsByTagName("UL")[0];
       if (ulChildElt != null) {     // defense!
@@ -221,6 +210,22 @@ function menuListClicked(event) {
       }
    }
 }
+
+function getRealTarget(clickedEvent) {
+   /*
+   | TEMPORARY fix?
+   | I am interested in list items, direct children of UL's, or TR's),
+   | The list items descendants (IMG, SPAN, etc...) are phony.
+   | I should probably add "role=listitem" for all such items.
+   */
+   var elt = clickedEvent.target;      // the item that was clicked
+   while ((elt != null) && (elt.nodeName != "TD") && (elt.nodeName != "LI")) {
+      elt = elt.parentNode;
+   }
+   return elt;
+}
+
+
 function expandPage(id) {
    var elt = document.getElementById(id);
    var siblings = elt.parentNode.children;

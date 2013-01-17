@@ -24,7 +24,6 @@ function init() {
    }
    var dfltLocale = navigator.language || navigator.userLanguage;
    formatUsersList();
-   dfltLocale = "pt_BR"; // FIXME (remove)
    translateBody(dfltLocale);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
 // document.getElementById("p1").setAttribute("aria-expanded", "true");
@@ -74,31 +73,20 @@ function formatUsersList() {
 }
 
 function changeLogin(elt, event) {
-   /*
-   | TEMPORARY fix?
-   | I am interested in list items, direct children of UL's, or TR's),
-   | The list items descendants (IMG, SPAN, etc...) are phony.
-   | I should probably add "role=listitem" for all such items.
-   */
-   var liElt = event.target;
-   while ((liElt.nodeName != "TD") && (liElt.nodeName != "LI")) {
-      if ((liElt = liElt.parentNode) == null) {
-         // event.stopPropagation();
-         return;
+   var liElt = getRealTarget(event);
+   if (liElt != null) {
+      var index = -1;
+      while (liElt=liElt.previousSibling) ++index;
+      if (event.target.getAttribute("role") == "trasher") {
+         if (confirm(i18n("revokeAccess", event.target.nextSibling.textContent))) {
+            users.deleteUserAt(index);
+            formatUsersList();
+         }
+      }else {
+         users.selectUserAt(index);
+         document.getElementById('jgUserName').textContent = users.getUserName();
+         tellAccessPass();
       }
-   }
-   var index = -1;
-   while (liElt=liElt.previousSibling) ++index;
-
-   if (event.target.getAttribute("role") == "trasher") {
-      if (confirm(i18n("revokeAccess", event.target.nextSibling.textContent))) {
-         users.deleteUserAt(index);
-         formatUsersList();
-      }
-   }else {
-      users.selectUserAt(index);
-      document.getElementById('jgUserName').textContent = users.getUserName();
-      tellAccessPass();
    }
 }
 
@@ -257,6 +245,44 @@ function queryFor(what, whenDone) {
    request.send();
 }
 
+function pickAndUploadImage(event) {
+   if (!users.hasSome()) {
+      formatUsersList();
+   }else {
+      var liElt = getRealTarget(event);
+      if (liElt != null) {
+         var albumId = liElt.id;
+         if (albumId) {
+            try {
+               uploadPick(albumId);
+            }catch (err) {
+               uploadFile(albumId);
+            }
+         }
+      }
+   }
+}
+
+function uploadPick() {
+   var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
+   a.onsuccess = function(e) {
+     var request = new XMLHttpRequest();
+     request.open(
+        "POST",
+        "jaxogram?OP=postImageData&AID="+albumId,
+        true
+     );
+     request.setRequestHeader("Content-Type", 'image/jpeg');
+     request.onreadystatechange = whenRequestStateChanged;
+     request.send(a.result.blob);
+     var url = URL.createObjectURL(a.result.blob);
+     var img = document.getElementById('photoImage');
+     img.src = url;
+     img.onload = function() { URL.revokeObjectURL(url); };
+   };
+   a.onerror = function() { alert(i18n('pickImageError')); };
+}
+
 function uploadFile(albumId) {
    var formElt = document.getElementById('upldForm');
    var elt = formElt.firstChild;
@@ -288,53 +314,6 @@ function uploadFile(albumId) {
    elt.click();
 }
 
-function pickAndUploadImage(event)
-{
-   if (!users.hasSome()) {
-      formatUsersList();
-      return;
-   }
-   // var albumId = prompt("[TEMPORARY]\nAlbum ID, please?", "5830280253747333482");
-   /*
-   | TEMPORARY fix?
-   | I am interested in list items, direct children of UL's, or TR's),
-   | The list items descendants (IMG, SPAN, etc...) are phony.
-   | I should probably add "role=listitem" for all such items.
-   */
-   var liElt = event.target;
-   while ((liElt.nodeName != "TD") && (liElt.nodeName != "LI")) {
-      if ((liElt = liElt.parentNode) == null) {
-         // event.stopPropagation();
-         return;
-      }
-   }
-   var albumId = liElt.id;
-   // alert("AlbumId:" + albumId);
-   if (!albumId) return;
-   try {
-      var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
-      a.onsuccess = function(e) {
-        var request = new XMLHttpRequest();
-        request.open(
-           "POST",
-           "jaxogram?OP=postImageData&AID="+albumId,
-           true
-        );
-        request.setRequestHeader("Content-Type", 'image/jpeg');
-        request.onreadystatechange = whenRequestStateChanged;
-        request.send(a.result.blob);
-        var url = URL.createObjectURL(a.result.blob);
-        var img = document.getElementById('photoImage');
-        img.src = url;
-        img.onload = function() { URL.revokeObjectURL(url); };
-      };
-      a.onerror = function() { alert(i18n('pickImageError')); };
-   }catch (err) {
-      uploadFile(albumId);
-      return;
-   }
-}
-
 function whenRequestStateChanged() {
    switch (this.readyState) {
    case 1: // OPENED
@@ -342,9 +321,10 @@ function whenRequestStateChanged() {
       break;
    case 4: // DONE
       document.getElementById("progresspane").style.visibility='hidden';
-      alert(this.responseText);
       if (this.status == 200) {
          expandPage("p1");
+      }else {
+         alert(this.responseText);
       }
       break;
    }
