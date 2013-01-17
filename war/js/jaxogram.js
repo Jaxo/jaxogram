@@ -266,19 +266,19 @@ function pickAndUploadImage(event) {
 function uploadPick(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
    a.onsuccess = function(e) {
-     var request = new XMLHttpRequest();
-     request.open(
-        "POST",
-        "jaxogram?OP=postImageData&AID="+albumId,
-        true
-     );
-     request.setRequestHeader("Content-Type", 'image/jpeg');
-     request.onreadystatechange = whenRequestStateChanged;
-     request.send(a.result.blob);
-     var url = URL.createObjectURL(a.result.blob);
-     var img = document.getElementById('photoImage');
-     img.src = url;
-     img.onload = function() { URL.revokeObjectURL(url); };
+      var request = new XMLHttpRequest();
+      request.open(
+         "POST",
+         "jaxogram?OP=postImageData&AID="+albumId,
+         true
+      );
+      request.setRequestHeader("Content-Type", 'image/jpeg');
+      request.onreadystatechange = whenRequestStateChanged;
+      request.send(a.result.blob);
+      var url = URL.createObjectURL(a.result.blob);
+      var img = document.getElementById('photoImage');
+      img.src = url;
+      img.onload = function() { URL.revokeObjectURL(url); };
    };
    a.onerror = function() { alert(i18n('pickImageError')); };
 }
