@@ -11,6 +11,17 @@ function JgUsers() {
    this.getUserName = function() {
       return users[selectedIndex].n;
    }
+   this.getAlbumTitle = function() {
+      return users[selectedIndex].tt;
+   }
+   this.getAlbumId = function() {
+      return users[selectedIndex].ai;
+   }
+   this.setAlbum = function(albumId, albumTitle) {
+      users[selectedIndex].ai = albumId;
+      users[selectedIndex].tt = albumTitle;
+      rewriteUsers();
+   }
    this.hasSome = function() {
       return users.length != 0;
    }
@@ -20,7 +31,7 @@ function JgUsers() {
          users.push(new JgUserItem(userName, userPass, userNet));
          rewriteUsers();
       }
-   };
+   }
    this.deleteUser = function(userName, userPass, userNet) {
       removeIf(
          function(user, at, users) {
@@ -38,10 +49,12 @@ function JgUsers() {
    this.selectUserAt = function(index) {
       rewriteSelectedIndex(index);
    }
-   this.forEach = function(doFunction/*(userName, userPass, userNet)*/) {
+   this.forEach = function(
+      doFunction /* (name, pass, albumTitle, isSelected, network) */
+   ) {
       users.forEach(
          function(user, at, users) {
-            doFunction(user.n, user.p, user.t, at == selectedIndex);
+            doFunction(user.n, user.p, user.tt, at == selectedIndex, user.t);
          }
       );
    }
@@ -96,6 +109,8 @@ function JgUserItem(userName, userPass, userNet) {
    this.n = userName;
    this.p = userPass;
    this.t = userNet;
+   this.ai = null;  // album id
+   this.tt = null;  // album title
 }
 
 

@@ -19,17 +19,19 @@
         <TD id="btnInstall" class="i18n"></TD>
      </TR></TABLE>
      <!-- See: appengine-web.xml -->
-     <H1>Jaxogram <SPAN style="font-size:1.2rem;text-shadow:none">v6.0</SPAN></H1>
+     <H1>Jaxogram <SPAN style="font-size:1.2rem;text-shadow:none">v6.1</SPAN></H1>
    </HEADER>
    <DIV id="main">
      <DIV id="p0" class="body" aria-expanded="true">
         <DIV id="p0_top">
            <SPAN class="i18n" id="m3"></SPAN>
+<!--
            <UL>
               <LI><SPAN class="i18n" id="m4"></SPAN></LI>
               <LI><SPAN class="i18n" id="m5"></SPAN></LI>
               <LI><SPAN class="i18n" id="m6"></SPAN></LI>
            </UL>
+-->
         </DIV>
         <DIV class="i18n" id="engineeredBy"></DIV>
         <DIV id="p0_bot_1">
@@ -69,26 +71,13 @@
            </TR>
         </TABLE>
      </DIV>
-     <DIV id="p3" class="body">
-        <DIV
-           class="mainlist"
-           onclick="menuListClicked(event);"
-        >
-           <H1 class="i18n" id="chooseAlbum"></H1>
-           <UL
-              class="menuList" id="p3_list"
-              role="radiogroup"
-              onclick="pickAndUploadImage(event);"
-           >
-           </UL>
-        </DIV>
-     </DIV>
    </DIV>
    <DIV id="sidebar" class="body">
       <UL class="menuList" onclick="menuListClicked(event);">
         <LI role="listbox" id="jgUsersIn"></LI>
+        <LI role="listbox" id="jgUsersAid" onclick="listAlbums(this, event);"></LI>
         <LI role="listbox">
-           <SPAN class="i18n" id="language"></SPAN> <i id="usedLang"></i>
+           <SPAN class="i18n" id="language"></SPAN><i id="usedLang"></i>
            <UL role="radiogroup" onclick="changeLanguage(this, event);">
               <LI class="i18n" id="en-US"></LI>
               <LI class="i18n" id="es-ES"></LI>
@@ -117,14 +106,8 @@
    <FOOTER>
       <TABLE onclick="expandSidebarView(-1);">
         <TR>
-          <TD onclick="queryListAlbums();"><SPAN class="i18n" id="m1"></SPAN></TD>
+          <TD onclick="pickAndUploadImage();"><SPAN class="i18n" id="m1"></SPAN></TD>
           <TD onclick="queryWhoAmI();"><SPAN class="i18n" id="m2"></SPAN></TD>
-          <!--
-          <TD aria-owns="p1" onclick="pickAndUploadImage();"><SPAN class="i18n" id="m1"></SPAN></TD>
-          <TD onclick="queryWhoAmI();"><SPAN class="i18n" id="m2"></SPAN></TD>
-          <TD onclick="queryListAlbums();"><SPAN class="i18n" id="m3"></SPAN></TD>
-          <TD onclick="authorize();">Authorize</TD>
-          -->
         </TR>
       </TABLE>
    </FOOTER>

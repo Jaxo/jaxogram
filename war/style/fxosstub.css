@@ -393,60 +393,44 @@ li[aria-selected=true], li[role=listbox] {
   color:#222;
 }
 
-div.mainlist {
-   position:absolute;
-   top:0;
-   bottom:3rem;
-   width:100%;
-}
-.mainlist h1 {
-   display: inline-block;
-   color:white;
-   font-style: normal;
-   font-size: 2rem;
-   font-weight: normal;
-   height:1.8rem;
-   line-height: 1.5rem;
-   overflow: hidden;
-   margin:0;
-   text-align: left;
-   text-overflow: ellipsis;
-   white-space: nowrap;
-   width: 100%;
-}
-.mainlist ul {
-   display:block;
-   font-size:2.5rem;
-   max-height:100%;
-   width:100%;
-   overflow-y:auto;
-   overflow-x: hidden;
-}
-.mainlist li:before {  /* set ".menulist li:before" to same value? */
+#albumList li:before {  /* set ".menulist li:before" to same value? */
    right: 0.2em;
+   /* bottom: 1.2rem; */
 }
-.mainlist li {
-   padding: 0.5rem;
-   height: 7rem;
+#albumList li:first-child {
+  padding: 1.8rem 2rem 0.2rem 1rem;               /* T, R, B, L */
 }
-.mainlist li img {
-   border:1px solid #333;
-   width:6rem;
-   position: absolute;
-   clip:rect(0, 6.2rem, 7rem, 0);                  /* T, R, B, L */
+#albumList li {
+  /* border-bottom: solid 1px #445; */
+  margin: 0;
+  padding: 1rem 2rem 1rem 0.5rem;                     /* T, R, B, L */
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 3.2rem;
+  vertical-align: middle;
 }
-.mainlist li small {
-  font-size:1.5rem;
-}
-.mainlist li div {
+#albumList li div {
    display:inline-block;
    vertical-align: top;
    position: absolute;
-   left: 8rem;
-   right: 2em;
+   line-height: 1.4rem;
+   padding-top:0.1rem;
+   left: 4.5rem;
+   right: 2rem;
    overflow-x: hidden;
    white-space: nowrap;
    text-overflow: ellipsis;
+}
+#albumList li img {
+   border: 1px solid #333;
+   width: 3rem;
+   position: absolute;
+   clip: rect(0, 3.2rem, 3rem, 0);                  /* T, R, B, L */
+}
+#albumList li small {
+  font-size:1rem;
 }
 
 /*-- Styles specific to jaxogram --*/
@@ -528,31 +512,31 @@ div.mainlist {
 #p0_top {
    position: absolute;
    width: 100%;
-   right:0;top:5rem;
+   right:0;top:2rem;
    text-align: center;
-   font-size: 3rem;
+   font-size: 2rem;
    color: white;
 }
 #p0_top ul {
-   margin-top: 5rem;
+   margin-top: 2rem;
    text-align: left;
    font-size: 1.5rem;
    text-shadow: none;
 }
 #engineeredBy {
     position: absolute;
-    height: 9.5rem;
-    right: 21rem;
-    bottom: 2rem;
-    font-size: 2rem;
+    height: 7rem;
+    right: 12.5rem;
+    bottom: 1rem;
+    font-size: 1rem;
     color: #555;
 }
 #p0_bot_1 {
     position: absolute;
-    width: 20rem;
-    height: 10rem;
-    right: 2rem;
-    bottom: 2rem;
+    width: 12rem;
+    height: 8rem;
+    right: 1rem;
+    bottom: 0rem;
 }
 #p0_copy {
     position: absolute;

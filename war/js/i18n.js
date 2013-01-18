@@ -86,10 +86,10 @@ var localeValues = {
       'pt-BR':"Criar Login",
       'es-ES':"Crear Login"
    }, loginAs: {
-      'en-US':"User:",
-      'fr-FR':"Utilisateur :",
-      'pt-BR':"Usuário:",
-      'es-ES':"Usuario:"
+      'en-US':"User: ",
+      'fr-FR':"Utilisateur : ",
+      'pt-BR':"Usuário: ",
+      'es-ES':"Usuario: "
    }, newAlbum: {
       'en-US':"Create album",
       'fr-FR':"Nouvel album",
@@ -110,16 +110,21 @@ var localeValues = {
       'fr-FR':"Erreur à la prise de l'image",
       'pt-BR':"O fracasso em escolher uma imagem",
       'es-ES':"El fracaso en una imagen en"
-   }, chooseAlbum: {
-      'en-US':"Target an album",
-      'fr-FR':"Ciblez un album",
-      'pt-BR':"Alvo de um álbum",
-      'es-ES':"Objetivo un álbum"
+   }, imageUploaded: {
+      'en-US':"Image successfully uploaded in album \"%1\"",
+      'fr-FR':"Image insérée dans l'album \"%1\"",
+      'pt-BR':"Imagem enviada com sucesso em \"%1\" álbum",
+      'es-ES':"Imagen cargada con éxito en el álbum \"%1\""
+   }, createAlbum: {
+      'en-US':"Please enter the album title,\npossibly followed by a slash sign and a description",
+      'fr-FR':"Veuillez entrer le titre de l'album,\néventuellement suivi d'une barre oblique et une description",
+      'pt-BR':"Por favor insira o título do álbum,\npossivelmente seguido por um sinal de barra e uma descrição",
+      'es-ES':"Por favor introduce el título del álbum,\nposiblemente seguido de un signo diagonal y una descripción"
    }, photoAlbum: {
-      'en-US':"Photo album:",
-      'fr-FR':"Album photo :",
-      'pt-BR':"Álbum de fotos:",
-      'es-ES':"Álbum de fotos:"
+      'en-US':"Photo album: ",
+      'fr-FR':"Album photo : ",
+      'pt-BR':"Álbum de fotos: ",
+      'es-ES':"Álbum de fotos: "
    }, selAlbum: {
       'en-US':"(unspecified)",
       'fr-FR':"(non précisé)",
@@ -146,10 +151,10 @@ var localeValues = {
       'pt-BR':"aniversário",
       'es-ES':"cumpleaños"
    }, language: {
-      'en-US':"Language:",
-      'fr-FR':"Langage :",
-      'pt-BR':"Língua:",
-      'es-ES':"Idioma:"
+      'en-US':"Language: ",
+      'fr-FR':"Langage : ",
+      'pt-BR':"Língua: ",
+      'es-ES':"Idioma: "
    }, 'en-US': {
       'en-US':"US English",
       'fr-FR':"Anglais",
