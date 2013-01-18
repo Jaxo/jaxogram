@@ -86,10 +86,15 @@ var localeValues = {
       'pt-BR':"Criar Login",
       'es-ES':"Crear Login"
    }, loginAs: {
-      'en-US':"User",
-      'fr-FR':"Utilisateur",
-      'pt-BR':"Usuário",
-      'es-ES':"Usuario"
+      'en-US':"User:",
+      'fr-FR':"Utilisateur :",
+      'pt-BR':"Usuário:",
+      'es-ES':"Usuario:"
+   }, newAlbum: {
+      'en-US':"Create album",
+      'fr-FR':"Nouvel album",
+      'pt-BR':"Criar álbum",
+      'es-ES':"Crear álbum"
    }, authDenied: {
       'en-US':"Authorization denied",
       'fr-FR':"Autorisation refusée",
@@ -110,6 +115,16 @@ var localeValues = {
       'fr-FR':"Ciblez un album",
       'pt-BR':"Alvo de um álbum",
       'es-ES':"Objetivo un álbum"
+   }, photoAlbum: {
+      'en-US':"Photo album:",
+      'fr-FR':"Album photo :",
+      'pt-BR':"Álbum de fotos:",
+      'es-ES':"Álbum de fotos:"
+   }, selAlbum: {
+      'en-US':"(unspecified)",
+      'fr-FR':"(non précisé)",
+      'pt-BR':"(indeterminado)",
+      'es-ES':"(sin especificar)"
    }, email: {
       'en-US':"email",
       'fr-FR':"e-mail",
@@ -131,10 +146,10 @@ var localeValues = {
       'pt-BR':"aniversário",
       'es-ES':"cumpleaños"
    }, language: {
-      'en-US':"Language",
-      'fr-FR':"Langage",
-      'pt-BR':"Língua",
-      'es-ES':"Idioma"
+      'en-US':"Language:",
+      'fr-FR':"Langage :",
+      'pt-BR':"Língua:",
+      'es-ES':"Idioma:"
    }, 'en-US': {
       'en-US':"US English",
       'fr-FR':"Anglais",
