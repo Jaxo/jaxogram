@@ -1,4 +1,4 @@
-var locale = "en-US";
+﻿var locale = "en-US";
 var localeValues = {
    btnInstall: {
       'en-US':"Install",
@@ -6,40 +6,40 @@ var localeValues = {
       'pt-BR':"Instalar",
       'es-ES':"Instalar"
    }, m1: {
-      'en-US':"Pick and Upload",
-      'fr-FR':"Transmettre une image",
-      'pt-BR':"Escolha e Upload",
-      'es-ES':"Recogida y carga"
+      'en-US':"Share Photo",
+      'fr-FR':"Partager la Photo",
+      'pt-BR':"Foto Compartilhar",
+      'es-ES':"Compartir fotos"
    }, m2: {
       'en-US':"Who am I?",
       'fr-FR':"Qui suis-je ?",
       'pt-BR':"Quem sou eu?",
       'es-ES':"¿Quién soy yo?"
    }, m3: {
-      'en-US':"Share your pictures and snap-shots with your friends on Orkut",
-      'fr-FR':"Partagez images et instantanés avec vos amis sur Orkut",
-      'pt-BR':"Compartilhe suas fotos e instantâneos com seus amigos no Orkut",
-      'es-ES':"Comparte tus fotos y rápidos disparos-con sus amigos en Orkut"
+      'en-US':"Share camera and gallery photos on Orkut",
+      'fr-FR':"Partager caméra et galerie photos sur Orkut",
+      'pt-BR':"Compartilhar câmera e galeria de fotos no Orkut",
+      'es-ES':"Compartir de la cámara y las fotos en galería de Orkut"
    }, m4: {
-      'en-US':"Press \"Pick and Upload\", below",
-      'fr-FR':"Appuyez sur \"Transmettre une image\", ci-dessous",
-      'pt-BR':"Pressione \"Escolha e Upload\", abaixo",
-      'es-ES':"Pulse el botón \"Recogida y carga\", a continuación"
+      'en-US':"Press \"Share Photo\" below",
+      'fr-FR':"Appuyez sur \"Partager la Photo\" ci-dessous",
+      'pt-BR':"Pressione \"Foto Compartilhar\" abaixo",
+      'es-ES':"Pulse el botón \"Compartir fotos\" a continuación"
    }, m5: {
-      'en-US':"Choose an album",
-      'fr-FR':"Choisissez un album",
-      'pt-BR':"Escolha um álbum",
-      'es-ES':"Elige un álbum"
+      'en-US':"Select an album",
+      'fr-FR':"Sélectionnez un album",
+      'pt-BR':"Selecione um álbum",
+      'es-ES':"Seleccionar un álbum"
    }, m6: {
-      'en-US':"Take a picture or select an existing image",
-      'fr-FR':"Prenez une photo ou sélectionnez une image existante",
-      'pt-BR':"Tire uma foto ou selecionar uma imagem existente",
-      'es-ES':"Tome una foto o seleccionar una imagen existente"
+      'en-US':"Take a photo or select one from the gallery",
+      'fr-FR':"Prenez une photo ou sélectionnez l'une de la galerie",
+      'pt-BR':"Tire uma foto ou selecionar uma da galeria",
+      'es-ES':"Tome una foto o seleccionar uno de la galería"
    }, engineeredBy: {
-      'en-US':"Engineered by",
-      'fr-FR':"Conçu par",
-      'pt-BR':"Desenvolvido por",
-      'es-ES':"Diseñado por"
+      'en-US':"",
+      'fr-FR':"",
+      'pt-BR':"",
+      'es-ES':""
    }, installFailure: {
       'en-US':"Install has failed",
       'fr-FR':"Echec de l'installation",
@@ -87,7 +87,7 @@ var localeValues = {
       'es-ES':"Crear Login"
    }, loginAs: {
       'en-US':"User: ",
-      'fr-FR':"Utilisateur : ",
+      'fr-FR':"Utilisateur: ",
       'pt-BR':"Usuário: ",
       'es-ES':"Usuario: "
    }, newAlbum: {
@@ -107,14 +107,14 @@ var localeValues = {
       'es-ES':"¿Está seguro que desea eliminar [CR], el inicio de sesión para \"% 1 \"?"
    }, pickImageError: {
       'en-US':"Failure at picking an image",
-      'fr-FR':"Erreur à la prise de l'image",
-      'pt-BR':"O fracasso em escolher uma imagem",
-      'es-ES':"El fracaso en una imagen en"
+      'fr-FR':"Le non sélectionné une photo",
+      'pt-BR':"Falha seleccionando uma foto",
+      'es-ES':"La falta seleccionar una foto"
    }, imageUploaded: {
-      'en-US':"Image successfully uploaded in album \"%1\"",
-      'fr-FR':"Image insérée dans l'album \"%1\"",
-      'pt-BR':"Imagem enviada com sucesso em \"%1\" álbum",
-      'es-ES':"Imagen cargada con éxito en el álbum \"%1\""
+      'en-US':"Photo successfully uploaded in album \"%1\"",
+      'fr-FR':"Photo téléchargée avec succès dans l'album \"%1\"",
+      'pt-BR':"Foto carregado com sucesso em álbum \"%1\"",
+      'es-ES':"Foto cargado correctamente en el álbum \"%1\""
    }, createAlbum: {
       'en-US':"Please enter the album title,\npossibly followed by a slash sign and a description",
       'fr-FR':"Veuillez entrer le titre de l'album,\néventuellement suivi d'une barre oblique et une description",
@@ -122,7 +122,7 @@ var localeValues = {
       'es-ES':"Por favor introduce el título del álbum,\nposiblemente seguido de un signo diagonal y una descripción"
    }, photoAlbum: {
       'en-US':"Photo album: ",
-      'fr-FR':"Album photo : ",
+      'fr-FR':"Album photo: ",
       'pt-BR':"Álbum de fotos: ",
       'es-ES':"Álbum de fotos: "
    }, selAlbum: {
@@ -131,25 +131,25 @@ var localeValues = {
       'pt-BR':"(indeterminado)",
       'es-ES':"(sin especificar)"
    }, email: {
-      'en-US':"email",
-      'fr-FR':"e-mail",
-      'pt-BR':"e-mail",
-      'es-ES':"email"
+      'en-US':"Email",
+      'fr-FR':"Email",
+      'pt-BR':"Email",
+      'es-ES':"Email"
    }, phone: {
-      'en-US':"phone",
-      'fr-FR':"téléphone",
-      'pt-BR':"telefone",
-      'es-ES':"teléfono"
+      'en-US':"Telephone",
+      'fr-FR':"Téléphone",
+      'pt-BR':"Telefone",
+      'es-ES':"Teléfono"
    }, gender: {
-      'en-US':"gender",
-      'fr-FR':"sexe",
-      'pt-BR':"sexo",
-      'es-ES':"género"
+      'en-US':"Gender",
+      'fr-FR':"Sexe",
+      'pt-BR':"Sexo",
+      'es-ES':"Género"
    }, birthday: {
-      'en-US':"birthday",
-      'fr-FR':"anniversaire",
-      'pt-BR':"aniversário",
-      'es-ES':"cumpleaños"
+      'en-US':"Birthday",
+      'fr-FR':"Anniversaire",
+      'pt-BR':"Aniversário",
+      'es-ES':"Cumpleaños"
    }, language: {
       'en-US':"Language: ",
       'fr-FR':"Langage : ",
