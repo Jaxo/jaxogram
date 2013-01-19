@@ -17,8 +17,7 @@ function init() {
    // users.destroy();
    var params = getQueryParams();
    if (params.OP === "granted") {
-      var name = prompt(i18n('enterUserName'), i18n("defaultUserName"));
-      users.addUser(name, params.ap, "orkut");
+      users.addUser(params.u, params.ap, "orkut");
    }else if (params.OP === "denied") {
       alert(i18n("authDenied") + "\n\n(" + params.msg + ")");
    }

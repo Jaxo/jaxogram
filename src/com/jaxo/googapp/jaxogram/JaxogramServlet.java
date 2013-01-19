@@ -92,7 +92,10 @@ public class JaxogramServlet extends HttpServlet
                   (OAuthAccessor)session.getAttribute("accessor")
                );
                session.setAttribute("accesspass", ap);
-               redirect = "/?OP=granted&ap=" + URLEncoder.encode(ap, "UTF-8");
+               redirect = (
+                  "/?OP=granted&u=" + makeOrkutNetwork(req).whoAmI() +
+                  "&ap=" + URLEncoder.encode(ap, "UTF-8")
+               );
             }catch (Exception e) {
                redirect = "/?OP=denied&msg=" + e;
             }
