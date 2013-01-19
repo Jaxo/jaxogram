@@ -152,7 +152,7 @@ var localeValues = {
       'es-ES':"Cumpleaños"
    }, language: {
       'en-US':"Language: ",
-      'fr-FR':"Langage : ",
+      'fr-FR':"Langage: ",
       'pt-BR':"Língua: ",
       'es-ES':"Idioma: "
    }, 'en-US': {
