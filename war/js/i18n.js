@@ -1,4 +1,4 @@
-﻿var locale = "en-US";
+var locale = "en-US";
 var localeValues = {
    btnInstall: {
       'en-US':"Install",
@@ -7,7 +7,7 @@ var localeValues = {
       'es-ES':"Instalar"
    }, m1: {
       'en-US':"Share Photo",
-      'fr-FR':"Partager la Photo",
+      'fr-FR':"Partager une photo",
       'pt-BR':"Foto Compartilhar",
       'es-ES':"Compartir fotos"
    }, m2: {
@@ -17,12 +17,12 @@ var localeValues = {
       'es-ES':"¿Quién soy yo?"
    }, m3: {
       'en-US':"Share camera and gallery photos on Orkut",
-      'fr-FR':"Partager caméra et galerie photos sur Orkut",
+      'fr-FR':"Partagez caméra et galerie photos sur Orkut",
       'pt-BR':"Compartilhar câmera e galeria de fotos no Orkut",
       'es-ES':"Compartir de la cámara y las fotos en galería de Orkut"
    }, m4: {
       'en-US':"Press \"Share Photo\" below",
-      'fr-FR':"Appuyez sur \"Partager la Photo\" ci-dessous",
+      'fr-FR':"Appuyez sur \"Partager une photo\" ci-dessous",
       'pt-BR':"Pressione \"Foto Compartilhar\" abaixo",
       'es-ES':"Pulse el botón \"Compartir fotos\" a continuación"
    }, m5: {
@@ -32,14 +32,9 @@ var localeValues = {
       'es-ES':"Seleccionar un álbum"
    }, m6: {
       'en-US':"Take a photo or select one from the gallery",
-      'fr-FR':"Prenez une photo ou sélectionnez l'une de la galerie",
+      'fr-FR':"Prenez une photo ou sélectionnez en une dans la galerie",
       'pt-BR':"Tire uma foto ou selecionar uma da galeria",
       'es-ES':"Tome una foto o seleccionar uno de la galería"
-   }, engineeredBy: {
-      'en-US':"",
-      'fr-FR':"",
-      'pt-BR':"",
-      'es-ES':""
    }, installFailure: {
       'en-US':"Install has failed",
       'fr-FR':"Echec de l'installation",
@@ -87,7 +82,7 @@ var localeValues = {
       'es-ES':"Crear Login"
    }, loginAs: {
       'en-US':"User: ",
-      'fr-FR':"Utilisateur: ",
+      'fr-FR':"Utilisateur : ",
       'pt-BR':"Usuário: ",
       'es-ES':"Usuario: "
    }, newAlbum: {
@@ -106,13 +101,13 @@ var localeValues = {
       'pt-BR':"Tem certeza de que deseja excluir\no login para \"%1\"?",
       'es-ES':"¿Está seguro que desea eliminar [CR], el inicio de sesión para \"% 1 \"?"
    }, pickImageError: {
-      'en-US':"Failure at picking an image",
-      'fr-FR':"Le non sélectionné une photo",
+      'en-US':"The selection of the photo has failed",
+      'fr-FR':"Erreur lors de la selection de la photo",
       'pt-BR':"Falha seleccionando uma foto",
       'es-ES':"La falta seleccionar una foto"
    }, imageUploaded: {
       'en-US':"Photo successfully uploaded in album \"%1\"",
-      'fr-FR':"Photo téléchargée avec succès dans l'album \"%1\"",
+      'fr-FR':"Photo insérée dans l'album \"%1\"",
       'pt-BR':"Foto carregado com sucesso em álbum \"%1\"",
       'es-ES':"Foto cargado correctamente en el álbum \"%1\""
    }, createAlbum: {
@@ -122,7 +117,7 @@ var localeValues = {
       'es-ES':"Por favor introduce el título del álbum,\nposiblemente seguido de un signo diagonal y una descripción"
    }, photoAlbum: {
       'en-US':"Photo album: ",
-      'fr-FR':"Album photo: ",
+      'fr-FR':"Album photo : ",
       'pt-BR':"Álbum de fotos: ",
       'es-ES':"Álbum de fotos: "
    }, selAlbum: {
@@ -152,7 +147,7 @@ var localeValues = {
       'es-ES':"Cumpleaños"
    }, language: {
       'en-US':"Language: ",
-      'fr-FR':"Langage: ",
+      'fr-FR':"Langage : ",
       'pt-BR':"Língua: ",
       'es-ES':"Idioma: "
    }, 'en-US': {
