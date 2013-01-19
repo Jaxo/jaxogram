@@ -15,26 +15,11 @@ var localeValues = {
       'fr-FR':"Qui suis-je ?",
       'pt-BR':"Quem sou eu?",
       'es-ES':"¿Quién soy yo?"
-   }, m3: {
+   }, p0_top: {
       'en-US':"Share camera and gallery photos on Orkut",
       'fr-FR':"Partagez caméra et galerie photos sur Orkut",
       'pt-BR':"Compartilhar câmera e galeria de fotos no Orkut",
       'es-ES':"Compartir de la cámara y las fotos en galería de Orkut"
-   }, m4: {
-      'en-US':"Press \"Share Photo\" below",
-      'fr-FR':"Appuyez sur \"Partager une photo\" ci-dessous",
-      'pt-BR':"Pressione \"Foto Compartilhar\" abaixo",
-      'es-ES':"Pulse el botón \"Compartir fotos\" a continuación"
-   }, m5: {
-      'en-US':"Select an album",
-      'fr-FR':"Sélectionnez un album",
-      'pt-BR':"Selecione um álbum",
-      'es-ES':"Seleccionar un álbum"
-   }, m6: {
-      'en-US':"Take a photo or select one from the gallery",
-      'fr-FR':"Prenez une photo ou sélectionnez en une dans la galerie",
-      'pt-BR':"Tire uma foto ou selecionar uma da galeria",
-      'es-ES':"Tome una foto o seleccionar uno de la galería"
    }, installFailure: {
       'en-US':"Install has failed",
       'fr-FR':"Echec de l'installation",
@@ -50,16 +35,6 @@ var localeValues = {
       'fr-FR':"Orkut va demander votre autorisation\npour accèder à vos données.\nEtes vous d'accord?",
       'pt-BR':"Orkut requer sua autorização \ nto vamos Jaxogram acessar seus dados. \nProsseguir a concessão?",
       'es-ES':"Orkut requiere su autorización\npara que Jaxogram acceder a sus datos.\nProceda a la concesión?"
-   }, enterUserName: {
-      'en-US':"Please, enter a nickname for this user",
-      'fr-FR':"Veuillez nommer cet utilisateur",
-      'pt-BR':"Por favor, insira um apelido para este usuário",
-      'es-ES':"Por favor, introduzca un apodo para este usuario"
-   }, defaultUserName: {
-      'en-US':"John Doe",
-      'fr-FR':"Jean Dupond",
-      'pt-BR':"Luiz Santos",
-      'es-ES':"Sergio Garcia"
    }, noFileApi: {
       'en-US':"The file API isn't supported on this browser yet.",
       'fr-FR':"Pas d'interface 'File' pour ce navigateur",
