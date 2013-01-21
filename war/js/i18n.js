@@ -120,7 +120,7 @@ var localeValues = {
       'fr-FR':"Album photo : ",
       'pt-BR':"Álbum de fotos: ",
       'es-ES':"Álbum de fotos: "
-   }, selAlbum: {
+   }, albumTitle: {
       'en-US':"(unspecified)",
       'fr-FR':"(non précisé)",
       'pt-BR':"(indeterminado)",

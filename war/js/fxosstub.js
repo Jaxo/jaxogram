@@ -118,6 +118,7 @@ function setInstallButton(buttonId) {
             if (install.state == "failed") {
                alert(i18n("installFailure"));
             }
+            dispatcher.post("install", install.state);
          }
       );
       install.on(

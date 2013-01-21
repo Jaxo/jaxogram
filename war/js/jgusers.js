@@ -112,6 +112,3 @@ function JgUserItem(userName, userPass, userNet) {
    this.ai = null;  // album id
    this.tt = null;  // album title
 }
-
-
-

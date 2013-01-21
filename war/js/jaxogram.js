@@ -2,6 +2,32 @@ var users;
 
 function init() {
    createDispatcher();
+   users = new JgUsers();
+   // users.cleanUp();
+   // users.destroy();
+   var params = getQueryParams();
+   if (params.OP === "granted") {
+      users.addUser(params.u, params.ap, "orkut");
+   }else if (params.OP === "denied") {
+      alert(i18n("authDenied") + "\n\n(" + params.msg + ")");
+   }
+   dispatcher.on(
+      "install",
+      function action(state) {
+         if (
+            (state == "uninstalled") &&
+            !users.hasSome() &&
+            params.OP !== "denied" &&
+            confirm(
+               "Jaxogram works nicer when installed,\n" +
+               "and it will remember your sign-in to Orkut.\n\n" +
+               "Want to install now?"
+            )
+         ) {
+            document.getElementById("btnInstall").click();
+         }
+      }
+   );
    setInstallButton("btnInstall");
 // document.getElementById('fdflt').click();
    fitImage(document.getElementById('photoImage'));
@@ -13,17 +39,8 @@ function init() {
       },
       false
    );
-   users = new JgUsers();
-   // users.cleanUp();
-   // users.destroy();
-   var params = getQueryParams();
-   if (params.OP === "granted") {
-      users.addUser(params.u, params.ap, "orkut");
-   }else if (params.OP === "denied") {
-      alert(i18n("authDenied") + "\n\n(" + params.msg + ")");
-   }
    var dfltLocale = navigator.language || navigator.userLanguage;
-   formatUsersList();
+   formatUsersList(false);
    translateBody(dfltLocale);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
 // window.onerror = function(msg, url, linenumber){
@@ -32,31 +49,31 @@ function init() {
 // }
 }
 
-function formatUsersList() {
+function formatUsersList(isUserRequired) {
    document.getElementById("jgUsersAid").innerHTML = (
       "<SPAN class='i18n' id='photoAlbum'>" +
-      i18n('photoAlbum') +
-      "</SPAN><i class='i18n' id='selAlbum'>" + i18n(selAlbum) + "</i>" +
+      i18n("photoAlbum") +
+      "</SPAN><i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>" +
       "<UL role='radiogroup' id='albumList' onclick='changeAlbum(this, event)'></UL>"
    );
    if (users.hasSome()) {
       var html = "";
       var selName = null;
-      var selAlbum = null;
+      var selAlbumTitle = null;
       users.forEach(
          function(name, pass, albumTitle, isSelected, net) {
             html += "<LI";
             if (isSelected) {
                selName = name;
-               selAlbum = albumTitle;
+               selAlbumTitle = albumTitle;
                html += " aria-selected='true'";
             }
             html += "><span role='trasher'>&#xF018;</span>" + name + "</LI>";
          }
       );
-      if (selAlbum) {
-         var albumTitleElt = document.getElementById('selAlbum');
-         albumTitleElt.textContent = selAlbum;
+      if (selAlbumTitle) {
+         var albumTitleElt = document.getElementById('albumTitle');
+         albumTitleElt.textContent = selAlbumTitle;
          albumTitleElt.removeAttribute("class");  // no more i18n'ed
       }
       document.getElementById("jgUsersIn").innerHTML = (
@@ -71,7 +88,7 @@ function formatUsersList() {
       );
       tellAccessPass();
    }else {
-      if (confirm(i18n("requestAuth"))) {
+      if (isUserRequired && confirm(i18n("requestAuth"))) {
          authorize();
       }else {
          document.getElementById("jgUsersIn").innerHTML = (
@@ -85,6 +102,7 @@ function formatUsersList() {
 function formatAlbumsList(albums, elt) {
    var html = "";
    var selAlbumId = users.getAlbumId();
+   var selAlbumTitle = users.getAlbumTitle();
    var isSelAlbumOK = false;
    for (var i=0, max=albums.length; i < max; ++i) {
       var album = albums[i];
@@ -105,7 +123,11 @@ function formatAlbumsList(albums, elt) {
       " onclick='createAlbum(true);event.stopPropagation();'>" +
       i18n('newAlbum') + "</SPAN></LI>" + html + "</UL>"
    );
-   if (!isSelAlbumOK) {
+   var albumTitleElt = document.getElementById('albumTitle');
+   if (isSelAlbumOK) {
+      albumTitleElt.textContent = selAlbumTitle;
+      albumTitleElt.removeAttribute("class");  // no more i18n'ed
+   }else {
       /*
       | Sanity check.
       | We didn't find the saved album ID in the list...
@@ -114,14 +136,13 @@ function formatAlbumsList(albums, elt) {
       // 1) Tell JgUsers that its album id is no more alive,
       users.setAlbum(null, null);
       // 2) Reflect this fact in the Photo Album title
-      var albumTitleElt = document.getElementById('selAlbum');
       albumTitleElt.setAttribute("class", "i18n");
-      albumTitleElt.textContent = i18n("selAlbum");
+      albumTitleElt.textContent = i18n("albumTitle");
    }
 }
 
 function changeAlbum(elt, event) {
-   var albumTitleElt = document.getElementById('selAlbum');
+   var albumTitleElt = document.getElementById('albumTitle');
    var liElt = getRealTarget(event);
    var albumTitle = liElt.getElementsByTagName("SPAN")[0].textContent;
    users.setAlbum(liElt.id, albumTitle);
@@ -137,11 +158,22 @@ function changeLogin(elt, event) {
       if (event.target.getAttribute("role") == "trasher") {
          if (confirm(i18n("revokeAccess", event.target.nextSibling.textContent))) {
             users.deleteUserAt(index);
-            formatUsersList();
+            formatUsersList(false);
          }
       }else {
          users.selectUserAt(index);
          document.getElementById('jgUserName').textContent = users.getUserName();
+         var albumTitle = users.getAlbumTitle();
+         document.getElementById("jgUsersAid").innerHTML = (
+            "<SPAN class='i18n' id='photoAlbum'>" +
+            i18n('photoAlbum') +
+            "</SPAN>" + (
+                albumTitle?
+                ("<i id='albumTitle'>" + albumTitle + "</i>") :
+                ("<i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>")
+             ) +
+            "<UL role='radiogroup' id='albumList' onclick='changeAlbum(this, event)'></UL>"
+         );
          tellAccessPass();
       }
    }
@@ -308,7 +340,7 @@ function createAlbum(isDirect) {
 
 function queryFor(what, whenDone) {
    if (!users.hasSome()) {
-      formatUsersList();
+      formatUsersList(true);
       return;
    }
    var request = new XMLHttpRequest();
@@ -335,7 +367,7 @@ function queryFor(what, whenDone) {
 
 function pickAndUploadImage(event) {
    if (!users.hasSome()) {
-      formatUsersList();
+      formatUsersList(true);
    }else {
       var albumId = users.getAlbumId();
       if (!albumId) {
@@ -376,10 +408,14 @@ function uploadPick(albumId) {
       request.setRequestHeader("Content-Type", 'image/jpeg');
       request.onreadystatechange = whenRequestStateChanged;
       request.send(a.result.blob);
-      var url = URL.createObjectURL(a.result.blob);
-      var img = document.getElementById('photoImage');
-      img.src = url;
-      img.onload = function() { URL.revokeObjectURL(url); };
+      try {
+         var url = URL.createObjectURL(a.result.blob);
+         var img = document.getElementById('photoImage');
+         img.src = url;
+         img.onload = function() { URL.revokeObjectURL(url); };
+      }catch (e) {
+         alert("Local error: " + e);
+      }
    };
    a.onerror = function() { alert(i18n('pickImageError')); };
 }
