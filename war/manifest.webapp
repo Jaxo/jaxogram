@@ -1,0 +1,45 @@
+{
+  "name": "Jaxogram",
+  "version": "0.7.00",
+  "locales": {
+    "en": { "description": "Jaxo's Photo Sharing App" },
+    "fr": { "description": "Jaxo l'App Photo Sharing" },
+    "pt": { "description": "App Jaxo de compartilhamento de foto" },
+    "es": { "description": "App Jaxo de uso compartido de fotos" }
+  },
+  "developer": {
+    "name": "Jaxo, Inc.",
+    "url": "http://www.jaxo.com"
+  },
+  "default_locale": "en",
+
+  "launch_path": "/index.html",
+  "icons": {
+    "32": "/applogos/jaxologo32.png",
+    "64": "/applogos/jaxologo64.png",
+    "128": "/applogos/jaxologo128.png"
+  },
+  "installs_allowed_from": ["*"],
+
+  "type": "privileged",
+  "permissions": {
+    "contacts": { "description": "Import Orkut friends as contacts", "access": "readcreate" },
+    "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
+    "geolocation": { "description": "Geotag photos" },
+    "storage": { "description": "Use local storage for access tokens" },
+    "network-http": { "description": "http://jaxogram.appspot.com" },
+    "network-tcp": { "description": "http://jaxogram.appspot.com" },
+    "camera": { "description": "Share photos" }
+  },
+
+  "activities": {
+    "share": {
+      "filters": {
+        "type": "image/*"
+      },
+      "href": "/index.html",
+      "disposition": "window",
+      "returnValue": true
+    }
+  }
+}
