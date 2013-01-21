@@ -108,7 +108,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter
 
    public String listAlbumsAsJson() throws Exception {
       GetAlbumsTx tx = getAlbumsTF().getSelfAlbums();
-      tx.setCount(5);  // get first 5 albums
+      tx.setCount(20);  // get first 20 albums
       BatchTransaction btx = newBatch();
       btx.add(tx);
       submitBatch(btx);
@@ -126,6 +126,27 @@ public class OrkutNetwork extends DefaultOrkutAdapter
          return sb.toString();
       }
    }
+
+   public String createAlbumAsJson(
+      String title,  // Album title
+      String desc    // Album description
+   ) throws Exception {
+      CreateAlbumTx tx = getAlbumsTF().createAlbum(title, desc);
+      BatchTransaction btx = newBatch();
+      btx.add(tx);
+      submitBatch(btx);
+      if (tx.hasError()) {
+         throw new Exception("Error creating album: " + tx.getError());
+      }
+      StringBuilder sb = new StringBuilder();
+      sb.append("{\"new\":");
+      sb.append(tx.getAlbum().toJsonString());
+      sb.append(",\"list\":");
+      sb.append(listAlbumsAsJson());
+      sb.append("}");
+      return sb.toString();
+   }
+
 
    public String whoAmI() throws Exception {
       BatchTransaction btx = newBatch();
@@ -336,7 +357,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       String title,  // Album title
       String desc    // Album description
    ) throws Exception {
-      CreateAlbumTx tx = getAlbumsTF().createAlbum(title,desc);
+      CreateAlbumTx tx = getAlbumsTF().createAlbum(title, desc);
       BatchTransaction btx = newBatch();
       btx.add(tx);
       submitBatch(btx);
@@ -347,7 +368,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter
 
    public String listAlbums() throws Exception {
       GetAlbumsTx tx = getAlbumsTF().getSelfAlbums();
-      tx.setCount(5);  // get first 5 albums
+      tx.setCount(20);  // get first 20 albums
       BatchTransaction btx = newBatch();
       btx.add(tx);
       submitBatch(btx);

@@ -1,6 +1,7 @@
 var users;
 
 function init() {
+   createDispatcher();
    setInstallButton("btnInstall");
 // document.getElementById('fdflt').click();
    fitImage(document.getElementById('photoImage'));
@@ -81,52 +82,41 @@ function formatUsersList() {
       }
    }
 }
-
-function listAlbums(elt, event) {
-   if (elt.getAttribute("aria-expanded") != "true") {
-      var ulChildElt = elt.getElementsByTagName("UL")[0];
-      if (ulChildElt != null) {     // defense!
-         queryFor(
-            'listAlbums',
-            function(albums) {
-               var html = "";
-               var selAlbumId = users.getAlbumId();
-               var isSelAlbumOK = false;
-               for (var i=0, max=albums.length; i < max; ++i) {
-                  var album = albums[i];
-                  html += "<LI id='" + album.id;
-                  if (selAlbumId == album.id) {
-                     html += "' aria-selected='true";
-                     isSelAlbumOK = true;
-                  }
-                  html += (
-                     "'><IMG src='" + album.thumbnailUrl + "'/><DIV><SPAN>" +
-                     album.title +
-                     "</SPAN><BR/><SMALL>" +
-                     album.description + "</SMALL></DIV></LI>"
-                  );
-               }
-               ulChildElt.innerHTML = (
-                  "<LI class='i18n' id='newAlbum'" +
-                  " onclick='createAlbum();event.stopPropagation();'>" +
-                  i18n('newAlbum') + "</SPAN></LI>" + html + "</UL>"
-               );
-               if (!isSelAlbumOK) {
-                  /*
-                  | Sanity check.
-                  | We didn't find the saved album ID in the list...
-                  | May be was it removed?
-                  */
-                  // 1) Tell JgUsers that its album id is no more alive,
-                  users.setAlbum(null, null);
-                  // 2) Reflect this fact in the Photo Album title
-                  var albumTitleElt = document.getElementById('selAlbum');
-                  albumTitleElt.setAttribute("class", "i18n");
-                  albumTitleElt.textContent = i18n("selAlbum");
-               }
-            }
-         );
+function formatAlbumsList(albums, elt) {
+   var html = "";
+   var selAlbumId = users.getAlbumId();
+   var isSelAlbumOK = false;
+   for (var i=0, max=albums.length; i < max; ++i) {
+      var album = albums[i];
+      html += "<LI id='" + album.id;
+      if (selAlbumId == album.id) {
+         html += "' aria-selected='true";
+         isSelAlbumOK = true;
       }
+      html += (
+         "'><IMG src='" + album.thumbnailUrl + "'/><DIV><SPAN>" +
+         album.title +
+         "</SPAN><BR/><SMALL>" +
+         album.description + "</SMALL></DIV></LI>"
+      );
+   }
+   elt.innerHTML = (
+      "<LI class='i18n' id='newAlbum'" +
+      " onclick='createAlbum(true);event.stopPropagation();'>" +
+      i18n('newAlbum') + "</SPAN></LI>" + html + "</UL>"
+   );
+   if (!isSelAlbumOK) {
+      /*
+      | Sanity check.
+      | We didn't find the saved album ID in the list...
+      | May be was it removed?
+      */
+      // 1) Tell JgUsers that its album id is no more alive,
+      users.setAlbum(null, null);
+      // 2) Reflect this fact in the Photo Album title
+      var albumTitleElt = document.getElementById('selAlbum');
+      albumTitleElt.setAttribute("class", "i18n");
+      albumTitleElt.textContent = i18n("selAlbum");
    }
 }
 
@@ -137,11 +127,6 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
-}
-
-function createAlbum() {
-   prompt(i18n('createAlbum'));
-   alert("Not Yet Implemented.\nSorry...");  // FIXME
 }
 
 function changeLogin(elt, event) {
@@ -207,7 +192,6 @@ function getQueryParams() {
 
 function authorize() {
    var request = new XMLHttpRequest();
-   request.onreadystatechange = whenRequestStateChanged;
    // obtain the URL at which the user will grant us access
    request.open("GET", "jaxogram?OP=getUrl", true);
    request.onreadystatechange = function() {
@@ -271,6 +255,57 @@ function queryWhoAmI() {
    );
 }
 
+function listAlbums(elt, event) {
+   if (elt.getAttribute("aria-expanded") == "true") {
+      if (!event.isTrusted) {    // a programatic click forces list refresh
+         event.stopPropagation();
+      }else {
+         return;
+      }
+   }
+   var ulChildElt = elt.getElementsByTagName("UL")[0];
+   if (ulChildElt != null) {     // defense!
+      queryFor(
+         'listAlbums',
+         function(albums) {
+            formatAlbumsList(albums, ulChildElt);
+            dispatcher.post("albumsListed", albums.length);
+         }
+      );
+   }
+}
+
+function createAlbum(isDirect) {
+   var resp = prompt(
+      i18n(isDirect? 'createAlbumProlog1' : 'createAlbumProlog2') +
+      i18n('createAlbum'),
+      'Jaxogram / ' + i18n('albumDescr')
+   );
+   if (resp) {
+      var ix = resp.indexOf('/');
+      var what = "createAlbum";
+      if (ix == -1) {
+         what += "&title=" + resp.replace(/^\s+|\s+$/g,'');
+      }else {
+         what += (
+            "&title=" + resp.substr(0, ix).replace(/^\s+|\s+$/g,'') +
+            "&descr=" + resp.substr(ix+1).replace(/^\s+|\s+$/g,'')
+         );
+      }
+      queryFor(
+         what,
+         function(val) {
+            users.setAlbum(val.new.id, val.new.title);
+            formatAlbumsList(
+               val.list,
+               document.getElementById("jgUsersAid").
+               getElementsByTagName("UL")[0]
+            );
+         }
+      );
+   }
+}
+
 function queryFor(what, whenDone) {
    if (!users.hasSome()) {
       formatUsersList();
@@ -285,9 +320,10 @@ function queryFor(what, whenDone) {
       case 4: // DONE
          document.getElementById("progresspane").style.visibility='hidden';
          if (this.status == 200) {
-            var val = JSON.parse(this.responseText)
+            var val = JSON.parse(this.responseText);
             whenDone(val);
          }else {
+            dispatcher.clean();
             alert(this.responseText);
          }
          break;
@@ -303,7 +339,21 @@ function pickAndUploadImage(event) {
    }else {
       var albumId = users.getAlbumId();
       if (!albumId) {
-         createAlbum();
+         event.stopPropagation();
+         dispatcher.on(
+            "albumsListed",
+            function action(albumsCount) {
+               dispatcher.off("albumsListed", action);
+               if (albumsCount > 0) {
+                  alert(i18n("selectOrCreateAlbum"));
+               }else {
+                  createAlbum(false);
+               }
+            }
+         );
+         // show the appropriate panel for selecting the default album
+         document.getElementById("jgUsersAid").click();
+         expandSidebarView(1);
       }else {
          try {
             uploadPick(albumId);

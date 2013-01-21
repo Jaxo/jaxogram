@@ -109,6 +109,15 @@ public class JaxogramServlet extends HttpServlet
          }else if (op.equals("listAlbums")) {
             writer.println(makeOrkutNetwork(req).listAlbumsAsJson());
 
+         }else if (op.equals("createAlbum")) {
+            String title = req.getParameter("title");
+            String descr = req.getParameter("descr");
+            writer.println(
+               makeOrkutNetwork(req).createAlbumAsJson(
+                  (title == null)? "No title" : title,
+                  (descr == null)? "" : descr
+               )
+            );
          }else if (op.startsWith("postImage")) {
             String imgType = "jpg";
             String imgTitle = "(No Title)";

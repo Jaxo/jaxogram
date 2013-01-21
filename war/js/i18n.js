@@ -85,11 +85,36 @@ var localeValues = {
       'fr-FR':"Photo insérée dans l'album \"%1\"",
       'pt-BR':"Foto carregado com sucesso em álbum \"%1\"",
       'es-ES':"Foto cargado correctamente en el álbum \"%1\""
+   }, albumCreated: {
+      'en-US':"Album \"%1\" was created",
+      'fr-FR':"L'album \"%1\" a été créé.",
+      'pt-BR':"\"%1\" álbum criado.",
+      'es-ES':"Album \"%1\" creada."
+   }, selectOrCreateAlbum: {
+      'en-US':"You need first to select or create the album in which the photo will be inserted",
+      'fr-FR':"Vous devez d'abord sélectionner ou créer l'album dans lequel la photo sera insérée",
+      'pt-BR':"Você precisa primeiro selecionar ou criar o álbum em que a foto será inserida",
+      'es-ES':"Usted necesita primero seleccionar o crear el álbum en el que se inserta la foto"
+   }, createAlbumProlog1: {
+      'en-US':"New album\n\n",
+      'fr-FR':"Nouvel album\n\n",
+      'pt-BR':"Novo álbum\n\n",
+      'es-ES':"Nuevo álbum\n\n"
+   }, createAlbumProlog2: {
+      'en-US':"You need first to create an album in which the photo will be inserted\n\n",
+      'fr-FR':"Vous devez d'abord créer un album dans lequel la photo sera insérée\n\n",
+      'pt-BR':"Você precisa primeiro criar um álbum em que a foto será inserida\n\n",
+      'es-ES':"Necesitas primero en crear un álbum en el que se inserta la foto\n\n"
    }, createAlbum: {
-      'en-US':"Please enter the album title,\npossibly followed by a slash sign and a description",
-      'fr-FR':"Veuillez entrer le titre de l'album,\néventuellement suivi d'une barre oblique et une description",
-      'pt-BR':"Por favor insira o título do álbum,\npossivelmente seguido por um sinal de barra e uma descrição",
-      'es-ES':"Por favor introduce el título del álbum,\nposiblemente seguido de un signo diagonal y una descripción"
+      'en-US':"Enter  the album title,\npossibly followed by a slash sign and a description",
+      'fr-FR':"Entrer le titre de l'album,\néventuellement suivi d'une barre oblique et une description",
+      'pt-BR':"Digite o título do álbum, \npossibly seguido por um sinal de barra e uma descrição",
+      'es-ES':"lntroduzca el título del álbum,\npossibly seguido por un signo de barra y una descripción"
+   }, albumDescr: {
+      'en-US':"Uploads",
+      'fr-FR':"Téléchargements",
+      'pt-BR':"Carregamentos",
+      'es-ES':"Subidas"
    }, photoAlbum: {
       'en-US':"Photo album: ",
       'fr-FR':"Album photo : ",

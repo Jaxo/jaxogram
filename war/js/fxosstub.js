@@ -225,7 +225,6 @@ function getRealTarget(clickedEvent) {
    return elt;
 }
 
-
 function expandPage(id) {
    var elt = document.getElementById(id);
    var siblings = elt.parentNode.children;
