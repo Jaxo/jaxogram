@@ -1,140 +1,96 @@
 function Install() {
-   this.state = "idle";
-
-   // trigger events registration
-   var events = new Object();
-   this.on = function(name, func) {
-      events[name] = (events[name] || []).concat([func]);
-   };
-   this.off = function(name, func) {
-      if (events[name]) {
-         var res = [];
-         for (var i=0, l=events[name].length; i<l; ++i) {
-            var f = events[name][i];
-            if (f != func) res.push();
-         }
-         events[name] = res;
-      }
-   };
-   this.trigger = function(name) {
-      var args = Array.prototype.slice.call(arguments, 1);
-      if (events[name]) {
-         for (var i=0, l=events[name].length; i<l; ++i) {
-            events[name][i].apply(this, args);
-         }
-      }
-   };
-   this.triggerChange = function(state) {  // helper
-      //var msg = "State: " + this.state + " -> " + state;
-      //if (typeof this.error !== "undefined") msg += "\n" + this.error;
-      //alert(msg);
-      this.state = state;
-      this.trigger("change", this.state);
-   }
-
-   this.init = function() {
-      if (navigator.mozApps) {
-         var request = navigator.mozApps.getSelf();
-         var that = this;
-         request.onsuccess = function () {
-            if (!this.result) {
-               that.installUrl = (
-                  location.href.substring(0, location.href.lastIndexOf("/")) +
-                  "/manifest.webapp"
-               );
-               that.doIt = function() {
-                  //*/ alert("Install from " + that.installUrl);
-                  try {
-                     var req2 = navigator.mozApps.install(that.installUrl);
-                     req2.onsuccess = function(data) {
-                        that.triggerChange("installed");
-                        //*/ alert("Bingo!");
-                     };
-                     req2.onerror = function() {
-                        that.error = this.error;
-                        that.triggerChange("failed");
-                     };
-                  }catch (error) {
-                     that.error = error;
-                     that.triggerChange("failed");
-                  }
-               };
-               that.triggerChange("uninstalled");
-            }else {
-               that.triggerChange("installed");
-            }
-         };
-         request.onerror = function (error) {
-            that.error = error;
-            that.triggerChange("failed");
-         };
-      }else if ((typeof chrome !== "undefined") && chrome.webstore && chrome.app) {
-         if (!chrome.app.isInstalled) {
-            var that = this;
-            this.doIt = function() {
-               chrome.webstore.install(
-                  null,
-                  function () { that.triggerChange("installed"); },
-                  function (err) {
-                     that.error = err;
-                     that.triggerChange("failed");
-                  }
-               );
-            };
-            this.triggerChange("uninstalled");
+   if (navigator.mozApps) {
+      var that = this;
+      var request = navigator.mozApps.getSelf();
+      request.onsuccess = function () {
+         if (this.result) {
+            dispatcher.post("install_changed", "installed");
          }else {
-            this.triggerChange("installed");
-         }
-      }else if (typeof window.navigator.standalone !== "undefined") {
-         if (!window.navigator.standalone) {
-            /*
-            | Right now, just asks that something show a UI element mentioning
-            | how to install using Safari's "Add to Home Screen" button.
-            */
-            this.doIt = function() {
-               this.trigger("showiOSInstall", navigator.platform.toLowerCase());
+            that.installUrl = (
+               location.href.substring(0, location.href.lastIndexOf("/")) +
+               "/manifest.webapp"
+            );
+            that.doIt = function() {
+               //*/ alert("Install from " + that.installUrl);
+               try {
+                  var req2 = navigator.mozApps.install(that.installUrl);
+                  req2.onsuccess = function(data) {
+                     dispatcher.post("install_changed", "installed");
+                     //*/ alert("Bingo!");
+                  };
+                  req2.onerror = function() {
+                     dispatcher.post("install_changed", "failed", this.error);
+                  };
+               }catch (error) {
+                  dispatcher.post("install_changed", "failed", error);
+               }
             };
-            this.triggerChange("uninstalled");
-         }else {
-            this.triggerChange("installed");
+            dispatcher.post("install_changed", "uninstalled");
          }
+      };
+      request.onerror = function(error) {
+         dispatcher.post("install_changed", "failed", error);
+      };
+   }else if ((typeof chrome !== "undefined") && chrome.webstore && chrome.app) {
+      if (chrome.app.isInstalled) {
+         dispatcher.post("install_changed", "installed");
       }else {
-         this.triggerChange("unsupported");
+         this.doIt = function() {
+            chrome.webstore.install(
+               null,
+               function() {
+                  dispatcher.post("install_changed", "installed");
+               },
+               function(error) {
+                  dispatcher.post("install_changed", "failed", error);
+               }
+            );
+         };
+         dispatcher.post("install_changed", "uninstalled");
       }
+   }else if (typeof window.navigator.standalone !== "undefined") {
+      if (window.navigator.standalone) {
+         dispatcher.post("install_changed", "installed");
+      }else {
+         /*
+         | Right now, just asks that something show a UI element mentioning
+         | how to install using Safari's "Add to Home Screen" button.
+         */
+         this.doIt = function() {
+            dispatcher.post("install_forIOS", navigator.platform.toLowerCase());
+         };
+         dispatcher.post("install_changed", "uninstalled");
+      }
+   }else {
+      dispatcher.post("install_changed", "unsupported");
    }
    return this;
 }
 
 function setInstallButton(buttonId) {
-   if (!document.getElementById(buttonId)) {
-      document.addEventListener("DOMContentLoaded", setInstallButton);
-   }else {
-      var install = new Install();
-      var buttonElt = document.getElementById(buttonId);
-      install.on(
-         "change",
-         function() {
-            buttonElt.style.display = (
-               (install.state == "uninstalled")? "table-cell" : "none"
-            );
-            if (install.state == "failed") {
-               alert(i18n("installFailure"));
-            }
-            dispatcher.post("install", install.state);
+   var buttonElt = document.getElementById(buttonId);
+   dispatcher.on(
+      "install_changed",
+      function action(state) {
+         buttonElt.style.display = (
+            (state == "uninstalled")? "table-cell" : "none"
+         );
+         if (state == "failed") {
+            alert(i18n("installFailure"));
          }
-      );
-      install.on(
-         "showiOSInstall",
-         function() {
-            buttonElt.style.display = "none";
-            alert(i18n("safariInstall"));
-         }
-      );
-      buttonElt.addEventListener(
-         "click", function() { install.doIt(); }
-      );
-      install.init();
-   }
+      }
+   );
+   dispatcher.on(
+      "install_forIOS",
+      function action(state) {
+         buttonElt.style.display = "none";
+         alert(i18n("safariInstall"));
+      }
+   );
+   var install = new Install();
+   buttonElt.addEventListener(
+      "click", function() { install.doIt(); }
+   );
 }
 
 function toggleSidebarView() {

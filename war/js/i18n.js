@@ -20,6 +20,11 @@ var localeValues = {
       'fr-FR':"Partagez caméra et galerie photos sur Orkut",
       'pt-BR':"Compartilhar câmera e galeria de fotos no Orkut",
       'es-ES':"Compartir de la cámara y las fotos en galería de Orkut"
+   }, betterInstall: {
+      'en-US':"Jaxogram works nicer when installed,\nand it will remember your sign-in to Orkut.\n\nWant to install now?",
+      'fr-FR':"Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion à Orkut.\n\nVoulez-vous l'installer maintenant?",
+      'pt-BR':"Jaxogram funciona melhor quando instalado,\ne ele vai se lembrar do seu login do Orkut.\n\nDeseja instalar agora?",
+      'es-ES':"Jaxogram funciona mejor cuando se instala,\ny recordará su sesión de Orkut.\n\n¿Desea instalarlo ahora?"
    }, installFailure: {
       'en-US':"Install has failed",
       'fr-FR':"Echec de l'installation",

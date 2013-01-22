@@ -12,17 +12,11 @@ function init() {
       alert(i18n("authDenied") + "\n\n(" + params.msg + ")");
    }
    dispatcher.on(
-      "install",
+      "install_changed",
       function action(state) {
          if (
-            (state == "uninstalled") &&
-            !users.hasSome() &&
-            params.OP !== "denied" &&
-            confirm(
-               "Jaxogram works nicer when installed,\n" +
-               "and it will remember your sign-in to Orkut.\n\n" +
-               "Want to install now?"
-            )
+            (state == "uninstalled") && !users.hasSome() &&
+            (params.OP !== "denied") && confirm(i18n('betterInstall'))
          ) {
             document.getElementById("btnInstall").click();
          }
