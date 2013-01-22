@@ -43,6 +43,7 @@ function init() {
    formatUsersList(false);
    translateBody(dfltLocale);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
+   document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
 // window.onerror = function(msg, url, linenumber){
 //    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
 //    return true;
