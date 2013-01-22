@@ -32,73 +32,75 @@ function Install() {
       this.trigger("change", this.state);
    }
 
-   if (navigator.mozApps) {
-      var request = navigator.mozApps.getSelf();
-      var that = this;
-      request.onsuccess = function () {
-         if (!this.result) {
-            that.triggerChange("uninstalled");
-            that.installUrl = (
-               location.href.substring(0, location.href.lastIndexOf("/")) +
-               "/manifest.webapp"
-            );
-            that.doIt = function() {
-               //*/ alert("Install from " + that.installUrl);
-               try {
-                  var req2 = navigator.mozApps.install(that.installUrl);
-                  req2.onsuccess = function(data) {
-                     that.triggerChange("installed");
-                     //*/ alert("Bingo!");
-                  };
-                  req2.onerror = function() {
-                     that.error = this.error;
-                     that.triggerChange("failed");
-                  };
-               }catch (error) {
-                  that.error = error;
-                  that.triggerChange("failed");
-               }
-            };
-         }else {
-            that.triggerChange("installed");
-         }
-      };
-      request.onerror = function (error) {
-         that.error = error;
-         that.triggerChange("failed");
-      };
-   }else if ((typeof chrome !== "undefined") && chrome.webstore && chrome.app) {
-      if (!chrome.app.isInstalled) {
-         this.triggerChange("uninstalled");
+   this.init = function() {
+      if (navigator.mozApps) {
+         var request = navigator.mozApps.getSelf();
          var that = this;
-         this.doIt = function() {
-            chrome.webstore.install(
-               null,
-               function () { that.triggerChange("installed"); },
-               function (err) {
-                  that.error = err;
-                  that.triggerChange("failed");
-               }
-            );
+         request.onsuccess = function () {
+            if (!this.result) {
+               that.installUrl = (
+                  location.href.substring(0, location.href.lastIndexOf("/")) +
+                  "/manifest.webapp"
+               );
+               that.doIt = function() {
+                  //*/ alert("Install from " + that.installUrl);
+                  try {
+                     var req2 = navigator.mozApps.install(that.installUrl);
+                     req2.onsuccess = function(data) {
+                        that.triggerChange("installed");
+                        //*/ alert("Bingo!");
+                     };
+                     req2.onerror = function() {
+                        that.error = this.error;
+                        that.triggerChange("failed");
+                     };
+                  }catch (error) {
+                     that.error = error;
+                     that.triggerChange("failed");
+                  }
+               };
+               that.triggerChange("uninstalled");
+            }else {
+               that.triggerChange("installed");
+            }
          };
-      }else {
-         this.triggerChange("installed");
-      }
-   }else if (typeof window.navigator.standalone !== "undefined") {
-      if (!window.navigator.standalone) {
-         this.triggerChange("uninstalled");
-         /*
-         | Right now, just asks that something show a UI element mentioning
-         | how to install using Safari's "Add to Home Screen" button.
-         */
-         this.doIt = function() {
-            this.trigger("showiOSInstall", navigator.platform.toLowerCase());
+         request.onerror = function (error) {
+            that.error = error;
+            that.triggerChange("failed");
          };
+      }else if ((typeof chrome !== "undefined") && chrome.webstore && chrome.app) {
+         if (!chrome.app.isInstalled) {
+            var that = this;
+            this.doIt = function() {
+               chrome.webstore.install(
+                  null,
+                  function () { that.triggerChange("installed"); },
+                  function (err) {
+                     that.error = err;
+                     that.triggerChange("failed");
+                  }
+               );
+            };
+            this.triggerChange("uninstalled");
+         }else {
+            this.triggerChange("installed");
+         }
+      }else if (typeof window.navigator.standalone !== "undefined") {
+         if (!window.navigator.standalone) {
+            /*
+            | Right now, just asks that something show a UI element mentioning
+            | how to install using Safari's "Add to Home Screen" button.
+            */
+            this.doIt = function() {
+               this.trigger("showiOSInstall", navigator.platform.toLowerCase());
+            };
+            this.triggerChange("uninstalled");
+         }else {
+            this.triggerChange("installed");
+         }
       }else {
-         this.triggerChange("installed");
+         this.triggerChange("unsupported");
       }
-   }else {
-      this.triggerChange("unsupported");
    }
    return this;
 }
@@ -131,6 +133,7 @@ function setInstallButton(buttonId) {
       buttonElt.addEventListener(
          "click", function() { install.doIt(); }
       );
+      install.init();
    }
 }
 
