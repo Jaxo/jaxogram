@@ -101,16 +101,18 @@ function formatAlbumsList(albums, elt) {
    var isSelAlbumOK = false;
    for (var i=0, max=albums.length; i < max; ++i) {
       var album = albums[i];
+      var title = album.title;
+      var description = album.description;
+      if (!title || (title.length == 0)) title = "no title";
+      if (!description || (description.length == 0)) description = "&nbsp;";
       html += "<LI id='" + album.id;
       if (selAlbumId == album.id) {
          html += "' aria-selected='true";
          isSelAlbumOK = true;
       }
       html += (
-         "'><IMG src='" + album.thumbnailUrl + "'/><DIV><SPAN>" +
-         album.title +
-         "</SPAN><BR/><SMALL>" +
-         album.description + "</SMALL></DIV></LI>"
+         "'><IMG src='" + album.thumbnailUrl + "'/><DIV><SPAN>" + title +
+         "</SPAN><BR/><SMALL>" + description + "</SMALL></DIV></LI>"
       );
    }
    elt.innerHTML = (
