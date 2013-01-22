@@ -52,9 +52,9 @@ function init() {
 
 function formatUsersList(isUserRequired) {
    document.getElementById("jgUsersAid").innerHTML = (
-      "<SPAN class='i18n' id='photoAlbum'>" +
+      "<SMALL class='i18n' id='photoAlbum'>" +
       i18n("photoAlbum") +
-      "</SPAN><i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>" +
+      "</SMALL><BR/><i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>" +
       "<UL role='radiogroup' id='albumList' onclick='changeAlbum(this, event)'></UL>"
    );
    if (users.hasSome()) {
@@ -78,9 +78,9 @@ function formatUsersList(isUserRequired) {
          albumTitleElt.removeAttribute("class");  // no more i18n'ed
       }
       document.getElementById("jgUsersIn").innerHTML = (
-         "<SPAN class='i18n' id='loginAs'>" +
+         "<SMALL class='i18n' id='loginAs'>" +
          i18n('loginAs') +
-         "</SPAN><i id='jgUserName'>" +
+         "</SMALL><BR/><i id='jgUserName'>" +
          selName +
          "</i><UL role='radiogroup' onclick='changeLogin(this, event);'>" +
          "<LI class='i18n' id='newLogin'" +
@@ -166,9 +166,9 @@ function changeLogin(elt, event) {
          document.getElementById('jgUserName').textContent = users.getUserName();
          var albumTitle = users.getAlbumTitle();
          document.getElementById("jgUsersAid").innerHTML = (
-            "<SPAN class='i18n' id='photoAlbum'>" +
+            "<SMALL class='i18n' id='photoAlbum'>" +
             i18n('photoAlbum') +
-            "</SPAN>" + (
+            "</SMALL><BR/>" + (
                 albumTitle?
                 ("<i id='albumTitle'>" + albumTitle + "</i>") :
                 ("<i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>")

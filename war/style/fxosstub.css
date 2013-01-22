@@ -313,6 +313,9 @@ button {
   background-image: url("images/pattern.png");
   background-color: #555d65;            /* Mobile only */
 }
+.menuList small {
+  font-size: 66%;
+}
 .menuList ul  {
   position: relative;
   margin: 0;
@@ -429,10 +432,6 @@ li[aria-selected=true], li[role=listbox] {
    position: absolute;
    clip: rect(0, 3.2rem, 3rem, 0);                  /* T, R, B, L */
 }
-#albumList li small {
-  font-size:1rem;
-}
-
 /*-- Styles specific to jaxogram --*/
 .body textarea {
   -moz-box-sizing: border-box;
