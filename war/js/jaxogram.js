@@ -26,13 +26,14 @@ function init() {
 // document.getElementById('fdflt').click();
    fitImage(document.getElementById('photoImage'));
    window.addEventListener("resize", fitImages, false);
-   document.getElementById("p1").addEventListener(
-      'transitionend',
-      function(event) {
-         p1Expanded(event.target.attributes["aria-expanded"].value == "true");
-      },
-      false
-   );
+// document.getElementById("p1").addEventListener(
+//    'transitionend',
+//    function(event) {
+//       p1Expanded(event.target.attributes["aria-expanded"].value == "true");
+//    },
+//    false
+// );
+
    var dfltLocale = navigator.language || navigator.userLanguage;
    formatUsersList(false);
    translateBody(dfltLocale);
@@ -42,6 +43,39 @@ function init() {
 //    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
 //    return true;
 // }
+   var eltMain = document.getElementById("main");
+   new GestureDetector(eltMain).startDetecting();
+   eltMain.addEventListener("swipe", swipeHandler);
+}
+
+// function p1Expanded(isExpanded) {
+//    var style = document.getElementById("btnSecond").style;
+//    if (isExpanded) {
+//       style.display ="";
+//    }else {
+//       style.display = "none";
+//    }
+// }
+
+function swipeHandler(e) {
+   var direction = e.detail.direction;
+   if (direction == 'right') {
+      expandSidebarView(1);
+   }else if (direction == 'left') {
+      expandSidebarView(-1);
+   }
+// alert(
+//    "Swipe:" +
+//    "\n start: " + detail.start +
+//    "\n end: " + detail.end +
+//    "\n dx: " + detail.dx +
+//    "\n dy: " + detail.dy +
+//    "\n dt: " + detail.dt +
+//    "\n vx: " + detail.vx +
+//    "\n vy: " + detail.vy +
+//    "\n direction: " + detail.direction +
+//    "\n angle: " + detail.angle
+// );
 }
 
 function formatUsersList(isUserRequired) {
@@ -94,6 +128,7 @@ function formatUsersList(isUserRequired) {
       }
    }
 }
+
 function formatAlbumsList(albums, elt) {
    var html = "";
    var selAlbumId = users.getAlbumId();
@@ -180,15 +215,6 @@ function changeLanguage(elt, event) {
    var clicked = event.target;
    translateBody(clicked.id);
    document.getElementById('usedLang').textContent = clicked.textContent;
-}
-
-function p1Expanded(isExpanded) {
-   // var style = document.getElementById("btnSecond").style;
-   // if (isExpanded) {
-   //    style.display ="";
-   // }else {
-   //    style.display = "none";
-   // }
 }
 
 function fitImages() {
