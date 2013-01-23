@@ -131,16 +131,30 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       String title,  // Album title
       String desc    // Album description
    ) throws Exception {
+      BatchTransaction btx;
       CreateAlbumTx tx = getAlbumsTF().createAlbum(title, desc);
-      BatchTransaction btx = newBatch();
+      btx = newBatch();
       btx.add(tx);
       submitBatch(btx);
       if (tx.hasError()) {
          throw new Exception("Error creating album: " + tx.getError());
       }
+      Album album = tx.getAlbum();
+      /*------*/
+//    album.setTitle(title);
+//    album.setDescription(desc);
+//    btx = newBatch();
+//    UpdateAlbumTx utx = getAlbumsTF().updateAlbum(album);
+//    btx.add(utx);
+//    submitBatch(btx);
+//    if (utx.hasError()) {
+//       throw new Exception("Error updating album: " + utx.getError());
+//    }
+      /*------*/
       StringBuilder sb = new StringBuilder();
       sb.append("{\"new\":");
-      sb.append(tx.getAlbum().toJsonString());
+      // sb.append(tx.getAlbum().toJsonString());
+      sb.append(album.toJsonString());
       sb.append(",\"list\":");
       sb.append(listAlbumsAsJson());
       sb.append("}");
