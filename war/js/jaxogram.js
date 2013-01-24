@@ -15,7 +15,7 @@ window.onload = function() {
       "install_changed",
       function action(state) {
          if (
-            (state == "uninstalled") && !users.hasSome() &&
+            (state === "uninstalled") && !users.hasSome() &&
             (params.OP !== "denied") && confirm(i18n('betterInstall'))
          ) {
             document.getElementById("btnInstall").click();
@@ -55,7 +55,7 @@ window.onload = function() {
    var eltMain = document.getElementById("main");
    new GestureDetector(eltMain).startDetecting();
    eltMain.addEventListener("swipe", swipeHandler);
-}
+};
 
 // function p1Expanded(isExpanded) {
 //    var style = document.getElementById("btnSecond").style;
@@ -68,9 +68,9 @@ window.onload = function() {
 
 function swipeHandler(e) {
    var direction = e.detail.direction;
-   if (direction == 'right') {
+   if (direction === 'right') {
       expandSidebarView(1);
-   }else if (direction == 'left') {
+   }else if (direction === 'left') {
       expandSidebarView(-1);
    }
 // alert(
@@ -147,10 +147,10 @@ function formatAlbumsList(albums, elt) {
       var album = albums[i];
       var title = album.title;
       var description = album.description;
-      if (!title || (title.length == 0)) title = "no title";
-      if (!description || (description.length == 0)) description = "&nbsp;";
+      if (!title || (title.length === 0)) title = "no title";
+      if (!description || (description.length === 0)) description = "&nbsp;";
       html += "<LI id='" + album.id;
-      if (selAlbumId == album.id) {
+      if (selAlbumId === album.id) {
          html += "' aria-selected='true";
          isSelAlbumOK = true;
       }
@@ -193,10 +193,10 @@ function changeAlbum(elt, event) {
 
 function changeLogin(elt, event) {
    var liElt = getRealTarget(event);
-   if (liElt != null) {
+   if (liElt) {
       var index = -1;
       while (liElt=liElt.previousSibling) ++index;
-      if (event.target.getAttribute("role") == "trasher") {
+      if (event.target.getAttribute("role") === "trasher") {
          if (confirm(i18n("revokeAccess", event.target.nextSibling.textContent))) {
             users.deleteUserAt(index);
             formatUsersList(false);
@@ -232,6 +232,7 @@ function fitImages() {
    fitImage(document.getElementById('photoImage'));
 }
 function fitImage(img) {
+   var s;
    var elt = document.getElementById("p1");
    if ((elt.offsetHeight * img.offsetWidth)<(img.offsetHeight * elt.offsetWidth)) {
       s = "height:100%";
@@ -243,11 +244,11 @@ function fitImage(img) {
 
 function getQueryParams() {
    var query = window.location.search.substr(1).split('&');
-   if (query == "") return {};
+   if (query === "") return {};
    var params = {};
    for (var i=0; i < query.length; ++i) {
        var param = query[i].split('=');
-       if (param.length == 2) {
+       if (param.length === 2) {
           params[param[0]] = decodeURIComponent(param[1].replace(/\+/g, " "));
        }
    }
@@ -259,8 +260,8 @@ function authorize() {
    // obtain the URL at which the user will grant us access
    request.open("GET", "jaxogram?OP=getUrl", true);
    request.onreadystatechange = function() {
-      if (request.readyState == 4) {
-         if (this.status == 200) {
+      if (request.readyState === 4) {
+         if (this.status === 200) {
             // navigate to it...
             window.location.href = request.responseText;
 //          window.open(
@@ -272,7 +273,7 @@ function authorize() {
             alert(this.responseText);
          }
       }
-   }
+   };
    request.send();
 }
 
@@ -281,12 +282,12 @@ function tellAccessPass()
    var request = new XMLHttpRequest();
    request.open("POST", "jaxogram?OP=postAccPss", true);
    request.onreadystatechange = function () {
-      if (request.readyState == 4) {
-         if (this.status != 200) {
+      if (request.readyState === 4) {
+         if (this.status !== 200) {
             alert('HTTP error ' + this.status);
          }
       }
-   }
+   };
    request.send(users.getAccessPass());
 }
 
@@ -294,20 +295,21 @@ function whoAmI() {
    queryFor(
       'whoAmI',
        function(person) {
+          var value;
           value = person.name.givenName;
-          if (value == null) value = "?";
+          if (value === null) value = "?";
           document.getElementById("p2_givenName").textContent = value;
           value = person.name.familyName;
-          if (value == null) value = "?";
+          if (value === null) value = "?";
           document.getElementById("p2_familyName").textContent = value;
 //        document.getElementById("p2_thumbnail").setAttribute(
 //           "src", person.thumbnailUrl
 //        );
           value = person.gender;
-          if (value == null) value = "?";
+          if (value === null) value = "?";
           document.getElementById("p2_gender").textContent = value;
           value = person.birthday;
-          if (value == null) {
+          if (value === null) {
              value = "?";
           }else {
              var date = new Date(value);
@@ -320,7 +322,7 @@ function whoAmI() {
 }
 
 function listAlbums(event) {
-   if (this.getAttribute("aria-expanded") == "true") {
+   if (this.getAttribute("aria-expanded") === "true") {
       if (!event.isTrusted) {    // a programatic click forces list refresh
          event.stopPropagation();
       }else {
@@ -328,7 +330,7 @@ function listAlbums(event) {
       }
    }
    var ulChildElt = this.getElementsByTagName("UL")[0];
-   if (ulChildElt != null) {     // defense!
+   if (ulChildElt !== null) {     // defense!
       queryFor(
          'listAlbums',
          function(albums) {
@@ -348,7 +350,7 @@ function createAlbum(isDirect) {
    if (resp) {
       var ix = resp.indexOf('/');
       var what = "createAlbum";
-      if (ix == -1) {
+      if (ix === -1) {
          what += "&title=" + resp.replace(/^\s+|\s+$/g,'');
       }else {
          what += (
@@ -383,7 +385,7 @@ function queryFor(what, whenDone) {
          break;
       case 4: // DONE
          document.getElementById("progresspane").style.visibility='hidden';
-         if (this.status == 200) {
+         if (this.status === 200) {
             var val = JSON.parse(this.responseText);
             whenDone(val);
          }else {
@@ -392,7 +394,7 @@ function queryFor(what, whenDone) {
          }
          break;
       }
-   }
+   };
    request.open("GET", "jaxogram?OP=" + what, true);  // ???
    request.send();
 }
@@ -445,8 +447,8 @@ function uploadPick(albumId) {
          var img = document.getElementById('photoImage');
          img.src = url;
          img.onload = function() { URL.revokeObjectURL(url); };
-      }catch (e) {
-         alert("Local error: " + e);
+      }catch (error) {
+         alert("Local error: " + error);
       }
    };
    a.onerror = function() { alert(i18n('pickImageError')); };
@@ -479,7 +481,7 @@ function uploadFile(albumId) {
          };
          reader.readAsDataURL(file);
       }
-   }
+   };
    elt.click();
 }
 
@@ -490,7 +492,7 @@ function whenRequestStateChanged() {
       break;
    case 4: // DONE
       document.getElementById("progresspane").style.visibility='hidden';
-      if (this.status == 200) {
+      if (this.status === 200) {
          expandPage("p1");
          alert(i18n('imageUploaded', users.getAlbumTitle()));
       }else {
