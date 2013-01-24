@@ -15,14 +15,14 @@
    <SCRIPT type="text/javascript" src="js/debug.js"></SCRIPT>
    <TITLE>Jaxogram</title>
 </HEAD>
-<BODY onload="init();">
+<BODY>
    <HEADER>
-     <DIV id="btnMain" onclick="toggleSidebarView();"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
+     <DIV id="btnMain"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
      <TABLE><TR>
         <TD id="btnInstall" class="i18n"></TD>
      </TR></TABLE>
      <!-- See: appengine-web.xml -->
-     <H1>Jaxogram <SPAN style="font-size:1.2rem;text-shadow:none">v7.4</SPAN></H1>
+     <H1>Jaxogram <SPAN style="font-size:1.2rem;text-shadow:none">v7.5</SPAN></H1>
    </HEADER>
    <DIV id="main">
      <DIV id="p0" class="body" aria-expanded="true">
@@ -38,7 +38,7 @@
         </DIV>
      </DIV>
      <DIV id="p2" class="body">
-        <TABLE border="0">
+        <TABLE>
            <TR>
              <!--
              <TD rowspan="3">
@@ -66,12 +66,12 @@
      </DIV>
    </DIV>
    <DIV id="sidebar" class="body">
-      <UL class="menuList" onclick="menuListClicked(event);">
+      <UL id="sidebarMenu" class="menuList">
         <LI role="listbox" id="jgUsersIn"></LI>
-        <LI role="listbox" id="jgUsersAid" onclick="listAlbums(this,event);"></LI>
+        <LI role="listbox" id="jgUsersAid"></LI>
         <LI role="listbox">
            <SMALL class="i18n" id="language"></SMALL><BR/><i id="usedLang"></i>
-           <UL role="radiogroup" onclick="changeLanguage(this, event);">
+           <UL role="radiogroup" id="changeLanguage">
               <LI class="i18n" id="en-US"></LI>
               <LI class="i18n" id="es-ES"></LI>
               <LI class="i18n" id="pt-BR"></LI>
@@ -97,10 +97,10 @@
    <!-- -->
 
    <FOOTER>
-      <TABLE onclick="expandSidebarView(-1);">
+      <TABLE id="footerTable">
         <TR>
-          <TD onclick="pickAndUploadImage(event);"><SPAN class="i18n" id="m1"></SPAN></TD>
-          <TD onclick="queryWhoAmI();"><SPAN class="i18n" id="m2"></SPAN></TD>
+          <TD class="i18n" id="pickAndUpload"></TD>
+          <TD class="i18n" id="whoAmI"></TD>
         </TR>
       </TABLE>
    </FOOTER>

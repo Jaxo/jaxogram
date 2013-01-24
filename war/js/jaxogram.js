@@ -1,6 +1,6 @@
 var users;
 
-function init() {
+window.onload = function() {
    createDispatcher();
    users = new JgUsers();
    // users.cleanUp();
@@ -23,9 +23,18 @@ function init() {
       }
    );
    setInstallButton("btnInstall");
-// document.getElementById('fdflt').click();
    fitImage(document.getElementById('photoImage'));
    window.addEventListener("resize", fitImages, false);
+
+   // Listeners
+   document.getElementById("btnMain").onclick = toggleSidebarView;
+   document.getElementById("sidebarMenu").onclick = menuListClicked;
+   document.getElementById("jgUsersAid").onclick = listAlbums;
+   document.getElementById("changeLanguage").onclick = changeLanguage;
+   document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
+   document.getElementById("pickAndUpload").onclick = pickAndUpload;
+   document.getElementById("whoAmI").onclick = whoAmI;
+
 // document.getElementById("p1").addEventListener(
 //    'transitionend',
 //    function(event) {
@@ -211,7 +220,7 @@ function changeLogin(elt, event) {
    }
 }
 
-function changeLanguage(elt, event) {
+function changeLanguage(event) {
    var clicked = event.target;
    translateBody(clicked.id);
    document.getElementById('usedLang').textContent = clicked.textContent;
@@ -281,7 +290,7 @@ function tellAccessPass()
    request.send(users.getAccessPass());
 }
 
-function queryWhoAmI() {
+function whoAmI() {
    queryFor(
       'whoAmI',
        function(person) {
@@ -310,15 +319,15 @@ function queryWhoAmI() {
    );
 }
 
-function listAlbums(elt, event) {
-   if (elt.getAttribute("aria-expanded") == "true") {
+function listAlbums(event) {
+   if (this.getAttribute("aria-expanded") == "true") {
       if (!event.isTrusted) {    // a programatic click forces list refresh
          event.stopPropagation();
       }else {
          return;
       }
    }
-   var ulChildElt = elt.getElementsByTagName("UL")[0];
+   var ulChildElt = this.getElementsByTagName("UL")[0];
    if (ulChildElt != null) {     // defense!
       queryFor(
          'listAlbums',
@@ -388,7 +397,7 @@ function queryFor(what, whenDone) {
    request.send();
 }
 
-function pickAndUploadImage(event) {
+function pickAndUpload(event) {
    if (!users.hasSome()) {
       formatUsersList(true);
    }else {

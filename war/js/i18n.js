@@ -5,12 +5,12 @@ var localeValues = {
       'fr-FR':"Installer",
       'pt-BR':"Instalar",
       'es-ES':"Instalar"
-   }, m1: {
+   }, pickAndUpload: {
       'en-US':"Share Photo",
       'fr-FR':"Partager une photo",
       'pt-BR':"Foto Compartilhar",
       'es-ES':"Compartir fotos"
-   }, m2: {
+   }, whoAmI: {
       'en-US':"Who am I?",
       'fr-FR':"Qui suis-je ?",
       'pt-BR':"Quem sou eu?",
