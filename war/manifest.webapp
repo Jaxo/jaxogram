@@ -1,6 +1,7 @@
 {
   "name": "Jaxogram",
   "version": "0.7.04",
+  "description": "Jaxo's Photo Sharing App",
   "locales": {
     "en": { "description": "Jaxo's Photo Sharing App" },
     "fr": { "description": "App. Jaxo de partage de photos" },
@@ -14,14 +15,15 @@
   "default_locale": "en",
 
   "icons": {
-    "32": "/applogos/logo32.png",
     "60": "/applogos/logo60.png",
+    "32": "/applogos/logo32.png",
     "64": "/applogos/logo64.png",
     "128": "/applogos/logo128.png"
   },
+
   "installs_allowed_from": ["*"],
 
-
+  "type": "privileged",
   "permissions": {
     "contacts": { "description": "Import Orkut friends as contacts", "access": "readcreate" },
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
@@ -36,8 +38,7 @@
         "type": "image/*"
       },
       "href": "index.html",
-      "disposition": "window",
-      "returnValue": true
+      "disposition": "window"
     }
   }
 }
