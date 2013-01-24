@@ -26,6 +26,11 @@ header {
   z-index: 1;
 }
 
+header h1 small {
+  font-size:1.2rem;
+  text-shadow:none
+}
+
 header #btnMain {
   background: transparent;
   position: absolute;
