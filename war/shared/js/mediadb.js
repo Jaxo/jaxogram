@@ -302,7 +302,7 @@
  */
 var MediaDB = (function() {
 
-  function MediaDB(mediaType, metadataParser, options) {
+  function init(mediaType, metadataParser, options) {
     this.mediaType = mediaType;
     this.metadataParser = metadataParser;
     if (!options)
@@ -437,38 +437,41 @@ var MediaDB = (function() {
       // If storage is null, then there is no sdcard installed and
       // we have to abort.
       media.storage = navigator.getDeviceStorage(mediaType);
+      if (!media.storage) {
+         changeState(media, MediaDB.UNMOUNTED);
+      }else {
+         // Handle change notifications from device storage
+         // We set this onchange property to null in the close() method
+         // so don't use addEventListener here
+         media.storage.addEventListener('change', deviceStorageChangeHandler);
+         media.details.dsEventListener = deviceStorageChangeHandler;
 
-      // Handle change notifications from device storage
-      // We set this onchange property to null in the close() method
-      // so don't use addEventListener here
-      media.storage.addEventListener('change', deviceStorageChangeHandler);
-      media.details.dsEventListener = deviceStorageChangeHandler;
-
-      // Use stat() to figure out if there is actually an sdcard there
-      // and emit a ready or unavailable event
-      var statreq = media.storage.stat();
-      statreq.onsuccess = function(e) {
-        var stats = e.target.result;
-        switch (stats.state) {
-        case 'available':
-          changeState(media, MediaDB.READY);
-          scan(media); // Start scanning as soon as we're ready
-          break;
-        case 'unavailable':
-          changeState(media, MediaDB.NOCARD);
-          break;
-        case 'shared':
-          changeState(media, MediaDB.UNMOUNTED);
-          break;
-        }
-      };
-      statreq.onerror = function(e) {
-        // XXX stat fails for unavailable and shared,
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=782351
-        // No way to distinguish these cases so just guess
-        console.error('stat() failed', statreq.error && statreq.error.name);
-        changeState(media, MediaDB.UNMOUNTED);
-      };
+         // Use stat() to figure out if there is actually an sdcard there
+         // and emit a ready or unavailable event
+         var statreq = media.storage.stat();
+         statreq.onsuccess = function(e) {
+           var stats = e.target.result;
+           switch (stats.state) {
+           case 'available':
+             changeState(media, MediaDB.READY);
+             scan(media); // Start scanning as soon as we're ready
+             break;
+           case 'unavailable':
+             changeState(media, MediaDB.NOCARD);
+             break;
+           case 'shared':
+             changeState(media, MediaDB.UNMOUNTED);
+             break;
+           }
+         };
+         statreq.onerror = function(e) {
+           // XXX stat fails for unavailable and shared,
+           // https://bugzilla.mozilla.org/show_bug.cgi?id=782351
+           // No way to distinguish these cases so just guess
+           console.error('stat() failed', statreq.error && statreq.error.name);
+           changeState(media, MediaDB.UNMOUNTED);
+         };
+      }
     }
 
     function deviceStorageChangeHandler(e) {
@@ -1366,10 +1369,12 @@ var MediaDB = (function() {
   function changeState(media, state) {
     if (media.state !== state) {
       media.state = state;
-      if (state === MediaDB.READY)
-        dispatchEvent(media, 'ready');
-      else
+      if (state === MediaDB.READY) {
+   alert("READY!!!!!!!!!!!!");
+           dispatchEvent(media, 'ready');
+      }else {
         dispatchEvent(media, 'unavailable', state);
+      }
     }
   }
 

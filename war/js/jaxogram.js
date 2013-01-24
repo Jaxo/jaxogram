@@ -19,6 +19,8 @@ function init() {
             (params.OP !== "denied") && confirm(i18n('betterInstall'))
          ) {
             document.getElementById("btnInstall").click();
+         }else if (state == "installed") {
+            initPhotosDB();
          }
       }
    );
@@ -421,6 +423,7 @@ function pickAndUploadImage(event) {
 
 function uploadPick(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
+   //  type: ["image/jpeg","image/png"] ?
    a.onsuccess = function(e) {
       var request = new XMLHttpRequest();
       request.open(
@@ -465,7 +468,7 @@ function uploadFile(albumId) {
          request.open("POST", "jaxogram?OP=postImageFile", true);
          request.send(formData);
          var reader = new FileReader();
-         reader.onload = function (event) {
+         reader.onload = function(event) {
             document.getElementById("photoImage").src = event.target.result;
          };
          reader.readAsDataURL(file);

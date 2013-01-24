@@ -27,8 +27,6 @@
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
     "geolocation": { "description": "Geotag photos" },
     "storage": { "description": "Use local storage for access tokens" },
-    "network-http": { "description": "http://jaxogram.appspot.com" },
-    "network-tcp": { "description": "http://jaxogram.appspot.com" },
     "camera": { "description": "Share photos" }
   },
 
