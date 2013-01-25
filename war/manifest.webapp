@@ -23,7 +23,6 @@
 
   "installs_allowed_from": ["*"],
 
-  "type": "privileged",
   "permissions": {
     "contacts": { "description": "Import Orkut friends as contacts", "access": "readcreate" },
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },

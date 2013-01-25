@@ -455,9 +455,8 @@ function uploadPick(albumId) {
 }
 
 function uploadFile(albumId) {
-   var formElt = document.getElementById('upldForm');
-   var elt = formElt.firstChild;
-   elt.onchange= function() {
+   var elt = document.getElementById('upldFile');
+   elt.onchange = function() {
       if (typeof window.FileReader !== 'function') {
          alert(i18n("noFileApi"));
       }else if (!this.files) {
@@ -466,12 +465,13 @@ function uploadFile(albumId) {
          alert("No file selected");
       }else {
          var file = this.files[0];
-         var formData = new FormData(formElt);
+         var formData = new FormData();
+         var request = new XMLHttpRequest();
          formData.append("MAX_FILE_SIZE", "1000000");
          formData.append("IMG", file.name.substr(-3));
          formData.append("AID", albumId);
-//       formData.append("TIT", "a title");
-         var request = new XMLHttpRequest();
+//       formData.append("TIT", "my title");
+         formData.append("upldFile", file);
          request.onreadystatechange = whenRequestStateChanged;
          request.open("POST", "jaxogram?OP=postImageFile", true);
          request.send(formData);
