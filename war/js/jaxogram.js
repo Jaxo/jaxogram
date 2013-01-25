@@ -313,7 +313,7 @@ function whoAmI() {
              value = "?";
           }else {
              var date = new Date(value);
-             value = date.getDay() + " " + i18n('months')[date.getMonth()];
+             value = date.getDate() + " " + i18n('months')[date.getMonth()];
           }
           document.getElementById("p2_birthday").textContent = value;
           expandPage("p2");
