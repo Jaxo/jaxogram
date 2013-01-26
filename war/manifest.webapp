@@ -1,6 +1,6 @@
 {
   "name": "Jaxogram",
-  "version": "0.7.06",
+  "version": "0.8.0",
   "description": "Jaxo's Photo Sharing App",
   "launch_path": "/index.html",
   "locales": {
@@ -26,6 +26,7 @@
 
   "type": "privileged",
   "permissions": {
+    "systemXHR": {},
     "contacts": { "description": "Import Orkut friends as contacts", "access": "readcreate" },
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
     "geolocation": { "description": "Geotag photos" },
