@@ -521,21 +521,7 @@ li[aria-selected=true], li[role=listbox] {
    font-size: 2rem;
    color: white;
 }
-#p0_top ul {
-   margin-top: 2rem;
-   text-align: left;
-   font-size: 1.5rem;
-   text-shadow: none;
-}
-#engineeredBy {
-    position: absolute;
-    height: 7rem;
-    right: 12.5rem;
-    bottom: 1rem;
-    font-size: 1rem;
-    color: #555;
-}
-#p0_bot_1 {
+#p0_bot {
     position: absolute;
     width: 12rem;
     height: 8rem;
@@ -550,10 +536,6 @@ li[aria-selected=true], li[role=listbox] {
     color: white;
 }
 
-#upldForm {
-   position: absolute;
-   top: -20px
-}
-#upldForm input {
-   opacity: 0;
+#upldFile {
+   display: none;
 }

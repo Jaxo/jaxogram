@@ -258,7 +258,7 @@ function getQueryParams() {
 function authorize() {
    var request = new XMLHttpRequest({mozSystem: true});
    // obtain the URL at which the user will grant us access
-   request.open("GET", "http://8.jaxogram.appspot.com/jaxogram?OP=getUrl", true);
+   request.open("GET", "http://jaxogram.appspot.com/jaxogram?OP=getUrl", true);
    request.onreadystatechange = function() {
       if (request.readyState === 4) {
          if (this.status === 200) {
@@ -280,7 +280,7 @@ function authorize() {
 function tellAccessPass()
 {
    var request = new XMLHttpRequest({mozSystem: true});
-   request.open("POST", "http://8.jaxogram.appspot.com/jaxogram?OP=postAccPss", true);
+   request.open("POST", "http://jaxogram.appspot.com/jaxogram?OP=postAccPss", true);
    request.onreadystatechange = function () {
       if (request.readyState === 4) {
          if (this.status !== 200) {
@@ -313,7 +313,7 @@ function whoAmI() {
              value = "?";
           }else {
              var date = new Date(value);
-             value = date.getDay() + " " + i18n('months')[date.getMonth()];
+             value = date.getDate() + " " + i18n('months')[date.getMonth()];
           }
           document.getElementById("p2_birthday").textContent = value;
           expandPage("p2");
@@ -395,7 +395,7 @@ function queryFor(what, whenDone) {
          break;
       }
    };
-   request.open("GET", "http://8.jaxogram.appspot.com/jaxogram?OP=" + what, true);  // ???
+   request.open("GET", "http://jaxogram.appspot.com/jaxogram?OP=" + what, true);
    request.send();
 }
 
@@ -436,7 +436,7 @@ function uploadPick(albumId) {
       var request = new XMLHttpRequest({mozSystem: true});
       request.open(
          "POST",
-         "http://8.jaxogram.appspot.com/jaxogram?OP=postImageData&AID="+albumId,
+         "http://jaxogram.appspot.com/jaxogram?OP=postImageData&AID="+albumId,
          true
       );
       request.setRequestHeader("Content-Type", 'image/jpeg');
@@ -455,9 +455,8 @@ function uploadPick(albumId) {
 }
 
 function uploadFile(albumId) {
-   var formElt = document.getElementById('upldForm');
-   var elt = formElt.firstChild;
-   elt.onchange= function() {
+   var elt = document.getElementById('upldFile');
+   elt.onchange = function() {
       if (typeof window.FileReader !== 'function') {
          alert(i18n("noFileApi"));
       }else if (!this.files) {
@@ -466,14 +465,15 @@ function uploadFile(albumId) {
          alert("No file selected");
       }else {
          var file = this.files[0];
-         var formData = new FormData(formElt);
+         var formData = new FormData();
+         var request = new XMLHttpRequest({mozSystem: true});
          formData.append("MAX_FILE_SIZE", "1000000");
          formData.append("IMG", file.name.substr(-3));
          formData.append("AID", albumId);
-//       formData.append("TIT", "a title");
-         var request = new XMLHttpRequest({mozSystem: true});
+//       formData.append("TIT", "my title");
+         formData.append("upldFile", file);
          request.onreadystatechange = whenRequestStateChanged;
-         request.open("POST", "http://8.jaxogram.appspot.com/jaxogram?OP=postImageFile", true);
+         request.open("POST", "http://jaxogram.appspot.com/jaxogram?OP=postImageFile", true);
          request.send(formData);
          var reader = new FileReader();
          reader.onload = function (event) {
