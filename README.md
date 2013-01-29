@@ -48,34 +48,33 @@ Characters:
 When Registering
 ----------------
 
-   User -> Jaxo (OP=getURL): I want to pass the auth procedure
-   Jaxo -> Orkt: Point me to your URL for auth registration, and call me back
+    User -> Jaxo (OP=getURL): I want to pass the auth procedure
+    Jaxo -> Orkt: Point me to your URL for auth registration, and call me back
                  when the user is done with
                  (CB with OP=backCall, and User address, aka referer)
                  Jaxo stores the "accessor" into a session variable
-   Orkt -> Jaxo: here is the auth URL where User must navigate to
-   Jaxo -> User: window.location = the auth URL
-   ---------
-   [No valid Session ID here]
-   User -> Orkt: I authorize Jaxo to issue requests on my behalf (or I deny access)
-   Orkt -> Jaxo (OP=backCall): User said OK, here is your "verifier"
+    Orkt -> Jaxo: here is the auth URL where User must navigate to
+    Jaxo -> User: window.location = the auth URL
+    ---------
+    [No valid Session ID here]
+    User -> Orkt: I authorize Jaxo to issue requests on my behalf (or I deny access)
+    Orkt -> Jaxo (OP=backCall): User said OK, here is your "verifier"
                  Jaxo:
                  - redirects the response to User (the referer)
                  - passes the oauth "verifier" in the parameters (and OP=backCall)
-   Jaxo -> User: interprets the OP backcall as an XHR
-   [Session ID again valid]
-   ---------
-   User -> Jaxo: (OP=getAccPss) obtain the "access password", given the "accessor" and the
-                 "verifier"
-                 save the "access password" in a session variable
-   Jaxo -> User: here is your access pass
-                 User saves it in Permanent Local Storage
+    Jaxo -> User: interprets the OP backcall as an XHR
+    [Session ID again valid]
+    ---------
+    User -> Jaxo: (OP=getAccPss) obtain the "access password", given the "accessor" and the
+                  "verifier"
+                  save the "access password" in a session variable
+    Jaxo -> User: here is your access pass
+                  User saves it in Permanent Local Storage
 
 After Registration
 ------------------
 
-   From the Permanent Locale Storage, User gets the "access password", and tells
-   Jaxo to use it: OP=postAccessPass
+From the Permanent Locale Storage, User gets the "access password", and tells Jaxo to use it: OP=postAccessPass
 
 
 
