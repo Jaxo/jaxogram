@@ -262,6 +262,7 @@ function getQueryParams() {
 function makeCorsRequest(method, query) {
    var xhr = new XMLHttpRequest({mozSystem: true});
    xhr.open(method, SERVER_URL + query, true);
+   return xhr;
 }
 
 function authorize() {
