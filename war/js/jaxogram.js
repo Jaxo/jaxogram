@@ -1,4 +1,8 @@
 var users;
+var SERVER_URL = "http://jaxogram.appspot.com/jaxogram";
+// var SERVER_URL = "http://9.jaxogram.appspot.com/jaxogram";
+// var SERVER_URL = "jaxogram";
+// var SERVER_URL = "http://localhost:8888/jaxogram";
 
 window.onload = function() {
    createDispatcher();
@@ -255,40 +259,43 @@ function getQueryParams() {
    return params;
 }
 
+function makeCorsRequest(method, query) {
+   var xhr = new XMLHttpRequest({mozSystem: true});
+   xhr.open(method, SERVER_URL + query, true);
+}
+
 function authorize() {
-   var request = new XMLHttpRequest({mozSystem: true});
    // obtain the URL at which the user will grant us access
-   request.open("GET", "http://jaxogram.appspot.com/jaxogram?OP=getUrl", true);
-   request.onreadystatechange = function() {
-      if (request.readyState === 4) {
+   var xhr = makeCorsRequest("GET", "?OP=getUrl");
+   xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
          if (this.status === 200) {
             // navigate to it...
-            window.location.href = request.responseText;
+            window.location.href = xhr.responseText;
 //          window.open(
-//             request.responseText,
+//             xhr.responseText,
 //             'popUpWindow',
 //             'resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes'
 //          );
          }else {
-            alert(this.responseText);
+            alert("authorize RC:" + this.status + "\n" + this.responseText);
          }
       }
    };
-   request.send();
+   xhr.send();
 }
 
 function tellAccessPass()
 {
-   var request = new XMLHttpRequest({mozSystem: true});
-   request.open("POST", "http://jaxogram.appspot.com/jaxogram?OP=postAccPss", true);
-   request.onreadystatechange = function () {
-      if (request.readyState === 4) {
+   var xhr = makeCorsRequest("POST", "?OP=postAccPss");
+   xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
          if (this.status !== 200) {
-            alert('HTTP error ' + this.status);
+            alert('tellAccess RC: ' + this.status + "\n" + this.responseText);
          }
       }
    };
-   request.send(users.getAccessPass());
+   xhr.send(users.getAccessPass());
 }
 
 function whoAmI() {
@@ -377,8 +384,8 @@ function queryFor(what, whenDone) {
       formatUsersList(true);
       return;
    }
-   var request = new XMLHttpRequest({mozSystem: true});
-   request.onreadystatechange = function() {
+   var xhr = makeCorsRequest("GET", "?OP=" + what);
+   xhr.onreadystatechange = function() {
       switch (this.readyState) {
       case 1: // OPENED
          document.getElementById("progresspane").style.visibility='visible';
@@ -390,13 +397,12 @@ function queryFor(what, whenDone) {
             whenDone(val);
          }else {
             dispatcher.clean();
-            alert(this.responseText);
+            alert(what + " RC: " + this.status + "\n" + this.responseText);
          }
          break;
       }
    };
-   request.open("GET", "http://jaxogram.appspot.com/jaxogram?OP=" + what, true);
-   request.send();
+   xhr.send();
 }
 
 function pickAndUpload(event) {
@@ -433,15 +439,10 @@ function pickAndUpload(event) {
 function uploadPick(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
    a.onsuccess = function(e) {
-      var request = new XMLHttpRequest({mozSystem: true});
-      request.open(
-         "POST",
-         "http://jaxogram.appspot.com/jaxogram?OP=postImageData&AID="+albumId,
-         true
-      );
-      request.setRequestHeader("Content-Type", 'image/jpeg');
-      request.onreadystatechange = whenRequestStateChanged;
-      request.send(a.result.blob);
+      var xhr = makeCorsRequest("POST", "?OP=postImageData&AID="+albumId);
+      xhr.setRequestHeader("Content-Type", 'image/jpeg');
+      xhr.onreadystatechange = whenRequestStateChanged;
+      xhr.send(a.result.blob);
       try {
          var url = URL.createObjectURL(a.result.blob);
          var img = document.getElementById('photoImage');
@@ -466,15 +467,14 @@ function uploadFile(albumId) {
       }else {
          var file = this.files[0];
          var formData = new FormData();
-         var request = new XMLHttpRequest({mozSystem: true});
          formData.append("MAX_FILE_SIZE", "1000000");
          formData.append("IMG", file.name.substr(-3));
          formData.append("AID", albumId);
 //       formData.append("TIT", "my title");
          formData.append("upldFile", file);
-         request.onreadystatechange = whenRequestStateChanged;
-         request.open("POST", "http://jaxogram.appspot.com/jaxogram?OP=postImageFile", true);
-         request.send(formData);
+         var xhr = makeCorsRequest("POST", "?OP=postImageFile");
+         xhr.onreadystatechange = whenRequestStateChanged;
+         xhr.send(formData);
          var reader = new FileReader();
          reader.onload = function (event) {
             document.getElementById("photoImage").src = event.target.result;
