@@ -10,22 +10,41 @@ window.onload = function() {
    // users.cleanUp();
    // users.destroy();
    var params = getQueryParams();
-   if (params.OP === "granted") {
-      users.addUser(params.u, params.ap, "orkut");
-   }else if (params.OP === "denied") {
-      alert(i18n("authDenied") + "\n\n(" + params.msg + ")");
+   if (params.OP === "backCall") {
+      var xhr = makeCorsRequest(
+         "GET",
+         "?OP=getAccPss&verifier=" + encodeURIComponent(params.verifier)
+      );
+      xhr.onreadystatechange = function () {
+         if (xhr.readyState === 4) {
+            if (this.status !== 200) {
+               alert(i18n("authDenied", xhr.responseText));
+            }else {
+               var val = JSON.parse(xhr.responseText);
+               // alert(dump(val));
+               users.addUser(
+                  decodeURIComponent(val.userName),
+                  decodeURIComponent(val.accessPass),
+                  "orkut"
+               );
+               formatUsersList(false);
+            }
+         }
+      };
+      xhr.send();
    }
    dispatcher.on(
       "install_changed",
       function action(state) {
          if (
             (state === "uninstalled") && !users.hasSome() &&
-            (params.OP !== "denied") && confirm(i18n('betterInstall'))
+            (params.OP !== "backCall") && confirm(i18n('betterInstall'))
          ) {
             document.getElementById("btnInstall").click();
          }
       }
    );
+
    setInstallButton("btnInstall");
    fitImage(document.getElementById('photoImage'));
    window.addEventListener("resize", fitImages, false);
@@ -261,6 +280,11 @@ function getQueryParams() {
 
 function makeCorsRequest(method, query) {
    var xhr = new XMLHttpRequest({mozSystem: true});
+   if (xhr.withCredentials === undefined) {
+      alert("Sorry: your browser doesn't handle cross-site requests");
+      return;
+   }
+   xhr.withCredentials = true;
    xhr.open(method, SERVER_URL + query, true);
    return xhr;
 }

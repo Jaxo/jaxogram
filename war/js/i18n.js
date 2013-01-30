@@ -71,10 +71,10 @@ var localeValues = {
       'pt-BR':"Criar álbum",
       'es-ES':"Crear álbum"
    }, authDenied: {
-      'en-US':"Authorization denied",
-      'fr-FR':"Autorisation refusée",
-      'pt-BR':"Autorização negada",
-      'es-ES':"Autorización denegada"
+      'en-US':"Authorization denied\n(%1)",
+      'fr-FR':"Autorisation refusée\n(%1)",
+      'pt-BR':"Autorização negada\n(%1)",
+      'es-ES':"Autorización denegada\n(%1)"
    }, revokeAccess: {
       'en-US':"Are you sure you want to delete\nthe login for \"%1\"?",
       'fr-FR':"Veuiller confirmer la suppression\nde l'utilisateur \"%1\".",
