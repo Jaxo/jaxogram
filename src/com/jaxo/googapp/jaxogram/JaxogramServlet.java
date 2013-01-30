@@ -190,7 +190,7 @@ public class JaxogramServlet extends HttpServlet
       }catch (Exception e) {
          resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 //*/     e.printStackTrace();
-         writer.println(e.getMessage());
+         writer.print(e.getMessage());
       }
    }
 
