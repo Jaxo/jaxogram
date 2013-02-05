@@ -1,37 +1,32 @@
 var users;
-var SERVER_URL = "http://jaxogram.appspot.com/jaxogram";
-// var SERVER_URL = "http://9.jaxogram.appspot.com/jaxogram";
-// var SERVER_URL = "jaxogram";
-// var SERVER_URL = "http://localhost:8888/jaxogram";
+var isPackaged = false;
+var server_url;
+// var APPSPOT_URL = "http://jaxogram.appspot.com/jaxogram";
+var APPSPOT_URL = "http://5.jaxogram.appspot.com/jaxogram";   // for our internal tests
 
 window.onload = function() {
+   var loc = window.location.href;
+   if (loc.startsWith("app://")) {                  // "app://{92390129-62c9-...}"
+      isPackaged = true;
+      server_url = APPSPOT_URL;
+   }else if (loc.indexOf("appspot") >= 0) {         // "default, or versionned
+      server_url = loc + "jaxogram";
+   }else {                                          // "http://localhost:8888/", or
+      server_url = "http://localhost:8888/jaxogram" // "http://ottokar/jaxogram/index.html"
+   }
+   // alert(location);
    createDispatcher();
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
    var params = getQueryParams();
    if (params.OP === "backCall") {
-      var xhr = makeCorsRequest(
-         "GET",
-         "?OP=getAccPss&verifier=" + encodeURIComponent(params.verifier)
-      );
-      xhr.onreadystatechange = function () {
-         if (xhr.readyState === 4) {
-            if (this.status !== 200) {
-               alert(i18n("authDenied", xhr.responseText));
-            }else {
-               var val = JSON.parse(xhr.responseText);
-               // alert(dump(val));
-               users.addUser(
-                  decodeURIComponent(val.userName),
-                  decodeURIComponent(val.accessPass),
-                  "orkut"
-               );
-               formatUsersList(false);
-            }
-         }
-      };
-      xhr.send();
+      /*
+      | this occurs for non-packaged application only:
+      | packaged app have no origin, can not appear as referer...
+      | no way to call them back from the external world.
+      */
+      registerUser(params.verifier);
    }
    dispatcher.on(
       "install_changed",
@@ -265,19 +260,6 @@ function fitImage(img) {
    img.setAttribute("style", s);
 }
 
-function getQueryParams() {
-   var query = window.location.search.substr(1).split('&');
-   if (query === "") return {};
-   var params = {};
-   for (var i=0; i < query.length; ++i) {
-       var param = query[i].split('=');
-       if (param.length === 2) {
-          params[param[0]] = decodeURIComponent(param[1].replace(/\+/g, " "));
-       }
-   }
-   return params;
-}
-
 function makeCorsRequest(method, query) {
    var xhr = new XMLHttpRequest({mozSystem: true});
    if (xhr.withCredentials === undefined) {
@@ -285,25 +267,119 @@ function makeCorsRequest(method, query) {
       return;
    }
    xhr.withCredentials = true;
-   xhr.open(method, SERVER_URL + query, true);
+   xhr.open(method, server_url + query, true);
    return xhr;
 }
 
 function authorize() {
    // obtain the URL at which the user will grant us access
-   var xhr = makeCorsRequest("GET", "?OP=getUrl");
+   var xhr = makeCorsRequest("GET", "?OP=getUrl&JXK=bougnoul");
    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-         if (this.status === 200) {
-            // navigate to it...
-            window.location.href = xhr.responseText;
-//          window.open(
-//             xhr.responseText,
-//             'popUpWindow',
-//             'resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes'
-//          );
+      switch (xhr.readyState) {
+      case 1: // OPENED
+         document.getElementById("progresspane").style.visibility='visible';
+         break;
+      case 4:
+         document.getElementById("progresspane").style.visibility='hidden';
+         if (this.status === 200) {         // navigate to it as a top browser window
+            if (isPackaged) {               // then, do NOT leave the app!
+               browseTo(xhr.responseText);  // use a mozbrowser
+            }else {
+               window.location.href = xhr.responseText;
+            }
          }else {
             alert("authorize RC:" + this.status + "\n" + this.responseText);
+         }
+         break;
+      }
+   };
+   xhr.send();
+}
+
+function browseTo(targetUrl) {
+   window.addEventListener("message", whenVerifierResponds, false);
+   document.getElementById("jojo").src = server_url + "?OP=getVerifier&JXK=bougnoul";
+   var pane = document.getElementById("browserpane");
+   var browserFrame = document.createElement('iframe');
+   browserFrame.setAttribute('mozbrowser', 'true');
+   browserFrame.classList.add('iframebox');
+   pane.appendChild(browserFrame);
+   pane.style.visibility = "visible";
+   browserFrame.src = targetUrl;
+// browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou";
+   document.querySelector("footer").style.visibility="hidden";
+   document.getElementById("btnMain").style.visibility='hidden';
+   gouguigou(pane);
+}
+function gouguigou(pane) {
+   var tonton = document.createElement('button');
+   tonton.style.cssText = "position:relative; top:-7rem; left:2rem";
+   tonton.textContent = "Cancel";
+   tonton.onclick = function() { browseQuit(); return false; };
+   var ronron = document.createElement('span');
+   ronron.id = "indic";
+   ronron.style.cssText = "position:relative; top:-7rem; left:7rem";
+   ronron.textContent = "Y";
+   pane.appendChild(tonton);
+   pane.appendChild(ronron);
+}
+
+function browseQuit() {
+   var pane = document.getElementById("browserpane");
+   pane.innerHTML = "";
+   pane.style.visibility = "hidden";
+   document.querySelector("footer").style.visibility = "visible";
+   document.getElementById("btnMain").style.visibility = "visible";
+}
+
+function whenVerifierResponds(evt) {
+   /*
+   | for packaged application, this is the way appspot tells us the verifier
+   */
+   if (server_url.startsWith(evt.origin)) {
+      var val = JSON.parse(evt.data);
+      if (!val.status || (val.status != '200') || (!val.verifier)) {
+         window.removeEventListener("message", whenVerifierResponds, false);
+         alert("verifyResponse RC:" + val.status);
+      }else if (val.verifier === "???") {
+         var indicElt = document.getElementById("indic");
+         if (indicElt.textContent === "X") {
+            indicElt.textContent = " ";
+         }else {
+            indicElt.textContent = "X";
+         }
+         setTimeout(
+            function() {evt.source.postMessage("getVerifier", evt.origin);},
+            1000
+         );
+      }else {
+         window.removeEventListener("message", whenVerifierResponds, false);
+         browseQuit();
+         alert("Bingo!\nVerifier is: " + val.verifier);
+         registerUser(val.verifier);
+         formatUsersList(false);
+      }
+   }
+}
+
+function registerUser(verifier) {
+   var xhr = makeCorsRequest(
+      "GET",
+      "?OP=getAccPss&verifier=" + encodeURIComponent(verifier)
+   );
+   xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+         if (this.status !== 200) {
+            alert(i18n("authDenied", xhr.responseText));
+         }else {
+            var val = JSON.parse(xhr.responseText);
+            // alert(dump(val));
+            users.addUser(
+               decodeURIComponent(val.userName),
+               decodeURIComponent(val.accessPass),
+               "orkut"
+            );
+            formatUsersList(false);
          }
       }
    };

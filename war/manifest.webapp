@@ -31,7 +31,8 @@
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
     "geolocation": { "description": "Geotag photos" },
     "storage": { "description": "Use local storage for access tokens" },
-    "camera": { "description": "Share photos" }
+    "camera": { "description": "Share photos" },
+    "browser":{}
   },
 
   "activities": {
