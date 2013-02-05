@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.Enumeration;
-/**/ import java.util.logging.Logger;
+//*/ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,9 +34,6 @@ import org.apache.commons.io.IOUtils;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-// import com.google.appengine.api.users.User;
-// import com.google.appengine.api.users.UserService;
-// import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -63,34 +60,11 @@ public class JaxogramServlet extends HttpServlet
    public void doPost(HttpServletRequest req, HttpServletResponse resp)
    throws IOException
    {
-/**/  Logger logger = Logger.getLogger(
-/**/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
-/**/  );
-/*
-      MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-      String memKey = "JAXO_" + "bougnoul";
-      String preciousValue = (String)memcache.get(memKey);
-*/
-/*
-      UserService userService = UserServiceFactory.getUserService();
-      MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-      User user = userService.getCurrentUser();
-      String preciousValue = "NONE";
-String bobo = "";
-      if (user != null) {
-         String memKey = "JAXO_" +  user.getUserId();
-         preciousValue = (String)memcache.get(memKey);
-         if (preciousValue == null) {
-bobo = " (new)";
-            preciousValue = "Stromboli";
-            memcache.put(memKey, preciousValue, Expiration.byDeltaSeconds(400));
-         }
-      }
+//*/  Logger logger = Logger.getLogger(
+//*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
+//*/  );
       String op = req.getParameter("OP");
-      logger.info("OP:" + op + " cache:" + preciousValue + bobo);
-*/
-      String op = req.getParameter("OP");
-/**/  logger.info("OP:" + op);
+//*/  logger.info("OP: " + op);
 
       resp.setContentType("text/plain");
       PrintWriter writer = resp.getWriter();
@@ -117,31 +91,23 @@ bobo = " (new)";
                resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
                resp.setHeader("Location", redirect);
             }else {
-/*N*/          MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+               MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
                String memKey = req.getParameter("JXK");
                memcache.put(
                   memKey,
                   URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
                   Expiration.byDeltaSeconds(1200)  // TODO 300 is enough
                );
-/*N*///        req.getSession(true).setAttribute(
-     //           "verifier",  /* UU */
-     //           URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
-     //        );
                resp.setStatus(HttpServletResponse.SC_CREATED);
             }
          }else if (op.equals("backCallTest")) {
-/*N*/       MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+            MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             String memKey = req.getParameter("JXK");
             memcache.put(
                memKey,
                URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
                Expiration.byDeltaSeconds(1200)  // TODO 300 is enough
             );
-/*N*///     req.getSession(true).setAttribute(
-     //        "verifier",  /* UU */
-     //        URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
-     //     );
             resp.setContentType("text/html");
             writer.print(
                backCallTestResponse(
@@ -157,23 +123,14 @@ bobo = " (new)";
             // need cookies for session id's:
             resp.setHeader("Access-Control-Allow-Credentials", "true");
             // resp.setHeader("Access-Control-Expose-Headers", "FooBar");
-            if (op.equals("getVerifier")) {
-               resp.setContentType("text/html");
-               writer.print(
-                  getVerifierResponse(
-                     req.getRequestURL().toString(),
-                     req.getParameter("JXK")
-                  )
-               );
 
-/*N*/       }else if (op.equals("gogo")) {
-/*N*/          MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+            if (op.equals("getVerifier")) {
+               MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
                String memKey = req.getParameter("JXK");
                String val = (String)memcache.get(memKey);
-/*N*///        String val= (String)(req.getSession(true).getAttribute("verifier")); /*UU*/
-/*N*/          if (val == null) val = "???";
+               if (val == null) val = "???";
                // TODO if not null, remove the key from the memcache
-/*N*/          writer.print(val);
+               writer.print(val);
 
             }else if (op.equals("postAccPss")) {
                InputStream in = req.getInputStream();
@@ -327,46 +284,6 @@ bobo = " (new)";
       sb.append(req.getScheme()).append("://").append(req.getServerName());
       if ((port != 80) && (port != 443)) sb.append(':').append(port);
       return sb.toString();
-   }
-
-   private static String getVerifierResponse(String myUrl, String jxk) {
-      String r =
-      "<HTML><HEAD>" +
-      "<SCRIPT type='text/javascript'>" +
-"var count=0;" +
-      "window.onload = function () {" +
-        " window.addEventListener(" +
-           " 'message'," +
-           " function(evt) {" +
-              " if (evt.data === 'getVerifier') {" +
-" document.getElementById('count').innerHTML = (++count);" +
-                 " var xhr = new XMLHttpRequest({mozSystem: true});" +
-                // if (xhr.withCredentials === undefined) {
-                //    alert('Sorry: your browser does not handle cross-site requests');
-                //    return;
-                // }
-                 " xhr.withCredentials = true;" +
-                 " xhr.open('GET', '" + myUrl + "?OP=gogo&JXK=" + jxk + "', true);" +
-                 " xhr.onreadystatechange = function() {" +
-                    " if (xhr.readyState == \"4\") {" +
-                       " window.parent.postMessage(" +
-                          "'{\"verifier\":\"' + this.responseText" +
-                          " + '\",\"status\":\"' + this.status + '\"}'" +
-                          ", '*'" +
-                       " );" +
-                    " }" +
-                 " };" +
-                 " xhr.send();" +
-              " }" +
-           " }," +
-           " false" +
-        " );" +
-        " window.parent.postMessage('{\"verifier\":\"???\",\"status\":\"200\"}', '*');" +
-      "}" +
-      "</SCRIPT></HEAD><BODY>" +
-"<DIV id='count'>0</DIV>" +
-      "</BODY></HTML>";
-      return r;
    }
 
    private static String backCallTestResponse(String verifier) {

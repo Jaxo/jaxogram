@@ -297,8 +297,6 @@ function authorize() {
 }
 
 function browseTo(targetUrl) {
-   window.addEventListener("message", whenVerifierResponds, false);
-   document.getElementById("jojo").src = server_url + "?OP=getVerifier&JXK=bougnoul";
    var pane = document.getElementById("browserpane");
    var browserFrame = document.createElement('iframe');
    browserFrame.setAttribute('mozbrowser', 'true');
@@ -309,19 +307,12 @@ function browseTo(targetUrl) {
 // browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou";
    document.querySelector("footer").style.visibility="hidden";
    document.getElementById("btnMain").style.visibility='hidden';
-   gouguigou(pane);
-}
-function gouguigou(pane) {
-   var tonton = document.createElement('button');
-   tonton.style.cssText = "position:relative; top:-7rem; left:2rem";
-   tonton.textContent = "Cancel";
-   tonton.onclick = function() { browseQuit(); return false; };
-   var ronron = document.createElement('span');
-   ronron.id = "indic";
-   ronron.style.cssText = "position:relative; top:-7rem; left:7rem";
-   ronron.textContent = "Y";
-   pane.appendChild(tonton);
-   pane.appendChild(ronron);
+   getVerifier();
+   var cancelBtn = document.createElement('button');
+   cancelBtn.style.cssText = "position:relative; top:-7rem; left:2rem";
+   cancelBtn.textContent = "Cancel";
+   cancelBtn.onclick = function() { browseQuit(); return false; };
+   pane.appendChild(cancelBtn);
 }
 
 function browseQuit() {
@@ -332,34 +323,29 @@ function browseQuit() {
    document.getElementById("btnMain").style.visibility = "visible";
 }
 
-function whenVerifierResponds(evt) {
-   /*
-   | for packaged application, this is the way appspot tells us the verifier
-   */
-   if (server_url.startsWith(evt.origin)) {
-      var val = JSON.parse(evt.data);
-      if (!val.status || (val.status != '200') || (!val.verifier)) {
-         window.removeEventListener("message", whenVerifierResponds, false);
-         alert("verifyResponse RC:" + val.status);
-      }else if (val.verifier === "???") {
-         var indicElt = document.getElementById("indic");
-         if (indicElt.textContent === "X") {
-            indicElt.textContent = " ";
+/*
+| for packaged application, this is the way appspot tells us the verifier
+*/
+function getVerifier() {
+   var xhr=makeCorsRequest("GET", "?OP=getVerifier&JXK=bougnoul");
+   xhr.onreadystatechange = function() {
+      if (xhr.readyState == "4") {
+         if (xhr.status != '200') {
+            alert("verifyResponse RC:" + xhr.status);
          }else {
-            indicElt.textContent = "X";
+            var val = JSON.parse(this.respnseText);
+            if (val.verifier === "???") {
+               setTimeout(getVerifier, 1000);
+            }else {
+               browseQuit();
+               alert("Bingo!\nVerifier is: " + val.verifier);
+               registerUser(val.verifier);
+               formatUsersList(false);
+            }
          }
-         setTimeout(
-            function() {evt.source.postMessage("getVerifier", evt.origin);},
-            1000
-         );
-      }else {
-         window.removeEventListener("message", whenVerifierResponds, false);
-         browseQuit();
-         alert("Bingo!\nVerifier is: " + val.verifier);
-         registerUser(val.verifier);
-         formatUsersList(false);
       }
    }
+   xhr.send();
 }
 
 function registerUser(verifier) {
