@@ -1,4 +1,5 @@
 var users;
+var authKey;
 var isPackaged = true;
 // var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
@@ -277,8 +278,10 @@ function makeCorsRequest(method, query) {
 }
 
 function authorize() {
+   // make a pseudo-random key )between 100000 and 200000
+   authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
-   var xhr = makeCorsRequest("GET", "?OP=getUrl&JXK=bougnoul");
+   var xhr = makeCorsRequest("GET", "?OP=getUrl&JXK=" + authKey);
    xhr.onreadystatechange = function() {
       switch (xhr.readyState) {
       case 1: // OPENED
@@ -287,9 +290,9 @@ function authorize() {
       case 4:
          document.getElementById("progresspane").style.visibility='hidden';
          if (this.status === 200) {         // navigate to it as a top browser window
-            if (isPackaged) {               // then, do NOT leave the app!
-               browseTo(xhr.responseText);  // use a mozbrowser
-            }else {
+            if (isPackaged) {               // if packaged, do NOT leave the app!
+               browseTo(xhr.responseText);  // use a mozbrowser, instead
+            }else {                         // if not packaged, we can leave the page
                window.location.href = xhr.responseText;
             }
          }else {
@@ -309,7 +312,7 @@ function browseTo(targetUrl) {
    pane.appendChild(browserFrame);
    pane.style.visibility = "visible";
 
-   //OT-LH*/ browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou";
+   //OT-LH*/ browserFrame.src = server_url + "?OP=backCallTest&JXK=" + authKey " "&oauth_verifier=tombouctou";
    browserFrame.src = targetUrl;
 
    document.querySelector("footer").style.visibility="hidden";
@@ -331,7 +334,7 @@ function browseQuit() {
 | for packaged application, this is the way appspot tells us the verifier
 */
 function getVerifier() {
-   var xhr=makeCorsRequest("GET", "?OP=getVerifier&JXK=bougnoul");
+   var xhr=makeCorsRequest("GET", "?OP=getVerifier&JXK=" + authKey);
    xhr.onreadystatechange = function() {
       if (xhr.readyState == "4") {
          if (xhr.status != '200') {

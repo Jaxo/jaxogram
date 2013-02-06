@@ -96,17 +96,17 @@ public class JaxogramServlet extends HttpServlet
                memcache.put(
                   memKey,
                   URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
-                  Expiration.byDeltaSeconds(1200)  // TODO 300 is enough
+                  Expiration.byDeltaSeconds(300) // 5 minutes
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
             }
-         }else if (op.equals("backCallTest")) {
+         }else if (op.equals("backCallTest")) {  // Debug only
             MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
             String memKey = req.getParameter("JXK");
             memcache.put(
                memKey,
                URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
-               Expiration.byDeltaSeconds(1200)  // TODO 300 is enough
+               Expiration.byDeltaSeconds(300)
             );
             resp.setContentType("text/html");
             writer.print(
@@ -289,6 +289,11 @@ public class JaxogramServlet extends HttpServlet
       return sb.toString();
    }
 
+   /*----------------------------------------------------backCallTestResponse-+
+   *//**
+   * Debug only
+   *//*
+   +-------------------------------------------------------------------------*/
    private static String backCallTestResponse(String verifier) {
       String f = (
          "<HTML><HEAD>" +
