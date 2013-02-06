@@ -1,20 +1,24 @@
 var users;
-var isPackaged = false;
-var server_url;
+var isPackaged = true;
 // var APPSPOT_URL = "http://jaxogram.appspot.com/jaxogram";
-var APPSPOT_URL = "http://5.jaxogram.appspot.com/jaxogram";   // for our internal tests
+// var APPSPOT_URL = "http://5.jaxogram.appspot.com/jaxogram"; // for our internal tests
+var APPSPOT_URL = "http://localhost:8888/jaxogram";            // for our internal tests
+var server_url = APPSPOT_URL;
 
 window.onload = function() {
-   var loc = window.location.href;
-   if (loc.startsWith("app://")) {                  // "app://{92390129-62c9-...}"
-      isPackaged = true;
-      server_url = APPSPOT_URL;
-   }else if (loc.indexOf("appspot") >= 0) {         // "default, or versionned
-      server_url = loc + "jaxogram";
-   }else {                                          // "http://localhost:8888/", or
-      server_url = "http://localhost:8888/jaxogram" // "http://ottokar/jaxogram/index.html"
+   var loc = window.location;
+   if (loc.protocol !== "app:") {
+      isPackaged = false;
+      var host = loc.host;
+      if (host.indexOf("appspot") >= 0) {              // appspot default, or versioned
+         server_url = host + "/jaxogram";
+      }else {                                          // "http://localhost:8888/", or
+         server_url = "http://localhost:8888/jaxogram" // "http://ottokar/jaxogram/index.html"
+      }
    }
-   // alert(location);
+   if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
+      alert("Warning: test version\nServer at\n" + server_url);
+   }
    createDispatcher();
    users = new JgUsers();
    // users.cleanUp();
@@ -304,7 +308,8 @@ function browseTo(targetUrl) {
    pane.appendChild(browserFrame);
    pane.style.visibility = "visible";
    browserFrame.src = targetUrl;
-// browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou";
+//*/ alert("warning: call to OAuth is simulated")
+//*/ browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou";
    document.querySelector("footer").style.visibility="hidden";
    document.getElementById("btnMain").style.visibility='hidden';
    getVerifier();
@@ -331,15 +336,15 @@ function getVerifier() {
    xhr.onreadystatechange = function() {
       if (xhr.readyState == "4") {
          if (xhr.status != '200') {
-            alert("verifyResponse RC:" + xhr.status);
+            alert("getVerifier RC:" + xhr.status);
          }else {
-            var val = JSON.parse(this.respnseText);
-            if (val.verifier === "???") {
+            var verifier = this.responseText;
+            if (verifier === "???") {
                setTimeout(getVerifier, 1000);
             }else {
                browseQuit();
-               alert("Bingo!\nVerifier is: " + val.verifier);
-               registerUser(val.verifier);
+               registerUser(verifier);
+               //*/ alert("Bingo!\nVerifier is: " + verifier);
                formatUsersList(false);
             }
          }

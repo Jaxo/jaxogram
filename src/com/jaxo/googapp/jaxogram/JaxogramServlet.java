@@ -128,8 +128,11 @@ public class JaxogramServlet extends HttpServlet
                MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
                String memKey = req.getParameter("JXK");
                String val = (String)memcache.get(memKey);
-               if (val == null) val = "???";
-               // TODO if not null, remove the key from the memcache
+               if (val == null) {
+                  val = "???";
+               }else {
+                  memcache.delete(memKey);
+               }
                writer.print(val);
 
             }else if (op.equals("postAccPss")) {
