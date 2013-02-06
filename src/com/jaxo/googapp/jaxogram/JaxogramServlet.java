@@ -31,6 +31,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
 
+import com.google.appengine.api.memcache.Expiration;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
+
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
 *//**
@@ -61,33 +65,77 @@ public class JaxogramServlet extends HttpServlet
 //*/  );
       String op = req.getParameter("OP");
 //*/  logger.info("OP: " + op);
+
       resp.setContentType("text/plain");
       PrintWriter writer = resp.getWriter();
 
       try {
          if (op.equals("backCall")) {
             /*
-            | Call back from Orkut: pass the oauth_verifier back to origin
-            | (redirect to the referer page)
+            | Call back from Orkut:
+            | regular WEB app:
+            |    pass the oauth_verifier back to origin (redirect to the referer page)
+            | packaged app
+            |    store the verifier in device local storage
+            |    return an iframe contents
             */
-            String redirect = (
-               req.getParameter("referer") +
-               "?OP=backCall" +
-               "&verifier=" + URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
-            );
-//*/        logger.info("Callback from orkut => proxy to " + redirect);
-            resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
-            resp.setHeader("Location", redirect);
-
-         }else {  // Cross Origin Resource Sharing
-            if (req.getHeader("origin") == null) {
-               throw new Exception("Invalid CORS header (no origin)");
+            String referer = req.getParameter("referer");
+            if (referer != null) {
+               String redirect = (
+                  req.getParameter("referer") +
+                  "?OP=backCall" +
+                  "&verifier=" +
+                  URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
+               );
+//*/           logger.info("Callback from orkut => proxy to " + redirect);
+               resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
+               resp.setHeader("Location", redirect);
+            }else {
+               MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+               String memKey = req.getParameter("JXK");
+               memcache.put(
+                  memKey,
+                  URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
+                  Expiration.byDeltaSeconds(300) // 5 minutes
+               );
+               resp.setStatus(HttpServletResponse.SC_CREATED);
             }
-            resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));
+         }else if (op.equals("backCallTest")) {  // Debug only
+            MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+            String memKey = req.getParameter("JXK");
+            memcache.put(
+               memKey,
+               URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
+               Expiration.byDeltaSeconds(300)
+            );
+            resp.setContentType("text/html");
+            writer.print(
+               backCallTestResponse(
+                  URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
+               )
+            );
+         }else {  // Cross Origin Resource Sharing
+            if (req.getHeader("origin") != null) {
+               resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));
+//          }else {
+//             throw new Exception("Invalid CORS header (no origin)");
+            }
             // need cookies for session id's:
             resp.setHeader("Access-Control-Allow-Credentials", "true");
             // resp.setHeader("Access-Control-Expose-Headers", "FooBar");
-            if (op.equals("postAccPss")) {
+
+            if (op.equals("getVerifier")) {
+               MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+               String memKey = req.getParameter("JXK");
+               String val = (String)memcache.get(memKey);
+               if (val == null) {
+                  val = "???";
+               }else {
+                  memcache.delete(memKey);
+               }
+               writer.print(val);
+
+            }else if (op.equals("postAccPss")) {
                InputStream in = req.getInputStream();
                req.getSession(true).setAttribute("accesspass", IOUtils.toString(in));
 //*/           logger.info("Access Pass: " + req.getSession(true).getAttribute("accesspass"));
@@ -214,13 +262,18 @@ public class JaxogramServlet extends HttpServlet
    public static OrkutNetwork makeNullOrkutNetwork(HttpServletRequest req)
    throws Exception {
       String referer = req.getHeader("referer");
-      if (referer == null) {
-         throw new Exception("Invalid CORS header (null referer)");
+      if (referer != null) {
+         referer = "&referer=" +  URLEncoder.encode(referer, "UTF-8");
+      }else if ((referer = req.getParameter("JXK")) != null) {
+         referer = "&JXK=" + referer;
+      }else {
+         referer = "";
+//       throw new Exception("Invalid CORS header (null referer)");
       }
       return new OrkutNetwork(
          null,                                        // no access password
          getBaseUrl(req) + "/jaxogram?OP=backCall" +  // callback URL
-         "&referer=" + URLEncoder.encode(referer, "UTF-8")
+         referer
       );
    }
 
@@ -236,5 +289,27 @@ public class JaxogramServlet extends HttpServlet
       return sb.toString();
    }
 
+   /*----------------------------------------------------backCallTestResponse-+
+   *//**
+   * Debug only
+   *//*
+   +-------------------------------------------------------------------------*/
+   private static String backCallTestResponse(String verifier) {
+      String f = (
+         "<HTML><HEAD>" +
+         "\n<SCRIPT type='text/javascript'>" +
+         "\nfunction setVerifier() {" +
+         "\n  document.getElementById('vrf').innerHTML = (" +
+            "\n'<SMALL>" + verifier + "</SMALL>'" +
+         "\n  );" +
+         "\n}" +
+         "\n</SCRIPT></HEAD>" +
+         "\n<BODY><H1>Back Call Test</H1>" +
+         "\n<BUTTON onclick='setVerifier();'>Set Verifier</BUTTON>" +
+         "\n<DIV id='vrf'>&nbsp;</DIV>" +
+         "\n</BODY></HTML>"
+      );
+      return f;
+   }
 }
 /*===========================================================================*/
