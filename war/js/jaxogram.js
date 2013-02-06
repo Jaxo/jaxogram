@@ -1,9 +1,9 @@
 var users;
 var isPackaged = true;
-// var APPSPOT_URL = "http://jaxogram.appspot.com/jaxogram";
-// var APPSPOT_URL = "http://5.jaxogram.appspot.com/jaxogram"; // for our internal tests
-var APPSPOT_URL = "http://localhost:8888/jaxogram";            // for our internal tests
-var server_url = APPSPOT_URL;
+// var server_url = "http://jaxogram.appspot.com/jaxogram";
+// -- only for our internal testing --
+// var server_url = "http://5.jaxogram.appspot.com/jaxogram";
+var server_url = "http://localhost:8888/jaxogram";
 
 window.onload = function() {
    var loc = window.location;
@@ -16,6 +16,7 @@ window.onload = function() {
          server_url = "http://localhost:8888/jaxogram" // "http://ottokar/jaxogram/index.html"
       }
    }
+   //OT-LH*/ isPackaged = true;  // testing on ottokar/localhost
    if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
       alert("Warning: test version\nServer at\n" + server_url);
    }
@@ -307,17 +308,14 @@ function browseTo(targetUrl) {
    browserFrame.classList.add('iframebox');
    pane.appendChild(browserFrame);
    pane.style.visibility = "visible";
+
+   //OT-LH*/ browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou";
    browserFrame.src = targetUrl;
-//*/ alert("warning: call to OAuth is simulated")
-//*/ browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou";
+
    document.querySelector("footer").style.visibility="hidden";
-   document.getElementById("btnMain").style.visibility='hidden';
+   document.getElementById("btnMainImage").style.backgroundImage = "url(style/images/close.png)";
+   document.getElementById("btnMain").onclick = browseQuit;
    getVerifier();
-   var cancelBtn = document.createElement('button');
-   cancelBtn.style.cssText = "position:relative; top:-7rem; left:2rem";
-   cancelBtn.textContent = "Cancel";
-   cancelBtn.onclick = function() { browseQuit(); return false; };
-   pane.appendChild(cancelBtn);
 }
 
 function browseQuit() {
@@ -325,7 +323,8 @@ function browseQuit() {
    pane.innerHTML = "";
    pane.style.visibility = "hidden";
    document.querySelector("footer").style.visibility = "visible";
-   document.getElementById("btnMain").style.visibility = "visible";
+   document.getElementById("btnMainImage").style.backgroundImage = "url(style/images/menu.png)";
+   document.getElementById("btnMain").onclick = toggleSidebarView;
 }
 
 /*
@@ -343,8 +342,8 @@ function getVerifier() {
                setTimeout(getVerifier, 1000);
             }else {
                browseQuit();
+               //OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);
                registerUser(verifier);
-               //*/ alert("Bingo!\nVerifier is: " + verifier);
                formatUsersList(false);
             }
          }
