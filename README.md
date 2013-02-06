@@ -52,9 +52,17 @@ When Registering
     Jaxo -> Orkt: Point me to your URL for auth registration, and call me back
                  when the user is done with
                  (CB with OP=backCall, and User address, aka referer)
+                 | Except for packaged app:
+                 | referer contains a random key ("authKey"), because
+                 | the user address doesn't exist
                  Jaxo stores the "accessor" into a session variable
     Orkt -> Jaxo: here is the auth URL where User must navigate to
     Jaxo -> User: window.location = the auth URL
+                 | Except for packaged app:
+                 |  we do *not* leave the app, or we would never return to it,
+                 |  What is done:
+                 |   - Open a mozbrowser as an iframe [requires: browser perm]
+                 |   - Point the iframe at the auth URL
     ---------
     [No valid Session ID here]
     User -> Orkt: I authorize Jaxo to issue requests on my behalf (or I deny access)
@@ -62,7 +70,16 @@ When Registering
                  Jaxo:
                  - redirects the response to User (the referer)
                  - passes the oauth "verifier" in the parameters (and OP=backCall)
+                 | Except for packaged app, where Jaxo:
+                 | - stores the oauth "verifier" in the memcache, under the key
+                 |   "authKey"
+                 | - the "User" has provided a watch-dog ("getVerifier"),
+                 |   waiting for this action
+
     Jaxo -> User: interprets the OP backcall as an XHR
+                 | Except for packaged app:
+                 | Jaxo's dog wakes up, get the "verifier" from the memcache,
+                 | and kills the mozbrowser
     [Session ID again valid]
     ---------
     User -> Jaxo: (OP=getAccPss) obtain the "access password", given the "accessor" and the
@@ -77,7 +94,49 @@ After Registration
 From the Permanent Locale Storage, User gets the "access password", and tells Jaxo to use it: OP=postAccessPass
 
 
+Means For Testing
+==================
 
+1) Simulate a basic exchange:
+-----------------------------
+Eclipse, localhost:8888, Server and Jaxo on GAE simulator:
+<PRE>
+      in "jaxogram.js", make sure server_url is set to "http://localhost:8888/jaxogram"
+      start JaxoGram on localhost:8888
+</PRE>
 
+<i>Never underestimate JavaScript problems (typos may kill you),
+even if the following step is a pain in the neck **DO IT**.</i>
 
+2) Simulate Jaxo separated from Server
+--------------------------------------
+Eclipse Server at localhost:8888, Jaxo on Ottokar:
+<PRE>
+   in "jaxogram.js",
+      [line numbering may change... look for lines starting with "//OT-LH*/"]
+      make sure server_url is set to "http://localhost:8888/jaxogram"
+      line 19: uncomment (that is, replace the 2nd slash with a star):
+         //OT-LH*/ isPackaged = true; // testing on ottokar/localhost
+      line 312...313
+         uncomment:
+         //OT-LH*/ browserFrame.src = server_url + "?OP=backCallTest&JXK=bougnoul&oauth_verifier=tombouctou"
+         comment out the next line: "browserFrame.src = targetUrl;"
+      line 345...346
+         uncomment
+         "//OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);"
+         comment out the next line: "registerUser(verifier)"
+   from ~/jaxoapps/jaxogram enter
+         "serveOnOttokar"
+   from /home/pgr/.gvfs/build on ottokar/sites/jaxogram
+         "unzip jaxogram.zip"
+   start Jaxogram on ottokar/jaxogram
+</PRE>
+Don't forget to clean up your changes!
+
+3) Firefox OS simulator
+-----------------------
+<PRE>
+   from ~/jaxoapps/jaxogram enter "serveOnOttokar"
+   install from "http://ottokar/jaxogram/install.html"
+</PRE>
 
