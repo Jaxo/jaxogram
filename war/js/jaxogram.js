@@ -361,7 +361,12 @@ function registerUser(verifier) {
       "?OP=getAccPss&verifier=" + encodeURIComponent(verifier)
    );
    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
+      switch (this.readyState) {
+      case 1: // OPENED
+         document.getElementById("progresspane").style.visibility='visible';
+         break;
+      case 4: // DONE
+         document.getElementById("progresspane").style.visibility='hidden';
          if (this.status !== 200) {
             alert(i18n("authDenied", xhr.responseText));
          }else {
