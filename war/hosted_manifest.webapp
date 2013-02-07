@@ -1,8 +1,7 @@
 {
   "name": "Jaxogram",
-  "version": "0.9.4",
+  "version": "0.9.4h",
   "description": "Jaxo's Photo Sharing App",
-  "launch_path": "/index.html",
   "locales": {
     "en": { "description": "Jaxo's Photo Sharing App" },
     "fr": { "description": "App. Jaxo de partage de photos" },
@@ -24,7 +23,6 @@
 
   "installs_allowed_from": ["*"],
 
-  "type": "privileged",
   "permissions": {
     "systemXHR": { "description": "Access Jaxo's app server and OAuth" },
     "browser":{ "description": "OAuth browser window" },
@@ -34,5 +32,4 @@
     "storage": { "description": "Use local storage for access tokens" },
     "camera": { "description": "Share photos" }
   }
-
 }

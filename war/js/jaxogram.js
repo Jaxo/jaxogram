@@ -36,12 +36,14 @@ window.onload = function() {
    }
    dispatcher.on(
       "install_changed",
-      function action(state) {
+      function action(state, version) {
          if (
             (state === "uninstalled") && !users.hasSome() &&
             (params.OP !== "backCall") && confirm(i18n('betterInstall'))
          ) {
             document.getElementById("btnInstall").click();
+         }else if ((state === "installed") && version) {
+            document.querySelector("header h1 small").textContent = version;
          }
       }
    );

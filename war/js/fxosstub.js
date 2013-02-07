@@ -4,18 +4,24 @@ function Install() {
       var request = navigator.mozApps.getSelf();
       request.onsuccess = function () {
          if (this.result) {
-            dispatcher.post("install_changed", "installed");
+            dispatcher.post(
+               "install_changed", "installed", this.result.manifest.version
+            );
          }else {
             that.installUrl = (
                location.href.substring(0, location.href.lastIndexOf("/")) +
-               "/manifest.webapp"
+               "/hosted_manifest.webapp"
             );
             that.doIt = function() {
                //*/ alert("Install from " + that.installUrl);
                try {
                   var req2 = navigator.mozApps.install(that.installUrl);
                   req2.onsuccess = function(data) {
-                     dispatcher.post("install_changed", "installed");
+                     dispatcher.post(
+                        "install_changed",
+                        "installed",
+                        req2.result.manifest.version
+                     );
                      //*/ alert("Bingo!");
                   };
                   req2.onerror = function() {
