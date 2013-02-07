@@ -12,7 +12,7 @@ window.onload = function() {
       isPackaged = false;
       var host = loc.host;
       if (host.indexOf("appspot") >= 0) {              // appspot default, or versioned
-         server_url = host + "/jaxogram";
+         server_url = "http://" + host + "/jaxogram";
       }else {                                          // "http://localhost:8888/", or
          server_url = "http://localhost:8888/jaxogram" // "http://ottokar/jaxogram/index.html"
       }
