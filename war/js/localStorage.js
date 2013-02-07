@@ -79,3 +79,16 @@ if (!Array.prototype.forEach)
     }
   };
 }
+
+function getQueryParams() {
+   var query = window.location.search.substr(1).split('&');
+   if (query === "") return {};
+   var params = {};
+   for (var i=0; i < query.length; ++i) {
+       var param = query[i].split('=');
+       if (param.length === 2) {
+          params[param[0]] = decodeURIComponent(param[1].replace(/\+/g, " "));
+       }
+   }
+   return params;
+}

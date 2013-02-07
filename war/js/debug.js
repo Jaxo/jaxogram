@@ -6,7 +6,7 @@ Parameters:
 Return Value:
   The stringized variable
 */
-function dump(v, howDisplay, indent, depth) {
+function dump(v, indent, depth) {
    depth = (typeof depth !== 'number')? 0 : depth;
    indent = (typeof indent !== "string")? "   " : indent;
    var vType = typeof v;
