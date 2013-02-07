@@ -1,7 +1,7 @@
 {
   "name": "Jaxogram",
   "package_path": "http://192.168.1.150:8080/jaxogram.zip",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "developer": {
     "name": "Jaxo, Inc.",
     "url": "http://www.jaxo.com"

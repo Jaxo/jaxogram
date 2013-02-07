@@ -1,6 +1,6 @@
 {
   "name": "Jaxogram",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Jaxo's Photo Sharing App",
   "launch_path": "/index.html",
   "locales": {
