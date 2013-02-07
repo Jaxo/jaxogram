@@ -82,7 +82,7 @@ var localeValues = {
       'es-ES':"¿Está seguro que desea eliminar [CR], el inicio de sesión para \"% 1 \"?"
    }, pickImageError: {
       'en-US':"The selection of the photo has failed",
-      'fr-FR':"Erreur lors de la selection de la photo",
+      'fr-FR':"Erreur lors de la sélection de la photo",
       'pt-BR':"Falha seleccionando uma foto",
       'es-ES':"La falta seleccionar una foto"
    }, imageUploaded: {
