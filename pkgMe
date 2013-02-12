@@ -8,6 +8,8 @@ else
    set SERVER_DIR = '<unknown server directory>'
 endif
 
+zip ${SERVER_DIR:q}/jaxogram.zip -x \*/.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images
+
 cat > ${SERVER_DIR:q}/install.html << End-Of-File
 <html>
  <body>
@@ -35,14 +37,14 @@ cat > ${SERVER_DIR:q}/package.manifest << End-Of-File
 `grep -m 1 -e '\"name\":' manifest.webapp`
   "package_path": "$SERVER_URL/jaxogram.zip",
 `grep -m 1 -e '\"version\":' manifest.webapp`
+  "size": `stat -c %s '${SERVER_DIR:q}/jaxogram.zip'`,
+`awk '/ *"locales":/, /.*^ *},/ {print}' manifest.webapp`
   "developer": {
     "name": "Jaxo, Inc.",
     "url": "http://www.jaxo.com"
   }
 }
 End-Of-File
-
-zip ${SERVER_DIR:q}/jaxogram.zip -x \*/.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images
 
 echo === ${SERVER_DIR:q}/package.manifest
 cat ${SERVER_DIR:q}/package.manifest
