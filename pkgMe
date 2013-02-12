@@ -1,0 +1,54 @@
+#!/bin/csh
+cd war
+if ($USER == 'pgr') then
+   set SERVER_URL = 'http://10.110.2.103/jaxogram'
+   set SERVER_DIR = $HOME'/.gvfs/build on ottokar/sites/jaxogram'
+else
+   set SERVER_URL = 'http://192.168.1.150:8080'
+   set SERVER_DIR = '<unknown server directory>'
+endif
+
+cat > ${SERVER_DIR:q}/install.html << End-Of-File
+<html>
+ <body>
+   <p>Jaxogram Installation Page</p>
+   <script>
+     var manifestUrl = '$SERVER_URL/package.manifest';
+     try {
+        var req = navigator.mozApps.installPackage(manifestUrl);
+        req.onsuccess = function() {
+          alert('Sucessfully installed from\n' + this.result.origin);
+        };
+        req.onerror = function() {
+          alert('Error during install:\n' + this.error.name);
+        };
+     }catch (error) {
+        alert(error);
+     }
+   </script>
+ </body>
+</html>
+End-Of-File
+
+cat > ${SERVER_DIR:q}/package.manifest << End-Of-File
+{
+`grep -m 1 -e '\"name\":' manifest.webapp`
+  "package_path": "$SERVER_URL/jaxogram.zip",
+`grep -m 1 -e '\"version\":' manifest.webapp`
+  "developer": {
+    "name": "Jaxo, Inc.",
+    "url": "http://www.jaxo.com"
+  }
+}
+End-Of-File
+
+zip ${SERVER_DIR:q}/jaxogram.zip -x \*/.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images
+
+echo === ${SERVER_DIR:q}/package.manifest
+cat ${SERVER_DIR:q}/package.manifest
+echo
+echo === ${SERVER_DIR:q}/install.html
+cat ${SERVER_DIR:q}/install.html
+echo
+echo === zip file: ${SERVER_DIR:q}/jaxogram.zip
+
