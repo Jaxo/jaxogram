@@ -12,19 +12,28 @@ Jaxo's Mozilla Marketplace id is jaxo@jaxo.com (the password is the standard one
 
 To test the packaging of Jaxogram for the marketplace:
 
-1. Remove the Firefox OS Simulator from Firefox (Firefox->Tools->Add Ons->Extensions, select Firefox OS Simulator, press the Remove button)
+1. For safety...
+<UL><LI>Remove the Firefox OS Simulator from Firefox
+<UL><LI>do <CODE>Firefox->Tools->Add Ons->Extensions</CODE>
+</LI><LI>select Firefox OS Simulator,
+</LI><LI>press the Remove button
+</LI></UL>
+</LI><LI>Reinstall the Firefox OS Simulator from https://addons.mozilla.org/en-US/firefox/addon/firefox-os-simulator
+</LI></UL><BR/>
 
-2. Reinstall the Firefox OS Simulator from https://addons.mozilla.org/en-US/firefox/addon/firefox-os-simulator
+2. Start the Firefox OS Simulator and turn on Developer Mode, which is a setting buried deep in<BR/><CODE>Settings->Device Information->More Information->Developer</CODE>
 
-3. Start the Firefox OS Simulator and turn on Developer Mode, which is a setting buried deep in Settings->Device Information->More Information->Developer
+3. Run the <code>pkgMe</code> shell script.
+<BR/>First time use? *Modify <CODE>pkgMe</CODE>, so it knows your URL server address, and the top directory of your local server files*
+<BR/>PkgMe does:
+<UL><LI>create a jaxogram.zip packaged app from jaxogram/war:<BR/><CODE>zip jaxogram -x */.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images</CODE>
+</LI><LI>create an install.html and package.manifest
+</LI><LI>all these files being saved into the top level directory of your local Web server files
+</LI></UL><BR/>
 
-4. Create a jaxogram.zip packaged app from jaxogram/war: zip jaxogram -x */.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images
+4. Install the jaxogram app by entering the following in Firefox in the Firefox OS Simulator: <BR/><CODE>http://&lt;URL server address&gt;/install.html</CODE>
 
-5. Copy jaxogram.zip and jaxogram/war/packaged-app/install.html and jaxogram/war/packaged-app/package.manifest into the top level directory on a local Web server (BE SURE TO CHANGE THE URL'S ADDRESS IN BOTH OF THE packaged-app FILES ACCORDINGLY)
-
-6. Install the jaxogram app by entering the following in Firefox in the Firefox OS Simulator: http://<local-web-server>/install.html
-
-7. With jaxogram successfully installed, start jaxogram and try Who am I?
+5. With jaxogram successfully installed, start jaxogram and try <CODE>Who am I?</CODE>
 
 Good links:
 
@@ -126,7 +135,7 @@ Eclipse Server at localhost:8888, Jaxo on Ottokar:
          "//OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);"
          comment out the next line: "registerUser(verifier)"
    from ~/jaxoapps/jaxogram enter
-         "serveOnOttokar"
+         "pkgMe"
    from /home/pgr/.gvfs/build on ottokar/sites/jaxogram
          "unzip jaxogram.zip"
    start Jaxogram on ottokar/jaxogram
@@ -135,8 +144,8 @@ Don't forget to clean up your changes!
 
 3) Firefox OS simulator
 -----------------------
+See "Market Place" above
 <PRE>
-   from ~/jaxoapps/jaxogram enter "serveOnOttokar"
+   from ~/jaxoapps/jaxogram enter "pkgMe"
    install from "http://ottokar/jaxogram/install.html"
 </PRE>
-
