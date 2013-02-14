@@ -1,9 +1,5 @@
 {
   "name": "Jaxogram",
-<<<<<<< HEAD
-  "package_path": "http://192.168.1.150:8080/jaxogram.zip",
-  "version": "0.9.5",
-=======
   "package_path": "http://192.168.1.150:8080/application.zip",
   "size": 115028,
   "version": "9.0",
@@ -13,7 +9,6 @@
     "pt": { "description": "App Jaxo de compartilhamento de foto" },
     "es": { "description": "App Jaxo de uso compartido de fotos" }
   },
->>>>>>> Jaxogram running on sim 2.0
   "developer": {
     "name": "Jaxo, Inc.",
     "url": "http://www.jaxo.com"
