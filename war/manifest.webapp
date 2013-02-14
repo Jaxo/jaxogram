@@ -22,6 +22,16 @@
     "128": "/applogos/logo128.png"
   },
 
-  "installs_allowed_from": ["*"]
+  "installs_allowed_from": ["*"],
+
+  "type": "privileged",
+  "permissions": {
+    "systemXHR": { "description": "Access Jaxo's app server and OAuth" },
+    "browser":{ "description": "OAuth browser window" },
+    "contacts": { "description": "Import Orkut friends as contacts", "access": "readcreate" },
+    "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
+    "geolocation": { "description": "Geotag photos" },
+    "storage": { "description": "Use local storage for access tokens" }
+  }
 
 }
