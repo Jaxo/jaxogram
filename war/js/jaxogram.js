@@ -339,7 +339,7 @@ function getVerifier() {
    var xhr=makeCorsRequest("GET", "?OP=getVerifier&JXK=" + authKey);
    xhr.onreadystatechange = function() {
       if (xhr.readyState == "4") {
-         if (xhr.status != '200') {
+         if (xhr.status != '200' && xhr.status != '0') {
             alert("getVerifier RC:" + xhr.status);
          }else {
             var verifier = this.responseText;
