@@ -1,10 +1,6 @@
 {
   "name": "Jaxogram",
-<<<<<<< HEAD
-  "version": "0.9.5",
-=======
   "version": "9.0",
->>>>>>> Jaxogram running on sim 2.0
   "description": "Jaxo's Photo Sharing App",
   "launch_path": "/index.html",
   "locales": {
