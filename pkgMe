@@ -1,5 +1,6 @@
 #!/bin/csh
 cd war
+set NAME = 'Jaxogram'
 if ($USER == 'pgr') then
    set SERVER_URL = 'http://10.110.2.103/jaxogram'
    set SERVER_DIR = $HOME'/.gvfs/build on ottokar/sites/jaxogram'
@@ -8,49 +9,79 @@ else
    set SERVER_DIR = '<unknown server directory>'
 endif
 
-zip ${SERVER_DIR:q}/jaxogram.zip -x \*/.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images
+echo "Testing for the simulator requires type:privileged to be removed."
+echo "Remove it? [Y or n]"
+set RESP = "$<"
+if ($RESP == 'Y') then
+   # first is to remove the line with "type" : "privileged"
+   sed -i".bak" '/\"type\":/d' manifest.webapp
+   # then, zip to "application.zip"
+   zip ${SERVER_DIR:q}/application.zip -x \*/.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images
+   # and restore
+   mv manifest.webapp.bak manifest.webapp
+else
+   zip ${SERVER_DIR:q}/application.zip -x \*/.DS_Store -r manifest.webapp index.html favicon.ico js style applogos images
+endif
 
+# create "install.html"
 cat > ${SERVER_DIR:q}/install.html << End-Of-File
+<!DOCTYPE HTML>
 <html>
+ <head>
+   <meta charset="utf-8"/>
+   <meta name="viewport" content="width=device-width"/>
+   <title>$NAME Install</title>
+ </head>
  <body>
-   <p>Jaxogram Installation Page</p>
+   <p>$NAME Installation Page</p>
+   <div id="status" style="background-color:#edee88">Installing...<div>
    <script>
-     var manifestUrl = '$SERVER_URL/package.manifest';
+     var manifestUrl = location.href.substring(
+        0, location.href.lastIndexOf("/")
+     ) + "/package.webapp";
      try {
         var req = navigator.mozApps.installPackage(manifestUrl);
         req.onsuccess = function() {
-          alert('Sucessfully installed from\n' + this.result.origin);
+           document.getElementById("status").textContent = (
+              "Sucessfully installed from\n" + this.result.origin
+           );
         };
         req.onerror = function() {
-          alert('Error during install:\n' + this.error.name);
+           document.getElementById("status").textContent = (
+              "Error during install:\n" + this.error.name
+           );
         };
      }catch (error) {
-        alert(error);
+        document.getElementById("status").textContent = (
+           "Problem during install:\n" + error
+        );
      }
    </script>
  </body>
 </html>
 End-Of-File
 
-cat > ${SERVER_DIR:q}/package.manifest << End-Of-File
+# create "package.webapp"
+cat > ${SERVER_DIR:q}/package.webapp << End-Of-File
 {
 `grep -m 1 -e '\"name\":' manifest.webapp`
-  "package_path": "$SERVER_URL/jaxogram.zip",
+  "package_path": "$SERVER_URL/application.zip",
 `grep -m 1 -e '\"version\":' manifest.webapp`
-  "size": `stat -c %s '${SERVER_DIR:q}/jaxogram.zip'`,
-`awk '/ *"locales":/, /.*^ *},/ {print}' manifest.webapp`
-  "developer": {
-    "name": "Jaxo, Inc.",
-    "url": "http://www.jaxo.com"
-  }
+`awk '/ *"developer":/, /.*^  },/ {print}' manifest.webapp`
+`awk '/ *"locales":/, /.*^  },/ {print}' manifest.webapp`
+  "size": `stat -c %s '${SERVER_DIR:q}/application.zip'`
 }
 End-Of-File
+# `grep -m 1 -e '\"type\":' manifest.webapp`
+# `awk '/ *"permissions":/, /.*^  },/ {print}' manifest.webapp`
+# `awk '/ *"locales":/, /.*^  },/ {print}' manifest.webapp`
+# `awk '/ *"activities":/, /.*^}/ {print}' manifest.webapp`
 
-echo === ${SERVER_DIR:q}/package.manifest
-cat ${SERVER_DIR:q}/package.manifest
+echo === ${SERVER_DIR:q}/package.webapp
+cat ${SERVER_DIR:q}/package.webapp
 echo
 echo === ${SERVER_DIR:q}/install.html
 cat ${SERVER_DIR:q}/install.html
 echo
-echo === zip file: ${SERVER_DIR:q}/jaxogram.zip
+echo === zip file: ${SERVER_DIR:q}/application.zip
 

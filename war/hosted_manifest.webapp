@@ -1,6 +1,6 @@
 {
   "name": "Jaxogram",
-  "version": "0.9.5h",
+  "version": "9.6h",
   "description": "Jaxo's Photo Sharing App",
   "locales": {
     "en": { "description": "Jaxo's Photo Sharing App" },
@@ -29,7 +29,6 @@
     "contacts": { "description": "Import Orkut friends as contacts", "access": "readcreate" },
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
     "geolocation": { "description": "Geotag photos" },
-    "storage": { "description": "Use local storage for access tokens" },
-    "camera": { "description": "Share photos" }
+    "storage": { "description": "Use local storage for access tokens" }
   }
 }
