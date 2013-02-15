@@ -353,7 +353,7 @@ button {
 [role=radiogroup] li:before {
   content: " ";
 }
-span[role=trasher] {
+span[role=trasher]:before {
    font-family:GeneralEnclosedFoundicons;
    font-weight: normal;
    font-style: normal;
@@ -364,8 +364,9 @@ span[role=trasher] {
    left:-0.7rem;
    padding:0.6rem;
    line-height:0;
+   content: "\f018";
 }
-span[role=trasher]:active {
+span[role=trasher]:active:before {
    background-color: #FC2200;
    color:white;
 }

@@ -114,82 +114,204 @@ function swipeHandler(e) {
 }
 
 function formatUsersList(isUserRequired) {
-   document.getElementById("jgUsersAid").innerHTML = (
-      "<SMALL class='i18n' id='photoAlbum'>" +
-      i18n("photoAlbum") +
-      "</SMALL><BR/><i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>" +
-      "<UL role='radiogroup' id='albumList' onclick='changeAlbum(this, event)'></UL>"
-   );
+   resetAlbumsList();
    if (users.hasSome()) {
-      var html = "";
-      var selName = null;
-      var selAlbumTitle = null;
+      var elt;
+      var liElt;
+      var smallElt;
+      var italicElt;
+      var ulElt = document.createElement("UL");
+      ulElt.setAttribute("role", "radiogroup");
+      ulElt.onclick = function(event) { changeLogin(this, event); };
+
+      liElt = document.createElement("LI");
+      liElt.className = "i18n";
+      liElt.id = "newLogin";
+      liElt.onclick = function(event) {
+         authorize();
+         event.stopPropagation();
+      };
+      liElt.appendChild(document.createTextNode(i18n("newLogin")));
+      ulElt.appendChild(liElt);
+//    var html =
+//       "<UL role='radiogroup' onclick='changeLogin(this, event);'>" +
+//         "<LI class='i18n' id='newLogin'" +
+//         " onclick='authorize();event.stopPropagation()'>" +
+//         i18n('newLogin') +
+//       "</SPAN></LI>"
+//    );
+//    var selName = null;
+//    var selAlbumTitle = null;
       users.forEach(
          function(name, pass, albumTitle, isSelected, net) {
-            html += "<LI";
-            if (isSelected) {
-               selName = name;
-               selAlbumTitle = albumTitle;
-               html += " aria-selected='true'";
-            }
-            html += "><span role='trasher'>&#xF018;</span>" + name + "</LI>";
+            var itmElt = document.createElement("LI");
+            var spanElt = document.createElement("SPAN");
+            if (isSelected) itmElt.setAttribute("aria-selected", "true");
+            spanElt.setAttribute("role", "trasher");
+            itmElt.appendChild(spanElt);
+            itmElt.appendChild(document.createTextNode(name));
+            ulElt.appendChild(itmElt);
+//          html += "<LI";
+//          if (isSelected) {
+//             selName = name;
+//             selAlbumTitle = albumTitle;
+//             html += " aria-selected='true'";
+//          }
+//          html += "><span role='trasher'>&#xF018;</span>" + name + "</LI>";
          }
       );
-      if (selAlbumTitle) {
-         var albumTitleElt = document.getElementById('albumTitle');
-         albumTitleElt.textContent = selAlbumTitle;
-         albumTitleElt.removeAttribute("class");  // no more i18n'ed
+      elt = document.getElementById("jgUsersIn");
+      while (elt.hasChildNodes()) {
+         elt.removeChild(elt.lastChild);
       }
-      document.getElementById("jgUsersIn").innerHTML = (
-         "<SMALL class='i18n' id='loginAs'>" +
-         i18n('loginAs') +
-         "</SMALL><BR/><i id='jgUserName'>" +
-         selName +
-         "</i><UL role='radiogroup' onclick='changeLogin(this, event);'>" +
-         "<LI class='i18n' id='newLogin'" +
-         " onclick='authorize();event.stopPropagation()'>" +
-         i18n('newLogin') + "</SPAN></LI>" + html + "</UL>"
-      );
+      smallElt = document.createElement("SMALL");
+      smallElt.className = "i18n";
+      smallElt.id = "loginAs";
+      smallElt.appendChild(document.createTextNode(i18n("loginAs")));
+      italicElt = document.createElement("I");
+      italicElt.id = "jgUserName";
+      italicElt.appendChild(document.createTextNode(users.getUserName()));
+      elt.appendChild(smallElt);
+      elt.appendChild(document.createElement("BR"));
+      elt.appendChild(italicElt);
+      elt.appendChild(ulElt);
+//    document.getElementById("jgUsersIn").innerHTML = (
+//       "<SMALL class='i18n' id='loginAs'>" + i18n('loginAs') + "</SMALL>" +
+//       "<BR/>" +
+//       "<i id='jgUserName'>" + users.getUserName() + "</i>" +
+//        html +
+//        "</UL>"
+//    );
       tellAccessPass();
    }else {
       if (isUserRequired && confirm(i18n("requestAuth"))) {
          authorize();
       }else {
-         document.getElementById("jgUsersIn").innerHTML = (
-            "<BUTTON onclick='authorize();event.stopPropagation();' >" +
-            "<SPAN class='i18n' id='newLogin'>" + i18n('newLogin') +
-            "</SPAN></BUTTON>"
-         );
+         var elt = document.getElementById("jgUsersIn");
+         var btnElt = document.createElement("BUTTON");
+         var spanElt = document.createElement("SPAN");
+         btnElt.onclick = function(event) {
+            authorize();
+            event.stopPropagation();
+         }
+         spanElt.className = "i18n";
+         spanElt.id = "newLogin";
+         spanElt.appendChild(document.createTextNode(i18n("newLogin")));
+         btnElt.appendChild(spanElt);
+
+         while (elt.hasChildNodes()) {
+            elt.removeChild(elt.lastChild);
+         }
+         elt.appendChild(btnElt);
+//       document.getElementById("jgUsersIn").innerHTML = (
+//          "<BUTTON onclick='authorize();event.stopPropagation();' >" +
+//          "<SPAN class='i18n' id='newLogin'>" + i18n('newLogin') +
+//          "</SPAN></BUTTON>"
+//       );
       }
    }
 }
 
-function formatAlbumsList(albums, elt) {
-   var html = "";
+function resetAlbumsList() {
+   var elt;
+   var smallElt;
+   var italicElt;
+   var ulElt;
+
+   smallElt = document.createElement("SMALL");
+   smallElt.className = "i18n";
+   smallElt.id = "photoAlbum";
+   smallElt.appendChild(document.createTextNode(i18n("photoAlbum")));
+   italicElt = document.createElement("I");
+   italicElt.id = "albumTitle";
+   if (users.getAlbumTitle()) {
+      italicElt.textContent = users.getAlbumTitle();
+   }else {
+      italicElt.className = "i18n";
+      italicElt.appendChild(document.createTextNode(i18n("albumTitle")));
+   }
+   ulElt = document.createElement("UL");
+   ulElt.id = "albumList";
+   ulElt.setAttribute("role", "radiogroup");
+   ulElt.onclick = function(event) { changeAlbum(this, event); };
+
+   elt = document.getElementById("jgUsersAid");
+   while (elt.hasChildNodes()) {
+      elt.removeChild(elt.lastChild);
+   }
+   elt.appendChild(smallElt);
+   elt.appendChild(document.createElement("BR"));
+   elt.appendChild(italicElt);
+   elt.appendChild(ulElt);
+// document.getElementById("jgUsersAid").innerHTML = (
+//    "<SMALL class='i18n' id='photoAlbum'>" + i18n("photoAlbum") + "</SMALL>" +
+//    "<BR/>" + (
+//       albumTitle?
+//       ("<i id='albumTitle'>" + albumTitle + "</i>") :
+//       ("<i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>")
+//    ) +
+//    "<i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>" +
+//    "<UL role='radiogroup' id='albumList' onclick='changeAlbum(this, event)'></UL>"
+// );
+}
+
+function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
    var selAlbumId = users.getAlbumId();
    var selAlbumTitle = users.getAlbumTitle();
    var isSelAlbumOK = false;
+   var liElt;
+
+   while (elt.hasChildNodes()) {
+      elt.removeChild(elt.lastChild);
+   }
+   liElt = document.createElement("LI");
+   liElt.className = "i18n";
+   liElt.id = "newAlbum";
+   liElt.onclick = function(event) {
+      createAlbum(true);
+      event.stopPropagation();
+   };
+   liElt.appendChild(document.createTextNode(i18n('newAlbum')));
+   elt.appendChild(liElt);
+// var html = (
+//    "<LI class='i18n' id='newAlbum'" +
+//    " onclick='createAlbum(true);event.stopPropagation();'>" +
+//    i18n('newAlbum') + "</LI>";
+// );
    for (var i=0, max=albums.length; i < max; ++i) {
       var album = albums[i];
       var title = album.title;
       var description = album.description;
       if (!title || (title.length === 0)) title = "no title";
-      if (!description || (description.length === 0)) description = "&nbsp;";
-      html += "<LI id='" + album.id;
+      if (!description || (description.length === 0)) description = "";
+
+      var imgElt = document.createElement("IMG");
+      imgElt.src = album.thumbnailUrl;
+      var spanElt = document.createElement("SPAN");
+      spanElt.appendChild(document.createTextNode(title));
+      var smallElt = document.createElement("SMALL");
+      smallElt.appendChild(document.createTextNode(description));
+      var divElt = document.createElement("DIV");
+      divElt.appendChild(spanElt);
+      divElt.appendChild(document.createElement("BR"));
+      divElt.appendChild(smallElt);
+
+      liElt = document.createElement("LI");
+      liElt.id = album.id;
+//    html += "<LI id='" + album.id;
       if (selAlbumId === album.id) {
-         html += "' aria-selected='true";
+         liElt.setAttribute("aria-selected", "true");
+//       html += "' aria-selected='true";
          isSelAlbumOK = true;
       }
-      html += (
-         "'><IMG src='" + album.thumbnailUrl + "'/><DIV><SPAN>" + title +
-         "</SPAN><BR/><SMALL>" + description + "</SMALL></DIV></LI>"
-      );
+      liElt.appendChild(imgElt);
+      liElt.appendChild(divElt);
+      elt.appendChild(liElt);
+//    html += (
+//       "'><IMG src='" + album.thumbnailUrl + "'/><DIV><SPAN>" + title +
+//       "</SPAN><BR/><SMALL>" + description + "</SMALL></DIV></LI>"
+//    );
    }
-   elt.innerHTML = (
-      "<LI class='i18n' id='newAlbum'" +
-      " onclick='createAlbum(true);event.stopPropagation();'>" +
-      i18n('newAlbum') + "</SPAN></LI>" + html + "</UL>"
-   );
    var albumTitleElt = document.getElementById('albumTitle');
    if (isSelAlbumOK) {
       albumTitleElt.textContent = selAlbumTitle;
@@ -203,7 +325,7 @@ function formatAlbumsList(albums, elt) {
       // 1) Tell JgUsers that its album id is no more alive,
       users.setAlbum(null, null);
       // 2) Reflect this fact in the Photo Album title
-      albumTitleElt.setAttribute("class", "i18n");
+      albumTitleElt.className = "i18n";
       albumTitleElt.textContent = i18n("albumTitle");
    }
 }
@@ -230,17 +352,7 @@ function changeLogin(elt, event) {
       }else {
          users.selectUserAt(index);
          document.getElementById('jgUserName').textContent = users.getUserName();
-         var albumTitle = users.getAlbumTitle();
-         document.getElementById("jgUsersAid").innerHTML = (
-            "<SMALL class='i18n' id='photoAlbum'>" +
-            i18n('photoAlbum') +
-            "</SMALL><BR/>" + (
-                albumTitle?
-                ("<i id='albumTitle'>" + albumTitle + "</i>") :
-                ("<i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>")
-             ) +
-            "<UL role='radiogroup' id='albumList' onclick='changeAlbum(this, event)'></UL>"
-         );
+         resetAlbumsList();
          tellAccessPass();
       }
    }
@@ -472,8 +584,7 @@ function createAlbum(isDirect) {
             users.setAlbum(val.new.id, val.new.title);
             formatAlbumsList(
                val.list,
-               document.getElementById("jgUsersAid").
-               getElementsByTagName("UL")[0]
+               document.getElementById("jgUsersAid").getElementsByTagName("UL")[0]
             );
          }
       );

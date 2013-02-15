@@ -12,7 +12,11 @@ function JgUsers() {
       return users[selectedIndex].n;
    }
    this.getAlbumTitle = function() {
-      return users[selectedIndex].tt;
+      if (users.length != 0) {
+         return users[selectedIndex].tt;
+      }else {
+         return null;
+      }
    }
    this.getAlbumId = function() {
       return users[selectedIndex].ai;
