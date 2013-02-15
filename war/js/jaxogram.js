@@ -403,7 +403,8 @@ function authorize() {
          break;
       case 4:
          document.getElementById("progresspane").style.visibility='hidden';
-         if (this.status === 200 || this.status === 0) {         // navigate to it as a top browser window
+         if ((this.status === 200) || (this.status === 0)) {
+            // navigate to it as a top browser window
             if (isPackaged) {               // if packaged, do NOT leave the app!
                browseTo(xhr.responseText);  // use a mozbrowser, instead
             }else {                         // if not packaged, we can leave the page
@@ -451,7 +452,7 @@ function getVerifier() {
    var xhr=makeCorsRequest("GET", "?OP=getVerifier&JXK=" + authKey);
    xhr.onreadystatechange = function() {
       if (xhr.readyState == "4") {
-         if (xhr.status != '200' && xhr.status != '0') {
+         if ((xhr.status !== 200) && (xhr.status !== 0)) {
             alert("getVerifier RC:" + xhr.status);
          }else {
             var verifier = this.responseText;
@@ -481,7 +482,7 @@ function registerUser(verifier) {
          break;
       case 4: // DONE
          document.getElementById("progresspane").style.visibility='hidden';
-         if (this.status !== 200 && this.status !== 0) {
+         if ((this.status !== 200) && (this.status !== 0)) {
             alert(i18n("authDenied", xhr.responseText));
          }else {
             var val = JSON.parse(xhr.responseText);
@@ -503,7 +504,7 @@ function tellAccessPass()
    var xhr = makeCorsRequest("POST", "?OP=postAccPss");
    xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
-         if (this.status !== 200 && this.status !== 0) {
+         if ((this.status !== 200) && (this.status !== 0)) {
             alert('tellAccess RC: ' + this.status + "\n" + this.responseText);
          }
       }
@@ -604,7 +605,7 @@ function queryFor(what, whenDone) {
          break;
       case 4: // DONE
          document.getElementById("progresspane").style.visibility='hidden';
-         if (this.status === 200 || this.status === 0) {
+         if ((this.status === 200) || (this.status === 0)) {
             var val = JSON.parse(this.responseText);
             whenDone(val);
          }else {
@@ -704,7 +705,7 @@ function whenRequestStateChanged() {
       break;
    case 4: // DONE
       document.getElementById("progresspane").style.visibility='hidden';
-      if (this.status === 200 || this.status === 0) {
+      if ((this.status === 200) || (this.status === 0)) {
          expandPage("p1");
          alert(i18n('imageUploaded', users.getAlbumTitle()));
       }else {
