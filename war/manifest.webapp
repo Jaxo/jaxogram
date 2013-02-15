@@ -31,8 +31,7 @@
     "contacts": { "description": "Import Orkut friends as contacts", "access": "readcreate" },
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
     "geolocation": { "description": "Geotag photos" },
-    "storage": { "description": "Use local storage for access tokens" },
-    "camera": { "description": "Share photos" }
+    "storage": { "description": "Use local storage for access tokens" }
   }
 
 }
