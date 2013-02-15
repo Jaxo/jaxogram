@@ -13,7 +13,7 @@ function Install() {
                "/hosted_manifest.webapp"
             );
             that.doIt = function() {
-               /**/ alert("Install from " + that.installUrl);
+               //*/ alert("Install from " + that.installUrl);
                try {
                   var req2 = navigator.mozApps.install(that.installUrl);
                   req2.onsuccess = function(data) {
