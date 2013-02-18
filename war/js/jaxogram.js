@@ -676,7 +676,7 @@ function uploadFile(albumId) {
       }else if (!this.files) {
          alert(i18n("noFileApiProp"));
       }else if (!this.files[0]) {
-         alert("No file selected");
+         alert(i18n("noFileSelected"));
       }else {
          var file = this.files[0];
          var formData = new FormData();
