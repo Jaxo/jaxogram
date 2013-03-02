@@ -60,6 +60,7 @@ window.onload = function() {
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
    document.getElementById("whoAmI").onclick = whoAmI;
+   document.getElementById("picasaTest").onclick = picasaTest;  // PICASA_TEST
 
 // document.getElementById("p1").addEventListener(
 //    'transitionend',
@@ -713,4 +714,48 @@ function whenRequestStateChanged() {
       }
       break;
    }
+}
+
+function picasaTest() {    // PICASA_TEST
+   query4(
+      'picasaTest',
+       function(response) {
+          var res = "<OL>";
+          var albums = response.albums;
+          for (var i=0, iMax=albums.length; i < iMax; ++i) {
+             var album = albums[i];
+             var title = album.title;
+             res += "<LI>" + album.title + "<UL>";
+             for (var j=0, jMax=album.photos.length; j < jMax; ++j) {
+                var photo = album.photos[j];
+                res += "<LI>" + photo.title + "</LI>";
+             }
+             res += "</UL>" + album.title + "</LI>";
+          }
+          res += "</OL>";
+          document.getElementById("p3").innerHTML = res;
+          expandPage("p3");
+      }
+   );
+}
+function query4(what, whenDone) {
+   var xhr = makeCorsRequest("GET", "?OP=" + what);
+   xhr.onreadystatechange = function() {
+      switch (this.readyState) {
+      case 1: // OPENED
+         document.getElementById("progresspane").style.visibility='visible';
+         break;
+      case 4: // DONE
+         document.getElementById("progresspane").style.visibility='hidden';
+         if ((this.status === 200) || (this.status === 0)) {
+            var val = JSON.parse(this.responseText);
+            whenDone(val);
+         }else {
+            dispatcher.clean();
+            alert(what + " RC: " + this.status + "\n" + this.responseText);
+         }
+         break;
+      }
+   };
+   xhr.send();
 }
