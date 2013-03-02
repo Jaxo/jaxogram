@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.Enumeration;
+import java.util.List;
 //*/ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -34,6 +35,8 @@ import org.apache.commons.io.IOUtils;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.gdata.data.photos.AlbumEntry;
+import com.google.gdata.data.photos.PhotoEntry;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -310,6 +313,40 @@ public class JaxogramServlet extends HttpServlet
          "\n</BODY></HTML>"
       );
       return f;
+   }
+
+
+   /* LOGIN and PASSWD ==> */                                                     public final String LOGIN = "pgr@jaxo.com"; public final String PASSWD = "BlackZ3bra";
+   /*--------------------------------------------------------------testPicasa-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public void testPicasa(HttpServletRequest req, HttpServletResponse resp)
+   throws IOException
+   {
+      resp.setContentType("text/plain");
+      try {
+         PrintWriter out = resp.getWriter();
+         PicasaNetwork picasa = new PicasaNetwork(LOGIN, PASSWD);
+         for (AlbumEntry album : picasa.getAlbums()) {
+            out.println(album.getTitle().getPlainText());
+            List<PhotoEntry> photos = picasa.getPhotos(album);
+            if (photos.size() == 0) {
+               out.println("No photos found.");
+            }else {
+               int count = 0;
+               for (PhotoEntry photo : photos) {
+                  out.println(
+                     "Photo " + (++count) + " " +
+                     photo.getTitle().getPlainText() + "\n" +
+                     photo.getDescription().getPlainText()
+                  );
+               }
+            }
+         }
+      }catch (Exception e) {
+         e.printStackTrace();
+      }
    }
 }
 /*===========================================================================*/
