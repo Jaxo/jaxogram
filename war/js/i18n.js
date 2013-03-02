@@ -16,10 +16,10 @@ var localeValues = {
       'pt-BR':"Quem sou eu?",
       'es-ES':"¿Quién soy yo?"
    }, p0_top: {
-      'en-US':"Share camera and gallery photos on Orkut",
-      'fr-FR':"Partagez caméra et galerie photos sur Orkut",
-      'pt-BR':"Compartilhar câmera e galeria de fotos no Orkut",
-      'es-ES':"Compartir de la cámara y las fotos en galería de Orkut"
+      'en-US':"Share camera and gallery photos on Orkut and Picasa",
+      'fr-FR':"Partagez caméra et galerie photos sur Orkut et Picasa",
+      'pt-BR':"Compartilhar câmera e galeria de fotos no Orkut e Picasa",
+      'es-ES':"Compartir de la cámara y las fotos galería en Orkut y Picasa"
    }, betterInstall: {
       'en-US':"Jaxogram works nicer when installed,\nand it will remember your sign-in to Orkut.\n\nWant to install now?",
       'fr-FR':"Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion à Orkut.\n\nVoulez-vous l'installer maintenant?",

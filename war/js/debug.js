@@ -28,7 +28,7 @@ function dump(v, indent, depth) {
          for (var i=0; i < v.length; ++i) {
             out += (
                repeatString(indent, depth) + "[" + i + "]: " +
-               dump(v[i], "none", indent, depth) + "\n"
+               dump(v[i], indent, depth) + "\n"
             );
          }
          --depth;
@@ -43,7 +43,7 @@ function dump(v, indent, depth) {
             sContents += (
                repeatString(indent, depth) +
                member + ": " +
-               dump(v[member], "none", indent, depth) + "\n"
+               dump(v[member], indent, depth) + "\n"
             );
             ++cnt;
          }
