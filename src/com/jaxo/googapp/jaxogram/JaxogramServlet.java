@@ -236,6 +236,8 @@ public class JaxogramServlet extends HttpServlet
                   albumId, imgTitle, image, imgType
                );
 //*/           writer.println("Successfully uploaded to album #" + albumId);
+            }else if (op.equals("picasaTest")) {  // PICASA_TEST
+               writer.println(picasaTest());
             }
          }
       }catch (Exception e) {
@@ -316,37 +318,38 @@ public class JaxogramServlet extends HttpServlet
    }
 
 
-   /* LOGIN and PASSWD ==> */                                                     public final String LOGIN = "pgr@jaxo.com"; public final String PASSWD = "BlackZ3bra";
-   /*--------------------------------------------------------------testPicasa-+
+   /* PICASA_TEST LOGIN and PASSWD ==> */                                         public final String LOGIN = "pgr@jaxo.com"; public final String PASSWD = "BlackZ3bra";
+   /*--------------------------------------------------------------picasaTest-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public void testPicasa(HttpServletRequest req, HttpServletResponse resp)
-   throws IOException
+   public String picasaTest() throws Exception  // PICASA_TEST
    {
-      resp.setContentType("text/plain");
-      try {
-         PrintWriter out = resp.getWriter();
-         PicasaNetwork picasa = new PicasaNetwork(LOGIN, PASSWD);
-         for (AlbumEntry album : picasa.getAlbums()) {
-            out.println(album.getTitle().getPlainText());
-            List<PhotoEntry> photos = picasa.getPhotos(album);
-            if (photos.size() == 0) {
-               out.println("No photos found.");
-            }else {
-               int count = 0;
-               for (PhotoEntry photo : photos) {
-                  out.println(
-                     "Photo " + (++count) + " " +
-                     photo.getTitle().getPlainText() + "\n" +
-                     photo.getDescription().getPlainText()
-                  );
-               }
-            }
+      StringBuilder sb = new StringBuilder();
+
+      int albumsCount = 0;
+      PicasaNetwork picasa = new PicasaNetwork(LOGIN, PASSWD);
+      sb.append("{\"albums\":[");
+      for (AlbumEntry album : picasa.getAlbums()) {
+         if (albumsCount > 0) sb.append(',');
+         sb.
+         append("{\"no\":\"").append(++albumsCount).
+         append("\",\"title\":\"").append(album.getTitle().getPlainText()).
+         append("\",\"photos\":[");
+         List<PhotoEntry> photos = picasa.getPhotos(album);
+         int photosCount = 0;
+         for (PhotoEntry photo : photos) {
+            if (photosCount > 0) sb.append(',');
+            sb.
+            append("{\"no\":\"").append(++photosCount).
+            append("\",\"title\":\"").append(photo.getTitle().getPlainText()).
+            append("\",\"descr\":\"").append(photo.getDescription().getPlainText()).
+            append("\"}");
          }
-      }catch (Exception e) {
-         e.printStackTrace();
+         sb.append("]}");
       }
+      sb.append("]}");
+      return sb.toString();
    }
 }
 /*===========================================================================*/
