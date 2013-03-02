@@ -120,6 +120,7 @@ function formatUsersList(isUserRequired) {
       var elt;
       var liElt;
       var smallElt;
+      var imgNetElt;
       var italicElt;
       var ulElt = document.createElement("UL");
       ulElt.setAttribute("role", "radiogroup");
@@ -134,31 +135,22 @@ function formatUsersList(isUserRequired) {
       };
       liElt.appendChild(document.createTextNode(i18n("newLogin")));
       ulElt.appendChild(liElt);
-//    var html =
-//       "<UL role='radiogroup' onclick='changeLogin(this, event);'>" +
-//         "<LI class='i18n' id='newLogin'" +
-//         " onclick='authorize();event.stopPropagation()'>" +
-//         i18n('newLogin') +
-//       "</SPAN></LI>"
-//    );
-//    var selName = null;
-//    var selAlbumTitle = null;
       users.forEach(
          function(name, pass, albumTitle, isSelected, net) {
+            var imgElt = document.createElement("IMG");
             var itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
+            if (net === "orkut") {
+               imgElt.setAttribute("src", "../images/orkutSmallLogo.png");
+            }else {
+               imgElt.setAttribute("src", "../images/picasaSmallLogo.png");
+            }
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
+            itmElt.appendChild(imgElt);
             itmElt.appendChild(document.createTextNode(name));
             ulElt.appendChild(itmElt);
-//          html += "<LI";
-//          if (isSelected) {
-//             selName = name;
-//             selAlbumTitle = albumTitle;
-//             html += " aria-selected='true'";
-//          }
-//          html += "><span role='trasher'>&#xF018;</span>" + name + "</LI>";
          }
       );
       elt = document.getElementById("jgUsersIn");
@@ -172,17 +164,18 @@ function formatUsersList(isUserRequired) {
       italicElt = document.createElement("I");
       italicElt.id = "jgUserName";
       italicElt.appendChild(document.createTextNode(users.getUserName()));
+      imgNetElt = document.createElement("IMG");
+      imgNetElt.setAttribute("src", "../images/picasaLogo.png");
+      if (users.getNet() === "orkut") {
+         imgNetElt.setAttribute("src", "../images/orkutLogo.png");
+      }else {
+         imgNetElt.setAttribute("src", "../images/picasaLogo.png");
+      }
       elt.appendChild(smallElt);
       elt.appendChild(document.createElement("BR"));
+      elt.appendChild(imgNetElt);
       elt.appendChild(italicElt);
       elt.appendChild(ulElt);
-//    document.getElementById("jgUsersIn").innerHTML = (
-//       "<SMALL class='i18n' id='loginAs'>" + i18n('loginAs') + "</SMALL>" +
-//       "<BR/>" +
-//       "<i id='jgUserName'>" + users.getUserName() + "</i>" +
-//        html +
-//        "</UL>"
-//    );
       tellAccessPass();
    }else {
       if (isUserRequired && confirm(i18n("requestAuth"))) {
@@ -204,11 +197,6 @@ function formatUsersList(isUserRequired) {
             elt.removeChild(elt.lastChild);
          }
          elt.appendChild(btnElt);
-//       document.getElementById("jgUsersIn").innerHTML = (
-//          "<BUTTON onclick='authorize();event.stopPropagation();' >" +
-//          "<SPAN class='i18n' id='newLogin'>" + i18n('newLogin') +
-//          "</SPAN></BUTTON>"
-//       );
       }
    }
 }
@@ -244,16 +232,6 @@ function resetAlbumsList() {
    elt.appendChild(document.createElement("BR"));
    elt.appendChild(italicElt);
    elt.appendChild(ulElt);
-// document.getElementById("jgUsersAid").innerHTML = (
-//    "<SMALL class='i18n' id='photoAlbum'>" + i18n("photoAlbum") + "</SMALL>" +
-//    "<BR/>" + (
-//       albumTitle?
-//       ("<i id='albumTitle'>" + albumTitle + "</i>") :
-//       ("<i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>")
-//    ) +
-//    "<i class='i18n' id='albumTitle'>" + i18n("albumTitle") + "</i>" +
-//    "<UL role='radiogroup' id='albumList' onclick='changeAlbum(this, event)'></UL>"
-// );
 }
 
 function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
@@ -274,11 +252,6 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
    };
    liElt.appendChild(document.createTextNode(i18n('newAlbum')));
    elt.appendChild(liElt);
-// var html = (
-//    "<LI class='i18n' id='newAlbum'" +
-//    " onclick='createAlbum(true);event.stopPropagation();'>" +
-//    i18n('newAlbum') + "</LI>";
-// );
    for (var i=0, max=albums.length; i < max; ++i) {
       var album = albums[i];
       var title = album.title;
@@ -299,19 +272,13 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
 
       liElt = document.createElement("LI");
       liElt.id = album.id;
-//    html += "<LI id='" + album.id;
       if (selAlbumId === album.id) {
          liElt.setAttribute("aria-selected", "true");
-//       html += "' aria-selected='true";
          isSelAlbumOK = true;
       }
       liElt.appendChild(imgElt);
       liElt.appendChild(divElt);
       elt.appendChild(liElt);
-//    html += (
-//       "'><IMG src='" + album.thumbnailUrl + "'/><DIV><SPAN>" + title +
-//       "</SPAN><BR/><SMALL>" + description + "</SMALL></DIV></LI>"
-//    );
    }
    var albumTitleElt = document.getElementById('albumTitle');
    if (isSelAlbumOK) {

@@ -11,6 +11,9 @@ function JgUsers() {
    this.getUserName = function() {
       return users[selectedIndex].n;
    }
+   this.getNet = function() {
+      return users[selectedIndex].t;
+   }
    this.getAlbumTitle = function() {
       if (users.length != 0) {
          return users[selectedIndex].tt;
