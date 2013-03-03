@@ -95,6 +95,36 @@ var localeValues = {
       'fr-FR':"L'album \"%1\" a été créé.",
       'pt-BR':"\"%1\" álbum criado.",
       'es-ES':"Album \"%1\" creada."
+   }, chooseNetwork: {
+      'en-US':"Please, choose a social network",
+      'fr-FR':"Choisissez votre réseau social",
+      'pt-BR':"Escolher uma rede social",
+      'es-ES':"Elige una red social."
+   }, picasaLogin: {
+      'en-US':"Login to Picasa …",
+      'fr-FR':"Connexion à Picasa …",
+      'pt-BR':"Entrar para o Picasa …",
+      'es-ES':"Ingresar a Picasa …"
+   }, login: {
+      'en-US':"Login",
+      'fr-FR':"Identifiant",
+      'pt-BR':"Login",
+      'es-ES':"Login"
+   }, passwd: {
+      'en-US':"Password",
+      'fr-FR':"Mot de passe",
+      'pt-BR':"Senha",
+      'es-ES':"Contraseña"
+   }, OK: {
+      'en-US':"OK",
+      'fr-FR':"OK",
+      'pt-BR':"OK",
+      'es-ES':"Aceptar"
+   }, cancel: {
+      'en-US':"Cancel",
+      'fr-FR':"Annuler",
+      'pt-BR':"Cancelar",
+      'es-ES':"Cancelar"
    }, selectOrCreateAlbum: {
       'en-US':"You need first to select or create the album in which the photo will be inserted",
       'fr-FR':"Vous devez d'abord sélectionner ou créer l'album dans lequel la photo sera insérée",

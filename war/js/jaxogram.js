@@ -60,7 +60,6 @@ window.onload = function() {
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
    document.getElementById("whoAmI").onclick = whoAmI;
-   document.getElementById("picasaTest").onclick = picasaTest;  // PICASA_TEST
 
 // document.getElementById("p1").addEventListener(
 //    'transitionend',
@@ -359,7 +358,117 @@ function makeCorsRequest(method, query) {
    return xhr;
 }
 
+function showMessagePane(eltContainer) {
+   var eltMessage = document.getElementById("message");
+   eltMessage.appendChild(eltContainer);
+   document.getElementById("messagepane").style.visibility = "visible";
+}
+
+function clearMessagePane() {
+   var eltMessage = document.getElementById("message");
+   document.getElementById("messagepane").style.visibility = "hidden";
+   while (eltMessage.hasChildNodes()) {
+      eltMessage.removeChild(eltMessage.lastChild);
+   }
+}
+
 function authorize() {
+   var eltText = document.createElement("DIV");
+   var eltOrkut = document.createElement("IMG");
+   var eltPicasa = document.createElement("IMG");
+   var eltContainer = document.createElement("DIV");
+   eltText.className = "i18n";
+   eltText.id = "chooseNetwork";
+   eltText.appendChild(document.createTextNode(i18n("chooseNetwork")));
+   eltOrkut.className = "buttonLike";
+   eltOrkut.src= "images/orkutLogo.png";
+   eltOrkut.onclick = authorizeOrkut;
+   eltPicasa.className = "buttonLike";
+   eltPicasa.src= "images/picasaLogo.png";
+   eltPicasa.onclick = authorizePicasa;
+   eltContainer.appendChild(eltText);
+   eltContainer.appendChild(eltOrkut);
+   eltContainer.appendChild(eltPicasa);
+   showMessagePane(eltContainer);
+}
+
+function authorizePicasa() {
+   clearMessagePane();
+   var eltText = document.createElement("DIV");
+   eltText.className = "i18n";
+   eltText.id = "picasaLogin";
+   eltText.appendChild(document.createTextNode(i18n("picasaLogin")));
+
+   var eltLeg1 = document.createElement("LEGEND");
+   eltLeg1.className = "i18n";
+   eltLeg1.id = "i18n";
+   eltLeg1.id = "login";
+   eltLeg1.appendChild(document.createTextNode(i18n("login")));
+   var eltInp1 = document.createElement("INPUT");
+   var eltField1 = document.createElement("FIELDSET");
+   eltField1.appendChild(eltLeg1);
+   eltField1.appendChild(eltInp1);
+   var eltDiv1 = document.createElement("DIV");
+   eltDiv1.style.margin = "2rem auto";
+   eltDiv1.appendChild(eltField1);
+
+   var eltLeg2 = document.createElement("LEGEND");
+   eltLeg2.className = "i18n";
+   eltLeg2.id = "i18n";
+   eltLeg2.id = "passwd";
+   eltLeg2.appendChild(document.createTextNode(i18n("passwd")));
+   var eltInp2 = document.createElement("INPUT");
+   eltInp2.type = "password";
+   var eltField2 = document.createElement("FIELDSET");
+   eltField2.appendChild(eltLeg2);
+   eltField2.appendChild(eltInp2);
+   var eltDiv2 = document.createElement("DIV");
+   eltDiv2.style.margin = "2rem auto";
+   eltDiv2.appendChild(eltField2);
+
+   var eltBtnOk = document.createElement("BUTTON");
+   eltBtnOk.className = "i18n";
+   eltBtnOk.id = "i18n";
+   eltBtnOk.id = "OK";
+   eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
+   eltBtnOk.onclick = function() {
+      alert(
+         "Login: " + eltInp1.value +
+         "\nPassw: " + eltInp2.value +
+         "\nNot Yet Implemented"
+      );
+      clearMessagePane();
+   }
+
+   var eltBtnCancel = document.createElement("BUTTON");
+   eltBtnCancel.className = "i18n";
+   eltBtnCancel.id = "i18n";
+   eltBtnCancel.id = "cancel";
+   eltBtnCancel.appendChild(document.createTextNode(i18n("cancel")));
+   eltBtnCancel.onclick = function() {
+      clearMessagePane();
+   }
+
+   var eltSepa = document.createElement("SPAN");
+   eltSepa.style.marginLeft = "3rem";
+
+   var eltDiv3 = document.createElement("DIV");
+   eltDiv3.style.marginTop = "5rem";
+   eltDiv3.appendChild(eltBtnOk);
+   eltDiv3.appendChild(eltSepa);
+   eltDiv3.appendChild(eltBtnCancel);
+
+   var eltContainer = document.createElement("DIV");
+   eltContainer.appendChild(eltText);
+   eltContainer.appendChild(eltDiv1);
+   eltContainer.appendChild(eltDiv2);
+   eltContainer.appendChild(eltDiv3);
+
+   showMessagePane(eltContainer);
+}
+
+function authorizeOrkut() {
+   clearMessagePane();
    // make a pseudo-random key )between 100000 and 200000
    authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
