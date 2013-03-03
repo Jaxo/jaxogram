@@ -141,9 +141,9 @@ function formatUsersList(isUserRequired) {
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
             if (net === "orkut") {
-               imgElt.setAttribute("src", "../images/orkutSmallLogo.png");
+               imgElt.src = "../images/orkutSmallLogo.png";
             }else {
-               imgElt.setAttribute("src", "../images/picasaSmallLogo.png");
+               imgElt.src = "../images/picasaSmallLogo.png";
             }
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
@@ -164,11 +164,11 @@ function formatUsersList(isUserRequired) {
       italicElt.id = "jgUserName";
       italicElt.appendChild(document.createTextNode(users.getUserName()));
       imgNetElt = document.createElement("IMG");
-      imgNetElt.setAttribute("src", "../images/picasaLogo.png");
+      imgNetElt.id = "jgUserNet";
       if (users.getNet() === "orkut") {
-         imgNetElt.setAttribute("src", "../images/orkutLogo.png");
+         imgNetElt.src = "../images/orkutLogo.png";
       }else {
-         imgNetElt.setAttribute("src", "../images/picasaLogo.png");
+         imgNetElt.src = "../images/picasaLogo.png";
       }
       elt.appendChild(smallElt);
       elt.appendChild(document.createElement("BR"));
@@ -319,6 +319,11 @@ function changeLogin(elt, event) {
       }else {
          users.selectUserAt(index);
          document.getElementById('jgUserName').textContent = users.getUserName();
+         if (users.getNet() === "orkut") {
+            document.getElementById('jgUserNet').src = "../images/orkutLogo.png";
+         }else {
+            document.getElementById('jgUserNet').src = "../images/picasaLogo.png";
+         }
          resetAlbumsList();
          tellAccessPass();
       }
@@ -432,12 +437,15 @@ function authorizePicasa() {
    eltBtnOk.id = "OK";
    eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
    eltBtnOk.onclick = function() {
-      alert(
-         "Login: " + eltInp1.value +
-         "\nPassw: " + eltInp2.value +
-         "\nNot Yet Implemented"
-      );
-      clearMessagePane();
+      var login = eltInp1.value;
+      var passwd = eltInp2.value;
+      if (!login || (login.length < 1) || !passwd || (passwd.length < 1)) {
+         alert("Please enter a valid login and passwd");
+      }else {
+         clearMessagePane();
+         users.addUser(login, passwd, "picasa");
+         formatUsersList(false);
+      }
    }
 
    var eltBtnCancel = document.createElement("BUTTON");
