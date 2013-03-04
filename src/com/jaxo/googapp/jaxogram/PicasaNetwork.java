@@ -50,11 +50,24 @@ public class PicasaNetwork {
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public PicasaNetwork(String login, String passwd)
-   throws AuthenticationException {
+   public PicasaNetwork(String loginPasswd) throws AuthenticationException {
+      int splitAt = loginPasswd.indexOf(' ');
+      m_login = loginPasswd.substring(0, splitAt);
       m_service = new PicasawebService("Jaxogram_9");
-      m_service.setUserCredentials(login, passwd);
-      m_login = login;
+      m_service.setUserCredentials(m_login, loginPasswd.substring(splitAt+1));
+   }
+
+   /*------------------------------------------------------------------whoAmI-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String whoAmI() throws Exception {
+      return (
+         (List<Person>)m_service.getFeed(
+            new URL(API_PREFIX + m_login + "?kind=album"),
+            UserFeed.class
+         ).getAuthors()
+      ).get(0).getName();
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+

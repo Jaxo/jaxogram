@@ -142,6 +142,13 @@ public class JaxogramServlet extends HttpServlet
 //*/           logger.info("Access Pass: " + req.getSession(true).getAttribute("accesspass"));
                IOUtils.closeQuietly(in);
 
+            }else if (op.equals("checkAccPss")) {
+               InputStream in = req.getInputStream();
+               String loginPasswd = IOUtils.toString(in);
+               IOUtils.closeQuietly(in);
+               writer.print(new PicasaNetwork(loginPasswd).whoAmI());
+               req.getSession(true).setAttribute("accesspass", loginPasswd);
+
             }else if (op.equals("getUrl")) {
                HttpSession session = req.getSession(true);
                OrkutNetwork orknet = makeNullOrkutNetwork(req);
@@ -290,13 +297,8 @@ public class JaxogramServlet extends HttpServlet
    +-------------------------------------------------------------------------*/
    public static PicasaNetwork makePicasaNetwork(HttpServletRequest req)
    throws Exception {
-      String loginPasswd = (String)(
-         req.getSession(true).getAttribute("accesspass")
-      );
-      int splitAt = loginPasswd.indexOf(' ');
       return new PicasaNetwork(
-         loginPasswd.substring(0, splitAt),
-         loginPasswd.substring(splitAt+1)
+         (String)req.getSession(true).getAttribute("accesspass")
       );
    }
 

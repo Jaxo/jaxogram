@@ -439,15 +439,18 @@ function authorizePicasa() {
    eltBtnOk.id = "OK";
    eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
    eltBtnOk.onclick = function() {
-      var login = eltInp1.value;
-      var passwd = eltInp2.value;
-      if (!login || (login.length < 1) || !passwd || (passwd.length < 1)) {
-         alert("Please enter a valid login and passwd");
-      }else {
-         clearMessagePane();
-         users.addUser(login, login + " " + passwd, "picasa"); // PICASA_TEST
-         formatUsersList(false);
-      }
+      var passwd = eltInp1.value + " " + eltInp2.value;
+      checkAccessPass(
+         passwd,
+         function(val) {   // whenOk
+            clearMessagePane();
+            users.addUser(val, passwd, "picasa");
+            formatUsersList(false);
+         },
+         function(rc) {      // whenFailed
+            alert(i18n("badLogin"));
+         }
+      );
    }
 
    var eltBtnCancel = document.createElement("BUTTON");
@@ -576,6 +579,22 @@ function registerUser(verifier) {
       }
    };
    xhr.send();
+}
+
+function checkAccessPass(passwd, whenDone, whenFailed)
+{
+   var xhr = makeCorsRequest("POST", "?OP=checkAccPss");
+   xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+         document.getElementById("progresspane").style.visibility='hidden';
+         if ((this.status === 200) || (this.status === 0)) {
+            whenDone(this.responseText);
+         }else {
+            whenFailed(this.status);
+         }
+      }
+   };
+   xhr.send(passwd);
 }
 
 function tellAccessPass()

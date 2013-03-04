@@ -60,6 +60,11 @@ var localeValues = {
       'fr-FR':"Nouvel Utilisateur",
       'pt-BR':"Criar Login",
       'es-ES':"Crear Login"
+   }, badLogin: {
+      'en-US':"Invalid Login or Password",
+      'fr-FR':"Nom d'utilisateur ou mot de passe incorrect",
+      'pt-BR':"Inválida login ou senha",
+      'es-ES':"Válido de usuario o contraseña"
    }, loginAs: {
       'en-US':"User: ",
       'fr-FR':"Utilisateur : ",
