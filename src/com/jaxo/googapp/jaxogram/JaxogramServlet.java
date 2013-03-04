@@ -16,8 +16,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.Enumeration;
-import java.util.List;
-//*/ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +33,7 @@ import org.apache.commons.io.IOUtils;
 import com.google.appengine.api.memcache.Expiration;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
-import com.google.gdata.data.photos.AlbumEntry;
-import com.google.gdata.data.photos.PhotoEntry;
+//*/ import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -67,6 +64,7 @@ public class JaxogramServlet extends HttpServlet
 //*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
 //*/  );
       String op = req.getParameter("OP");
+      String net = req.getParameter("NET");
 //*/  logger.info("OP: " + op);
 
       resp.setContentType("text/plain");
@@ -167,7 +165,11 @@ public class JaxogramServlet extends HttpServlet
                );
 
             }else if (op.equals("whoAmI")) {
-               writer.println(makeOrkutNetwork(req).whoIsAsJson(null));
+               writer.println(
+                  (net.equals("picasa"))?
+                  makePicasaNetwork(req).whoIsAsJson(null) :
+                  makeOrkutNetwork(req).whoIsAsJson(null)
+               );
 
             }else if (op.equals("listAlbums")) {
                writer.println(makeOrkutNetwork(req).listAlbumsAsJson());
@@ -237,7 +239,7 @@ public class JaxogramServlet extends HttpServlet
                );
 //*/           writer.println("Successfully uploaded to album #" + albumId);
             }else if (op.equals("picasaTest")) {  // PICASA_TEST
-               writer.println(picasaTest());
+               writer.println(makePicasaNetwork(req).listAlbumsAsJson());
             }
          }
       }catch (Exception e) {
@@ -282,6 +284,22 @@ public class JaxogramServlet extends HttpServlet
       );
    }
 
+   /*-------------------------------------------------------makePicasaNetwork-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public static PicasaNetwork makePicasaNetwork(HttpServletRequest req)
+   throws Exception {
+      String loginPasswd = (String)(
+         req.getSession(true).getAttribute("accesspass")
+      );
+      int splitAt = loginPasswd.indexOf(' ');
+      return new PicasaNetwork(
+         loginPasswd.substring(0, splitAt),
+         loginPasswd.substring(splitAt+1)
+      );
+   }
+
    /*--------------------------------------------------------------getBaseUrl-+
    *//**
    *//*
@@ -315,41 +333,6 @@ public class JaxogramServlet extends HttpServlet
          "\n</BODY></HTML>"
       );
       return f;
-   }
-
-
-   /* PICASA_TEST LOGIN and PASSWD ==> */                                         public final String LOGIN = "pgr@jaxo.com"; public final String PASSWD = "BlackZ3bra";
-   /*--------------------------------------------------------------picasaTest-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   public String picasaTest() throws Exception  // PICASA_TEST
-   {
-      StringBuilder sb = new StringBuilder();
-
-      int albumsCount = 0;
-      PicasaNetwork picasa = new PicasaNetwork(LOGIN, PASSWD);
-      sb.append("{\"albums\":[");
-      for (AlbumEntry album : picasa.getAlbums()) {
-         if (albumsCount > 0) sb.append(',');
-         sb.
-         append("{\"no\":\"").append(++albumsCount).
-         append("\",\"title\":\"").append(album.getTitle().getPlainText()).
-         append("\",\"photos\":[");
-         List<PhotoEntry> photos = picasa.getPhotos(album);
-         int photosCount = 0;
-         for (PhotoEntry photo : photos) {
-            if (photosCount > 0) sb.append(',');
-            sb.
-            append("{\"no\":\"").append(++photosCount).
-            append("\",\"title\":\"").append(photo.getTitle().getPlainText()).
-            append("\",\"descr\":\"").append(photo.getDescription().getPlainText()).
-            append("\"}");
-         }
-         sb.append("]}");
-      }
-      sb.append("]}");
-      return sb.toString();
    }
 }
 /*===========================================================================*/

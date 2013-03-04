@@ -75,6 +75,10 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
+   /*-------------------------------------------------------------whoIsAsJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public String whoIsAsJson(String id) throws Exception {
       BatchTransaction btx = newBatch();
       GetProfileTx tx;
@@ -106,6 +110,10 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
+   /*--------------------------------------------------------listAlbumsAsJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public String listAlbumsAsJson() throws Exception {
       GetAlbumsTx tx = getAlbumsTF().getSelfAlbums();
       tx.setCount(20);  // get first 20 albums
@@ -127,6 +135,10 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
+   /*-------------------------------------------------------createAlbumAsJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public String createAlbumAsJson(
       String title,  // Album title
       String desc    // Album description

@@ -60,6 +60,7 @@ window.onload = function() {
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
    document.getElementById("whoAmI").onclick = whoAmI;
+   document.getElementById("picasaTest").onclick = picasaTest;  // PICASA_TEST
 
 // document.getElementById("p1").addEventListener(
 //    'transitionend',
@@ -360,6 +361,7 @@ function makeCorsRequest(method, query) {
    }
    xhr.withCredentials = true;
    xhr.open(method, server_url + query, true);
+   document.getElementById("progresspane").style.visibility='visible';
    return xhr;
 }
 
@@ -443,7 +445,7 @@ function authorizePicasa() {
          alert("Please enter a valid login and passwd");
       }else {
          clearMessagePane();
-         users.addUser(login, passwd, "picasa");
+         users.addUser(login, login + " " + passwd, "picasa"); // PICASA_TEST
          formatUsersList(false);
       }
    }
@@ -482,11 +484,7 @@ function authorizeOrkut() {
    // obtain the URL at which the user will grant us access
    var xhr = makeCorsRequest("GET", "?OP=getUrl&JXK=" + authKey);
    xhr.onreadystatechange = function() {
-      switch (xhr.readyState) {
-      case 1: // OPENED
-         document.getElementById("progresspane").style.visibility='visible';
-         break;
-      case 4:
+      if (xhr.readyState === 4) {
          document.getElementById("progresspane").style.visibility='hidden';
          if ((this.status === 200) || (this.status === 0)) {
             // navigate to it as a top browser window
@@ -498,7 +496,6 @@ function authorizeOrkut() {
          }else {
             alert("authorize RC:" + this.status + "\n" + this.responseText);
          }
-         break;
       }
    };
    xhr.send();
@@ -536,10 +533,9 @@ function browseQuit() {
 function getVerifier() {
    var xhr=makeCorsRequest("GET", "?OP=getVerifier&JXK=" + authKey);
    xhr.onreadystatechange = function() {
-      if (xhr.readyState == "4") {
-         if ((xhr.status !== 200) && (xhr.status !== 0)) {
-            alert("getVerifier RC:" + xhr.status);
-         }else {
+      if (xhr.readyState === 4) {
+         document.getElementById("progresspane").style.visibility='hidden';
+         if ((xhr.status === 200) || (xhr.status === 0)) {
             var verifier = this.responseText;
             if (verifier === "???") {
                setTimeout(getVerifier, 1000);
@@ -549,6 +545,8 @@ function getVerifier() {
                registerUser(verifier);
                formatUsersList(false);
             }
+         }else {
+            alert("getVerifier RC:" + xhr.status);
          }
       }
    }
@@ -561,15 +559,9 @@ function registerUser(verifier) {
       "?OP=getAccPss&verifier=" + encodeURIComponent(verifier)
    );
    xhr.onreadystatechange = function () {
-      switch (this.readyState) {
-      case 1: // OPENED
-         document.getElementById("progresspane").style.visibility='visible';
-         break;
-      case 4: // DONE
+      if (this.readyState === 4) {
          document.getElementById("progresspane").style.visibility='hidden';
-         if ((this.status !== 200) && (this.status !== 0)) {
-            alert(i18n("authDenied", xhr.responseText));
-         }else {
+         if ((this.status === 200) || (this.status === 0)) {
             var val = JSON.parse(xhr.responseText);
             // alert(dump(val));
             users.addUser(
@@ -578,6 +570,8 @@ function registerUser(verifier) {
                "orkut"
             );
             formatUsersList(false);
+         }else {
+            alert(i18n("authDenied", xhr.responseText));
          }
       }
    };
@@ -589,6 +583,7 @@ function tellAccessPass()
    var xhr = makeCorsRequest("POST", "?OP=postAccPss");
    xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
+         document.getElementById("progresspane").style.visibility='hidden';
          if ((this.status !== 200) && (this.status !== 0)) {
             alert('tellAccess RC: ' + this.status + "\n" + this.responseText);
          }
@@ -603,19 +598,19 @@ function whoAmI() {
        function(person) {
           var value;
           value = person.name.givenName;
-          if (value === null) value = "?";
+          if (!value) value = "?";
           document.getElementById("p2_givenName").textContent = value;
           value = person.name.familyName;
-          if (value === null) value = "?";
+          if (!value) value = "?";
           document.getElementById("p2_familyName").textContent = value;
 //        document.getElementById("p2_thumbnail").setAttribute(
 //           "src", person.thumbnailUrl
 //        );
           value = person.gender;
-          if (value === null) value = "?";
+          if (!value) value = "?";
           document.getElementById("p2_gender").textContent = value;
           value = person.birthday;
-          if (value === null) {
+          if (!value) {
              value = "?";
           }else {
              var date = new Date(value);
@@ -682,13 +677,9 @@ function queryFor(what, whenDone) {
       formatUsersList(true);
       return;
    }
-   var xhr = makeCorsRequest("GET", "?OP=" + what);
+   var xhr = makeCorsRequest("GET", "?OP=" + what + "&NET=" + users.getNet());
    xhr.onreadystatechange = function() {
-      switch (this.readyState) {
-      case 1: // OPENED
-         document.getElementById("progresspane").style.visibility='visible';
-         break;
-      case 4: // DONE
+      if (this.readyState === 4) {
          document.getElementById("progresspane").style.visibility='hidden';
          if ((this.status === 200) || (this.status === 0)) {
             var val = JSON.parse(this.responseText);
@@ -697,7 +688,6 @@ function queryFor(what, whenDone) {
             dispatcher.clean();
             alert(what + " RC: " + this.status + "\n" + this.responseText);
          }
-         break;
       }
    };
    xhr.send();
@@ -784,11 +774,7 @@ function uploadFile(albumId) {
 }
 
 function whenRequestStateChanged() {
-   switch (this.readyState) {
-   case 1: // OPENED
-      document.getElementById("progresspane").style.visibility='visible';
-      break;
-   case 4: // DONE
+   if (this.readyState === 4) {
       document.getElementById("progresspane").style.visibility='hidden';
       if ((this.status === 200) || (this.status === 0)) {
          expandPage("p1");
@@ -796,10 +782,12 @@ function whenRequestStateChanged() {
       }else {
          alert(this.responseText);
       }
-      break;
    }
 }
 
+//--
+//-- The following should be all shitcanned after testing Picasa is finished
+//--
 function picasaTest() {    // PICASA_TEST
    query4(
       'picasaTest',
@@ -825,11 +813,7 @@ function picasaTest() {    // PICASA_TEST
 function query4(what, whenDone) {
    var xhr = makeCorsRequest("GET", "?OP=" + what);
    xhr.onreadystatechange = function() {
-      switch (this.readyState) {
-      case 1: // OPENED
-         document.getElementById("progresspane").style.visibility='visible';
-         break;
-      case 4: // DONE
+      if (this.readyState === 4) {
          document.getElementById("progresspane").style.visibility='hidden';
          if ((this.status === 200) || (this.status === 0)) {
             var val = JSON.parse(this.responseText);
@@ -838,7 +822,6 @@ function query4(what, whenDone) {
             dispatcher.clean();
             alert(what + " RC: " + this.status + "\n" + this.responseText);
          }
-         break;
       }
    };
    xhr.send();

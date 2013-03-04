@@ -21,6 +21,7 @@ import com.google.gdata.client.photos.PicasawebService;
 import com.google.gdata.data.Kind.AdaptorException;
 import com.google.gdata.data.Link;
 import com.google.gdata.data.OtherContent;
+import com.google.gdata.data.Person;
 import com.google.gdata.data.PlainTextConstruct;
 import com.google.gdata.data.photos.AlbumEntry;
 import com.google.gdata.data.photos.AlbumFeed;
@@ -54,6 +55,62 @@ public class PicasaNetwork {
       m_service = new PicasawebService("Jaxogram_9");
       m_service.setUserCredentials(login, passwd);
       m_login = login;
+   }
+
+   /*-------------------------------------------------------------whoIsAsJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String whoIsAsJson(String id) throws Exception {
+      if (id != null) {
+         throw new Exception("Not Implemented");
+      }else {
+         Person person = (
+            (List<Person>)m_service.getFeed(
+               new URL(API_PREFIX + m_login + "?kind=album"),
+               UserFeed.class
+            ).getAuthors()
+         ).get(0);
+         StringBuilder sb = new StringBuilder();
+         sb.append("{\"name\":{\"givenName\":\"").
+         append(person.getName()).
+         append("\",\"familyName\":\" \"},").
+//       append("\"birthday\":\"\",").
+         append("\"gender\":\"\"}");
+         return sb.toString();
+      }
+   }
+
+   /*--------------------------------------------------------listAlbumsAsJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String listAlbumsAsJson() throws Exception
+   {
+      StringBuilder sb = new StringBuilder();
+
+      int albumsCount = 0;
+      sb.append("{\"albums\":[");
+      for (AlbumEntry album : getAlbums()) {
+         if (albumsCount > 0) sb.append(',');
+         sb.
+         append("{\"no\":\"").append(++albumsCount).
+         append("\",\"title\":\"").append(album.getTitle().getPlainText()).
+         append("\",\"photos\":[");
+         List<PhotoEntry> photos = getPhotos(album);
+         int photosCount = 0;
+         for (PhotoEntry photo : photos) {
+            if (photosCount > 0) sb.append(',');
+            sb.
+            append("{\"no\":\"").append(++photosCount).
+            append("\",\"title\":\"").append(photo.getTitle().getPlainText()).
+            append("\",\"descr\":\"").append(photo.getDescription().getPlainText()).
+            append("\"}");
+         }
+         sb.append("]}");
+      }
+      sb.append("]}");
+      return sb.toString();
    }
 
    /*---------------------------------------------------------------getAlbums-+
