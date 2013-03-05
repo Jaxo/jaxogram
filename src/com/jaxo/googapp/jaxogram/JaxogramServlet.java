@@ -259,8 +259,6 @@ public class JaxogramServlet extends HttpServlet
                   throw new Exception("Unknown Network");
                }
 //*/           writer.println("Successfully uploaded to album #" + albumId);
-            }else if (op.equals("picasaTest")) {  // PICASA_TEST
-               writer.println(makePicasaNetwork(req).listAllAlbumsAsJson());
             }
          }
       }catch (Exception e) {

@@ -60,7 +60,6 @@ window.onload = function() {
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
    document.getElementById("whoAmI").onclick = whoAmI;
-   document.getElementById("picasaTest").onclick = picasaTest;  // PICASA_TEST
 
 // document.getElementById("p1").addEventListener(
 //    'transitionend',
@@ -787,30 +786,4 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
    }else {
       xhr.send(values);
    }
-}
-
-//--
-//-- The following should be all shitcanned after testing Picasa is finished
-//--
-function picasaTest() {    // PICASA_TEST
-   issueRequestStd(
-      'picasaTest',
-       function(response) {
-          var res = "<OL>";
-          var albums = response.albums;
-          for (var i=0, iMax=albums.length; i < iMax; ++i) {
-             var album = albums[i];
-             var title = album.title;
-             res += "<LI>" + album.title + "<UL>";
-             for (var j=0, jMax=album.photos.length; j < jMax; ++j) {
-                var photo = album.photos[j];
-                res += "<LI>" + photo.title + "</LI>";
-             }
-             res += "</UL>" + album.title + "</LI>";
-          }
-          res += "</OL>";
-          document.getElementById("p3").innerHTML = res;
-          expandPage("p3");
-      }
-   );
 }
