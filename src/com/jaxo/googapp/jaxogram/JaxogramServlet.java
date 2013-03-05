@@ -179,7 +179,11 @@ public class JaxogramServlet extends HttpServlet
                );
 
             }else if (op.equals("listAlbums")) {
-               writer.println(makeOrkutNetwork(req).listAlbumsAsJson());
+               writer.println(
+                  (net.equals("picasa"))?
+                  makePicasaNetwork(req).listAlbumsAsJson() :
+                  makeOrkutNetwork(req).listAlbumsAsJson()
+               );
 
             }else if (op.equals("createAlbum")) {
                String title = req.getParameter("title");
@@ -190,6 +194,7 @@ public class JaxogramServlet extends HttpServlet
                      (descr == null)? "" : descr
                   )
                );
+
             }else if (op.startsWith("postImage")) {
                String imgType = "jpg";
                String imgTitle = "(No Title)";
@@ -246,7 +251,7 @@ public class JaxogramServlet extends HttpServlet
                );
 //*/           writer.println("Successfully uploaded to album #" + albumId);
             }else if (op.equals("picasaTest")) {  // PICASA_TEST
-               writer.println(makePicasaNetwork(req).listAlbumsAsJson());
+               writer.println(makePicasaNetwork(req).listAllAlbumsAsJson());
             }
          }
       }catch (Exception e) {

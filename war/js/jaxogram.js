@@ -792,7 +792,7 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
 //-- The following should be all shitcanned after testing Picasa is finished
 //--
 function picasaTest() {    // PICASA_TEST
-   query4(
+   issueRequestStd(
       'picasaTest',
        function(response) {
           var res = "<OL>";
@@ -812,6 +812,4 @@ function picasaTest() {    // PICASA_TEST
           expandPage("p3");
       }
    );
-}
-function query4(what, whenDone) {
 }

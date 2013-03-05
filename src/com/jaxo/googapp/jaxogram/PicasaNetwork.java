@@ -23,6 +23,8 @@ import com.google.gdata.data.Link;
 import com.google.gdata.data.OtherContent;
 import com.google.gdata.data.Person;
 import com.google.gdata.data.PlainTextConstruct;
+import com.google.gdata.data.media.mediarss.MediaGroup;
+import com.google.gdata.data.media.mediarss.MediaThumbnail;
 import com.google.gdata.data.photos.AlbumEntry;
 import com.google.gdata.data.photos.AlbumFeed;
 import com.google.gdata.data.photos.GphotoEntry;
@@ -98,7 +100,43 @@ public class PicasaNetwork {
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String listAlbumsAsJson() throws Exception
+   public String listAlbumsAsJson() throws Exception {
+      StringBuilder sb = new StringBuilder();
+
+      int albumsCount = 0;
+      sb.append("[");
+      for (AlbumEntry album : getAlbums()) {
+         MediaGroup grp = album.getMediaGroup();
+         List<MediaThumbnail> thumbnails = grp.getThumbnails();
+         String thumbnailUrl = "";
+         for (MediaThumbnail thumbnail : thumbnails) {
+            thumbnailUrl = thumbnail.getUrl();
+            int ixEnd = thumbnailUrl.lastIndexOf('/');
+            int ixStart = thumbnailUrl.lastIndexOf('/', ixEnd-1);
+            thumbnailUrl = (
+               thumbnailUrl.substring(0, ixStart+1) +
+               "s32" +  // s32-c (cropped?)
+               thumbnailUrl.substring(ixEnd)
+            );
+            break;
+         }
+         if (albumsCount > 0) sb.append(',');
+         sb.append("{\"id\":\"zz").append(++albumsCount).
+         append("\",\"title\":\"").append(album.getTitle().getPlainText()).
+         append("\",\"description\":\"").
+         append(album.getDescription().getPlainText()).
+         append("\",\"thumbnailUrl\":\"").append(thumbnailUrl).
+         append("\"}");
+      }
+      sb.append("]");
+      return sb.toString();
+   }
+
+   /*-----------------------------------------------------listAllAlbumsAsJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String listAllAlbumsAsJson() throws Exception
    {
       StringBuilder sb = new StringBuilder();
 
@@ -106,8 +144,7 @@ public class PicasaNetwork {
       sb.append("{\"albums\":[");
       for (AlbumEntry album : getAlbums()) {
          if (albumsCount > 0) sb.append(',');
-         sb.
-         append("{\"no\":\"").append(++albumsCount).
+         sb.append("{\"no\":\"").append(++albumsCount).
          append("\",\"title\":\"").append(album.getTitle().getPlainText()).
          append("\",\"photos\":[");
          List<PhotoEntry> photos = getPhotos(album);
