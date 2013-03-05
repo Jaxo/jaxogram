@@ -353,18 +353,6 @@ function fitImage(img) {
    img.setAttribute("style", s);
 }
 
-function makeCorsRequest(method, query) {
-   var xhr = new XMLHttpRequest({mozSystem: true});
-   if (xhr.withCredentials === undefined) {
-      alert("Sorry: your browser doesn't handle cross-site requests");
-      return;
-   }
-   xhr.withCredentials = true;
-   xhr.open(method, server_url + query, true);
-   document.getElementById("progresspane").style.visibility='visible';
-   return xhr;
-}
-
 function showMessagePane(eltContainer) {
    var eltMessage = document.getElementById("message");
    eltMessage.appendChild(eltContainer);
@@ -440,14 +428,14 @@ function authorizePicasa() {
    eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
    eltBtnOk.onclick = function() {
       var passwd = eltInp1.value + " " + eltInp2.value;
-      checkAccessPass(
-         passwd,
-         function(val) {   // whenOk
+      issueRequest(
+         "POST", "checkAccPss", passwd,
+         function(userName) { // whenDone
             clearMessagePane();
-            users.addUser(val, passwd, "picasa");
+            users.addUser(userName, passwd, "picasa");
             formatUsersList(false);
          },
-         function(rc) {      // whenFailed
+         function(rc, val) {  // whenFailed
             alert(i18n("badLogin"));
          }
       );
@@ -485,23 +473,20 @@ function authorizeOrkut() {
    // make a pseudo-random key )between 100000 and 200000
    authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
-   var xhr = makeCorsRequest("GET", "?OP=getUrl&JXK=" + authKey);
-   xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
-         if ((this.status === 200) || (this.status === 0)) {
-            // navigate to it as a top browser window
-            if (isPackaged) {               // if packaged, do NOT leave the app!
-               browseTo(xhr.responseText);  // use a mozbrowser, instead
-            }else {                         // if not packaged, we can leave the page
-               window.location.href = xhr.responseText;
-            }
-         }else {
-            alert("authorize RC:" + this.status + "\n" + this.responseText);
+   issueRequest(
+      "GET", "getUrl", "&JXK=" + authKey,
+      function(oauthUrl) {        // whenDone
+         // navigate to it as a top browser window
+         if (isPackaged) {        // if packaged, do NOT leave the app!
+            browseTo(oauthUrl);   // use a mozbrowser, instead
+         }else {                  // if not packaged, we can leave the page
+            window.location.href = oauthUrl;
          }
+      },
+      function(rc, val) {         // whenFailed
+         alert("authorize RC:" + rc + "\n" + val);
       }
-   };
-   xhr.send();
+   );
 }
 
 function browseTo(targetUrl) {
@@ -534,85 +519,56 @@ function browseQuit() {
 | for packaged application, this is the way appspot tells us the verifier
 */
 function getVerifier() {
-   var xhr=makeCorsRequest("GET", "?OP=getVerifier&JXK=" + authKey);
-   xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
-         if ((xhr.status === 200) || (xhr.status === 0)) {
-            var verifier = this.responseText;
-            if (verifier === "???") {
-               setTimeout(getVerifier, 1000);
-            }else {
-               browseQuit();
-               //OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);
-               registerUser(verifier);
-               formatUsersList(false);
-            }
+   issueRequest(
+      "GET", "getVerifier", "&JXK=" + authKey,
+      function(verifier) {     // whenDone
+         if (verifier === "???") {
+            setTimeout(getVerifier, 1000);
          }else {
-            alert("getVerifier RC:" + xhr.status);
+            browseQuit();
+            //OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);
+            registerUser(verifier);
+            formatUsersList(false);
          }
+      },
+      function(rc, val) { // whenFailed
+         alert("getVerifier RC:" + rc);
       }
-   }
-   xhr.send();
+   );
 }
 
 function registerUser(verifier) {
-   var xhr = makeCorsRequest(
-      "GET",
-      "?OP=getAccPss&verifier=" + encodeURIComponent(verifier)
+   issueRequest(
+      "GET", "getAccPss", "&verifier=" + encodeURIComponent(verifier),
+      function(val) {     // whenDone
+         var obj = JSON.parse(xhr.responseText);
+         // alert(dump(obj));
+         users.addUser(
+            decodeURIComponent(obj.userName),
+            decodeURIComponent(obj.accessPass),
+            "orkut"
+         );
+         formatUsersList(false);
+      },
+      function(rc, val) { // whenFailed
+         alert(i18n("authDenied", val));
+      }
    );
-   xhr.onreadystatechange = function () {
-      if (this.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
-         if ((this.status === 200) || (this.status === 0)) {
-            var val = JSON.parse(xhr.responseText);
-            // alert(dump(val));
-            users.addUser(
-               decodeURIComponent(val.userName),
-               decodeURIComponent(val.accessPass),
-               "orkut"
-            );
-            formatUsersList(false);
-         }else {
-            alert(i18n("authDenied", xhr.responseText));
-         }
-      }
-   };
-   xhr.send();
-}
-
-function checkAccessPass(passwd, whenDone, whenFailed)
-{
-   var xhr = makeCorsRequest("POST", "?OP=checkAccPss");
-   xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
-         if ((this.status === 200) || (this.status === 0)) {
-            whenDone(this.responseText);
-         }else {
-            whenFailed(this.status);
-         }
-      }
-   };
-   xhr.send(passwd);
 }
 
 function tellAccessPass()
 {
-   var xhr = makeCorsRequest("POST", "?OP=postAccPss");
-   xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
-         if ((this.status !== 200) && (this.status !== 0)) {
-            alert('tellAccess RC: ' + this.status + "\n" + this.responseText);
-         }
+   issueRequest(
+      "POST", "postAccPss", users.getAccessPass(),
+      function(val) {},   // whenDone
+      function(rc, val) { // whenFailed
+         alert('tellAccess RC: ' + rc + "\n" + val);
       }
-   };
-   xhr.send(users.getAccessPass());
+   );
 }
 
 function whoAmI() {
-   queryFor(
+   issueRequestStd(
       'whoAmI',
        function(person) {
           var value;
@@ -651,7 +607,7 @@ function listAlbums(event) {
    }
    var ulChildElt = this.getElementsByTagName("UL")[0];
    if (ulChildElt !== null) {     // defense!
-      queryFor(
+      issueRequestStd(
          'listAlbums',
          function(albums) {
             formatAlbumsList(albums, ulChildElt);
@@ -678,7 +634,7 @@ function createAlbum(isDirect) {
             "&descr=" + resp.substr(ix+1).replace(/^\s+|\s+$/g,'')
          );
       }
-      queryFor(
+      issueRequestStd(
          what,
          function(val) {
             users.setAlbum(val.new.id, val.new.title);
@@ -689,27 +645,6 @@ function createAlbum(isDirect) {
          }
       );
    }
-}
-
-function queryFor(what, whenDone) {
-   if (!users.hasSome()) {
-      formatUsersList(true);
-      return;
-   }
-   var xhr = makeCorsRequest("GET", "?OP=" + what + "&NET=" + users.getNet());
-   xhr.onreadystatechange = function() {
-      if (this.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
-         if ((this.status === 200) || (this.status === 0)) {
-            var val = JSON.parse(this.responseText);
-            whenDone(val);
-         }else {
-            dispatcher.clean();
-            alert(what + " RC: " + this.status + "\n" + this.responseText);
-         }
-      }
-   };
-   xhr.send();
 }
 
 function pickAndUpload(event) {
@@ -746,10 +681,17 @@ function pickAndUpload(event) {
 function uploadPick(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
    a.onsuccess = function(e) {
-      var xhr = makeCorsRequest("POST", "?OP=postImageData&AID="+albumId);
-      xhr.setRequestHeader("Content-Type", 'image/jpeg');
-      xhr.onreadystatechange = whenRequestStateChanged;
-      xhr.send(a.result.blob);
+      issueRequest(
+         "POST", "postImageData&AID=" + albumId, a.result.blob,
+         function(val) {     // whenDone
+            expandPage("p1");
+            alert(i18n('imageUploaded', users.getAlbumTitle()));
+         },
+         function(rc, val) { // whenFailed
+            alert(val);
+         },
+         "image/jpeg"
+      );
       try {
          var url = URL.createObjectURL(a.result.blob);
          var img = document.getElementById('photoImage');
@@ -779,9 +721,17 @@ function uploadFile(albumId) {
          formData.append("AID", albumId);
 //       formData.append("TIT", "my title");
          formData.append("upldFile", file);
-         var xhr = makeCorsRequest("POST", "?OP=postImageFile");
-         xhr.onreadystatechange = whenRequestStateChanged;
-         xhr.send(formData);
+         issueRequest(
+            "POST", "postImageFile", formData,
+            function(val) {     // whenDone
+               expandPage("p1");
+               alert(i18n('imageUploaded', users.getAlbumTitle()));
+            },
+            function(rc, val) { // whenFailed
+               alert(val);
+            },
+            "image/jpeg"
+         );
          var reader = new FileReader();
          reader.onload = function (event) {
             document.getElementById("photoImage").src = event.target.result;
@@ -792,15 +742,49 @@ function uploadFile(albumId) {
    elt.click();
 }
 
-function whenRequestStateChanged() {
-   if (this.readyState === 4) {
-      document.getElementById("progresspane").style.visibility='hidden';
-      if ((this.status === 200) || (this.status === 0)) {
-         expandPage("p1");
-         alert(i18n('imageUploaded', users.getAlbumTitle()));
-      }else {
-         alert(this.responseText);
+function issueRequestStd(what, whenDone) {
+   if (!users.hasSome()) {
+      formatUsersList(true);
+   }else {
+      issueRequest(
+         "GET", what, "&NET=" + users.getNet(),
+         function(val) {     // whenDone
+            whenDone(JSON.parse(val));
+         },
+         function(rc, val) { // whenFailed
+            dispatcher.clean();
+            alert(what + " RC: " + rc + "\n" + val);
+         }
+      );
+   }
+}
+
+function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
+   var query = "?OP=" + op;
+   if (method === "GET") query += values;
+   var xhr = new XMLHttpRequest({mozSystem: true});
+   if (xhr.withCredentials === undefined) {
+      alert("Sorry: your browser doesn't handle cross-site requests");
+      return;
+   }
+   xhr.withCredentials = true;
+   xhr.open(method, server_url + query, true);
+   if (contentType) xhr.setRequestHeader("Content-Type", contentType);
+   xhr.onreadystatechange = function () {
+      if (this.readyState === 4) {
+         document.getElementById("progresspane").style.visibility='hidden';
+         if ((this.status === 200) || (this.status === 0)) {
+            whenDone(this.responseText);
+         }else {
+            whenFailed(this.status, this.responseText);
+         }
       }
+   };
+   document.getElementById("progresspane").style.visibility='visible';
+   if (method === "GET") {
+      xhr.send();
+   }else {
+      xhr.send(values);
    }
 }
 
@@ -830,18 +814,4 @@ function picasaTest() {    // PICASA_TEST
    );
 }
 function query4(what, whenDone) {
-   var xhr = makeCorsRequest("GET", "?OP=" + what);
-   xhr.onreadystatechange = function() {
-      if (this.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
-         if ((this.status === 200) || (this.status === 0)) {
-            var val = JSON.parse(this.responseText);
-            whenDone(val);
-         }else {
-            dispatcher.clean();
-            alert(what + " RC: " + this.status + "\n" + this.responseText);
-         }
-      }
-   };
-   xhr.send();
 }
