@@ -682,13 +682,15 @@ function uploadPick(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
    a.onsuccess = function(e) {
       issueRequest(
-         "POST", "postImageData&AID=" + albumId, a.result.blob,
+         "POST",
+         "postImageData&NET=" + users.getNet() + "&AID=" + albumId,
+         a.result.blob,
          function(val) {     // whenDone
             expandPage("p1");
             alert(i18n('imageUploaded', users.getAlbumTitle()));
          },
          function(rc, val) { // whenFailed
-            alert(val);
+            alert("Error - RC = " + rc);
          },
          "image/jpeg"
       );
@@ -722,15 +724,14 @@ function uploadFile(albumId) {
 //       formData.append("TIT", "my title");
          formData.append("upldFile", file);
          issueRequest(
-            "POST", "postImageFile", formData,
+            "POST", "postImageFile&NET=" + users.getNet(), formData,
             function(val) {     // whenDone
                expandPage("p1");
                alert(i18n('imageUploaded', users.getAlbumTitle()));
             },
             function(rc, val) { // whenFailed
-               alert(val);
-            },
-            "image/jpeg"
+               alert("Error - RC = " + rc);
+            }
          );
          var reader = new FileReader();
          reader.onload = function (event) {

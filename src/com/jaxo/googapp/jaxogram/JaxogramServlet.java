@@ -65,7 +65,7 @@ public class JaxogramServlet extends HttpServlet
 //*/  );
       String op = req.getParameter("OP");
       String net = req.getParameter("NET");
-//*/  logger.info("OP: " + op);
+//*/  logger.info("OP:" + op + "NET:" + net);
 
       resp.setContentType("text/plain");
       PrintWriter writer = resp.getWriter();
@@ -246,9 +246,18 @@ public class JaxogramServlet extends HttpServlet
                if (image == null) {
                   throw new Exception("Image data not found");
                }
-               makeOrkutNetwork(req).uploadPhoto(
-                  albumId, imgTitle, image, imgType
-               );
+
+               if (net.equals("picasa")) {
+                  makePicasaNetwork(req).uploadPhoto(
+                     albumId, imgTitle, image, imgType
+                  );
+               }else if (net.equals("orkut")){
+                  makeOrkutNetwork(req).uploadPhoto(
+                     albumId, imgTitle, image, imgType
+                  );
+               }else {
+                  throw new Exception("Unknown Network");
+               }
 //*/           writer.println("Successfully uploaded to album #" + albumId);
             }else if (op.equals("picasaTest")) {  // PICASA_TEST
                writer.println(makePicasaNetwork(req).listAllAlbumsAsJson());

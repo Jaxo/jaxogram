@@ -174,6 +174,10 @@ public class OrkutNetwork extends DefaultOrkutAdapter
    }
 
 
+   /*------------------------------------------------------------------whoAmI-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public String whoAmI() throws Exception {
       BatchTransaction btx = newBatch();
       GetProfileTx profile = getProfileTF().getSelfProfile();
@@ -488,12 +492,18 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
+   /*-------------------------------------------------------------uploadPhoto-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public void uploadPhoto(
       String albumId,
       String title,
       byte[] image,
       String type // png, gif, or jpg.  see: ~/fxos/orkut/java/src/com/google/orkut/client/api/UploadPhotoTx.java
-   )throws Exception {
+   )
+   throws Exception
+   {
       UploadPhotoTx tx = getPhotosTF().uploadPhoto(albumId, image, type, title);
       BatchTransaction btx = newBatch();
       btx.add(tx);

@@ -56,6 +56,7 @@ public class PicasaNetwork {
       int splitAt = loginPasswd.indexOf(' ');
       m_login = loginPasswd.substring(0, splitAt);
       m_service = new PicasawebService("Jaxogram_9");
+      m_service.setConnectTimeout(30000);
       m_service.setUserCredentials(m_login, loginPasswd.substring(splitAt+1));
    }
 
@@ -120,8 +121,10 @@ public class PicasaNetwork {
             );
             break;
          }
-         if (albumsCount > 0) sb.append(',');
-         sb.append("{\"id\":\"zz").append(++albumsCount).
+         String id = album.getId();
+         if (albumsCount++ > 0) sb.append(',');
+         sb.append("{\"id\":\"").
+         append(id.substring(1 + id.lastIndexOf('/'))).
          append("\",\"title\":\"").append(album.getTitle().getPlainText()).
          append("\",\"description\":\"").
          append(album.getDescription().getPlainText()).
@@ -130,6 +133,37 @@ public class PicasaNetwork {
       }
       sb.append("]");
       return sb.toString();
+   }
+
+   /*-------------------------------------------------------------uploadPhoto-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public void uploadPhoto(
+      String albumId,
+      String title,
+      byte[] image,
+      String type // png, gif, jpg or jpeg
+   )
+   throws Exception
+   {
+//    URL albumUrl = new URL(API_PREFIX + m_login + "/" + albumId);
+      for (AlbumEntry album : getAlbums()) {
+         String id = album.getId();
+         if (id.endsWith(albumId)) {
+            PhotoEntry photo = new PhotoEntry();
+            photo.setTitle(new PlainTextConstruct(title));
+            // photo.setDescription(new PlainTextConstruct(description));
+            photo.setTimestamp(new Date());
+            OtherContent content = new OtherContent();
+            content.setBytes(image);
+            content.setMimeType(new ContentType("image/" + type));
+            photo.setContent(content);
+//          m_service.insert(albumUrl, photo);
+            insert(album, photo);
+            break;
+         }
+      }
    }
 
    /*-----------------------------------------------------listAllAlbumsAsJson-+
@@ -195,29 +229,6 @@ public class PicasaNetwork {
          }
       }
       return photos;
-   }
-
-   /*-------------------------------------------------------------uploadPhoto-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   public void uploadPhoto(
-      AlbumEntry albumEntry,
-      String title,
-      String description,
-      byte[] image,
-      String type // png, gif, jpg or jpeg
-   )
-   throws Exception {
-      PhotoEntry photo = new PhotoEntry();
-      photo.setTitle(new PlainTextConstruct(title));
-      photo.setDescription(new PlainTextConstruct(description));
-      photo.setTimestamp(new Date());
-      OtherContent content = new OtherContent();
-      content.setBytes(image);
-      content.setMimeType(new ContentType("image/" + type));
-      photo.setContent(content);
-      insert(albumEntry, photo);
    }
 
    /*------------------------------------------------------------------insert-+
