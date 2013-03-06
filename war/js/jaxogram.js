@@ -635,10 +635,11 @@ function createAlbum(isDirect) {
       }
       issueRequestStd(
          what,
-         function(val) {
-            users.setAlbum(val.new.id, val.new.title);
+         function(albums) {
+            var newAlbum = albums[0];
+            users.setAlbum(newAlbum.id, newAlbum.title);
             formatAlbumsList(
-               val.list,
+               albums,
                document.getElementById("jgUsersAid").getElementsByTagName("UL")[0]
             );
          }

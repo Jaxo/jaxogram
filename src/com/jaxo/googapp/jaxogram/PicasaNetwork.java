@@ -103,36 +103,33 @@ public class PicasaNetwork {
    +-------------------------------------------------------------------------*/
    public String listAlbumsAsJson() throws Exception {
       StringBuilder sb = new StringBuilder();
-
-      int albumsCount = 0;
+      int albumsCount = -1;
       sb.append("[");
       for (AlbumEntry album : getAlbums()) {
-         MediaGroup grp = album.getMediaGroup();
-         List<MediaThumbnail> thumbnails = grp.getThumbnails();
-         String thumbnailUrl = "";
-         for (MediaThumbnail thumbnail : thumbnails) {
-            thumbnailUrl = thumbnail.getUrl();
-            int ixEnd = thumbnailUrl.lastIndexOf('/');
-            int ixStart = thumbnailUrl.lastIndexOf('/', ixEnd-1);
-            thumbnailUrl = (
-               thumbnailUrl.substring(0, ixStart+1) +
-               "s32" +  // s32-c (cropped?)
-               thumbnailUrl.substring(ixEnd)
-            );
-            break;
-         }
-         String id = album.getId();
-         if (albumsCount++ > 0) sb.append(',');
-         sb.append("{\"id\":\"").
-         append(id.substring(1 + id.lastIndexOf('/'))).
-         append("\",\"title\":\"").append(album.getTitle().getPlainText()).
-         append("\",\"description\":\"").
-         append(album.getDescription().getPlainText()).
-         append("\",\"thumbnailUrl\":\"").append(thumbnailUrl).
-         append("\"}");
+         if (++albumsCount > 0) sb.append(',');
+         albumToJson(album, sb);
       }
       sb.append("]");
       return sb.toString();
+   }
+
+
+   /*-------------------------------------------------------createAlbumAsJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String createAlbumAsJson(
+      String title,  // Album title
+      String desc    // Album description
+   ) throws Exception {
+      AlbumEntry album = new AlbumEntry();
+      album.setTitle(new PlainTextConstruct(title));
+      album.setDescription(new PlainTextConstruct(desc));
+      album.setAccess("public");
+//    album.setLocation(location);
+      album.setDate(new Date());
+      m_service.insert(new URL(API_PREFIX + "default"), album);
+      return listAlbumsAsJson();
    }
 
    /*-------------------------------------------------------------uploadPhoto-+
@@ -166,11 +163,11 @@ public class PicasaNetwork {
       }
    }
 
-   /*-----------------------------------------------------listAllAlbumsAsJson-+
+   /*-----------------------------------------------------listAllPhotosAsJson-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String listAllAlbumsAsJson() throws Exception
+   public String listAllPhotosAsJson() throws Exception
    {
       StringBuilder sb = new StringBuilder();
 
@@ -229,6 +226,37 @@ public class PicasaNetwork {
          }
       }
       return photos;
+   }
+
+   /*-------------------------------------------------------------albumToJson-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   private void albumToJson(AlbumEntry album, StringBuilder sb) {
+      MediaGroup grp = album.getMediaGroup();
+      String thumbnailUrl = "";
+      if (grp != null) {
+         List<MediaThumbnail> thumbnails = grp.getThumbnails();
+         for (MediaThumbnail thumbnail : thumbnails) {
+            thumbnailUrl = thumbnail.getUrl();
+            int ixEnd = thumbnailUrl.lastIndexOf('/');
+            int ixStart = thumbnailUrl.lastIndexOf('/', ixEnd-1);
+            thumbnailUrl = (
+               thumbnailUrl.substring(0, ixStart+1) +
+               "s32" +  // s32-c (cropped?)
+               thumbnailUrl.substring(ixEnd)
+            );
+            break;
+         }
+      }
+      String id = album.getId();
+      sb.append("{\"id\":\"").
+      append(id.substring(1 + id.lastIndexOf('/'))).
+      append("\",\"title\":\"").append(album.getTitle().getPlainText()).
+      append("\",\"description\":\"").
+      append(album.getDescription().getPlainText()).
+      append("\",\"thumbnailUrl\":\"").append(thumbnailUrl).
+      append("\"}");
    }
 
    /*------------------------------------------------------------------insert-+

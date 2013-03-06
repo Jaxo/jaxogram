@@ -151,28 +151,8 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       if (tx.hasError()) {
          throw new Exception("Error creating album: " + tx.getError());
       }
-      Album album = tx.getAlbum();
-      /*------*/
-//    album.setTitle(title);
-//    album.setDescription(desc);
-//    btx = newBatch();
-//    UpdateAlbumTx utx = getAlbumsTF().updateAlbum(album);
-//    btx.add(utx);
-//    submitBatch(btx);
-//    if (utx.hasError()) {
-//       throw new Exception("Error updating album: " + utx.getError());
-//    }
-      /*------*/
-      StringBuilder sb = new StringBuilder();
-      sb.append("{\"new\":");
-      // sb.append(tx.getAlbum().toJsonString());
-      sb.append(album.toJsonString());
-      sb.append(",\"list\":");
-      sb.append(listAlbumsAsJson());
-      sb.append("}");
-      return sb.toString();
+      return listAlbumsAsJson();
    }
-
 
    /*------------------------------------------------------------------whoAmI-+
    *//**

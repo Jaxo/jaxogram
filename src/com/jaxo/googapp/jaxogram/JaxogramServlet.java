@@ -189,6 +189,11 @@ public class JaxogramServlet extends HttpServlet
                String title = req.getParameter("title");
                String descr = req.getParameter("descr");
                writer.println(
+                  (net.equals("picasa"))?
+                  makePicasaNetwork(req).createAlbumAsJson(
+                     (title == null)? "No title" : title,
+                     (descr == null)? "" : descr
+                  ) :
                   makeOrkutNetwork(req).createAlbumAsJson(
                      (title == null)? "No title" : title,
                      (descr == null)? "" : descr
