@@ -64,8 +64,7 @@ public class JaxogramServlet extends HttpServlet
 //*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
 //*/  );
       String op = req.getParameter("OP");
-      String net = req.getParameter("NET");
-//*/  logger.info("OP:" + op + "NET:" + net);
+//*/  logger.info("OP:" + op);
 
       resp.setContentType("text/plain");
       PrintWriter writer = resp.getWriter();
@@ -170,70 +169,44 @@ public class JaxogramServlet extends HttpServlet
                   URLEncoder.encode(makeOrkutNetwork(req).whoAmI(), "UTF-8").
                   replace("+", "%20")
                );
+            }else {
+               Network network;
+               String net = req.getParameter("NET");
+               if (net.equals("picasa")) {
+                  network = makePicasaNetwork(req);
+               }else if (net.equals("orkut")){
+                  network = makeOrkutNetwork(req);
+               }else {
+                  throw new Exception("Unknown Network");
+               }
+               if (op.equals("whoAmI")) {
+                  writer.println(network.whoIsAsJson(null));
 
-            }else if (op.equals("whoAmI")) {
-               writer.println(
-                  (net.equals("picasa"))?
-                  makePicasaNetwork(req).whoIsAsJson(null) :
-                  makeOrkutNetwork(req).whoIsAsJson(null)
-               );
+               }else if (op.equals("listAlbums")) {
+                  writer.println(network.listAlbumsAsJson());
 
-            }else if (op.equals("listAlbums")) {
-               writer.println(
-                  (net.equals("picasa"))?
-                  makePicasaNetwork(req).listAlbumsAsJson() :
-                  makeOrkutNetwork(req).listAlbumsAsJson()
-               );
-
-            }else if (op.equals("createAlbum")) {
-               String title = req.getParameter("title");
-               String descr = req.getParameter("descr");
-               writer.println(
-                  (net.equals("picasa"))?
-                  makePicasaNetwork(req).createAlbumAsJson(
+               }else if (op.equals("createAlbum")) {
+                  String title = req.getParameter("title");
+                  String descr = req.getParameter("descr");
+                  network.createAlbum(
                      (title == null)? "No title" : title,
                      (descr == null)? "" : descr
-                  ) :
-                  makeOrkutNetwork(req).createAlbumAsJson(
-                     (title == null)? "No title" : title,
-                     (descr == null)? "" : descr
-                  )
-               );
+                  );
+                  writer.println(network.listAlbumsAsJson());
 
-            }else if (op.startsWith("postImage")) {
-               String imgType = "jpg";
-               String imgTitle = "(No Title)";
-               String albumId = "5830280253747333482";
-               byte[] image = null;
-               if (op.equals("postImageData")) {
-                  for (
-                     @SuppressWarnings("unchecked")
-                     Enumeration<String> names = req.getParameterNames();
-                     names.hasMoreElements();
-                  ) {
-                     String name = names.nextElement();
-                     String values = req.getParameterValues(name)[0];
-                     if (name.equals("IMG")) {
-                        imgType = values;
-                     }else if (name.equals("TIT")) {
-                        imgTitle = values;
-                     }else if (name.equals("AID")) {
-                        albumId = values;
-                     }
-                  }
-                  InputStream in = req.getInputStream();
-                  image = IOUtils.toByteArray(in);
-                  IOUtils.closeQuietly(in);
-               }else { // (op.equals("postImageFile")) {
-                  ServletFileUpload upload = new ServletFileUpload();
-                  upload.setSizeMax(500000);
-                  // upload.setSizeMax(120000);
-                  FileItemIterator iterator = upload.getItemIterator(req);
-                  while (iterator.hasNext()) {
-                     FileItemStream item = iterator.next();
-                     if (item.isFormField()) {
-                        String name = item.getFieldName();
-                        String values = Streams.asString(item.openStream());
+               }else if (op.startsWith("postImage")) {
+                  String imgType = "jpg";
+                  String imgTitle = "(No Title)";
+                  String albumId = "5830280253747333482";
+                  byte[] image = null;
+                  if (op.equals("postImageData")) {
+                     for (
+                        @SuppressWarnings("unchecked")
+                        Enumeration<String> names = req.getParameterNames();
+                        names.hasMoreElements();
+                     ) {
+                        String name = names.nextElement();
+                        String values = req.getParameterValues(name)[0];
                         if (name.equals("IMG")) {
                            imgType = values;
                         }else if (name.equals("TIT")) {
@@ -241,29 +214,40 @@ public class JaxogramServlet extends HttpServlet
                         }else if (name.equals("AID")) {
                            albumId = values;
                         }
-                     }else {
-                        InputStream in = item.openStream();
-                        image = IOUtils.toByteArray(in);
-                        IOUtils.closeQuietly(in);
+                     }
+                     InputStream in = req.getInputStream();
+                     image = IOUtils.toByteArray(in);
+                     IOUtils.closeQuietly(in);
+                  }else { // (op.equals("postImageFile")) {
+                     ServletFileUpload upload = new ServletFileUpload();
+                     upload.setSizeMax(500000);
+                     // upload.setSizeMax(120000);
+                     FileItemIterator iterator = upload.getItemIterator(req);
+                     while (iterator.hasNext()) {
+                        FileItemStream item = iterator.next();
+                        if (item.isFormField()) {
+                           String name = item.getFieldName();
+                           String values = Streams.asString(item.openStream());
+                           if (name.equals("IMG")) {
+                              imgType = values;
+                           }else if (name.equals("TIT")) {
+                              imgTitle = values;
+                           }else if (name.equals("AID")) {
+                              albumId = values;
+                           }
+                        }else {
+                           InputStream in = item.openStream();
+                           image = IOUtils.toByteArray(in);
+                           IOUtils.closeQuietly(in);
+                        }
                      }
                   }
+                  if (image == null) {
+                     throw new Exception("Image data not found");
+                  }
+                  network.uploadPhoto(albumId, imgTitle, image, imgType);
+//*/              writer.println("Successfully uploaded to album #" + albumId);
                }
-               if (image == null) {
-                  throw new Exception("Image data not found");
-               }
-
-               if (net.equals("picasa")) {
-                  makePicasaNetwork(req).uploadPhoto(
-                     albumId, imgTitle, image, imgType
-                  );
-               }else if (net.equals("orkut")){
-                  makeOrkutNetwork(req).uploadPhoto(
-                     albumId, imgTitle, image, imgType
-                  );
-               }else {
-                  throw new Exception("Unknown Network");
-               }
-//*/           writer.println("Successfully uploaded to album #" + albumId);
             }
          }
       }catch (Exception e) {

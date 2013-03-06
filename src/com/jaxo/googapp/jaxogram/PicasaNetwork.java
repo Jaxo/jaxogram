@@ -41,7 +41,7 @@ import com.google.gdata.util.ServiceException;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class PicasaNetwork {
+public class PicasaNetwork implements Network {
    private static final String API_PREFIX = (
       "http://picasaweb.google.com/data/feed/api/user/"
    );
@@ -114,14 +114,11 @@ public class PicasaNetwork {
    }
 
 
-   /*-------------------------------------------------------createAlbumAsJson-+
+   /*-------------------------------------------------------------createAlbum-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String createAlbumAsJson(
-      String title,  // Album title
-      String desc    // Album description
-   ) throws Exception {
+   public void createAlbum(String title, String desc) throws Exception {
       AlbumEntry album = new AlbumEntry();
       album.setTitle(new PlainTextConstruct(title));
       album.setDescription(new PlainTextConstruct(desc));
@@ -129,7 +126,6 @@ public class PicasaNetwork {
 //    album.setLocation(location);
       album.setDate(new Date());
       m_service.insert(new URL(API_PREFIX + "default"), album);
-      return listAlbumsAsJson();
    }
 
    /*-------------------------------------------------------------uploadPhoto-+

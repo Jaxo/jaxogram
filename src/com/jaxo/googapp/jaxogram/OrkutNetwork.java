@@ -45,7 +45,7 @@ import com.google.orkut.client.api.OrkutAdapterDebugListener;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class OrkutNetwork extends DefaultOrkutAdapter
+public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 {
    static final boolean IS_DEBUG = false;
    static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.OrkutNetwork");
@@ -135,23 +135,18 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
-   /*-------------------------------------------------------createAlbumAsJson-+
+   /*-------------------------------------------------------------createAlbum-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String createAlbumAsJson(
-      String title,  // Album title
-      String desc    // Album description
-   ) throws Exception {
-      BatchTransaction btx;
+   public void createAlbum(String title, String desc) throws Exception {
       CreateAlbumTx tx = getAlbumsTF().createAlbum(title, desc);
-      btx = newBatch();
+      BatchTransaction btx = newBatch();
       btx.add(tx);
       submitBatch(btx);
       if (tx.hasError()) {
          throw new Exception("Error creating album: " + tx.getError());
       }
-      return listAlbumsAsJson();
    }
 
    /*------------------------------------------------------------------whoAmI-+
@@ -363,19 +358,6 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
-   public void createAlbum(
-      String title,  // Album title
-      String desc    // Album description
-   ) throws Exception {
-      CreateAlbumTx tx = getAlbumsTF().createAlbum(title, desc);
-      BatchTransaction btx = newBatch();
-      btx.add(tx);
-      submitBatch(btx);
-      if (tx.hasError()) {
-         throw new Exception("Error creating album: " + tx.getError());
-      }
-   }
-
    public String listAlbums() throws Exception {
       GetAlbumsTx tx = getAlbumsTF().getSelfAlbums();
       tx.setCount(20);  // get first 20 albums
@@ -458,20 +440,6 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
-   public void uploadPhoto(
-      String albumId,  // album ID
-      String filePath, // path to the JPG file
-      String title     // title of the photo
-   ) throws Exception {
-      UploadPhotoTx tx = getPhotosTF().uploadPhoto(albumId, filePath, title);
-      BatchTransaction btx = newBatch();
-      btx.add(tx);
-      submitBatch(btx);
-      if (tx.hasError()) {
-         throw new Exception("Error uploading photo:" + tx.getError());
-      }
-   }
-
    /*-------------------------------------------------------------uploadPhoto-+
    *//**
    *//*
@@ -493,6 +461,24 @@ public class OrkutNetwork extends DefaultOrkutAdapter
       }
    }
 
+   public void uploadPhoto(
+      String albumId,  // album ID
+      String filePath, // path to the JPG file
+      String title     // title of the photo
+   ) throws Exception {
+      UploadPhotoTx tx = getPhotosTF().uploadPhoto(albumId, filePath, title);
+      BatchTransaction btx = newBatch();
+      btx.add(tx);
+      submitBatch(btx);
+      if (tx.hasError()) {
+         throw new Exception("Error uploading photo:" + tx.getError());
+      }
+   }
+
+   /*---------------------------------------------------------------------log-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public static void log(String s) {
       // System.err.println(s);
       logger.info(s);
