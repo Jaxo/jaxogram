@@ -378,6 +378,8 @@ function authorize() {
    var eltPicasa = document.createElement("IMG");
    var eltFlickr = document.createElement("IMG");
    var eltContainer = document.createElement("DIV");
+   eltContainer.style.width = "180px";
+   eltContainer.style.textAlign = "center";
    eltText.className = "i18n";
    eltText.id = "chooseNetwork";
    eltText.appendChild(document.createTextNode(i18n("chooseNetwork")));
