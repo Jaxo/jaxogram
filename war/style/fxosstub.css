@@ -154,8 +154,8 @@ header td:active {
 
 #messagepane {
   position:absolute;
-  left:1rem;
-  right:1rem;
+  left:2rem;
+  right:2rem;
   top:0;
   height:75%;
   margin:auto;
@@ -359,7 +359,7 @@ button {
   font-weight: normal;
   font-style: normal;
   position: absolute;
-  right: 0.5em;
+  right: 0.4em;
   font-size: 130%;
   line-height:1em;
 }
@@ -524,7 +524,7 @@ li[aria-selected=true], li[role=listbox] {
 /* }                                          */
 
 #jgUsersIn img {
-   margin-right: 1rem;
+   margin-right: 0.7rem;
    height: 1.6rem;
 }
 

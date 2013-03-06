@@ -140,10 +140,12 @@ function formatUsersList(isUserRequired) {
             var itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
-            if (net === "orkut") {
-               imgElt.src = "../images/orkutSmallLogo.png";
-            }else {
+            if (net === "flickr") {
+               imgElt.src = "../images/flickrSmallLogo.png";
+            }else if (net === "picasa") {
                imgElt.src = "../images/picasaSmallLogo.png";
+            }else {
+               imgElt.src = "../images/orkutSmallLogo.png";
             }
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
@@ -165,10 +167,12 @@ function formatUsersList(isUserRequired) {
       italicElt.appendChild(document.createTextNode(users.getUserName()));
       imgNetElt = document.createElement("IMG");
       imgNetElt.id = "jgUserNet";
-      if (users.getNet() === "orkut") {
-         imgNetElt.src = "../images/orkutLogo.png";
-      }else {
+      if (users.getNet() === "flickr") {
+         imgNetElt.src = "../images/flickrLogo.png";
+      }else if (users.getNet() === "picasa") {
          imgNetElt.src = "../images/picasaLogo.png";
+      }else {
+         imgNetElt.src = "../images/orkutLogo.png";
       }
       elt.appendChild(smallElt);
       elt.appendChild(document.createElement("BR"));
@@ -319,10 +323,12 @@ function changeLogin(elt, event) {
       }else {
          users.selectUserAt(index);
          document.getElementById('jgUserName').textContent = users.getUserName();
-         if (users.getNet() === "orkut") {
-            document.getElementById('jgUserNet').src = "../images/orkutLogo.png";
-         }else {
+         if (users.getNet() === "flickr") {
+            document.getElementById('jgUserNet').src = "../images/flickrLogo.png";
+         }else if (users.getNet() === "picasa") {
             document.getElementById('jgUserNet').src = "../images/picasaLogo.png";
+         }else {
+            document.getElementById('jgUserNet').src = "../images/orkutLogo.png";
          }
          resetAlbumsList();
          tellAccessPass();
@@ -370,6 +376,7 @@ function authorize() {
    var eltText = document.createElement("DIV");
    var eltOrkut = document.createElement("IMG");
    var eltPicasa = document.createElement("IMG");
+   var eltFlickr = document.createElement("IMG");
    var eltContainer = document.createElement("DIV");
    eltText.className = "i18n";
    eltText.id = "chooseNetwork";
@@ -380,10 +387,17 @@ function authorize() {
    eltPicasa.className = "buttonLike";
    eltPicasa.src= "images/picasaLogo.png";
    eltPicasa.onclick = authorizePicasa;
+   eltFlickr.className = "buttonLike";
+   eltFlickr.src= "images/flickrLogo.png";
+   eltFlickr.onclick = authorizeFlickr;
    eltContainer.appendChild(eltText);
    eltContainer.appendChild(eltOrkut);
    eltContainer.appendChild(eltPicasa);
+   eltContainer.appendChild(eltFlickr);
    showMessagePane(eltContainer);
+}
+
+function authorizeFlickr() {
 }
 
 function authorizePicasa() {
