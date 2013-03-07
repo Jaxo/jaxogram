@@ -22,13 +22,14 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 
 public class DefaultOrkutAdapter extends OrkutAdapter {
-   protected OrkutAdapterDebugListener debugListener = null;
 
    protected String consumerKey = "";
    protected String consumerSecret = "";
-   protected String callbackURL = "";
-   protected boolean isProduction = false;
    protected String requestURL = "";
+
+   protected OAuthConsumer consumer = null;
+   protected OAuthAccessor accessor = null;
+   protected OAuthClient client = null;
 
    protected static final String OAUTH_REQUEST_URL =
                 "https://www.google.com/accounts/OAuthGetRequestToken";
@@ -38,34 +39,19 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
                 "https://www.google.com/accounts/OAuthGetAccessToken";
    protected static final String OAUTH_SCOPE =
                 "http://orkut.gmodules.com/social";
-   protected static final String SERVER_URL_SANDBOX =
-                "http://prod.sandbox.orkut.com/social/rpc";  // prod.
-   protected static final String SERVER_URL_PROD =
+   protected static final String SERVER_URL =
                 "http://www.orkut.com/social/rpc";
 
-   protected OAuthConsumer consumer = null;
-   protected OAuthAccessor accessor = null;
-   protected OAuthClient client = null;
-
    // Factories
-   protected final ActivityTxFactory activityTxFactory =
-            new ActivityTxFactory();
-   protected final AlbumsTxFactory   albumsTxFactory =
-            new AlbumsTxFactory();
-   protected final CaptchaTxFactory  captchaTxFactory =
-            new CaptchaTxFactory();
-   protected final CommentsTxFactory commentsTxFactory =
-            new CommentsTxFactory();
-   protected final FriendTxFactory   friendTxFactory =
-            new FriendTxFactory();
-   protected final PhotosTxFactory   photosTxFactory =
-            new PhotosTxFactory();
-   protected final ProfileTxFactory  profileTxFactory =
-            new ProfileTxFactory();
-   protected final ScrapTxFactory    scrapTxFactory =
-            new ScrapTxFactory();
-   protected final VideoTxFactory    videoTxFactory =
-            new VideoTxFactory();
+   protected final ActivityTxFactory activityTxFactory = new ActivityTxFactory();
+   protected final AlbumsTxFactory albumsTxFactory = new AlbumsTxFactory();
+   protected final CaptchaTxFactory captchaTxFactory = new CaptchaTxFactory();
+   protected final CommentsTxFactory commentsTxFactory = new CommentsTxFactory();
+   protected final FriendTxFactory friendTxFactory = new FriendTxFactory();
+   protected final PhotosTxFactory photosTxFactory = new PhotosTxFactory();
+   protected final ProfileTxFactory profileTxFactory = new ProfileTxFactory();
+   protected final ScrapTxFactory scrapTxFactory = new ScrapTxFactory();
+   protected final VideoTxFactory videoTxFactory = new VideoTxFactory();
 
 
    @Override
@@ -87,11 +73,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
    @Override
    public VideoTxFactory getVideoTF() { return videoTxFactory; }
 
-
-   protected void say(String s) {
-      if (debugListener != null)
-         debugListener.printOrkutAdapterMessage("[orkut-adapter]: " + s);
-   }
+   protected void say(String s) {}
 
    /** Creates a default adapter. Use this function to create an
     *  OrkutAdapter based on the default implementation. You will
@@ -101,30 +83,21 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
     *
     *  @param consumerKey Your OAuth consumer key.
     *  @param consumerSecret Your OAuth consumer secret.
-    *  @param callbackURL The URL to which the authentication page
-    *     should redirect once the authentication/authorization is
-    *     complete.
     *  @param isProduction If <tt>true</tt>, run against orkut
     *     production; if <tt>false</tt>, run against the sandbox.
     *  @param l The debug listener for this adapter. This parameter
     *     may be null. If not null, this is the listener that will
     *     be notified every time the library wants to print a debug message.
     */
-   public DefaultOrkutAdapter(String consumerKey, String consumerSecret,
-                       String callbackURL, boolean isProduction,
-                       OrkutAdapterDebugListener l)  {
-
+   public DefaultOrkutAdapter(String consumerKey, String consumerSecret)
+   {
       this.consumerKey = consumerKey;
       this.consumerSecret = consumerSecret;
-      this.callbackURL = callbackURL;
-      this.isProduction = isProduction;
-      this.debugListener = l;
-      this.requestURL = isProduction ? SERVER_URL_PROD : SERVER_URL_SANDBOX;
+      this.requestURL = SERVER_URL;
 
       say("Initting OAuth.");
       say("Consumer key     : " + consumerKey);
       say("Consumer secret  : <not shown>");
-      say("Callback URL     : " + callbackURL);
       say("Request URL is   : " + requestURL);
 
       try {
@@ -143,20 +116,15 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
       }
       catch (Exception ex) {
          throw new OrkutAdapterException(
-                "OrkutAdapter: Failed to initialize OAuth.", ex);
+            "OrkutAdapter: Failed to initialize OAuth.", ex
+         );
       }
    }
 
    @Override
-   public void setDebugListener(OrkutAdapterDebugListener l) {
-      debugListener = l;
-      say("Debug listener attached.");
-   }
-
-   @Override
-   public String requestAuthURL() {
+   public String requestAuthURL(String callbackUrl) {
       try {
-         return requestAuthURL_inner();
+         return requestAuthURL_inner(callbackUrl);
       }
       catch (Exception e) {
          e.printStackTrace();
@@ -166,10 +134,10 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
       }
    }
 
-   private String requestAuthURL_inner() throws Exception {
+   private String requestAuthURL_inner(String callbackUrl) throws Exception {
       say("Getting oauth request token.");
       List<OAuth.Parameter> callback = OAuth.newList(
-        OAuth.OAUTH_CALLBACK, callbackURL,
+        OAuth.OAUTH_CALLBACK, callbackUrl,
         "scope", OAUTH_SCOPE
       );
       OAuthMessage response = client.getRequestTokenResponse(
@@ -390,7 +358,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
    class PostOAuthMessage extends OAuthMessage {
       private final byte[] body;
       @SuppressWarnings("rawtypes")
-	  public PostOAuthMessage(String method, String url,
+     public PostOAuthMessage(String method, String url,
                    Collection<? extends Map.Entry> parameters, byte[] body) {
          super(method, url, parameters);
          this.body = body;

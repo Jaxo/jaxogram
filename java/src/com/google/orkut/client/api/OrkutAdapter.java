@@ -4,13 +4,13 @@ package com.google.orkut.client.api;
  *  is an object that can be used to make requests to the orkut
  *  servers. It stores authentication information and has member
  *  functions corresponding to the main operations. To use it,
- *  instantiate it through <tt>createDefaultAdapter</tt>, 
+ *  instantiate it through <tt>createDefaultAdapter</tt>,
  *  then authenticate either with <tt>requestAuthURL</tt> +
  *  <tt>authenticate</tt>, or with <tt>setAccessPass</tt> (if you
  *  have an access pass saved from a previous session).<br><br>
  *
  *  For a full walkthrough on how to use this class and the client
- *  library in general, please read the 
+ *  library in general, please read the
  *  <a href='http://code.google.com/apis/orkut/docs/clientlib/intro.html'>Introduction to the orkut Client Library</a>.
  */
 public abstract class OrkutAdapter {
@@ -33,12 +33,6 @@ public abstract class OrkutAdapter {
    /** Returns the factory for video-related transactions. */
    public abstract VideoTxFactory    getVideoTF();
 
-
-   /** Sets the listener for debug messages. Every time the adapter
-    *  wants to print a debug message, it will call this listener. 
-    *  Pass null to disable. */
-   public abstract void setDebugListener(OrkutAdapterDebugListener l);
-
    /** Request the authentication URL. This method will contact the
     *  orkut servers and request the URL that the user should visit
     *  in order to authenticate and authorize the application to access
@@ -49,7 +43,7 @@ public abstract class OrkutAdapter {
     *  parameter will be supplied. You must then supply the value
     *  of this parameter to the {@link #authenticate} method to
     *  finish the authentication ritual. */
-   public abstract String requestAuthURL();
+   public abstract String requestAuthURL(String callbackUrl);
 
    /** Finish the authentication ritual. You must call this function
     *  to finish the authentication ritual when you receive the
@@ -65,7 +59,7 @@ public abstract class OrkutAdapter {
     *  {@link #authenticate}, you can call this function to retrieve
     *  a string that works as an "access pass" that you can use
     *  next time instead of performing the authentication ritual again.
-    *  In that case, instead of authenticating with 
+    *  In that case, instead of authenticating with
     *  {@link #requestAuthURL} and {@link #authenticate}, you can
     *  simply call {@link #setAccessPass}. */
    public abstract String getAccessPass();
@@ -105,7 +99,7 @@ public abstract class OrkutAdapter {
     *  in order to resubmit the transaction. This function allows
     *  you to retrieve the captcha image as a byte array, in JPEG format.
     *
-    *  @param er The {@link OrkutError} that was returned from the 
+    *  @param er The {@link OrkutError} that was returned from the
     *  previous transaction.
     *
     *  @return The image data as a byte array, in JPEG format.
@@ -132,7 +126,7 @@ public abstract class OrkutAdapter {
     * @param answer The solution to the captcha. This will usually
     * be provided by the user or a highly, highly trained robot/pet.
     */
-   public abstract void submitBatchWithCaptcha(BatchTransaction btx, 
+   public abstract void submitBatchWithCaptcha(BatchTransaction btx,
                                       OrkutError error, String answer);
 }
 
