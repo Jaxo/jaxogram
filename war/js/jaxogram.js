@@ -540,7 +540,7 @@ function registerUser(verifier) {
    issueRequest(
       "GET", "getAccPss", "&verifier=" + encodeURIComponent(verifier),
       function(val) {     // whenDone
-         var obj = JSON.parse(xhr.responseText);
+         var obj = JSON.parse(val);
          // alert(dump(obj));
          users.addUser(
             decodeURIComponent(obj.userName),
