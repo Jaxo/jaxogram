@@ -26,14 +26,16 @@ window.onload = function() {
    // users.cleanUp();
    // users.destroy();
    var params = getQueryParams();
+
    if (params.OP === "backCall") {
       /*
-      | this occurs for non-packaged application only:
-      | packaged app have no origin, can not appear as referer...
-      | no way to call them back from the external world.
+      | this occurs for non-packaged applications only:
+      | b/c packaged app have no origin, can not appear as referer...
+      | so there is no way to call them back from the external world.
       */
-      registerUser(params.verifier);
+      registerUser(params.VRF, params.NET);
    }
+
    dispatcher.on(
       "install_changed",
       function action(state, version) {
@@ -399,9 +401,6 @@ function authorize() {
    showMessagePane(eltContainer);
 }
 
-function authorizeFlickr() {
-}
-
 function authorizePicasa() {
    clearMessagePane();
    var eltText = document.createElement("DIV");
@@ -483,13 +482,21 @@ function authorizePicasa() {
    showMessagePane(eltContainer);
 }
 
+function authorizeFlickr() {
+   authorizeThruOAuth("flickr");
+}
+
 function authorizeOrkut() {
+   authorizeThruOAuth("orkut");
+}
+
+function authorizeThruOAuth(net) {
    clearMessagePane();
    // make a pseudo-random key )between 100000 and 200000
    authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
    issueRequest(
-      "GET", "getUrl", "&JXK=" + authKey,
+      "GET", "getUrl", "&JXK=" + authKey + "&NET=" + net,
       function(oauthUrl) {        // whenDone
          // navigate to it as a top browser window
          if (isPackaged) {        // if packaged, do NOT leave the app!
@@ -503,6 +510,7 @@ function authorizeOrkut() {
       }
    );
 }
+
 
 function browseTo(targetUrl) {
    var pane = document.getElementById("browserpane");
@@ -542,7 +550,7 @@ function getVerifier() {
          }else {
             browseQuit();
             //OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);
-            registerUser(verifier);
+            registerUser(verifier, "trouDuc");  // <<<< FIXME!!!!
             formatUsersList(false);
          }
       },
@@ -552,16 +560,17 @@ function getVerifier() {
    );
 }
 
-function registerUser(verifier) {
+function registerUser(verifier, net) {
    issueRequest(
-      "GET", "getAccPss", "&verifier=" + encodeURIComponent(verifier),
+      "GET", "getAccPss",
+      "&VRF=" + encodeURIComponent(verifier) + "&NET=" + net,
       function(val) {     // whenDone
-         var obj = JSON.parse(xhr.responseText);
+         var obj = JSON.parse(val);
          // alert(dump(obj));
          users.addUser(
             decodeURIComponent(obj.userName),
             decodeURIComponent(obj.accessPass),
-            "orkut"
+            net
          );
          formatUsersList(false);
       },

@@ -37,8 +37,6 @@ import com.google.orkut.client.api.UpdateProfileTx;
 import com.google.orkut.client.api.UploadPhotoTx;
 import com.google.orkut.client.api.WriteScrapTx;
 
-import com.google.orkut.client.api.OrkutAdapterDebugListener;
-
 /*-- class OrkutNetwork --+
 *//**
 *
@@ -52,27 +50,17 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
    static final String consumerKey = "www.jaxo.com";
    static final String consumerSecret = "JYd4FdgQyQBvbgbq0rdDP44C";
 
-   public OrkutNetwork(String accessPass, String callbackUrl) throws Exception {
-      super(
-         consumerKey,
-         consumerSecret,
-         callbackUrl,
-         true, // false  [is prod]
-         makeDebugListener()
-      );
-      if (accessPass != null) setAccessPass(accessPass);
+   public OrkutNetwork() throws Exception {
+      super(consumerKey, consumerSecret);
    }
 
-   public static OrkutAdapterDebugListener makeDebugListener() {
-      if (IS_DEBUG) {
-         return new OrkutAdapterDebugListener() {
-            public void printOrkutAdapterMessage(String s) {
-               log(s);
-            }
-         };
-      }else {
-         return null;
-      }
+   public OrkutNetwork(String accessPass) throws Exception {
+      super(consumerKey, consumerSecret);
+      setAccessPass(accessPass);
+   }
+
+   protected void say(String s) {
+      if (IS_DEBUG) logger.info(s);
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+
