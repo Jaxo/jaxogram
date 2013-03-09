@@ -13,6 +13,17 @@ public enum ParameterStyle {
      */
     AUTHORIZATION_HEADER,
 
+   /**
+    * Flickr specific to upload photos.
+    * - the body initially contains the raw data of the photo to be uploaded
+    * - after being processed by net.oauth.http.HttpMessage.newRequest()
+    *   - the content type is set to multipart/form
+    *   - oauth parameters goes to the authorization header
+    *   - non-auth parameters will appear as parts in the multipart body of
+    * the POST, followed by the photo raw data
+    */
+    FLICKR_PHOTO_UPLOAD,
+
     /**
      * Send all parameters in the message body, with a Content-Type of
      * application/x-www-form-urlencoded.

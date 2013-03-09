@@ -19,13 +19,16 @@ package net.oauth.http;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.oauth.OAuth;
 import net.oauth.OAuthMessage;
 import net.oauth.ParameterStyle;
@@ -156,28 +159,54 @@ public class HttpMessage
          break;
       case AUTHORIZATION_HEADER:
           headers.add(new OAuth.Parameter("Authorization", from.getAuthorizationHeader(null)));
-          // Find the non-OAuth parameters:
-          List<Map.Entry<String, String>> others = from.getParameters();
-          if (others != null && !others.isEmpty()) {
-             others = new ArrayList<Map.Entry<String, String>>(others);
-             for (Iterator<Map.Entry<String, String>> p = others.iterator(); p.hasNext();) {
-                if (p.next().getKey().startsWith("oauth_")) {
-                   p.remove();
+          {
+             // Find the non-OAuth parameters:
+             List<Map.Entry<String, String>> others = from.getParameters();
+             if (others != null && !others.isEmpty()) {
+                others = new ArrayList<Map.Entry<String, String>>(others);
+                for (Iterator<Map.Entry<String, String>> p = others.iterator(); p.hasNext();) {
+                   if (p.next().getKey().startsWith("oauth_")) {
+                      p.remove();
+                   }
                 }
-             }
-             // Place the non-OAuth parameters elsewhere in the request:
-             if (isPost && body == null) {
-                byte[] form = OAuth.formEncode(others).getBytes(from.getBodyEncoding());
-                headers.add(new OAuth.Parameter(CONTENT_TYPE, OAuth.FORM_ENCODED));
-                headers.add(new OAuth.Parameter(CONTENT_LENGTH, form.length + ""));
-                body = new ByteArrayInputStream(form);
-             }else {
-                url = OAuth.addParameters(url, others);
+                // Place the non-OAuth parameters elsewhere in the request:
+                if (isPost && body == null) {
+                   byte[] form = OAuth.formEncode(others).getBytes(from.getBodyEncoding());
+                   headers.add(new OAuth.Parameter(CONTENT_TYPE, OAuth.FORM_ENCODED));
+                   headers.add(new OAuth.Parameter(CONTENT_LENGTH, form.length + ""));
+                   body = new ByteArrayInputStream(form);
+                }else {
+                   url = OAuth.addParameters(url, others);
+                }
              }
           }
           break;
+      case FLICKR_PHOTO_UPLOAD:
+         headers.add(new OAuth.Parameter("Authorization", from.getAuthorizationHeader(null)));
+         if (!isPost || (body == null)) {
+            throw new IOException("FlickrPhotoUpload requires POST and BODY");
+         }else {
+            // Write the non-OAuth parameters in the body
+            MultipartEntity entity = new MultipartEntity();
+            for (Map.Entry<String, String> parameter : from.getParameters()) {
+               if (!parameter.getKey().startsWith("oauth_")) {
+                  entity.addField(
+                     parameter.getKey(),   // not OAuth.percentEncode
+                     parameter.getValue(),
+                     from.getBodyEncoding()
+                  );
+               }
+            }
+            entity.addStream("photo", "tmpfile.jpg", "image/jpeg", body);
+            headers.add(new OAuth.Parameter(CONTENT_TYPE, entity.getContentType()));
+            // headers.add(new OAuth.Parameter(CONTENT_LENGTH, Integer.toString(form.length)));
+            body = entity.getBody();
+         }
+         break;
       }
-      HttpMessage httpRequest = new HttpMessage(from.method, new URL(url), body);
+      HttpMessage httpRequest = new HttpMessage(
+         from.method, new URL(url), body
+      );
       httpRequest.headers.addAll(headers);
       return httpRequest;
    }

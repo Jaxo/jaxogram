@@ -17,6 +17,7 @@
 package net.oauth.client;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -268,18 +269,43 @@ public class OAuthClient {
     *            the HTTP response status code was not 200 (OK)
     */
    @SuppressWarnings("rawtypes")
-   public OAuthMessage invoke(OAuthAccessor accessor, String httpMethod,
-           String url, Collection<? extends Map.Entry> parameters)
-   throws IOException, OAuthException, URISyntaxException {
-       OAuthMessage request = accessor.newRequestMessage(httpMethod, url, parameters);
-       Object accepted = accessor.consumer.getProperty(OAuthConsumer.ACCEPT_ENCODING);
-       if (accepted != null) {
-           request.getHeaders().add(new OAuth.Parameter(HttpMessage.ACCEPT_ENCODING, accepted.toString()));
-       }
-       Object ps = accessor.consumer.getProperty(PARAMETER_STYLE);
-       net.oauth.ParameterStyle style = (ps == null) ? net.oauth.ParameterStyle.BODY
-               : Enum.valueOf(net.oauth.ParameterStyle.class, ps.toString());
-       return invoke(request, style);
+   public OAuthMessage invoke(
+      OAuthAccessor accessor,
+      String httpMethod,
+      String url,
+      Collection<? extends Map.Entry> parameters
+   )
+   throws IOException, OAuthException, URISyntaxException
+   {
+      return invoke(accessor, httpMethod, url, parameters, null);
+   }
+
+   @SuppressWarnings("rawtypes")
+   public OAuthMessage invoke(
+      OAuthAccessor accessor,
+      String httpMethod,
+      String url,
+      Collection<? extends Map.Entry> parameters,
+      InputStream body
+   )
+   throws IOException, OAuthException, URISyntaxException
+   {
+      OAuthMessage request = accessor.newRequestMessage(
+         httpMethod, url, parameters, body
+      );
+      Object accepted = accessor.consumer.getProperty(
+         OAuthConsumer.ACCEPT_ENCODING
+      );
+      if (accepted != null) {
+         request.getHeaders().add(new OAuth.Parameter(HttpMessage.ACCEPT_ENCODING, accepted.toString()));
+      }
+      Object ps = accessor.consumer.getProperty(PARAMETER_STYLE);
+      return invoke(
+         request,
+         (ps == null)?
+         net.oauth.ParameterStyle.BODY :
+         Enum.valueOf(net.oauth.ParameterStyle.class, ps.toString())
+      );
    }
 
    /**
