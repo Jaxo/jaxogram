@@ -211,13 +211,6 @@ public class JaxogramServlet extends HttpServlet
                   req.getParameter("NET"),
                   (String)req.getSession(true).getAttribute("accesspass")
                );
-               if (req.getParameter("NET").equals("flickr")) {
-                  ((FlickrNetwork)network).barBar(
-                     getServletContext().getResourceAsStream(
-                        "/images/test.jpg"
-                     )
-                  );
-               }
                if (op.equals("whoAmI")) {
                   writer.println(network.whoIsAsJson(null));
 

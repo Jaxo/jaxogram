@@ -265,7 +265,9 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       if (!description || (description.length === 0)) description = "";
 
       var imgElt = document.createElement("IMG");
-      imgElt.src = album.thumbnailUrl;
+      if (album.thumbnailUrl && (album.thumbnailUrl.length !== 0)) {
+         imgElt.src = album.thumbnailUrl;
+      }
       var spanElt = document.createElement("SPAN");
       spanElt.appendChild(document.createTextNode(title));
       var smallElt = document.createElement("SMALL");

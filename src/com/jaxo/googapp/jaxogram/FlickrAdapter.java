@@ -11,14 +11,9 @@
 */
 package com.jaxo.googapp.jaxogram;
 
-import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
@@ -27,7 +22,6 @@ import net.oauth.OAuthMessage;
 import net.oauth.OAuthServiceProvider;
 import net.oauth.client.OAuthClient;
 import net.oauth.client.jnetclient.JNetClient;
-import net.oauth.signature.Base64;
 
 /*-- class FlickrAdapter --+
 *//**
@@ -36,12 +30,10 @@ import net.oauth.signature.Base64;
 * @version $Id: $
 */
 public class FlickrAdapter {
-   private String consumerKey = "";
-   private String consumerSecret = "";
+   OAuthConsumer consumer;
+   OAuthAccessor accessor;
+   OAuthClient client;
    private String requestURL = "";
-   private OAuthConsumer consumer = null;
-   private OAuthAccessor accessor = null;
-   private OAuthClient client = null;
 
    private static final String OAUTH_REQUEST_URL = (
       "http://www.flickr.com/services/oauth/request_token"
@@ -55,9 +47,6 @@ public class FlickrAdapter {
    private static final String SERVER_URL = (
       "http://api.flickr.com/services/rest"
    );
-   private static final String UPLOAD_URL = (
-      "http://api.flickr.com/services/upload"
-   );
 
    /*-----------------------------------------------------------FlickrAdapter-+
    *//*
@@ -67,10 +56,7 @@ public class FlickrAdapter {
    +-------------------------------------------------------------------------*/
    public FlickrAdapter(String consumerKey, String consumerSecret)
    throws Exception {
-      this.consumerKey = consumerKey;
-      this.consumerSecret = consumerSecret;
       this.requestURL = SERVER_URL;
-
       say("Init OAuth.");
       say("Consumer key:    " + consumerKey);
       say("Consumer secret: <not shown>");
@@ -215,45 +201,6 @@ public class FlickrAdapter {
       OAuthMessage response = client.invoke(accessor, SERVER_URL, params);
       if (response == null) {
          throw new Exception("Who cares?");
-      }
-   }
-
-   /*------------------------------------------------------------------barBar-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   void barBar(InputStream photo) throws Exception {
-      consumer.setProperty(
-         OAuthClient.PARAMETER_STYLE,
-         net.oauth.ParameterStyle.FLICKR_PHOTO_UPLOAD
-      );
-      ArrayList<Map.Entry<String, String>> params;
-      params = new ArrayList<Map.Entry<String, String>>();
-      params.add(new OAuth.Parameter("title", "My Title"));
-      params.add(new OAuth.Parameter("description", "My Description"));
-//    Collection<String> tags = ...;
-//    if (tags != null) {
-//       params.add(new OAuth.Parameter("tags", StringUtilities.join(tags, " ")));
-//    }
-      params.add(new OAuth.Parameter("is_public", "0"));
-      params.add(new OAuth.Parameter("is_family", "1"));
-      params.add(new OAuth.Parameter("is_friend", "1"));
-//    params.add(new OAuth.Parameter("safety_level", "1" : "2" : "3"));
-      params.add(new OAuth.Parameter("content_type", "1"));
-//    params.add(new OAuth.Parameter("hidden", foo? "1" : "2"));
-      OAuthMessage response = client.invoke(
-         accessor,
-         OAuthMessage.POST,
-         UPLOAD_URL,
-         params,
-         photo
-      );
-      InputStream body = response.getBodyAsStream();
-      int ch;
-      while ((ch = body.read()) != -1) System.out.print((char)ch);
-      System.out.println("");
-      if (response == null) {
-         throw new Exception("POPOPOPO");
       }
    }
 
