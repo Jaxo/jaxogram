@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 
-public class DefaultOrkutAdapter extends OrkutAdapter {
-
+public class DefaultOrkutAdapter extends OrkutAdapter
+{
    protected String consumerKey = "";
    protected String consumerSecret = "";
    protected String requestURL = "";
@@ -73,22 +73,13 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
    @Override
    public VideoTxFactory getVideoTF() { return videoTxFactory; }
 
-   protected void say(String s) {}
 
-   /** Creates a default adapter. Use this function to create an
-    *  OrkutAdapter based on the default implementation. You will
-    *  need to supply your credentials and some other configuration
-    *  parameters, as described below. You will need an OAuth
-    *  consumer key and secret (see library README for more info).
-    *
-    *  @param consumerKey Your OAuth consumer key.
-    *  @param consumerSecret Your OAuth consumer secret.
-    *  @param isProduction If <tt>true</tt>, run against orkut
-    *     production; if <tt>false</tt>, run against the sandbox.
-    *  @param l The debug listener for this adapter. This parameter
-    *     may be null. If not null, this is the listener that will
-    *     be notified every time the library wants to print a debug message.
-    */
+   /*-----------------------------------------------------DefaultOrkutAdapter-+
+   *//**
+   * @param consumerKey Your OAuth consumer key.
+   * @param consumerSecret Your OAuth consumer secret.
+   *//*
+   +-------------------------------------------------------------------------*/
    public DefaultOrkutAdapter(String consumerKey, String consumerSecret)
    {
       this.consumerKey = consumerKey;
@@ -122,6 +113,10 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
    }
 
    @Override
+   /*----------------------------------------------------------requestAuthURL-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public String requestAuthURL(String callbackUrl) {
       try {
          return requestAuthURL_inner(callbackUrl);
@@ -133,7 +128,6 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
          );
       }
    }
-
    private String requestAuthURL_inner(String callbackUrl) throws Exception {
       say("Getting oauth request token.");
       List<OAuth.Parameter> callback = OAuth.newList(
@@ -167,22 +161,47 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
       return authorizationURL;
    }
 
+   /*-------------------------------------------------------------getAccessor-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public OAuthAccessor getAccessor() {
       return accessor;
    }
 
    @Override
-   public void authenticate(String verifier) {
-      say("Trying to authenticate with verifier: " + verifier);
-      try {
-         authenticate_inner(verifier);
-      }catch (Exception e) {
-         throw new OrkutAdapterException(
-           "Orkut Adapter: Error authenticating.", e
-         );
-      }
+   /*-----------------------------------------------------------getAccessPass-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String getAccessPass() {
+      return accessor.accessToken + " " + accessor.tokenSecret;
    }
 
+   @Override
+   /*-----------------------------------------------------------setAccessPass-+
+   *//**
+   * @see
+   *//*
+   +-------------------------------------------------------------------------*/
+   public void setAccessPass(String accessPass) {
+      say("Access pass provided: '" + accessPass + "'");
+      String[] p = accessPass.split(" ");
+      if (p.length != 2)
+         throw new OrkutAdapterException(
+           "Access pass does not have correct format (token and secret)",null);
+
+      say("Literal access token and secret supplied:");
+      say("Access token  : " + p[0]);
+      say("Token secret  : " + p[1]);
+      accessor.accessToken = p[0];
+      accessor.tokenSecret = p[1];
+   }
+
+   /*------------------------------------------------------------authenticate-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    public String authenticate(String verifier, OAuthAccessor givenAccessor)
    throws Exception
    {
@@ -197,6 +216,26 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
       return givenAccessor.accessToken + " " + givenAccessor.tokenSecret;
    }
 
+   /*---------------------------------------------------------------------say-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   protected void say(String s) {}
+
+
+   /*------------------------------------------------------------------------*/
+   @Override
+   public void authenticate(String verifier) {
+      say("Trying to authenticate with verifier: " + verifier);
+      try {
+         authenticate_inner(verifier);
+      }catch (Exception e) {
+         throw new OrkutAdapterException(
+           "Orkut Adapter: Error authenticating.", e
+         );
+      }
+   }
+
    private void authenticate_inner(String verifier) throws Exception {
       say("Verifier code provided: " + verifier);
       say("Obtaining access token...");
@@ -207,26 +246,6 @@ public class DefaultOrkutAdapter extends OrkutAdapter {
       );
       say("Got access token   : " + accessor.accessToken);
       say("Access token secret: " + accessor.tokenSecret);
-   }
-
-   @Override
-   public String getAccessPass() {
-      return accessor.accessToken + " " + accessor.tokenSecret;
-   }
-
-   @Override
-   public void setAccessPass(String accessPass) {
-      say("Access pass provided: '" + accessPass + "'");
-      String[] p = accessPass.split(" ");
-      if (p.length != 2)
-         throw new OrkutAdapterException(
-           "Access pass does not have correct format (token and secret)",null);
-
-      say("Literal access token and secret supplied:");
-      say("Access token  : " + p[0]);
-      say("Token secret  : " + p[1]);
-      accessor.accessToken = p[0];
-      accessor.tokenSecret = p[1];
    }
 
    @Override

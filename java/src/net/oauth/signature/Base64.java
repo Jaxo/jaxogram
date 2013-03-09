@@ -3,9 +3,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,32 +20,32 @@ import java.math.BigInteger;
 
 /**
  * Provides Base64 encoding and decoding as defined by RFC 2045.
- * 
+ *
  * <p>
  * This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite> from RFC 2045 <cite>Multipurpose
  * Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</cite> by Freed and Borenstein.
  * </p>
- * 
+ *
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @author Apache Software Foundation
  * @author John Kristian
  */
-class Base64 {
+public class Base64 {
     /**
      * Chunk size per RFC 2045 section 6.8.
-     * 
+     *
      * <p>
      * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
      * equal signs.
      * </p>
-     * 
+     *
      * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045 section 6.8</a>
      */
     static final int CHUNK_SIZE = 76;
 
     /**
      * Chunk separator per RFC 2045 section 2.1.
-     * 
+     *
      * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045 section 2.1</a>
      */
     static final byte[] CHUNK_SEPARATOR = {'\r','\n'};
@@ -55,7 +55,7 @@ class Base64 {
      * index values into their "Base64 Alphabet" equivalents as specified
      * in Table 1 of RFC 2045.
      *
-     * Thanks to "commons" project in ws.apache.org for this code. 
+     * Thanks to "commons" project in ws.apache.org for this code.
      * http://svn.apache.org/repos/asf/webservices/commons/trunk/modules/util/
      */
     private static final byte[] intToBase64 = {
@@ -79,7 +79,7 @@ class Base64 {
      * array are translated to -1.
      *
      * Thanks to "commons" project in ws.apache.org for this code.
-     * http://svn.apache.org/repos/asf/webservices/commons/trunk/modules/util/ 
+     * http://svn.apache.org/repos/asf/webservices/commons/trunk/modules/util/
      */
     private static final byte[] base64ToInt = {
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -126,7 +126,7 @@ class Base64 {
     private final int encodeSize;
 
     /**
-     * Buffer for streaming. 
+     * Buffer for streaming.
      */
     private byte[] buf;
 
@@ -185,8 +185,8 @@ class Base64 {
      * </p>
      *
      * @param lineLength each line of encoded data will be at most this long
-     * (rounded up to nearest multiple of 4). 
-     * If lineLength <= 0, then the output will not be divided into lines (chunks).  
+     * (rounded up to nearest multiple of 4).
+     * If lineLength <= 0, then the output will not be divided into lines (chunks).
      * Ignored when decoding.
      */
     public Base64(int lineLength) {
@@ -402,7 +402,7 @@ class Base64 {
      * @param in byte[] array of ascii data to base64 decode.
      * @param inPos Position to start reading data from.
      * @param inAvail Amount of bytes available from input for encoding.
-     */    
+     */
     void decode(byte[] in, int inPos, int inAvail) {
         if (eof) {
             return;
@@ -449,7 +449,7 @@ class Base64 {
 
     /**
      * Returns whether or not the <code>octet</code> is in the base 64 alphabet.
-     * 
+     *
      * @param octet
      *            The value to test
      * @return <code>true</code> if the value is defined in the the base 64 alphabet, <code>false</code> otherwise.
@@ -461,7 +461,7 @@ class Base64 {
     /**
      * Tests a given byte array to see if it contains only valid characters within the Base64 alphabet.
      * Currently the method treats whitespace as valid.
-     * 
+     *
      * @param arrayOctet
      *            byte array to test
      * @return <code>true</code> if all bytes are valid characters in the Base64 alphabet or if the byte array is
@@ -478,7 +478,7 @@ class Base64 {
 
     /*
      * Tests a given byte array to see if it contains only valid characters within the Base64 alphabet.
-     * 
+     *
      * @param arrayOctet
      *            byte array to test
      * @return <code>true</code> if any byte is a valid character in the Base64 alphabet; false herwise
@@ -494,7 +494,7 @@ class Base64 {
 
     /**
      * Encodes binary data using the base64 algorithm but does not chunk the output.
-     * 
+     *
      * @param binaryData
      *            binary data to encode
      * @return Base64 characters
@@ -505,7 +505,7 @@ class Base64 {
 
     /**
      * Encodes binary data using the base64 algorithm and chunks the encoded output into 76 character blocks
-     * 
+     *
      * @param binaryData
      *            binary data to encode
      * @return Base64 characters chunked in 76 character blocks
@@ -516,7 +516,7 @@ class Base64 {
 
     /**
      * Decodes a byte[] containing containing characters in the Base64 alphabet.
-     * 
+     *
      * @param pArray
      *            A byte array containing Base64 character data
      * @return a byte array containing binary data
@@ -527,7 +527,7 @@ class Base64 {
 
     /**
      * Encodes binary data using the base64 algorithm, optionally chunking the output into 76 character blocks.
-     * 
+     *
      * @param binaryData
      *            Array containing binary data to encode.
      * @param isChunked
@@ -594,7 +594,7 @@ class Base64 {
 
     /**
      * Check if a byte value is whitespace or not.
-     * 
+     *
      * @param byteToCheck the byte to check
      * @return true if byte is whitespace, false otherwise
      */
@@ -613,7 +613,7 @@ class Base64 {
     /**
      * Discards any characters outside of the base64 alphabet, per the requirements on page 25 of RFC 2045 - "Any
      * characters outside of the base64 alphabet are to be ignored in base64 encoded data."
-     * 
+     *
      * @param data
      *            The base-64 encoded data to groom
      * @return The data, less non-base64 characters (see RFC 2045).
@@ -639,7 +639,7 @@ class Base64 {
 
     /**
      * Encodes a byte[] containing binary data, into a byte[] containing characters in the Base64 alphabet.
-     * 
+     *
      * @param pArray
      *            a byte array containing binary data
      * @return A byte array containing only Base64 character data
@@ -652,7 +652,7 @@ class Base64 {
     /**
      * Decode a byte64-encoded integer according to crypto
      * standards such as W3C's XML-Signature
-     * 
+     *
      * @param pArray a byte array containing base64 character data
      * @return A BigInteger
      */
@@ -663,7 +663,7 @@ class Base64 {
     /**
      * Encode to a byte64-encoded integer according to crypto
      * standards such as W3C's XML-Signature
-     * 
+     *
      * @param bigInt a BigInteger
      * @return A byte array containing base64 character data
      * @throws NullPointerException if null is passed in
