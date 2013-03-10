@@ -43,7 +43,7 @@ public abstract class OrkutAdapter {
     *  parameter will be supplied. You must then supply the value
     *  of this parameter to the {@link #authenticate} method to
     *  finish the authentication ritual. */
-   public abstract String requestAuthURL(String callbackUrl);
+   public abstract String requestAuthURL(String callbackUrl) throws Exception;
 
    /** Finish the authentication ritual. You must call this function
     *  to finish the authentication ritual when you receive the
@@ -69,7 +69,7 @@ public abstract class OrkutAdapter {
     *  from a previous session with {@link #getAccessPass}. This
     *  completely replaces the calls to {@link #requestAuthURL} and
     *  {@link #authenticate}. */
-   public abstract void setAccessPass(String accessPass);
+   public abstract void setAccessPass(String accessPass) throws Exception;
 
    /** Creates a new transaction batch. You must use this function
     *  rather than <tt>new BatchTransaction()</tt> (which is still possible

@@ -1,27 +1,27 @@
 package com.google.orkut.client.api;
 
-import net.oauth.OAuthConsumer;
-import net.oauth.OAuthServiceProvider;
-import net.oauth.OAuthAccessor;
 import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
 import net.oauth.OAuthMessage;
+import net.oauth.OAuthServiceProvider;
+import net.oauth.OAuthorizer;
 import net.oauth.client.OAuthClient;
-// import net.oauth.client.httpclient4.HttpClient4;  // USE JNET instead
 import net.oauth.client.jnetclient.JNetClient;
 
 import com.google.orkut.client.transport.HttpRequest;
 import com.google.orkut.client.transport.OrkutHttpRequestFactory;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Map;
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-public class DefaultOrkutAdapter extends OrkutAdapter
+public class DefaultOrkutAdapter extends OrkutAdapter implements OAuthorizer
 {
    protected String consumerKey = "";
    protected String consumerSecret = "";
@@ -117,18 +117,8 @@ public class DefaultOrkutAdapter extends OrkutAdapter
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String requestAuthURL(String callbackUrl) {
-      try {
-         return requestAuthURL_inner(callbackUrl);
-      }
-      catch (Exception e) {
-         e.printStackTrace();
-         throw new OrkutAdapterException(
-            "OrkutAdapter: Error requesting OAuth authorization URL", e
-         );
-      }
-   }
-   private String requestAuthURL_inner(String callbackUrl) throws Exception {
+   public String requestAuthURL(String callbackUrl) throws Exception
+   {
       say("Getting oauth request token.");
       List<OAuth.Parameter> callback = OAuth.newList(
         OAuth.OAUTH_CALLBACK, callbackUrl,
@@ -184,7 +174,7 @@ public class DefaultOrkutAdapter extends OrkutAdapter
    * @see
    *//*
    +-------------------------------------------------------------------------*/
-   public void setAccessPass(String accessPass) {
+   public void setAccessPass(String accessPass) throws Exception {
       say("Access pass provided: '" + accessPass + "'");
       String[] p = accessPass.split(" ");
       if (p.length != 2)
@@ -202,18 +192,31 @@ public class DefaultOrkutAdapter extends OrkutAdapter
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String authenticate(String verifier, OAuthAccessor givenAccessor)
+   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
    throws Exception
    {
+      String accessPass;
+      String userName;
       say("Verifier and Accessor provided: " + verifier);
       say("Obtaining access token...");
       client.getAccessToken(
          givenAccessor, null,
          OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
       );
-      say("Got access token   : " + givenAccessor.accessToken);
-      say("Access token secret: " + givenAccessor.tokenSecret);
-      return givenAccessor.accessToken + " " + givenAccessor.tokenSecret;
+      say("... authenticated");
+      accessPass = givenAccessor.accessToken + " " + givenAccessor.tokenSecret;
+      setAccessPass(accessPass);
+      BatchTransaction btx = newBatch();
+      GetProfileTx profile = getProfileTF().getSelfProfile();
+      btx.add(profile);
+      submitBatch(btx);
+      if (profile.hasError()) {
+         userName = "???";
+      }else {
+         OrkutPerson person = profile.getProfile();
+         userName = person.getGivenName() + " " + person.getFamilyName();
+      }
+      return new String[] { accessPass, userName };
    }
 
    /*---------------------------------------------------------------------say-+
