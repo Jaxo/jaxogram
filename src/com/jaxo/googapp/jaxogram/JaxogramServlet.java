@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import net.oauth.OAuthAccessor;
+import net.oauth.OAuthorizer;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
@@ -166,46 +167,27 @@ public class JaxogramServlet extends HttpServlet
                   getBaseUrl(req) +  // callback URL
                   "/jaxogram?OP=backCall&NET=" + net + referer
                );
-               if (net.equals("flickr")) {
-                  FlickrNetwork flickrnet = new FlickrNetwork();
-                  authorizeUrl = flickrnet.requestAuthURL(callbackUrl);
-                  session.setAttribute("accessor", flickrnet.getAccessor());
-               }else if (net.equals("orkut")){
-                  OrkutNetwork orknet = new OrkutNetwork();
-                  authorizeUrl = orknet.requestAuthURL(callbackUrl);
-                  session.setAttribute("accessor", orknet.getAccessor());
-               }else {
-                  throw new Exception("Unknown Network");
-               }
+               OAuthorizer authorizer = makeAuthorizer(net);
+               authorizeUrl = authorizer.requestAuthURL(callbackUrl);
+               session.setAttribute("accessor", authorizer.getAccessor());
                writer.print(authorizeUrl);
 
             }else if (op.equals("getAccPss")) {
                HttpSession session = req.getSession(true);
-               String net = req.getParameter("NET");
-               String accessPass;
-               String whoAmI;
-               if (net.equals("flickr")) {
-                  String[] vals = new FlickrNetwork().authenticate(
-                     req.getParameter("VRF"),
-                     (OAuthAccessor)session.getAttribute("accessor")
-                  );
-                  accessPass = vals[0];
-                  whoAmI = vals[1];
-               }else {
-                  OrkutNetwork orknet = new OrkutNetwork();
-                  accessPass =  orknet.authenticate(
-                     req.getParameter("VRF"),
-                     (OAuthAccessor)session.getAttribute("accessor")
-                  );
-                  orknet.setAccessPass(accessPass);
-                  whoAmI = orknet.whoAmI();
-               }
+               OAuthorizer authorizer = makeAuthorizer(req.getParameter("NET"));
+               String[] vals = authorizer.authenticate(
+                  req.getParameter("VRF"),
+                  (OAuthAccessor)session.getAttribute("accessor")
+               );
+               String accessPass = vals[0];
+               String userName = vals[1];
                session.setAttribute("accesspass", accessPass);
                writer.printf(
                   "{ \"accessPass\":\"%s\", \"userName\":\"%s\" }",    // JSON
                   URLEncoder.encode(accessPass, "UTF-8").replace("+", "%20"),  // arghhhh
-                  URLEncoder.encode(whoAmI, "UTF-8").replace("+", "%20")
+                  URLEncoder.encode(userName, "UTF-8").replace("+", "%20")
                );
+
             }else {
                Network network = makeNetwork(
                   req.getParameter("NET"),
@@ -296,7 +278,9 @@ public class JaxogramServlet extends HttpServlet
    public static Network makeNetwork(String net, String accessPass)
    throws Exception
    {
-      if (net.equals("flickr")) {
+      if (net.equals("twitter")) {
+         return new TwitterNetwork(accessPass);
+      }else if (net.equals("flickr")) {
          return new FlickrNetwork(accessPass);
       }else if (net.equals("picasa")) {
          return new PicasaNetwork(accessPass);
@@ -304,6 +288,23 @@ public class JaxogramServlet extends HttpServlet
          return new OrkutNetwork(accessPass);
       }else {
          throw new Exception("Unknown Network");
+      }
+   }
+
+   /*----------------------------------------------------------makeAuthorizer-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public static OAuthorizer makeAuthorizer(String net) throws Exception
+   {
+      if (net.equals("twitter")) {
+         return new TwitterNetwork();
+      }else if (net.equals("flickr")) {
+         return new FlickrNetwork();
+      }else if (net.equals("orkut")){
+         return new OrkutNetwork();
+      }else {
+         throw new Exception("Unknown Authorizer");
       }
    }
 

@@ -7,29 +7,28 @@
 * are prohibited, except with the express written agreement of Jaxo.
 *
 * Author:  Pierre G. Richard
-* Written: 3/9/2013
+* Written: 3/10/2013
 */
 package com.jaxo.googapp.jaxogram;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
 import net.oauth.OAuthMessage;
 import net.oauth.OAuthServiceProvider;
+import net.oauth.OAuthorizer;
 import net.oauth.client.OAuthClient;
 import net.oauth.client.jnetclient.JNetClient;
 
-/*-- class FlickrAdapter --+
+/*-- class TwitterAdapter --+
 *//**
 *
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class FlickrAdapter {
+public class TwitterAdapter implements OAuthorizer {
    OAuthConsumer consumer;
    OAuthAccessor accessor;
    OAuthClient client;
@@ -50,13 +49,13 @@ public class FlickrAdapter {
    );
    //                        "1/account/verify_credentials"
 
-   /*-----------------------------------------------------------FlickrAdapter-+
+   /*----------------------------------------------------------TwitterAdapter-+
    *//*
    * @param consumerKey Your OAuth consumer key.
    * @param consumerSecret Your OAuth consumer secret.
    *//*
    +-------------------------------------------------------------------------*/
-   public FlickrAdapter(String consumerKey, String consumerSecret)
+   public TwitterAdapter(String consumerKey, String consumerSecret)
    throws Exception {
       this.requestURL = SERVER_URL;
       say("Init OAuth.");
@@ -177,33 +176,12 @@ public class FlickrAdapter {
          givenAccessor, null,
          OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
       );
-      say("Got access token   : " + givenAccessor.accessToken);
-      say("Access token secret: " + givenAccessor.tokenSecret);
+      // List<Map.Entry<String, String>> foo = response.getParameters();
+
       return new String[] {
          givenAccessor.accessToken + " " + givenAccessor.tokenSecret,
-         response.getParameter("fullname")
+         response.getParameter("screen_name")
       };
-   }
-
-   /*------------------------------------------------------------------fooBar-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   public void fooBar() throws Exception {
-      consumer.setProperty(
-         OAuthClient.PARAMETER_STYLE,
-         net.oauth.ParameterStyle.QUERY_STRING
-      );
-      // ArrayList params = new ArrayList();
-      ArrayList<Map.Entry<String, String>> params;
-      params = new ArrayList<Map.Entry<String, String>>();
-      params.add(new OAuth.Parameter("format", "json"));
-      params.add(new OAuth.Parameter("method", "flickr.test.login"));
-      params.add(new OAuth.Parameter("nojsoncallback", "1"));
-      OAuthMessage response = client.invoke(accessor, SERVER_URL, params);
-      if (response == null) {
-         throw new Exception("Who cares?");
-      }
    }
 
    /*---------------------------------------------------------------------say-+

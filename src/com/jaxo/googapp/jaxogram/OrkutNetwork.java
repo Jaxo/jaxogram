@@ -125,23 +125,6 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
       }
    }
 
-   /*------------------------------------------------------------------whoAmI-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   public String whoAmI() throws Exception {
-      BatchTransaction btx = newBatch();
-      GetProfileTx profile = getProfileTF().getSelfProfile();
-      btx.add(profile);
-      submitBatch(btx);
-      if (profile.hasError()) {
-         throw new Exception("Error getting profile: " + profile.getError());
-      }else {
-         OrkutPerson person = profile.getProfile();
-         return person.getGivenName() + " " + person.getFamilyName();
-      }
-   }
-
    /*-------------------------------------------------------------uploadPhoto-+
    *//**
    *//*

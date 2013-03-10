@@ -20,6 +20,7 @@ import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
 import net.oauth.OAuthMessage;
 import net.oauth.OAuthServiceProvider;
+import net.oauth.OAuthorizer;
 import net.oauth.client.OAuthClient;
 import net.oauth.client.jnetclient.JNetClient;
 
@@ -29,7 +30,7 @@ import net.oauth.client.jnetclient.JNetClient;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class FlickrAdapter {
+public class FlickrAdapter implements OAuthorizer {
    OAuthConsumer consumer;
    OAuthAccessor accessor;
    OAuthClient client;

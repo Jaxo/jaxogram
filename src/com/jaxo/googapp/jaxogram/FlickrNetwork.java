@@ -12,7 +12,6 @@
 package com.jaxo.googapp.jaxogram;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -136,7 +135,7 @@ public class FlickrNetwork extends FlickrAdapter implements Network
          params,
          new ByteArrayInputStream(image)
       );
-      return extractPayload(response.getBodyAsStream());
+      return extractPayload(response.readBodyAsString());
    }
 
    /*----------------------------------------------------------extractPayload-+
@@ -147,17 +146,14 @@ public class FlickrNetwork extends FlickrAdapter implements Network
    static final Pattern status = Pattern.compile(".*\\<rsp.*stat=\"(.*?)\".*?>\\s*(.*?)\\</rsp>", Pattern.DOTALL);
    static final Pattern errCode = Pattern.compile(".*\\<err.*code=\"(.*?)\"", Pattern.DOTALL);
    static final Pattern errMsg = Pattern.compile(".*\\<err.*msg=\"(.*?)\"", Pattern.DOTALL);
-   static String extractPayload(InputStream in) throws Exception
+   static String extractPayload(String response) throws Exception
    {
       Matcher matcher;
       String statusVal = "fail";  // "ok" or "fail"
       String errCodeVal = "?";
       String errMsgVal = "?";
       String payload = "";
-      StringBuilder sb = new StringBuilder();
-      int ch;
-      while ((ch = in.read()) != -1) sb.append((char)ch);
-      matcher = status.matcher(sb.toString());
+      matcher = status.matcher(response);
       if (matcher.lookingAt() && (matcher.groupCount() > 0)) {
          statusVal = matcher.group(1);
          if (matcher.groupCount() > 1) {

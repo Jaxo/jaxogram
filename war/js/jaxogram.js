@@ -142,13 +142,7 @@ function formatUsersList(isUserRequired) {
             var itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
-            if (net === "flickr") {
-               imgElt.src = "../images/flickrSmallLogo.png";
-            }else if (net === "picasa") {
-               imgElt.src = "../images/picasaSmallLogo.png";
-            }else {
-               imgElt.src = "../images/orkutSmallLogo.png";
-            }
+            imgElt.src = "../images/" + net + "SmallLogo.png";
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
             itmElt.appendChild(imgElt);
@@ -169,13 +163,7 @@ function formatUsersList(isUserRequired) {
       italicElt.appendChild(document.createTextNode(users.getUserName()));
       imgNetElt = document.createElement("IMG");
       imgNetElt.id = "jgUserNet";
-      if (users.getNet() === "flickr") {
-         imgNetElt.src = "../images/flickrLogo.png";
-      }else if (users.getNet() === "picasa") {
-         imgNetElt.src = "../images/picasaLogo.png";
-      }else {
-         imgNetElt.src = "../images/orkutLogo.png";
-      }
+      imgNetElt.src = "../images/" + users.getNet() + "Logo.png";
       elt.appendChild(smallElt);
       elt.appendChild(document.createElement("BR"));
       elt.appendChild(imgNetElt);
@@ -327,13 +315,7 @@ function changeLogin(elt, event) {
       }else {
          users.selectUserAt(index);
          document.getElementById('jgUserName').textContent = users.getUserName();
-         if (users.getNet() === "flickr") {
-            document.getElementById('jgUserNet').src = "../images/flickrLogo.png";
-         }else if (users.getNet() === "picasa") {
-            document.getElementById('jgUserNet').src = "../images/picasaLogo.png";
-         }else {
-            document.getElementById('jgUserNet').src = "../images/orkutLogo.png";
-         }
+         document.getElementById('jgUserNet').src = "../images/" + users.getNet() + "Logo.png";
          resetAlbumsList();
          tellAccessPass();
       }
@@ -377,29 +359,27 @@ function clearMessagePane() {
 }
 
 function authorize() {
-   var eltText = document.createElement("DIV");
-   var eltOrkut = document.createElement("IMG");
-   var eltPicasa = document.createElement("IMG");
-   var eltFlickr = document.createElement("IMG");
    var eltContainer = document.createElement("DIV");
+   var eltText = document.createElement("DIV");
    eltContainer.style.width = "180px";
    eltContainer.style.textAlign = "center";
    eltText.className = "i18n";
    eltText.id = "chooseNetwork";
    eltText.appendChild(document.createTextNode(i18n("chooseNetwork")));
-   eltOrkut.className = "buttonLike";
-   eltOrkut.src= "images/orkutLogo.png";
-   eltOrkut.onclick = authorizeOrkut;
-   eltPicasa.className = "buttonLike";
-   eltPicasa.src= "images/picasaLogo.png";
-   eltPicasa.onclick = authorizePicasa;
-   eltFlickr.className = "buttonLike";
-   eltFlickr.src= "images/flickrLogo.png";
-   eltFlickr.onclick = authorizeFlickr;
    eltContainer.appendChild(eltText);
-   eltContainer.appendChild(eltOrkut);
-   eltContainer.appendChild(eltPicasa);
-   eltContainer.appendChild(eltFlickr);
+   ["orkut", "flickr", "picasa", "twitter"].forEach(
+      function(name) {
+         var elt = document.createElement("IMG");
+         elt.className = "buttonLike";
+         elt.src= "images/" + name + "Logo.png";
+         if (name === "picasa") {
+            elt.onclick = "authorizePicasa";
+         }else {
+            elt.onclick = function() { authorizeThruOAuth(name); }
+         }
+         eltContainer.appendChild(elt);
+      }
+   );
    showMessagePane(eltContainer);
 }
 
@@ -484,14 +464,6 @@ function authorizePicasa() {
    showMessagePane(eltContainer);
 }
 
-function authorizeFlickr() {
-   authorizeThruOAuth("flickr");
-}
-
-function authorizeOrkut() {
-   authorizeThruOAuth("orkut");
-}
-
 function authorizeThruOAuth(net) {
    clearMessagePane();
    // make a pseudo-random key )between 100000 and 200000
@@ -512,7 +484,6 @@ function authorizeThruOAuth(net) {
       }
    );
 }
-
 
 function browseTo(targetUrl) {
    var pane = document.getElementById("browserpane");
