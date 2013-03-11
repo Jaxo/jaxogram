@@ -26,7 +26,7 @@ import java.util.Vector;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-class MultipartEntity {
+public class MultipartEntity {
    private static final byte[] FIELD_PARAM = (
       "Content-Disposition: form-data; name=".getBytes()
    );
@@ -49,7 +49,7 @@ class MultipartEntity {
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   MultipartEntity() {
+   public MultipartEntity() {
       String boundary = generateBoundary();
       m_contentType = "multipart/form-data; boundary=" + boundary;
       m_boundary = ("--" + boundary).getBytes();
