@@ -373,7 +373,7 @@ function authorize() {
          elt.className = "buttonLike";
          elt.src= "images/" + name + "Logo.png";
          if (name === "picasa") {
-            elt.onclick = "authorizePicasa";
+            elt.onclick = authorizePicasa;
          }else {
             elt.onclick = function() { authorizeThruOAuth(name); }
          }

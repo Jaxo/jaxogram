@@ -7,20 +7,22 @@
 * are prohibited, except with the express written agreement of Jaxo.
 *
 * Author:  Pierre G. Richard
-* Written: 1/6/2013
+* Written: 3/8/2013
 */
 package com.jaxo.googapp.jaxogram;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
 import net.oauth.client.OAuthClient;
+//*/ import java.util.logging.Logger;
 
 // import com.google.orkut.client.api.DefaultOrkutAdapter;
 // import com.google.orkut.client.api.OrkutAdapterDebugListener;
@@ -31,21 +33,30 @@ import net.oauth.client.OAuthClient;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class FlickrNetwork extends FlickrAdapter implements Network
+public class FlickrNetwork extends OAuthorizer implements Network
 {
-   static final boolean IS_DEBUG = true;
-   static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.FlickrNetwork");
+   //*/ static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.FlickrNetwork");
+   private static final String CONSUMER_KEY = "10ffe23ba7c418592998e1d17a34ec59";
+   private static final String CONSUMER_SECRET = "9c3a11c7aeb7fd00";
+   private static final String OAUTH_REQUEST_URL = "http://www.flickr.com/services/oauth/request_token";
+   private static final String OAUTH_AUTHORIZATION_URL = "http://www.flickr.com/services/oauth/authorize";
+   private static final String OAUTH_ACCESS_URL = "http://www.flickr.com/services/oauth/access_token";
 
-   private static final String consumerKey = "10ffe23ba7c418592998e1d17a34ec59";
-   private static final String consumerSecret = "9c3a11c7aeb7fd00";
    private static final String UPLOAD_URL = "http://api.flickr.com/services/upload";
+   private static final String SERVER_URL = "http://api.flickr.com/services/rest";
 
    /*-----------------------------------------------------------FlickrNetwork-+
-   *//**
+   *//*
    *//*
    +-------------------------------------------------------------------------*/
    public FlickrNetwork() throws Exception {
-      super(consumerKey, consumerSecret);
+      super(
+         CONSUMER_KEY,
+         CONSUMER_SECRET,
+         OAUTH_REQUEST_URL,
+         OAUTH_AUTHORIZATION_URL,
+         OAUTH_ACCESS_URL
+      );
    }
 
    /*-----------------------------------------------------------FlickrNetwork-+
@@ -53,8 +64,80 @@ public class FlickrNetwork extends FlickrAdapter implements Network
    *//*
    +-------------------------------------------------------------------------*/
    public FlickrNetwork(String accessPass) throws Exception {
-      super(consumerKey, consumerSecret);
-      setAccessPass(accessPass);
+      this();
+      String[] p = accessPass.split(" ");
+      if (p.length != 2) {
+         throw new Exception(
+            "Access pass does not have correct format (token and secret)"
+         );
+      }
+      accessor.accessToken = p[0];
+      accessor.tokenSecret = p[1];
+   }
+
+   /*----------------------------------------------------------requestAuthURL-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String requestAuthURL(String callbackUrl) throws Exception
+   {
+      List<OAuth.Parameter> callback = OAuth.newList(
+         OAuth.OAUTH_CALLBACK, callbackUrl
+      );
+      OAuthMessage response = client.getRequestTokenResponse(
+         accessor, null, callback
+      );
+      String authorizationURL = OAuth.addParameters(
+         accessor.consumer.serviceProvider.userAuthorizationURL,
+         OAuth.OAUTH_TOKEN, accessor.requestToken
+      );
+      if (response.getParameter(OAuth.OAUTH_CALLBACK_CONFIRMED) == null) {
+         authorizationURL = OAuth.addParameters(authorizationURL, callback);
+      }else {
+         authorizationURL = OAuth.addParameters(
+            accessor.consumer.serviceProvider.userAuthorizationURL,
+            OAuth.OAUTH_TOKEN, accessor.requestToken
+         );
+      }
+      return authorizationURL;
+   }
+
+   /*------------------------------------------------------------authenticate-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
+   throws Exception
+   {
+      OAuthMessage response = client.getAccessToken(
+         givenAccessor, null,
+         OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
+      );
+      return new String[] {
+         givenAccessor.accessToken + " " + givenAccessor.tokenSecret,
+         response.getParameter("fullname")
+      };
+   }
+
+   /*------------------------------------------------------------------fooBar-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public void fooBar() throws Exception {
+      consumer.setProperty(
+         OAuthClient.PARAMETER_STYLE,
+         net.oauth.ParameterStyle.QUERY_STRING
+      );
+      // ArrayList params = new ArrayList();
+      ArrayList<Map.Entry<String, String>> params;
+      params = new ArrayList<Map.Entry<String, String>>();
+      params.add(new OAuth.Parameter("format", "json"));
+      params.add(new OAuth.Parameter("method", "flickr.test.login"));
+      params.add(new OAuth.Parameter("nojsoncallback", "1"));
+      OAuthMessage response = client.invoke(accessor, SERVER_URL, params);
+      if (response == null) {
+         throw new Exception("Who cares?");
+      }
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+
@@ -174,14 +257,6 @@ public class FlickrNetwork extends FlickrAdapter implements Network
          throw new Exception("RC=" + errCodeVal + " (" + errMsgVal + ")");
       }
       return payload.trim();
-   }
-
-   /*---------------------------------------------------------------------say-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   protected void say(String s) {
-      if (IS_DEBUG) logger.info(s);
    }
 }
 /*===========================================================================*/

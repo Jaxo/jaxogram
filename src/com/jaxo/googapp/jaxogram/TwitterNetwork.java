@@ -17,17 +17,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
 import net.oauth.OAuthMessage;
 import net.oauth.http.HttpMessage;
 import net.oauth.http.HttpResponseMessage;
 import net.oauth.http.MultipartEntity;
-
-
-// import com.google.orkut.client.api.DefaultOrkutAdapter;
-// import com.google.orkut.client.api.OrkutAdapterDebugListener;
+//*/ import java.util.logging.Logger;
 
 /*-- class TwitterNetwork --+
 *//**
@@ -35,21 +32,32 @@ import net.oauth.http.MultipartEntity;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class TwitterNetwork extends TwitterAdapter implements Network
+public class TwitterNetwork extends OAuthorizer implements Network
 {
-   static final boolean IS_DEBUG = true;
-   static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.TwitterNetwork");
-   private static final String consumerKey = "1GuuuKkVr2VqZrQRJJ3pkw";
-   private static final String consumerSecret = "aWyTrSFTXYBb2ddL67tdb1i8xRGJnNF67c3LkGadFs";
+   //*/ private static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.TwitterNetwork");
+   private static final String CONSUMER_KEY = "1GuuuKkVr2VqZrQRJJ3pkw";
+   private static final String CONSUMER_SECRET = "aWyTrSFTXYBb2ddL67tdb1i8xRGJnNF67c3LkGadFs";
+   private static final String OAUTH_REQUEST_URL = "https://api.twitter.com/oauth/request_token";
+   private static final String OAUTH_AUTHORIZATION_URL = "https://api.twitter.com/oauth/authorize";
+   private static final String OAUTH_ACCESS_URL = "https://api.twitter.com/oauth/access_token";
+
+   private static final String API_KEY = "7348580b4263e5703fc3cb97e7ba3283"; // TWitPic
    private static final String UPLOAD_URL = "http://api.twitpic.com/2/upload.json";
    private static final String CREDENTIALS_URL = "https://api.twitter.com/1/account/verify_credentials.json";
    private static final String REALM_URL = "http://api.twitter.com";
+
    /*----------------------------------------------------------TwitterNetwork-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
    public TwitterNetwork() throws Exception {
-      super(consumerKey, consumerSecret);
+      super(
+         CONSUMER_KEY,
+         CONSUMER_SECRET,
+         OAUTH_REQUEST_URL,
+         OAUTH_AUTHORIZATION_URL,
+         OAUTH_ACCESS_URL
+      );
    }
 
    /*----------------------------------------------------------TwitterNetwork-+
@@ -57,8 +65,60 @@ public class TwitterNetwork extends TwitterAdapter implements Network
    *//*
    +-------------------------------------------------------------------------*/
    public TwitterNetwork(String accessPass) throws Exception {
-      super(consumerKey, consumerSecret);
-      setAccessPass(accessPass);
+      this();
+      String[] p = accessPass.split(" ");
+      if (p.length != 2) {
+         throw new Exception(
+            "Access pass does not have correct format (token and secret)"
+         );
+      }
+      accessor.accessToken = p[0];
+      accessor.tokenSecret = p[1];
+   }
+
+   /*----------------------------------------------------------requestAuthURL-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String requestAuthURL(String callbackUrl) throws Exception
+   {
+      List<OAuth.Parameter> callback = OAuth.newList(
+         OAuth.OAUTH_CALLBACK, callbackUrl
+      );
+      OAuthMessage response = client.getRequestTokenResponse(
+         accessor, null, callback
+      );
+      String authorizationURL = OAuth.addParameters(
+         accessor.consumer.serviceProvider.userAuthorizationURL,
+         OAuth.OAUTH_TOKEN, accessor.requestToken
+      );
+      if (response.getParameter(OAuth.OAUTH_CALLBACK_CONFIRMED) == null) {
+         authorizationURL = OAuth.addParameters(authorizationURL, callback);
+      }else {
+         authorizationURL = OAuth.addParameters(
+            accessor.consumer.serviceProvider.userAuthorizationURL,
+            OAuth.OAUTH_TOKEN, accessor.requestToken
+         );
+      }
+      return authorizationURL;
+   }
+
+
+   /*------------------------------------------------------------authenticate-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
+   throws Exception
+   {
+      OAuthMessage response = client.getAccessToken(
+         givenAccessor, null,
+         OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
+      );
+      return new String[] {
+         givenAccessor.accessToken + " " + givenAccessor.tokenSecret,
+         response.getParameter("screen_name")
+      };
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+
@@ -114,20 +174,17 @@ public class TwitterNetwork extends TwitterAdapter implements Network
    )
    throws Exception
    {
-      OAuthMessage request = accessor.newRequestMessage(
-         OAuthMessage.GET, CREDENTIALS_URL, null, null
-
-      );
-      List<OAuth.Parameter> headers;
+      List<OAuth.Parameter> headers = new ArrayList<OAuth.Parameter>();
       MultipartEntity entity = new MultipartEntity();
-      entity.addField("key", "7348580b4263e5703fc3cb97e7ba3283", "UTF-8"); // from.getBodyEncoding()
-      entity.addField("message", "Jaxogram Test", "UTF-8");
-      entity.addFile("media", "tmpfile.jpg", "image/jpeg", image);
-      headers = new ArrayList<OAuth.Parameter>();
+      entity.addField("key", API_KEY, "UTF-8");
+      entity.addField("message", title, "UTF-8");
+      entity.addFile("media", "tmpfile." + type, "image/" + type, image);
       headers.add(
          new OAuth.Parameter(
             "X-Verify-Credentials-Authorization",
-            request.getAuthorizationHeader(REALM_URL)
+            accessor.newRequestMessage(
+               OAuthMessage.GET, CREDENTIALS_URL, null, null
+            ).getAuthorizationHeader(REALM_URL)
          )
       );
       headers.add(
@@ -152,11 +209,7 @@ public class TwitterNetwork extends TwitterAdapter implements Network
          httpRequest,
          client.getHttpParameters()
       );
-
-      // return response.readBodyAsString();
-      String foo = toString(
-         response.getBody(), response.getContentCharset()
-      );
+      return toString(response.getBody(), response.getContentCharset());
       // Example of JSON responses
       // {
       //    "id":"cag6rj",
@@ -180,7 +233,6 @@ public class TwitterNetwork extends TwitterAdapter implements Network
       //       }
       //    ]
       // }
-      return foo;
    }
 
    /*----------------------------------------------------------------toString-+
@@ -203,14 +255,6 @@ public class TwitterNetwork extends TwitterAdapter implements Network
              in.close();
          }
       }
-   }
-
-   /*---------------------------------------------------------------------say-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   protected void say(String s) {
-      if (IS_DEBUG) logger.info(s);
    }
 }
 /*===========================================================================*/

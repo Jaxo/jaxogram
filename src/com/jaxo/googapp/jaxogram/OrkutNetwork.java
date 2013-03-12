@@ -11,15 +11,32 @@
 */
 package com.jaxo.googapp.jaxogram;
 
-import java.util.logging.Logger;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import net.oauth.OAuth;
+import net.oauth.OAuthAccessor;
+import net.oauth.OAuthConsumer;
+import net.oauth.OAuthMessage;
+
+import com.google.orkut.client.api.AlbumsTxFactory;
 import com.google.orkut.client.api.BatchTransaction;
 import com.google.orkut.client.api.CreateAlbumTx;
-import com.google.orkut.client.api.DefaultOrkutAdapter;
 import com.google.orkut.client.api.GetAlbumsTx;
 import com.google.orkut.client.api.GetProfileTx;
 import com.google.orkut.client.api.OrkutPerson;
+import com.google.orkut.client.api.PhotosTxFactory;
+import com.google.orkut.client.api.ProfileTxFactory;
 import com.google.orkut.client.api.UploadPhotoTx;
+import com.google.orkut.client.transport.HttpRequest;
+import com.google.orkut.client.transport.OrkutHttpRequestFactory;
+//*/ import java.util.logging.Logger;
 
 /*-- class OrkutNetwork --+
 *//**
@@ -27,19 +44,34 @@ import com.google.orkut.client.api.UploadPhotoTx;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class OrkutNetwork extends DefaultOrkutAdapter implements Network
+public class OrkutNetwork extends OAuthorizer implements Network
 {
-   static final boolean IS_DEBUG = false;
-   static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.OrkutNetwork");
-   static final String consumerKey = "www.jaxo.com";
-   static final String consumerSecret = "JYd4FdgQyQBvbgbq0rdDP44C";
+   //*/ private static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.OrkutNetwork");
+   private static final String CONSUMER_KEY = "www.jaxo.com";
+   private static final String CONSUMER_SECRET = "JYd4FdgQyQBvbgbq0rdDP44C";
+   private static final String OAUTH_REQUEST_URL = "https://www.google.com/accounts/OAuthGetRequestToken";
+   private static final String OAUTH_AUTHORIZATION_URL = "https://www.google.com/accounts/OAuthAuthorizeToken";
+   private static final String OAUTH_ACCESS_URL = "https://www.google.com/accounts/OAuthGetAccessToken";
+
+   private static final String OAUTH_SCOPE = "http://orkut.gmodules.com/social";
+   private static final String SERVER_URL = "http://www.orkut.com/social/rpc";
+
+   private final ProfileTxFactory profileTxFactory = new ProfileTxFactory();
+   private final AlbumsTxFactory albumsTxFactory = new AlbumsTxFactory();
+   private final PhotosTxFactory photosTxFactory = new PhotosTxFactory();
 
    /*------------------------------------------------------------OrkutNetwork-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
    public OrkutNetwork() throws Exception {
-      super(consumerKey, consumerSecret);
+      super(
+         CONSUMER_KEY,
+         CONSUMER_SECRET,
+         OAUTH_REQUEST_URL,
+         OAUTH_AUTHORIZATION_URL,
+         OAUTH_ACCESS_URL
+      );
    }
 
    /*------------------------------------------------------------OrkutNetwork-+
@@ -47,8 +79,74 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
    *//*
    +-------------------------------------------------------------------------*/
    public OrkutNetwork(String accessPass) throws Exception {
-      super(consumerKey, consumerSecret);
-      setAccessPass(accessPass);
+      this();
+      String[] p = accessPass.split(" ");
+      if (p.length != 2) {
+         throw new Exception(
+            "Access pass does not have correct format (token and secret)"
+         );
+      }
+      accessor.accessToken = p[0];
+      accessor.tokenSecret = p[1];
+   }
+
+   /*----------------------------------------------------------requestAuthURL-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String requestAuthURL(String callbackUrl) throws Exception
+   {
+      List<OAuth.Parameter> callback = OAuth.newList(
+         OAuth.OAUTH_CALLBACK, callbackUrl, "scope", OAUTH_SCOPE
+      );
+      OAuthMessage response = client.getRequestTokenResponse(
+         accessor, null, callback
+      );
+      String authorizationURL = OAuth.addParameters(
+         accessor.consumer.serviceProvider.userAuthorizationURL,
+         OAuth.OAUTH_TOKEN, accessor.requestToken,
+         "scope", OAUTH_SCOPE
+      );
+      if (response.getParameter(OAuth.OAUTH_CALLBACK_CONFIRMED) == null) {
+         authorizationURL = OAuth.addParameters(authorizationURL, callback);
+      }else {
+         authorizationURL = OAuth.addParameters(
+            accessor.consumer.serviceProvider.userAuthorizationURL,
+            OAuth.OAUTH_TOKEN, accessor.requestToken,
+            "scope", OAUTH_SCOPE
+         );
+      }
+      return authorizationURL;
+   }
+
+   /*------------------------------------------------------------authenticate-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
+   throws Exception
+   {
+      String userName;
+      client.getAccessToken(
+         givenAccessor, null,
+         OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
+      );
+      accessor.accessToken = givenAccessor.accessToken;
+      accessor.tokenSecret = givenAccessor.tokenSecret;
+      BatchTransaction btx = newBatch();
+      GetProfileTx profile = profileTxFactory.getSelfProfile();
+      btx.add(profile);
+      submitBatch(btx);
+      if (profile.hasError()) {
+         userName = "???";
+      }else {
+         OrkutPerson person = profile.getProfile();
+         userName = person.getGivenName() + " " + person.getFamilyName();
+      }
+      return new String[] {
+         givenAccessor.accessToken + " " + givenAccessor.tokenSecret,
+         userName
+      };
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+
@@ -59,9 +157,9 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
       BatchTransaction btx = newBatch();
       GetProfileTx tx;
       if (id == null) {
-         tx = getProfileTF().getSelfProfile();
+         tx = profileTxFactory.getSelfProfile();
       }else {
-         tx = getProfileTF().getProfileOf(id);
+         tx = profileTxFactory.getProfileOf(id);
       }
       tx.alsoGetName();
       tx.alsoGetThumbnailUrl();
@@ -91,7 +189,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
    *//*
    +-------------------------------------------------------------------------*/
    public String listAlbumsAsJson() throws Exception {
-      GetAlbumsTx tx = getAlbumsTF().getSelfAlbums();
+      GetAlbumsTx tx = albumsTxFactory.getSelfAlbums();
       tx.setCount(20);  // get first 20 albums
       BatchTransaction btx = newBatch();
       btx.add(tx);
@@ -116,7 +214,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
    *//*
    +-------------------------------------------------------------------------*/
    public void createAlbum(String title, String desc) throws Exception {
-      CreateAlbumTx tx = getAlbumsTF().createAlbum(title, desc);
+      CreateAlbumTx tx = albumsTxFactory.createAlbum(title, desc);
       BatchTransaction btx = newBatch();
       btx.add(tx);
       submitBatch(btx);
@@ -137,7 +235,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
    )
    throws Exception
    {
-      UploadPhotoTx tx = getPhotosTF().uploadPhoto(albumId, image, type, title);
+      UploadPhotoTx tx = photosTxFactory.uploadPhoto(albumId, image, type, title);
       BatchTransaction btx = newBatch();
       btx.add(tx);
       submitBatch(btx);
@@ -147,12 +245,101 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
       return null;
    }
 
-   /*---------------------------------------------------------------------say-+
+   /*----------------------------------------------------------------newBatch-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   protected void say(String s) {
-      if (IS_DEBUG) logger.info(s);
+   private BatchTransaction newBatch() throws Exception {
+      return new BatchTransaction(
+         new OrkutHttpRequestFactory(),
+         new com.google.orkut.client.config.Config() {
+            public String getRequestBaseUrl() { return SERVER_URL; }
+         }
+      );
+   }
+
+   /*-------------------------------------------------------------submitBatch-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   private void submitBatch(BatchTransaction btx) throws Exception
+   {
+      HttpRequest req = btx.build();
+      byte[] body = req.getRequestBody();
+      String method = req.getMethod();
+      String baseURL = req.getRequestBaseUrl();
+      Collection reqParams = req.getParameters();
+      ArrayList<Map.Entry<String,String>> oauthParams = null;
+      if (reqParams != null && reqParams.size() > 0) {
+         oauthParams = new ArrayList<Map.Entry<String,String>>();
+         Iterator it = reqParams.iterator();
+         while (it.hasNext()) {
+            HttpRequest.Parameter parameter = (
+               (HttpRequest.Parameter)it.next()
+            );
+            oauthParams.add(
+               new OAuth.Parameter(parameter.getKey(), parameter.getValue())
+            );
+         }
+      }
+      Collection reqHeaders = req.getHeaders();
+      ArrayList<Map.Entry<String,String>> oauthHeaders = null;
+      if (reqHeaders != null && reqHeaders.size() > 0) {
+         oauthHeaders = new ArrayList<Map.Entry<String,String>>();
+         Iterator it = reqHeaders.iterator();
+         while (it.hasNext()) {
+            HttpRequest.Header header = (HttpRequest.Header) it.next();
+            oauthHeaders.add(
+               new OAuth.Parameter(header.getName(), header.getValue())
+            );
+         }
+      }
+      OAuthMessage msg = new PostOAuthMessage(
+         method, baseURL, oauthParams, body
+      );
+      msg.addRequiredParameters(accessor);
+      Iterator it = oauthHeaders.iterator();
+      while (it.hasNext()) {
+         msg.getHeaders().add((Map.Entry)it.next());
+      }
+      Object accepted = accessor.consumer.getProperty(
+          OAuthConsumer.ACCEPT_ENCODING
+      );
+      if (accepted != null) {
+         msg.getHeaders().add(
+            new OAuth.Parameter(
+               net.oauth.http.HttpMessage.ACCEPT_ENCODING,
+               accepted.toString()
+            )
+         );
+      }
+      OAuthMessage resp = client.invoke(
+         msg, net.oauth.ParameterStyle.QUERY_STRING
+      );
+      btx.setResponse(resp.readBodyAsString());
+   }
+
+   /*------------------------------------------------ class PostOAuthMessage -+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   class PostOAuthMessage extends OAuthMessage {
+      private final byte[] body;
+      @SuppressWarnings("rawtypes")
+      public PostOAuthMessage(
+         String method,
+         String url,
+         Collection<? extends Map.Entry> parameters,
+         byte[] body
+      ) {
+         super(method, url, parameters);
+         this.body = body;
+      }
+
+      public InputStream getBodyAsStream() throws IOException {
+         return (body == null) ? null : new ByteArrayInputStream(body);
+      }
    }
 
 // public void uploadPhoto(
@@ -160,7 +347,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 //    String filePath, // path to the JPG file
 //    String title     // title of the photo
 // ) throws Exception {
-//    UploadPhotoTx tx = getPhotosTF().uploadPhoto(albumId, filePath, title);
+//    UploadPhotoTx tx = photosTxFactory.uploadPhoto(albumId, filePath, title);
 //    BatchTransaction btx = newBatch();
 //    btx.add(tx);
 //    submitBatch(btx);
@@ -186,7 +373,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 // }
 //
 // public void updateStatus(String newStatus) throws Exception {
-//    UpdateProfileTx tx = getProfileTF().updateSelfProfile();
+//    UpdateProfileTx tx = profileTxFactory.updateSelfProfile();
 //    tx.setStatus(newStatus);
 //    BatchTransaction btx = newBatch();
 //    btx.add(tx);
@@ -223,9 +410,9 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 //    BatchTransaction btx = newBatch();
 //    GetProfileTx tx;
 //    if (id == null) {
-//       tx = getProfileTF().getSelfProfile();
+//       tx = profileTxFactory.getSelfProfile();
 //    }else {
-//       tx = getProfileTF().getProfileOf(id);
+//       tx = profileTxFactory.getProfileOf(id);
 //    }
 //    tx.alsoGetName();
 //    tx.alsoGetThumbnailUrl();
@@ -362,7 +549,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 // }
 //
 // public String listAlbums() throws Exception {
-//    GetAlbumsTx tx = getAlbumsTF().getSelfAlbums();
+//    GetAlbumsTx tx = albumsTxFactory.getSelfAlbums();
 //    tx.setCount(20);  // get first 20 albums
 //    BatchTransaction btx = newBatch();
 //    btx.add(tx);
@@ -389,7 +576,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 //    String newTitle, // new title
 //    String newDesc   // new description
 // ) throws Exception {
-//    GetAlbumsTx tx = getAlbumsTF().getSelfAlbum(albumId);
+//    GetAlbumsTx tx = albumsTxFactory.getSelfAlbum(albumId);
 //    BatchTransaction btx = newBatch();
 //    btx.add(tx);
 //    submitBatch(btx);
@@ -404,7 +591,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 //       album.setTitle(newTitle);
 //       album.setDescription(newDesc);
 //       btx = newBatch();
-//       UpdateAlbumTx utx = getAlbumsTF().updateAlbum(album);
+//       UpdateAlbumTx utx = albumsTxFactory.updateAlbum(album);
 //       btx.add(utx);
 //       submitBatch(btx);
 //       if (utx.hasError()) {
@@ -414,7 +601,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 // }
 //
 // public void deleteAlbum(String albumId) throws Exception {
-//    DeleteAlbumTx tx = getAlbumsTF().deleteAlbum(albumId);
+//    DeleteAlbumTx tx = albumsTxFactory.deleteAlbum(albumId);
 //    BatchTransaction btx = newBatch();
 //    btx.add(tx);
 //    submitBatch(btx);
@@ -424,7 +611,7 @@ public class OrkutNetwork extends DefaultOrkutAdapter implements Network
 // }
 //
 // public void listPhotos(String albumId) throws Exception {
-//    GetPhotosTx tx = getPhotosTF().getSelfPhotos(albumId);
+//    GetPhotosTx tx = photosTxFactory.getSelfPhotos(albumId);
 //    BatchTransaction btx = newBatch();
 //    tx.setCount(20); // get up to 20 photos
 //    btx.add(tx);
