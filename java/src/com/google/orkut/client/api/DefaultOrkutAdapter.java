@@ -5,7 +5,6 @@ import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
 import net.oauth.OAuthMessage;
 import net.oauth.OAuthServiceProvider;
-import net.oauth.OAuthorizer;
 import net.oauth.client.OAuthClient;
 import net.oauth.client.jnetclient.JNetClient;
 
@@ -21,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultOrkutAdapter extends OrkutAdapter implements OAuthorizer
+public class DefaultOrkutAdapter extends OrkutAdapter
 {
    protected String consumerKey = "";
    protected String consumerSecret = "";
