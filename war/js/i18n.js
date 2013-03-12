@@ -104,7 +104,7 @@ var localeValues = {
       'en-US':"Please, choose a social network",
       'fr-FR':"Choisissez votre réseau social",
       'pt-BR':"Escolher uma rede social",
-      'es-ES':"Elige una red social."
+      'es-ES':"Elige una red social"
    }, picasaLogin: {
       'en-US':"Login to Picasa …",
       'fr-FR':"Connexion à Picasa …",

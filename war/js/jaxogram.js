@@ -26,14 +26,16 @@ window.onload = function() {
    // users.cleanUp();
    // users.destroy();
    var params = getQueryParams();
+
    if (params.OP === "backCall") {
       /*
-      | this occurs for non-packaged application only:
-      | packaged app have no origin, can not appear as referer...
-      | no way to call them back from the external world.
+      | this occurs for non-packaged applications only:
+      | b/c packaged app have no origin, can not appear as referer...
+      | so there is no way to call them back from the external world.
       */
-      registerUser(params.verifier);
+      registerUser(params.VRF, params.NET);
    }
+
    dispatcher.on(
       "install_changed",
       function action(state, version) {
@@ -140,11 +142,7 @@ function formatUsersList(isUserRequired) {
             var itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
-            if (net === "orkut") {
-               imgElt.src = "../images/orkutSmallLogo.png";
-            }else {
-               imgElt.src = "../images/picasaSmallLogo.png";
-            }
+            imgElt.src = "../images/" + net + "SmallLogo.png";
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
             itmElt.appendChild(imgElt);
@@ -165,11 +163,7 @@ function formatUsersList(isUserRequired) {
       italicElt.appendChild(document.createTextNode(users.getUserName()));
       imgNetElt = document.createElement("IMG");
       imgNetElt.id = "jgUserNet";
-      if (users.getNet() === "orkut") {
-         imgNetElt.src = "../images/orkutLogo.png";
-      }else {
-         imgNetElt.src = "../images/picasaLogo.png";
-      }
+      imgNetElt.src = "../images/" + users.getNet() + "Logo.png";
       elt.appendChild(smallElt);
       elt.appendChild(document.createElement("BR"));
       elt.appendChild(imgNetElt);
@@ -259,7 +253,9 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       if (!description || (description.length === 0)) description = "";
 
       var imgElt = document.createElement("IMG");
-      imgElt.src = album.thumbnailUrl;
+      if (album.thumbnailUrl && (album.thumbnailUrl.length !== 0)) {
+         imgElt.src = album.thumbnailUrl;
+      }
       var spanElt = document.createElement("SPAN");
       spanElt.appendChild(document.createTextNode(title));
       var smallElt = document.createElement("SMALL");
@@ -319,11 +315,7 @@ function changeLogin(elt, event) {
       }else {
          users.selectUserAt(index);
          document.getElementById('jgUserName').textContent = users.getUserName();
-         if (users.getNet() === "orkut") {
-            document.getElementById('jgUserNet').src = "../images/orkutLogo.png";
-         }else {
-            document.getElementById('jgUserNet').src = "../images/picasaLogo.png";
-         }
+         document.getElementById('jgUserNet').src = "../images/" + users.getNet() + "Logo.png";
          resetAlbumsList();
          tellAccessPass();
       }
@@ -367,22 +359,27 @@ function clearMessagePane() {
 }
 
 function authorize() {
-   var eltText = document.createElement("DIV");
-   var eltOrkut = document.createElement("IMG");
-   var eltPicasa = document.createElement("IMG");
    var eltContainer = document.createElement("DIV");
+   var eltText = document.createElement("DIV");
+   eltContainer.style.width = "180px";
+   eltContainer.style.textAlign = "center";
    eltText.className = "i18n";
    eltText.id = "chooseNetwork";
    eltText.appendChild(document.createTextNode(i18n("chooseNetwork")));
-   eltOrkut.className = "buttonLike";
-   eltOrkut.src= "images/orkutLogo.png";
-   eltOrkut.onclick = authorizeOrkut;
-   eltPicasa.className = "buttonLike";
-   eltPicasa.src= "images/picasaLogo.png";
-   eltPicasa.onclick = authorizePicasa;
    eltContainer.appendChild(eltText);
-   eltContainer.appendChild(eltOrkut);
-   eltContainer.appendChild(eltPicasa);
+   ["orkut", "flickr", "picasa", "twitter"].forEach(
+      function(name) {
+         var elt = document.createElement("IMG");
+         elt.className = "buttonLike";
+         elt.src= "images/" + name + "Logo.png";
+         if (name === "picasa") {
+            elt.onclick = authorizePicasa;
+         }else {
+            elt.onclick = function() { authorizeThruOAuth(name); }
+         }
+         eltContainer.appendChild(elt);
+      }
+   );
    showMessagePane(eltContainer);
 }
 
@@ -467,13 +464,13 @@ function authorizePicasa() {
    showMessagePane(eltContainer);
 }
 
-function authorizeOrkut() {
+function authorizeThruOAuth(net) {
    clearMessagePane();
    // make a pseudo-random key )between 100000 and 200000
    authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
    issueRequest(
-      "GET", "getUrl", "&JXK=" + authKey,
+      "GET", "getUrl", "&JXK=" + authKey + "&NET=" + net,
       function(oauthUrl) {        // whenDone
          // navigate to it as a top browser window
          if (isPackaged) {        // if packaged, do NOT leave the app!
@@ -526,7 +523,7 @@ function getVerifier() {
          }else {
             browseQuit();
             //OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);
-            registerUser(verifier);
+            registerUser(verifier, "trouDuc");  // <<<< FIXME!!!!
             formatUsersList(false);
          }
       },
@@ -536,16 +533,17 @@ function getVerifier() {
    );
 }
 
-function registerUser(verifier) {
+function registerUser(verifier, net) {
    issueRequest(
-      "GET", "getAccPss", "&verifier=" + encodeURIComponent(verifier),
+      "GET", "getAccPss",
+      "&VRF=" + encodeURIComponent(verifier) + "&NET=" + net,
       function(val) {     // whenDone
          var obj = JSON.parse(val);
          // alert(dump(obj));
          users.addUser(
             decodeURIComponent(obj.userName),
             decodeURIComponent(obj.accessPass),
-            "orkut"
+            net
          );
          formatUsersList(false);
       },

@@ -21,7 +21,7 @@ interface Network {
    String whoIsAsJson(String id) throws Exception;
    String listAlbumsAsJson() throws Exception;
    void createAlbum(String title, String desc) throws Exception;
-   public void uploadPhoto(
+   String uploadPhoto(
       String albumId, String title, byte[] image, String type
    ) throws Exception;
 }

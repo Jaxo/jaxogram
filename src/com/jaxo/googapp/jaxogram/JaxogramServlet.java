@@ -84,7 +84,8 @@ public class JaxogramServlet extends HttpServlet
                String redirect = (
                   req.getParameter("referer") +
                   "?OP=backCall" +
-                  "&verifier=" +
+                  "&NET=" + req.getParameter("NET") +
+                  "&VRF=" +
                   URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
                );
 //*/           logger.info("Callback from orkut => proxy to " + redirect);
@@ -150,35 +151,47 @@ public class JaxogramServlet extends HttpServlet
 
             }else if (op.equals("getUrl")) {
                HttpSession session = req.getSession(true);
-               OrkutNetwork orknet = makeNullOrkutNetwork(req);
-               String authorizeUrl = orknet.requestAuthURL();
-               session.setAttribute("accessor", orknet.getAccessor());
+               String net = req.getParameter("NET");
+               String authorizeUrl;
+               String referer = req.getHeader("referer");
+               if (referer != null) {
+                  referer = "&referer=" +  URLEncoder.encode(referer, "UTF-8");
+               }else if ((referer = req.getParameter("JXK")) != null) {
+                  referer = "&JXK=" + referer;
+               }else {
+                  referer = "";
+         //       throw new Exception("Invalid CORS header (null referer)");
+               }
+               String callbackUrl = (
+                  getBaseUrl(req) +  // callback URL
+                  "/jaxogram?OP=backCall&NET=" + net + referer
+               );
+               OAuthorizer authorizer = makeAuthorizer(net);
+               authorizeUrl = authorizer.requestAuthURL(callbackUrl);
+               session.setAttribute("accessor", authorizer.getAccessor());
                writer.print(authorizeUrl);
 
             }else if (op.equals("getAccPss")) {
                HttpSession session = req.getSession(true);
-               OrkutNetwork orknet = makeNullOrkutNetwork(req);
-               String ap =  orknet.authenticate(
-                  req.getParameter("verifier"),
+               OAuthorizer authorizer = makeAuthorizer(req.getParameter("NET"));
+               String[] vals = authorizer.authenticate(
+                  req.getParameter("VRF"),
                   (OAuthAccessor)session.getAttribute("accessor")
                );
-               session.setAttribute("accesspass", ap);
+               String accessPass = vals[0];
+               String userName = vals[1];
+               session.setAttribute("accesspass", accessPass);
                writer.printf(
                   "{ \"accessPass\":\"%s\", \"userName\":\"%s\" }",    // JSON
-                  URLEncoder.encode(ap, "UTF-8").replace("+", "%20"),  // arghhhh
-                  URLEncoder.encode(makeOrkutNetwork(req).whoAmI(), "UTF-8").
-                  replace("+", "%20")
+                  URLEncoder.encode(accessPass, "UTF-8").replace("+", "%20"),  // arghhhh
+                  URLEncoder.encode(userName, "UTF-8").replace("+", "%20")
                );
+
             }else {
-               Network network;
-               String net = req.getParameter("NET");
-               if (net.equals("picasa")) {
-                  network = makePicasaNetwork(req);
-               }else if (net.equals("orkut")){
-                  network = makeOrkutNetwork(req);
-               }else {
-                  throw new Exception("Unknown Network");
-               }
+               Network network = makeNetwork(
+                  req.getParameter("NET"),
+                  (String)req.getSession(true).getAttribute("accesspass")
+               );
                if (op.equals("whoAmI")) {
                   writer.println(network.whoIsAsJson(null));
 
@@ -257,50 +270,41 @@ public class JaxogramServlet extends HttpServlet
       }
    }
 
-   /*--------------------------------------------------------makeOrkutNetwork-+
+   /*-------------------------------------------------------------makeNetwork-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public static OrkutNetwork makeOrkutNetwork(HttpServletRequest req)
-   throws Exception {
-      HttpSession session = req.getSession(true);
-      return new OrkutNetwork(
-         (String)session.getAttribute("accesspass"),
-         getBaseUrl(req) + "/jaxogram?OP=backCall"    // callback URL
-      );
-   }
-
-   /*----------------------------------------------------makeNullOrkutNetwork-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   public static OrkutNetwork makeNullOrkutNetwork(HttpServletRequest req)
-   throws Exception {
-      String referer = req.getHeader("referer");
-      if (referer != null) {
-         referer = "&referer=" +  URLEncoder.encode(referer, "UTF-8");
-      }else if ((referer = req.getParameter("JXK")) != null) {
-         referer = "&JXK=" + referer;
+   public static Network makeNetwork(String net, String accessPass)
+   throws Exception
+   {
+      if (net.equals("twitter")) {
+         return new TwitterNetwork(accessPass);
+      }else if (net.equals("flickr")) {
+         return new FlickrNetwork(accessPass);
+      }else if (net.equals("picasa")) {
+         return new PicasaNetwork(accessPass);
+      }else if (net.equals("orkut")){
+         return new OrkutNetwork(accessPass);
       }else {
-         referer = "";
-//       throw new Exception("Invalid CORS header (null referer)");
+         throw new Exception("Unknown Network");
       }
-      return new OrkutNetwork(
-         null,                                        // no access password
-         getBaseUrl(req) + "/jaxogram?OP=backCall" +  // callback URL
-         referer
-      );
    }
 
-   /*-------------------------------------------------------makePicasaNetwork-+
+   /*----------------------------------------------------------makeAuthorizer-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public static PicasaNetwork makePicasaNetwork(HttpServletRequest req)
-   throws Exception {
-      return new PicasaNetwork(
-         (String)req.getSession(true).getAttribute("accesspass")
-      );
+   public static OAuthorizer makeAuthorizer(String net) throws Exception
+   {
+      if (net.equals("twitter")) {
+         return new TwitterNetwork();
+      }else if (net.equals("flickr")) {
+         return new FlickrNetwork();
+      }else if (net.equals("orkut")){
+         return new OrkutNetwork();
+      }else {
+         throw new Exception("Unknown Authorizer");
+      }
    }
 
    /*--------------------------------------------------------------getBaseUrl-+

@@ -132,7 +132,7 @@ public class PicasaNetwork implements Network {
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public void uploadPhoto(
+   public String uploadPhoto(
       String albumId,
       String title,
       byte[] image,
@@ -157,6 +157,7 @@ public class PicasaNetwork implements Network {
             break;
          }
       }
+      return null;
    }
 
    /*-----------------------------------------------------listAllPhotosAsJson-+
