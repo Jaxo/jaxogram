@@ -170,13 +170,16 @@ header td:active {
 }
 
 #message {
-  border-top:1px solid #bbc;
-  border-left:1px solid #bbc;
-  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
-  opacity: 0.95;
-  background-color:#8b8b94;
+  /* border-top:1px solid #bbc;  */
+  /* border-left:1px solid #bbc; */
+  /* background-color:#8b8b94;   */
+  background-color: #C2C5CA;
+  border-color: #F2F3FF #555864 #F2F3FF #555864;
+  border-style: solid;
+  border-width: 1px;
+  opacity: 0.90;
   padding:1rem;
-  font-size:1.7rem;
+  font-size:1.4rem;
 }
 
 #progresspane {

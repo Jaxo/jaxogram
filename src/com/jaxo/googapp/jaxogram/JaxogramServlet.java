@@ -80,13 +80,17 @@ public class JaxogramServlet extends HttpServlet
             |    return an iframe contents
             */
             String referer = req.getParameter("referer");
+            String verifier = req.getParameter("oauth_verifier");
+            if (verifier == null) { // Facebook!
+               verifier = req.getParameter("code");
+            }
             if (referer != null) {
                String redirect = (
                   req.getParameter("referer") +
                   "?OP=backCall" +
                   "&NET=" + req.getParameter("NET") +
                   "&VRF=" +
-                  URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
+                  URLEncoder.encode(verifier, "UTF-8")
                );
 //*/           logger.info("Callback from orkut => proxy to " + redirect);
                resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
@@ -96,7 +100,7 @@ public class JaxogramServlet extends HttpServlet
                String memKey = req.getParameter("JXK");
                memcache.put(
                   memKey,
-                  URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
+                  URLEncoder.encode(verifier, "UTF-8"),
                   Expiration.byDeltaSeconds(300) // 5 minutes
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
@@ -277,7 +281,9 @@ public class JaxogramServlet extends HttpServlet
    public static Network makeNetwork(String net, String accessPass)
    throws Exception
    {
-      if (net.equals("twitter")) {
+      if (net.equals("facebook")) {
+         return new FacebookNetwork(accessPass);
+      }else if (net.equals("twitter")) {
          return new TwitterNetwork(accessPass);
       }else if (net.equals("flickr")) {
          return new FlickrNetwork(accessPass);
@@ -296,7 +302,9 @@ public class JaxogramServlet extends HttpServlet
    +-------------------------------------------------------------------------*/
    public static OAuthorizer makeAuthorizer(String net) throws Exception
    {
-      if (net.equals("twitter")) {
+      if (net.equals("facebook")) {
+         return new FacebookNetwork();
+      }else if (net.equals("twitter")) {
          return new TwitterNetwork();
       }else if (net.equals("flickr")) {
          return new FlickrNetwork();

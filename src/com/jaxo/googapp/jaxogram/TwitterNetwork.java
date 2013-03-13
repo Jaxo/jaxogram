@@ -11,9 +11,6 @@
 */
 package com.jaxo.googapp.jaxogram;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +21,8 @@ import net.oauth.OAuthMessage;
 import net.oauth.http.HttpMessage;
 import net.oauth.http.HttpResponseMessage;
 import net.oauth.http.MultipartEntity;
+
+import org.apache.commons.io.IOUtils;
 //*/ import java.util.logging.Logger;
 
 /*-- class TwitterNetwork --+
@@ -209,7 +208,7 @@ public class TwitterNetwork extends OAuthorizer implements Network
          httpRequest,
          client.getHttpParameters()
       );
-      return toString(response.getBody(), response.getContentCharset());
+      return IOUtils.toString(response.getBody(), response.getContentCharset());
       // Example of JSON responses
       // {
       //    "id":"cag6rj",
@@ -233,28 +232,6 @@ public class TwitterNetwork extends OAuthorizer implements Network
       //       }
       //    ]
       // }
-   }
-
-   /*----------------------------------------------------------------toString-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   public static String toString(InputStream in, String encoding)
-   throws IOException
-   {
-      if (in == null) {
-         return null;
-      }else {
-         try {
-            StringBuilder sb = new StringBuilder();
-            InputStreamReader r = new InputStreamReader(in, encoding);
-            char[] s = new char[512];
-            for (int n; (n = r.read(s)) > 0; sb.append(s, 0, n));
-            return sb.toString();
-         }finally {
-             in.close();
-         }
-      }
    }
 }
 /*===========================================================================*/

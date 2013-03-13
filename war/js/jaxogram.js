@@ -367,7 +367,7 @@ function authorize() {
    eltText.id = "chooseNetwork";
    eltText.appendChild(document.createTextNode(i18n("chooseNetwork")));
    eltContainer.appendChild(eltText);
-   ["orkut", "flickr", "picasa", "twitter"].forEach(
+   ["orkut", "flickr", "picasa", "twitter", "facebook"].forEach(
       function(name) {
          var elt = document.createElement("IMG");
          elt.className = "buttonLike";
