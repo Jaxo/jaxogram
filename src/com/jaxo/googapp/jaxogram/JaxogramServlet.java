@@ -72,7 +72,7 @@ public class JaxogramServlet extends HttpServlet
       try {
          if (op.equals("backCall")) {
             /*
-            | Call back from Orkut:
+            | Call back from Orkut, Twitter, etc...
             | regular WEB app:
             |    pass the oauth_verifier back to origin (redirect to the referer page)
             | packaged app
@@ -80,6 +80,7 @@ public class JaxogramServlet extends HttpServlet
             |    return an iframe contents
             */
             String referer = req.getParameter("referer");
+            String net = req.getParameter("NET");
             String verifier = req.getParameter("oauth_verifier");
             if (verifier == null) { // Facebook!
                verifier = req.getParameter("code");
@@ -87,10 +88,8 @@ public class JaxogramServlet extends HttpServlet
             if (referer != null) {
                String redirect = (
                   req.getParameter("referer") +
-                  "?OP=backCall" +
-                  "&NET=" + req.getParameter("NET") +
-                  "&VRF=" +
-                  URLEncoder.encode(verifier, "UTF-8")
+                  "?OP=backCall" + "&NET=" + net +
+                  "&VRF=" + URLEncoder.encode(verifier, "UTF-8")
                );
 //*/           logger.info("Callback from orkut => proxy to " + redirect);
                resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
@@ -100,25 +99,11 @@ public class JaxogramServlet extends HttpServlet
                String memKey = req.getParameter("JXK");
                memcache.put(
                   memKey,
-                  URLEncoder.encode(verifier, "UTF-8"),
+                  "{\"VRF\":\"" + verifier + "\", \"NET\":\"" + net + "\"}",
                   Expiration.byDeltaSeconds(300) // 5 minutes
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
             }
-         }else if (op.equals("backCallTest")) {  // Debug only
-            MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-            String memKey = req.getParameter("JXK");
-            memcache.put(
-               memKey,
-               URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8"),
-               Expiration.byDeltaSeconds(300)
-            );
-            resp.setContentType("text/html");
-            writer.print(
-               backCallTestResponse(
-                  URLEncoder.encode(req.getParameter("oauth_verifier"), "UTF-8")
-               )
-            );
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
                resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));
@@ -130,15 +115,17 @@ public class JaxogramServlet extends HttpServlet
             // resp.setHeader("Access-Control-Expose-Headers", "FooBar");
 
             if (op.equals("getVerifier")) {
+               // issued repeatedly by packaged application
                MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
                String memKey = req.getParameter("JXK");
                String val = (String)memcache.get(memKey);
                if (val == null) {
+                  // TODO To avoid repeated calls, should I wait here a bit?
                   val = "???";
                }else {
                   memcache.delete(memKey);
                }
-               writer.print(val);
+               writer.print(val); // { "VRF":"(verifier)", "NET":"(facebook)" }
 
             }else if (op.equals("postAccPss")) {
                InputStream in = req.getInputStream();
@@ -325,29 +312,6 @@ public class JaxogramServlet extends HttpServlet
       sb.append(req.getScheme()).append("://").append(req.getServerName());
       if ((port != 80) && (port != 443)) sb.append(':').append(port);
       return sb.toString();
-   }
-
-   /*----------------------------------------------------backCallTestResponse-+
-   *//**
-   * Debug only
-   *//*
-   +-------------------------------------------------------------------------*/
-   private static String backCallTestResponse(String verifier) {
-      String f = (
-         "<HTML><HEAD>" +
-         "\n<SCRIPT type='text/javascript'>" +
-         "\nfunction setVerifier() {" +
-         "\n  document.getElementById('vrf').innerHTML = (" +
-            "\n'<SMALL>" + verifier + "</SMALL>'" +
-         "\n  );" +
-         "\n}" +
-         "\n</SCRIPT></HEAD>" +
-         "\n<BODY><H1>Back Call Test</H1>" +
-         "\n<BUTTON onclick='setVerifier();'>Set Verifier</BUTTON>" +
-         "\n<DIV id='vrf'>&nbsp;</DIV>" +
-         "\n</BODY></HTML>"
-      );
-      return f;
    }
 }
 /*===========================================================================*/

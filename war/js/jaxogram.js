@@ -17,7 +17,6 @@ window.onload = function() {
          server_url = "http://localhost:8888/jaxogram" // "http://ottokar/jaxogram/index.html"
       }
    }
-   //OT-LH*/ isPackaged = true;  // testing on ottokar/localhost
    if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
       alert("Warning: test version\nServer at\n" + server_url);
    }
@@ -493,7 +492,6 @@ function browseTo(targetUrl) {
    pane.appendChild(browserFrame);
    pane.style.visibility = "visible";
 
-   //OT-LH*/ browserFrame.src = server_url + "?OP=backCallTest&JXK=" + authKey " "&oauth_verifier=tombouctou";
    browserFrame.src = targetUrl;
 
    document.querySelector("footer").style.visibility="hidden";
@@ -517,13 +515,13 @@ function browseQuit() {
 function getVerifier() {
    issueRequest(
       "GET", "getVerifier", "&JXK=" + authKey,
-      function(verifier) {     // whenDone
-         if (verifier === "???") {
+      function(val) {     // whenDone
+         if (val === "???") {
             setTimeout(getVerifier, 1000);
          }else {
             browseQuit();
-            //OT-LH*/ alert("Bingo!\nVerifier is: " + verifier);
-            registerUser(verifier, "trouDuc");  // <<<< FIXME!!!!
+            var obj = JSON.parse(val);
+            registerUser(obj.VRF, obj.NET);
             formatUsersList(false);
          }
       },
