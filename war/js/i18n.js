@@ -16,15 +16,15 @@ var localeValues = {
       'pt-BR':"Quem sou eu?",
       'es-ES':"¿Quién soy yo?"
    }, p0_top: {
-      'en-US':"Share camera and gallery photos on Orkut and Picasa",
-      'fr-FR':"Partagez caméra et galerie photos sur Orkut et Picasa",
-      'pt-BR':"Compartilhar câmera e galeria de fotos no Orkut e Picasa",
-      'es-ES':"Compartir de la cámara y las fotos galería en Orkut y Picasa"
+      'en-US':"Share camera and gallery photos on well known social networks",
+      'fr-FR':"Partagez caméra et galerie photos sur la plupart des réseaux sociaux",
+      'pt-BR':"Compartilhar câmera e galeria de fotos na maioria das redes sociais",
+      'es-ES':"Compartir de la cámara y galería de fotos en la mayoría de las redes sociales"
    }, betterInstall: {
-      'en-US':"Jaxogram works nicer when installed,\nand it will remember your sign-in to Orkut.\n\nWant to install now?",
-      'fr-FR':"Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion à Orkut.\n\nVoulez-vous l'installer maintenant?",
-      'pt-BR':"Jaxogram funciona melhor quando instalado,\ne ele vai se lembrar do seu login do Orkut.\n\nDeseja instalar agora?",
-      'es-ES':"Jaxogram funciona mejor cuando se instala,\ny recordará su sesión de Orkut.\n\n¿Desea instalarlo ahora?"
+      'en-US':"Jaxogram works nicer when installed,\nand it will remember your sign-in settings.\n\nWant to install now?",
+      'fr-FR':"Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion.\n\nVoulez-vous l'installer maintenant?",
+      'pt-BR':"Jaxogram funciona melhor quando instalado\ne ele se lembra de suas configurações de conexão.\n\nDeseja instalar agora?",
+      'es-ES':"Jaxogram funciona mejor cuando se instalan\ny se recuerda la configuración de conexión.\n\n¿Desea instalarlo ahora?"
    }, installFailure: {
       'en-US':"Install has failed",
       'fr-FR':"Echec de l'installation",
@@ -36,10 +36,10 @@ var localeValues = {
       'pt-BR':"Para instalar, pressione a seta para a frente no Safari e toque \"Adicionar à Tela Início\"",
       'es-ES':"Para instalarlo, pulse la flecha de avance en Safari y toca \"Añadir a pantalla de inicio\""
    }, requestAuth: {
-      'en-US':"Orkut requires your authorization\nto let Jaxogram access your data.\nProceed to granting?",
-      'fr-FR':"Orkut va demander votre autorisation\npour accèder à vos données.\nEtes vous d'accord?",
-      'pt-BR':"Orkut requer sua autorização \ nto vamos Jaxogram acessar seus dados. \nProsseguir a concessão?",
-      'es-ES':"Orkut requiere su autorización\npara que Jaxogram acceder a sus datos.\nProceda a la concesión?"
+      'en-US':"Your authorization is required\nto let Jaxogram access your data.\nProceed to granting?",
+      'fr-FR':"Vous devrez donner votre autorisation\nd'accèder à vos données.\nContinuer ?",
+      'pt-BR':"Sua autorização é necessária\npara deixar Jaxogram acessar seus dados.\nProsseguir a concessão?",
+      'es-ES':"Se requiere su autorización\npara que Jaxogram acceder a sus datos.\nProceda a la concesión?"
    }, noFileApi: {
       'en-US':"The file API isn't supported on this browser yet.",
       'fr-FR':"Pas d'interface 'File' pour ce navigateur",
