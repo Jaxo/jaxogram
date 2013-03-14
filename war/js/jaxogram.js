@@ -254,6 +254,8 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       var imgElt = document.createElement("IMG");
       if (album.thumbnailUrl && (album.thumbnailUrl.length !== 0)) {
          imgElt.src = album.thumbnailUrl;
+      }else {
+         imgElt.src = "../images/unknSmall.png";
       }
       var spanElt = document.createElement("SPAN");
       spanElt.appendChild(document.createTextNode(title));

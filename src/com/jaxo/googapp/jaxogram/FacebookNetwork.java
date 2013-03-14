@@ -42,7 +42,6 @@ public class FacebookNetwork extends OAuthorizer implements Network
    private static final String OAUTH_ACCESS_URL = "https://graph.facebook.com/oauth/access_token";
 
    private static final String ACCESS_TOKEN_NAME = "access_token=";
-   private static final String USERNAME_NAME = "\"name\"";
 
    /*----------------------------------------------------------FacebookNetwork-+
    *//**
@@ -128,13 +127,11 @@ public class FacebookNetwork extends OAuthorizer implements Network
             ),
             client.getHttpParameters()
          );
-         body = IOUtils.toString(response.getBody(), response.getContentCharset());
          if (response.getStatusCode() == 200) {
-            int beg = body.indexOf(USERNAME_NAME);
-            if (beg >= 0) {
-               beg = body.indexOf('"', beg+USERNAME_NAME.length()+1) + 1;
-               userName = body.substring(beg, body.indexOf('"', beg));
-            }
+            userName = jsonGet(
+               IOUtils.toString(response.getBody(), response.getContentCharset()),
+               "name"
+            );
          }
       }
       /**/ logger.info("authenticate: \n\turi:\"" + givenAccessor.tokenSecret + "\"\n\tresponse code: " + response.getStatusCode() + "\n\taccess token: \"" + ((accessToken == null)?"[NONE]" : accessToken) + "\"\n\tuser name: \"" + ((userName == null)?"[NONE]" : userName) + "\"\n\tresponse value: \"" + body + "\"" );
@@ -150,27 +147,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
    +-------------------------------------------------------------------------*/
    public String whoIsAsJson(String id) throws Exception {
       // We do not take "id" into account (we suppose it's "me")
-      HttpResponseMessage response= client.getHttpClient().execute(
-         new HttpMessage(
-            OAuthMessage.GET,
-            new URL(
-               OAUTH_REQUEST_URL +
-               "/me?access_token=" +  accessor.accessToken
-//             "/me/albums?access_token=" +  accessor.accessToken
-            )
-         ),
-         client.getHttpParameters()
-      );
-      String foo = IOUtils.toString(response.getBody(), response.getContentCharset());
-      /**/ logger.info("whoIs:" + foo);
-      return foo;
-//    StringBuilder sb = new StringBuilder();
-//    sb.append("{\"name\":{\"givenName\":\"").
-//    append("Not Yet Implemented").
-//    append("\",\"familyName\":\" \"},").
-//    append("\"birthday\":\"\",").
-//    append("\"gender\":\"\"}");
-//    return sb.toString();
+      return get("/me", null);
    }
 
    /*--------------------------------------------------------listAlbumsAsJson-+
@@ -179,14 +156,35 @@ public class FacebookNetwork extends OAuthorizer implements Network
    *//*
    +-------------------------------------------------------------------------*/
    public String listAlbumsAsJson() throws Exception {
-      StringBuilder sb = new StringBuilder();
-      sb.append("[{\"id\":\"").
-      append("15799571").
-      append("\",\"title\":\"").append("Dummy").
-      append("\",\"description\":\"").
-      append("Unused for Facebook").
-      append("\",\"thumbnailUrl\":\"").append("").
-      append("\"}]");
+      JsonIterator it = new JsonIterator(
+         get("/me/albums", "fields=id,name,cover_photo")
+      );
+      String title;
+      String id;
+      StringBuffer sb = new StringBuffer();
+      sb.append('[');
+      boolean first = true;
+      while (
+         ((id = it.next("id")) != null) &&
+         ((title = it.next("name")) != null)
+      ) {
+         String url;
+         if (first) {
+            first = false;
+         }else {
+            sb.append(',');
+         }
+         sb.append("{\"id\":\"").append(id).
+         append("\",\"title\":\"").append(title);
+         if (
+            ((url = it.next("cover_photo")) != null) &&
+            ((url = jsonGet(get("/"+url, "fields=source"), "source")) != null)
+         ) {
+            sb.append("\",\"thumbnailUrl\":\"").append(url);
+         }
+         sb.append("\"}");
+      }
+      sb.append(']');
       return sb.toString();
    }
 
@@ -195,7 +193,11 @@ public class FacebookNetwork extends OAuthorizer implements Network
    *//*
    +-------------------------------------------------------------------------*/
    public void createAlbum(String title, String desc) throws Exception {
-      // TODO
+      MultipartEntity entity = new MultipartEntity();
+      entity.addField("name", title, "UTF-8");
+      entity.addField("message", desc, "UTF-8");
+      post("/me/albums", null, entity);
+      // return post("/me/albums", null, entity);
    }
 
    /*-------------------------------------------------------------uploadPhoto-+
@@ -211,10 +213,30 @@ public class FacebookNetwork extends OAuthorizer implements Network
    )
    throws Exception
    {
+      // TODO album id is not yet used
       MultipartEntity entity = new MultipartEntity();
-      List<OAuth.Parameter> headers = new ArrayList<OAuth.Parameter>();
-      entity.addField("message", "A acat", "UTF-8");
+      entity.addField("message", title, "UTF-8");
       entity.addFile("file", "tmpfile." + type, "image/" + type, image);
+      return post("/" + albumId + "/photos", null, entity);
+   }
+
+   /*--------------------------------------------------------------------post-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   private String post(String path, String query, MultipartEntity entity)
+   throws Exception
+   {
+      List<OAuth.Parameter> headers = new ArrayList<OAuth.Parameter>();
+      StringBuilder sb = new StringBuilder(OAUTH_REQUEST_URL);
+      sb.append(path);
+      sb.append('?');
+      if ((query != null) && (query.length() > 0)) {
+         sb.append(query);
+         sb.append('&');
+      }
+      sb.append("access_token=");
+      sb.append(accessor.accessToken);
       headers.add(
          new OAuth.Parameter(
             net.oauth.http.HttpMessage.CONTENT_TYPE,
@@ -222,23 +244,87 @@ public class FacebookNetwork extends OAuthorizer implements Network
          )
       );
       HttpMessage request = new HttpMessage(
-         OAuthMessage.POST,
-         new URL(
-            OAUTH_REQUEST_URL + "/me/photos" +
-//          "?access_token=AAABZCUzGzP7IBAFyPzYNPVnWSE8pGHpOk9ZBqIXuLVNQfZAo3FPzaZB8wIuO6mXghq3IO7e7yvlABkfqB6mjDvIKB3ZBdNAEKpyGJ8VhNzQZDZD"
-            "?access_token=AAABZCUzGzP7IBAFyPzYNPVnWSE8pGHpOk9ZBqIXuLVNQfZAo3FPzaZB8wIuO6mXghq3IO7e7yvlABkfqB6mjDvIKB3ZBdNAEKpyGJ8VhNzQZDZD"
-         ),
-         entity.getBody()
+         OAuthMessage.POST, new URL(sb.toString()), entity.getBody()
       );
       request.headers.addAll(headers);
       HttpResponseMessage response = client.getHttpClient().execute(
          request,
          client.getHttpParameters()
       );
-      String body = IOUtils.toString(response.getBody(), response.getContentCharset());
-      /**/ logger.info("upld: response: \"" + body + "\"");
-      // {"id":"10151604445814623","post_id":"588959622_10151604443959623"}
+      String body = IOUtils.toString(
+         response.getBody(), response.getContentCharset()
+      );
+      if (response.getStatusCode() != 200) {
+         throw new Exception("RC=" + response.getStatusCode() + "\n" + body);
+      }
       return body;
+   }
+
+   /*---------------------------------------------------------------------get-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   private String get(String path, String query) throws Exception
+   {
+      StringBuilder sb = new StringBuilder(OAUTH_REQUEST_URL);
+      sb.append(path);
+      sb.append('?');
+      if ((query != null) && (query.length() > 0)) {
+         sb.append(query);
+         sb.append('&');
+      }
+      sb.append("access_token=");
+      sb.append(accessor.accessToken);
+      HttpResponseMessage response= client.getHttpClient().execute(
+         new HttpMessage(OAuthMessage.GET, new URL(sb.toString())),
+         client.getHttpParameters()
+      );
+      String body = IOUtils.toString(
+         response.getBody(), response.getContentCharset()
+      );
+      /**/ logger.info("GET " + path + " " + query + " RC:" + response.getStatusCode() + "\n\t\"" + body + "\"");
+      if (response.getStatusCode() != 200) {
+         throw new Exception("RC=" + response.getStatusCode() + "\n" + body);
+      }
+      return body;
+   }
+
+   /*---------------------------------------------------- class JsonIterator -+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   static class JsonIterator {
+      String m_data;
+      int m_start;
+      JsonIterator(String data) {
+         m_data = data;
+         m_start = -1;
+      }
+      String next(String name) {
+         name = "\"" + name + "\"";
+         int start = m_data.indexOf(name, m_start+1);
+         if (start >= 0) {
+            m_start = m_data.indexOf('"', start+name.length()+1) + 1;
+            return m_data.substring(m_start, m_start=m_data.indexOf('"', m_start));
+         }else {
+            return null;
+         }
+      }
+   }
+
+   /*-----------------------------------------------------------------jsonGet-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   static String jsonGet(String data, String name) {
+      name = "\"" + name + "\"";
+      int start = data.indexOf(name);
+      if (start >= 0) {
+         start = data.indexOf('"', start+name.length()+1) + 1;
+         return data.substring(start, data.indexOf('"', start));
+      }else {
+         return null;
+      }
    }
 }
 /*===========================================================================*/
