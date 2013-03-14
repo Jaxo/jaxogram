@@ -360,6 +360,7 @@ function clearMessagePane() {
 }
 
 function authorize() {
+   clearMessagePane();
    var eltContainer = document.createElement("DIV");
    var eltText = document.createElement("DIV");
    eltContainer.style.width = "180px";
@@ -381,6 +382,17 @@ function authorize() {
          eltContainer.appendChild(elt);
       }
    );
+   var eltBtnCancel = document.createElement("BUTTON");
+   eltBtnCancel.className = "i18n";
+   eltBtnCancel.id = "cancel";
+   eltBtnCancel.appendChild(document.createTextNode(i18n("cancel")));
+   eltBtnCancel.onclick = function() {
+      clearMessagePane();
+   }
+   var eltDiv3 = document.createElement("DIV");
+   eltDiv3.style.paddingTop = "2rem";
+   eltDiv3.appendChild(eltBtnCancel);
+   eltContainer.appendChild(eltDiv3);
    showMessagePane(eltContainer);
 }
 
@@ -393,7 +405,6 @@ function authorizePicasa() {
 
    var eltLeg1 = document.createElement("LEGEND");
    eltLeg1.className = "i18n";
-   eltLeg1.id = "i18n";
    eltLeg1.id = "login";
    eltLeg1.appendChild(document.createTextNode(i18n("login")));
    var eltInp1 = document.createElement("INPUT");
@@ -406,7 +417,6 @@ function authorizePicasa() {
 
    var eltLeg2 = document.createElement("LEGEND");
    eltLeg2.className = "i18n";
-   eltLeg2.id = "i18n";
    eltLeg2.id = "passwd";
    eltLeg2.appendChild(document.createTextNode(i18n("passwd")));
    var eltInp2 = document.createElement("INPUT");
@@ -420,7 +430,6 @@ function authorizePicasa() {
 
    var eltBtnOk = document.createElement("BUTTON");
    eltBtnOk.className = "i18n";
-   eltBtnOk.id = "i18n";
    eltBtnOk.id = "OK";
    eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
    eltBtnOk.onclick = function() {
@@ -440,7 +449,6 @@ function authorizePicasa() {
 
    var eltBtnCancel = document.createElement("BUTTON");
    eltBtnCancel.className = "i18n";
-   eltBtnCancel.id = "i18n";
    eltBtnCancel.id = "cancel";
    eltBtnCancel.appendChild(document.createTextNode(i18n("cancel")));
    eltBtnCancel.onclick = function() {
@@ -451,12 +459,13 @@ function authorizePicasa() {
    eltSepa.style.marginLeft = "3rem";
 
    var eltDiv3 = document.createElement("DIV");
-   eltDiv3.style.marginTop = "5rem";
+   eltDiv3.style.paddingTop = "2rem";
    eltDiv3.appendChild(eltBtnOk);
    eltDiv3.appendChild(eltSepa);
    eltDiv3.appendChild(eltBtnCancel);
 
    var eltContainer = document.createElement("DIV");
+   eltContainer.style.textAlign = "center";
    eltContainer.appendChild(eltText);
    eltContainer.appendChild(eltDiv1);
    eltContainer.appendChild(eltDiv2);
@@ -615,22 +624,51 @@ function listAlbums(event) {
 }
 
 function createAlbum(isDirect) {
-   var resp = prompt(
-      i18n(isDirect? 'createAlbumProlog1' : 'createAlbumProlog2') +
-      i18n('createAlbum'),
-      'Jaxogram / ' + i18n('albumDescr')
+   clearMessagePane();
+   var eltText = document.createElement("DIV");
+   eltText.className = "i18n";
+   eltText.id = "picasaLogin";
+   eltText.appendChild(
+      document.createTextNode(
+         i18n(isDirect? 'createAlbumProlog1' : 'createAlbumProlog2')
+      )
    );
-   if (resp) {
-      var ix = resp.indexOf('/');
-      var what = "createAlbum";
-      if (ix === -1) {
-         what += "&title=" + resp.replace(/^\s+|\s+$/g,'');
-      }else {
-         what += (
-            "&title=" + resp.substr(0, ix).replace(/^\s+|\s+$/g,'') +
-            "&descr=" + resp.substr(ix+1).replace(/^\s+|\s+$/g,'')
-         );
-      }
+
+   var eltLeg1 = document.createElement("LEGEND");
+   eltLeg1.className = "i18n";
+   eltLeg1.id = "title";
+   eltLeg1.appendChild(document.createTextNode(i18n("title")));
+   var eltInp1 = document.createElement("INPUT");
+   var eltField1 = document.createElement("FIELDSET");
+   eltField1.appendChild(eltLeg1);
+   eltField1.appendChild(eltInp1);
+   var eltDiv1 = document.createElement("DIV");
+   eltDiv1.style.margin = "2rem auto";
+   eltDiv1.appendChild(eltField1);
+
+   var eltLeg2 = document.createElement("LEGEND");
+   eltLeg2.className = "i18n";
+   eltLeg2.id = "description";
+   eltLeg2.appendChild(document.createTextNode(i18n("description")));
+   var eltInp2 = document.createElement("INPUT");
+   var eltField2 = document.createElement("FIELDSET");
+   eltField2.appendChild(eltLeg2);
+   eltField2.appendChild(eltInp2);
+   var eltDiv2 = document.createElement("DIV");
+   eltDiv2.style.margin = "2rem auto";
+   eltDiv2.appendChild(eltField2);
+
+   var eltBtnOk = document.createElement("BUTTON");
+   eltBtnOk.className = "i18n";
+   eltBtnOk.id = "OK";
+   eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
+   eltBtnOk.onclick = function() {
+      clearMessagePane();
+      var what = (
+         "createAlbum" +
+         "&title=" + eltInp1.value.replace(/^\s+|\s+$/g,'') +
+         "&descr=" + eltInp2.value.replace(/^\s+|\s+$/g,'')
+      );
       issueRequestStd(
          what,
          function(albums) {
@@ -643,6 +681,31 @@ function createAlbum(isDirect) {
          }
       );
    }
+
+   var eltBtnCancel = document.createElement("BUTTON");
+   eltBtnCancel.className = "i18n";
+   eltBtnCancel.id = "cancel";
+   eltBtnCancel.appendChild(document.createTextNode(i18n("cancel")));
+   eltBtnCancel.onclick = function() {
+      clearMessagePane();
+   }
+
+   var eltSepa = document.createElement("SPAN");
+   eltSepa.style.marginLeft = "3rem";
+
+   var eltDiv3 = document.createElement("DIV");
+   eltDiv3.style.paddingTop = "2rem";
+   eltDiv3.appendChild(eltBtnOk);
+   eltDiv3.appendChild(eltSepa);
+   eltDiv3.appendChild(eltBtnCancel);
+
+   var eltContainer = document.createElement("DIV");
+   eltContainer.appendChild(eltText);
+   eltContainer.appendChild(eltDiv1);
+   eltContainer.appendChild(eltDiv2);
+   eltContainer.appendChild(eltDiv3);
+
+   showMessagePane(eltContainer);
 }
 
 function pickAndUpload(event) {

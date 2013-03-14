@@ -145,11 +145,16 @@ var localeValues = {
       'fr-FR':"Vous devez d'abord créer un album dans lequel la photo sera insérée\n\n",
       'pt-BR':"Você precisa primeiro criar um álbum em que a foto será inserida\n\n",
       'es-ES':"Necesitas primero en crear un álbum en el que se inserta la foto\n\n"
-   }, createAlbum: {
-      'en-US':"Enter  the album title,\npossibly followed by a slash sign and a description",
-      'fr-FR':"Entrer le titre de l'album,\néventuellement suivi d'une barre oblique et une description",
-      'pt-BR':"Digite o título do álbum, \npossibly seguido por um sinal de barra e uma descrição",
-      'es-ES':"lntroduzca el título del álbum,\npossibly seguido por un signo de barra y una descripción"
+   }, title: {
+      'en-US':"Album title",
+      'fr-FR':"Titre de l'album",
+      'pt-BR':"Título do álbum",
+      'es-ES':"Título del álbum"
+   }, description: {
+      'en-US':"Description",
+      'fr-FR':"Description",
+      'pt-BR':"Descrição",
+      'es-ES':"Descripción"
    }, albumDescr: {
       'en-US':"Uploads",
       'fr-FR':"Téléchargements",
