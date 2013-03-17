@@ -345,30 +345,9 @@ function fitImage(img) {
    img.setAttribute("style", s);
 }
 
-function showMessagePane(eltContainer) {
-   var eltMessage = document.getElementById("message");
-   eltMessage.appendChild(eltContainer);
-   document.getElementById("messagepane").style.visibility = "visible";
-}
-
-function clearMessagePane() {
-   var eltMessage = document.getElementById("message");
-   document.getElementById("messagepane").style.visibility = "hidden";
-   while (eltMessage.hasChildNodes()) {
-      eltMessage.removeChild(eltMessage.lastChild);
-   }
-}
-
 function authorize() {
-   clearMessagePane();
+   hideMessagePane();
    var eltContainer = document.createElement("DIV");
-   var eltText = document.createElement("DIV");
-   eltContainer.style.width = "180px";
-   eltContainer.style.textAlign = "center";
-   eltText.className = "i18n";
-   eltText.id = "chooseNetwork";
-   eltText.appendChild(document.createTextNode(i18n("chooseNetwork")));
-   eltContainer.appendChild(eltText);
    ["orkut", "flickr", "picasa", "twitter", "facebook"].forEach(
       function(name) {
          var elt = document.createElement("IMG");
@@ -382,100 +361,36 @@ function authorize() {
          eltContainer.appendChild(elt);
       }
    );
-   var eltBtnCancel = document.createElement("BUTTON");
-   eltBtnCancel.className = "i18n";
-   eltBtnCancel.id = "cancel";
-   eltBtnCancel.appendChild(document.createTextNode(i18n("cancel")));
-   eltBtnCancel.onclick = function() {
-      clearMessagePane();
-   }
-   var eltDiv3 = document.createElement("DIV");
-   eltDiv3.style.paddingTop = "2rem";
-   eltDiv3.appendChild(eltBtnCancel);
-   eltContainer.appendChild(eltDiv3);
-   showMessagePane(eltContainer);
+   showMessagePane("chooseNetwork", [eltContainer]);
 }
 
 function authorizePicasa() {
-   clearMessagePane();
-   var eltText = document.createElement("DIV");
-   eltText.className = "i18n";
-   eltText.id = "picasaLogin";
-   eltText.appendChild(document.createTextNode(i18n("picasaLogin")));
-
-   var eltLeg1 = document.createElement("LEGEND");
-   eltLeg1.className = "i18n";
-   eltLeg1.id = "login";
-   eltLeg1.appendChild(document.createTextNode(i18n("login")));
-   var eltInp1 = document.createElement("INPUT");
-   var eltField1 = document.createElement("FIELDSET");
-   eltField1.appendChild(eltLeg1);
-   eltField1.appendChild(eltInp1);
-   var eltDiv1 = document.createElement("DIV");
-   eltDiv1.style.margin = "2rem auto";
-   eltDiv1.appendChild(eltField1);
-
-   var eltLeg2 = document.createElement("LEGEND");
-   eltLeg2.className = "i18n";
-   eltLeg2.id = "passwd";
-   eltLeg2.appendChild(document.createTextNode(i18n("passwd")));
-   var eltInp2 = document.createElement("INPUT");
-   eltInp2.type = "password";
-   var eltField2 = document.createElement("FIELDSET");
-   eltField2.appendChild(eltLeg2);
-   eltField2.appendChild(eltInp2);
-   var eltDiv2 = document.createElement("DIV");
-   eltDiv2.style.margin = "2rem auto";
-   eltDiv2.appendChild(eltField2);
-
-   var eltBtnOk = document.createElement("BUTTON");
-   eltBtnOk.className = "i18n";
-   eltBtnOk.id = "OK";
-   eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
-   eltBtnOk.onclick = function() {
-      var passwd = eltInp1.value + " " + eltInp2.value;
-      issueRequest(
-         "POST", "checkAccPss", passwd,
-         function(userName) { // whenDone
-            clearMessagePane();
-            users.addUser(userName, passwd, "picasa");
-            formatUsersList(false);
-         },
-         function(rc, val) {  // whenFailed
-            alert(i18n("badLogin"));
-         }
-      );
-   }
-
-   var eltBtnCancel = document.createElement("BUTTON");
-   eltBtnCancel.className = "i18n";
-   eltBtnCancel.id = "cancel";
-   eltBtnCancel.appendChild(document.createTextNode(i18n("cancel")));
-   eltBtnCancel.onclick = function() {
-      clearMessagePane();
-   }
-
-   var eltSepa = document.createElement("SPAN");
-   eltSepa.style.marginLeft = "3rem";
-
-   var eltDiv3 = document.createElement("DIV");
-   eltDiv3.style.paddingTop = "2rem";
-   eltDiv3.appendChild(eltBtnOk);
-   eltDiv3.appendChild(eltSepa);
-   eltDiv3.appendChild(eltBtnCancel);
-
-   var eltContainer = document.createElement("DIV");
-   eltContainer.style.textAlign = "center";
-   eltContainer.appendChild(eltText);
-   eltContainer.appendChild(eltDiv1);
-   eltContainer.appendChild(eltDiv2);
-   eltContainer.appendChild(eltDiv3);
-
-   showMessagePane(eltContainer);
+   hideMessagePane();
+   var eltInp1 = makeInputField("login");
+   var eltInp2 = makeInputField("passwd", "password");
+   showMessagePane(
+      "picasaLogin",
+      [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
+      function() {
+         hideMessagePane();
+         var passwd = eltInp1.value + " " + eltInp2.value;
+         issueRequest(
+            "POST", "checkAccPss", passwd,
+            function(userName) { // whenDone
+               hideMessagePane();
+               users.addUser(userName, passwd, "picasa");
+               formatUsersList(false);
+            },
+            function(rc, val) {  // whenFailed
+               alert(i18n("badLogin"));
+            }
+         );
+      }
+   );
 }
 
 function authorizeThruOAuth(net) {
-   clearMessagePane();
+   hideMessagePane();
    // make a pseudo-random key )between 100000 and 200000
    authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
@@ -624,88 +539,32 @@ function listAlbums(event) {
 }
 
 function createAlbum(isDirect) {
-   clearMessagePane();
-   var eltText = document.createElement("DIV");
-   eltText.className = "i18n";
-   eltText.id = "picasaLogin";
-   eltText.appendChild(
-      document.createTextNode(
-         i18n(isDirect? 'createAlbumProlog1' : 'createAlbumProlog2')
-      )
+   hideMessagePane();
+   var eltInp1 = makeInputField("title");
+   var eltInp2 = makeInputField("description");
+   showMessagePane(
+      isDirect? "createAlbumProlog1" : "createAlbumProlog2",
+      [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
+      function() {
+         hideMessagePane();
+         var what = (
+            "createAlbum" +
+            "&title=" + eltInp1.value.replace(/^\s+|\s+$/g,'') +
+            "&descr=" + eltInp2.value.replace(/^\s+|\s+$/g,'')
+         );
+         issueRequestStd(
+            what,
+            function(albums) {
+               var newAlbum = albums[0];
+               users.setAlbum(newAlbum.id, newAlbum.title);
+               formatAlbumsList(
+                  albums,
+                  document.getElementById("jgUsersAid").getElementsByTagName("UL")[0]
+               );
+            }
+         );
+      }
    );
-
-   var eltLeg1 = document.createElement("LEGEND");
-   eltLeg1.className = "i18n";
-   eltLeg1.id = "title";
-   eltLeg1.appendChild(document.createTextNode(i18n("title")));
-   var eltInp1 = document.createElement("INPUT");
-   var eltField1 = document.createElement("FIELDSET");
-   eltField1.appendChild(eltLeg1);
-   eltField1.appendChild(eltInp1);
-   var eltDiv1 = document.createElement("DIV");
-   eltDiv1.style.margin = "2rem auto";
-   eltDiv1.appendChild(eltField1);
-
-   var eltLeg2 = document.createElement("LEGEND");
-   eltLeg2.className = "i18n";
-   eltLeg2.id = "description";
-   eltLeg2.appendChild(document.createTextNode(i18n("description")));
-   var eltInp2 = document.createElement("INPUT");
-   var eltField2 = document.createElement("FIELDSET");
-   eltField2.appendChild(eltLeg2);
-   eltField2.appendChild(eltInp2);
-   var eltDiv2 = document.createElement("DIV");
-   eltDiv2.style.margin = "2rem auto";
-   eltDiv2.appendChild(eltField2);
-
-   var eltBtnOk = document.createElement("BUTTON");
-   eltBtnOk.className = "i18n";
-   eltBtnOk.id = "OK";
-   eltBtnOk.appendChild(document.createTextNode(i18n("OK")));
-   eltBtnOk.onclick = function() {
-      clearMessagePane();
-      var what = (
-         "createAlbum" +
-         "&title=" + eltInp1.value.replace(/^\s+|\s+$/g,'') +
-         "&descr=" + eltInp2.value.replace(/^\s+|\s+$/g,'')
-      );
-      issueRequestStd(
-         what,
-         function(albums) {
-            var newAlbum = albums[0];
-            users.setAlbum(newAlbum.id, newAlbum.title);
-            formatAlbumsList(
-               albums,
-               document.getElementById("jgUsersAid").getElementsByTagName("UL")[0]
-            );
-         }
-      );
-   }
-
-   var eltBtnCancel = document.createElement("BUTTON");
-   eltBtnCancel.className = "i18n";
-   eltBtnCancel.id = "cancel";
-   eltBtnCancel.appendChild(document.createTextNode(i18n("cancel")));
-   eltBtnCancel.onclick = function() {
-      clearMessagePane();
-   }
-
-   var eltSepa = document.createElement("SPAN");
-   eltSepa.style.marginLeft = "3rem";
-
-   var eltDiv3 = document.createElement("DIV");
-   eltDiv3.style.paddingTop = "2rem";
-   eltDiv3.appendChild(eltBtnOk);
-   eltDiv3.appendChild(eltSepa);
-   eltDiv3.appendChild(eltBtnCancel);
-
-   var eltContainer = document.createElement("DIV");
-   eltContainer.appendChild(eltText);
-   eltContainer.appendChild(eltDiv1);
-   eltContainer.appendChild(eltDiv2);
-   eltContainer.appendChild(eltDiv3);
-
-   showMessagePane(eltContainer);
 }
 
 function pickAndUpload(event) {
