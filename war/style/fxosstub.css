@@ -159,7 +159,6 @@ header td:active {
    height:100%;
    display:table;
    z-index:2;
-   transition: all 0.6s;
    /* visibility: hidden; */
 }
 #messagepane > div:first-child {

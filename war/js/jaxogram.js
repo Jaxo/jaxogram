@@ -18,7 +18,7 @@ window.onload = function() {
       }
    }
    if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
-      alert("Warning: test version\nServer at\n" + server_url);
+      simpleMsg("warning", i18n("testMode", server_url));
    }
    createDispatcher();
    users = new JgUsers();
@@ -40,9 +40,12 @@ window.onload = function() {
       function action(state, version) {
          if (
             (state === "uninstalled") && !users.hasSome() &&
-            (params.OP !== "backCall") && confirm(i18n('betterInstall'))
+            (params.OP !== "backCall")
          ) {
-            document.getElementById("btnInstall").click();
+            confirmMsg(
+               i18n('betterInstall'),
+               function() { document.getElementById("btnInstall").click(); }
+            );
          }else if ((state === "installed") && version) {
             document.querySelector("header h1 small").textContent = version;
          }
@@ -170,8 +173,11 @@ function formatUsersList(isUserRequired) {
       elt.appendChild(ulElt);
       tellAccessPass();
    }else {
-      if (isUserRequired && confirm(i18n("requestAuth"))) {
-         authorize();
+      if (isUserRequired) {
+         confirmMsg(
+            i18n("requestAuth"),
+            function() { authorize(); }
+         );
       }else {
          var elt = document.getElementById("jgUsersIn");
          var btnElt = document.createElement("BUTTON");
@@ -309,10 +315,18 @@ function changeLogin(elt, event) {
       var index = -1;
       while (liElt=liElt.previousSibling) ++index;
       if (event.target.getAttribute("role") === "trasher") {
-         if (confirm(i18n("revokeAccess", event.target.nextSibling.textContent))) {
-            users.deleteUserAt(index);
-            formatUsersList(false);
-         }
+         var img = event.target.nextSibling.src;
+         confirmMsg(
+            i18n(
+               "revokeAccess",
+               event.target.nextSibling.nextSibling.textContent,
+               img.substring(1+img.lastIndexOf("/"), img.lastIndexOf("SmallLogo"))
+            ),
+            function() {
+               users.deleteUserAt(index);
+               formatUsersList(false);
+            }
+         );
       }else {
          users.selectUserAt(index);
          document.getElementById('jgUserName').textContent = users.getUserName();
@@ -346,7 +360,6 @@ function fitImage(img) {
 }
 
 function authorize() {
-   hideMessagePane();
    var eltContainer = document.createElement("DIV");
    ["orkut", "flickr", "picasa", "twitter", "facebook"].forEach(
       function(name) {
@@ -361,28 +374,27 @@ function authorize() {
          eltContainer.appendChild(elt);
       }
    );
-   showMessagePane("chooseNetwork", [eltContainer]);
+   showMsg("chooseNetwork", [eltContainer]);
 }
 
 function authorizePicasa() {
-   hideMessagePane();
    var eltInp1 = makeInputField("login");
    var eltInp2 = makeInputField("passwd", "password");
-   showMessagePane(
+   showMsg(
       "picasaLogin",
       [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
       function() {
-         hideMessagePane();
+         hideMsg();
          var passwd = eltInp1.value + " " + eltInp2.value;
          issueRequest(
             "POST", "checkAccPss", passwd,
             function(userName) { // whenDone
-               hideMessagePane();
+               hideMsg();
                users.addUser(userName, passwd, "picasa");
                formatUsersList(false);
             },
             function(rc, val) {  // whenFailed
-               alert(i18n("badLogin"));
+               simpleMsg("error", i18n("badLogin"));
             }
          );
       }
@@ -390,7 +402,7 @@ function authorizePicasa() {
 }
 
 function authorizeThruOAuth(net) {
-   hideMessagePane();
+   hideMsg();
    // make a pseudo-random key )between 100000 and 200000
    authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
@@ -405,7 +417,7 @@ function authorizeThruOAuth(net) {
          }
       },
       function(rc, val) {         // whenFailed
-         alert("authorize RC:" + rc + "\n" + val);
+         simpleMsg("error", "authorize RC:" + rc + "\n" + val);
       }
    );
 }
@@ -452,7 +464,7 @@ function getVerifier() {
          }
       },
       function(rc, val) { // whenFailed
-         alert("getVerifier RC:" + rc);
+         simpleMsg("error", "getVerifier RC:" + rc);
       }
    );
 }
@@ -472,7 +484,7 @@ function registerUser(verifier, net) {
          formatUsersList(false);
       },
       function(rc, val) { // whenFailed
-         alert(i18n("authDenied", val));
+         simpleMsg("error", i18n("authDenied", val));
       }
    );
 }
@@ -483,7 +495,7 @@ function tellAccessPass()
       "POST", "postAccPss", users.getAccessPass(),
       function(val) {},   // whenDone
       function(rc, val) { // whenFailed
-         alert('tellAccess RC: ' + rc + "\n" + val);
+         simpleMsg("error", "tellAccess RC: " + rc + "\n" + val);
       }
    );
 }
@@ -539,14 +551,13 @@ function listAlbums(event) {
 }
 
 function createAlbum(isDirect) {
-   hideMessagePane();
    var eltInp1 = makeInputField("title");
    var eltInp2 = makeInputField("description");
-   showMessagePane(
+   showMsg(
       isDirect? "createAlbumProlog1" : "createAlbumProlog2",
       [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
       function() {
-         hideMessagePane();
+         hideMsg();
          var what = (
             "createAlbum" +
             "&title=" + eltInp1.value.replace(/^\s+|\s+$/g,'') +
@@ -579,7 +590,7 @@ function pickAndUpload(event) {
             function action(albumsCount) {
                dispatcher.off("albumsListed", action);
                if (albumsCount > 0) {
-                  alert(i18n("selectOrCreateAlbum"));
+                  simpleMsg("warning", i18n("selectOrCreateAlbum"));
                }else {
                   createAlbum(false);
                }
@@ -607,10 +618,10 @@ function uploadPick(albumId) {
          a.result.blob,
          function(val) {     // whenDone
             expandPage("p1");
-            alert(i18n('imageUploaded', users.getAlbumTitle()));
+            simpleMsg("info", i18n('imageUploaded', users.getAlbumTitle()));
          },
          function(rc, val) { // whenFailed
-            alert("Error - RC = " + rc);
+            simpleMsg("error", "RC: " + rc);
          },
          "image/jpeg"
       );
@@ -620,21 +631,21 @@ function uploadPick(albumId) {
          img.src = url;
          img.onload = function() { URL.revokeObjectURL(url); };
       }catch (error) {
-         alert("Local error: " + error);
+         simpleMsg("error", "Local error: " + error);
       }
    };
-   a.onerror = function() { alert(i18n('pickImageError')); };
+   a.onerror = function() { simpleMsg("error", i18n('pickImageError')); };
 }
 
 function uploadFile(albumId) {
    var elt = document.getElementById('upldFile');
    elt.onchange = function() {
       if (typeof window.FileReader !== 'function') {
-         alert(i18n("noFileApi"));
+         simpleMsg("error", i18n("noFileApi"));
       }else if (!this.files) {
-         alert(i18n("noFileApiProp"));
+         simpleMsg("error", i18n("noFileApiProp"));
       }else if (!this.files[0]) {
-         alert(i18n("noFileSelected"));
+         simpleMsg("error", i18n("noFileSelected"));
       }else {
          var file = this.files[0];
          var formData = new FormData();
@@ -647,10 +658,10 @@ function uploadFile(albumId) {
             "POST", "postImageFile&NET=" + users.getNet(), formData,
             function(val) {     // whenDone
                expandPage("p1");
-               alert(i18n('imageUploaded', users.getAlbumTitle()));
+               simpleMsg("info", i18n("imageUploaded", users.getAlbumTitle()));
             },
             function(rc, val) { // whenFailed
-               alert("Error - RC = " + rc);
+               simpleMsg("error", "RC: " + rc);
             }
          );
          var reader = new FileReader();
@@ -674,7 +685,7 @@ function issueRequestStd(what, whenDone) {
          },
          function(rc, val) { // whenFailed
             dispatcher.clean();
-            alert(what + " RC: " + rc + "\n" + val);
+            simpleMsg("error", what + " RC: " + rc + "\n" + val);
          }
       );
    }
@@ -685,7 +696,7 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
    if (method === "GET") query += values;
    var xhr = new XMLHttpRequest({mozSystem: true});
    if (xhr.withCredentials === undefined) {
-      alert("Sorry: your browser doesn't handle cross-site requests");
+      simpleMsg("error", "Sorry: your browser doesn't handle cross-site requests");
       return;
    }
    xhr.withCredentials = true;

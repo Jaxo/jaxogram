@@ -1,20 +1,70 @@
-function hideMessagePane() {
-   document.getElementById("messagepane").style.top = '-100%';
+function showMsg(idTitle, eltContents, whenDone) {
+   hideMsg();
+   var elt = buildMessagePane(idTitle, eltContents, whenDone);
+   elt.style.transitionProperty = "top";
+   elt.style.transitionDuration = "0.6s";
+   elt.style.opacity = "1.0";
+   elt.style.top='0px';
 }
 
-function showMessagePane(idTitle, eltContents, whenDone) {
+function alertMsg(idTitle, eltContents, whenDone) {
+   hideMsg();
+   var elt = buildMessagePane(idTitle, eltContents, whenDone);
+   elt.style.transitionProperty = "opacity";
+   elt.style.transitionDuration = "3s";
+   elt.style.top = "0";
+   setTimeout(
+      function() {
+         elt.style.opacity = "0";
+         elt.addEventListener(
+            "transitionend",
+            function() {
+               elt.removeEventListener("transitionend", arguments.callee, true);
+               elt.style.transitionProperty = "none";
+               elt.style.transitionDuration = "0";
+               elt.style.top = "-100%";
+               elt.style.opacity = "1.0";
+            },
+            true
+         );
+      }, 1000
+   );
+}
+
+function confirmMsg(text, whenDone) {
+   var eltDiv = document.createElement("DIV");
+   eltDiv.style.padding = "2rem";
+   eltDiv.style.textAlign = "left";
+   eltDiv.textContent = text;
+   showMsg("confirm", [eltDiv], function() { hideMsg(); whenDone(); });
+}
+
+function simpleMsg(idTitle, text) {
+   var eltDiv = document.createElement("DIV");
+   eltDiv.style.padding = "2rem";
+   eltDiv.style.textAlign = "left";
+   eltDiv.textContent = text;
+   alertMsg(idTitle, [eltDiv]);
+}
+
+function hideMsg() {
+   var elt = document.getElementById("messagepane");
+   elt.style.top = '-100%';
+   elt.style.opacity = "1.0";
+}
+
+function buildMessagePane(idTitle, eltContents, whenDone) {
    var eltCell;
    var eltMsg = document.getElementById("messagepane");
    var eltRows = eltMsg.querySelectorAll(
       "div:first-child > div:first-child > table tr"
    );
    var row = eltRows[0];
-   row.cells[0].onclick = hideMessagePane;
+   row.cells[0].onclick = hideMsg;
    eltCell = eltRows[0].cells[2];
    eltCell.className = "i18n";
    eltCell.id = idTitle;
    eltCell.childNodes[0].textContent = i18n(idTitle);
-   eltMsg.style.top='0px';
    if (whenDone) {
       row.cells[3].style.visibility = "visible";
       row.cells[4].style.visibility = "visible";
@@ -31,6 +81,7 @@ function showMessagePane(idTitle, eltContents, whenDone) {
    eltContents.forEach(
       function(elt) { eltCell.appendChild(elt); }
    );
+   return eltMsg;
 }
 
 function makeInputField(name, type) {

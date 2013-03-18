@@ -81,10 +81,10 @@ var localeValues = {
       'pt-BR':"Autorização negada\n(%1)",
       'es-ES':"Autorización denegada\n(%1)"
    }, revokeAccess: {
-      'en-US':"Are you sure you want to delete\nthe login for \"%1\"?",
-      'fr-FR':"Veuiller confirmer la suppression\nde l'utilisateur \"%1\".",
-      'pt-BR':"Tem certeza de que deseja excluir\no login para \"%1\"?",
-      'es-ES':"¿Está seguro que desea eliminar [CR], el inicio de sesión para \"% 1 \"?"
+      'en-US':"Are you sure you want to delete\nthe login for \"%1\" on %2?",
+      'fr-FR':"Veuiller confirmer la suppression\nde l'utilisateur %2 \"%1\".",
+      'pt-BR':"Tem certeza de que deseja excluir\no %2 login para \"%1\"?",
+      'es-ES':"¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?"
    }, pickImageError: {
       'en-US':"The selection of the photo has failed",
       'fr-FR':"Erreur lors de la sélection de la photo",
@@ -130,6 +130,31 @@ var localeValues = {
       'fr-FR':"Annuler",
       'pt-BR':"Cancelar",
       'es-ES':"Cancelar"
+   }, infos: {
+      'en-US':"Info",
+      'fr-FR':"Information",
+      'pt-BR':"Informação",
+      'es-ES':"Info"
+   }, warning: {
+      'en-US':"Warning",
+      'fr-FR':"Alerte",
+      'pt-BR':"Aviso",
+      'es-ES':"Alerta"
+   }, error: {
+      'en-US':"Error",
+      'fr-FR':"Erreur",
+      'pt-BR':"Erro",
+      'es-ES':"Error"
+   }, confirm: {
+      'en-US':"Confirm",
+      'fr-FR':"Validez",
+      'pt-BR':"Confirmar",
+      'es-ES':"Confirmar"
+   }, testMode: {
+      'en-US':"Test version.\nServer at\n%1",
+      'fr-FR':"Version de test.\nServeur\n%1",
+      'pt-BR':"A versão de teste. Servidor\n%1",
+      'es-ES':"Prueba de versión.nServidor\n%1"
    }, selectOrCreateAlbum: {
       'en-US':"You need first to select or create the album in which the photo will be inserted",
       'fr-FR':"Vous devez d'abord sélectionner ou créer l'album dans lequel la photo sera insérée",
