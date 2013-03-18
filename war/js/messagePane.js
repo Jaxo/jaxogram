@@ -53,6 +53,29 @@ function hideMsg() {
    elt.style.opacity = "1.0";
 }
 
+function shakeMsg() {
+   var eltMsg = document.getElementById("messagepane");
+   var count = 0;
+   var timer = setInterval(
+      function() {
+         var delta;
+         if (++count > 17) {
+            delta = 0;
+            clearInterval(timer);
+         }else {
+            switch (count % 5) {
+            case 0: delta = 1; break;
+            case 1: delta = 0; break;
+            case 2: delta = -1; break;
+            case 4: delta = 0; break;
+            }
+         }
+         eltMsg.style.transform = "translateX(" + delta + "rem)";
+      },
+      32
+   );
+}
+
 function buildMessagePane(idTitle, eltContents, whenDone) {
    var eltCell;
    var eltMsg = document.getElementById("messagepane");

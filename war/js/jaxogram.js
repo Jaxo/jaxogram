@@ -84,7 +84,7 @@ window.onload = function() {
 // }
    var eltMain = document.getElementById("main");
    new GestureDetector(eltMain).startDetecting();
-   eltMain.addEventListener("swipe", swipeHandler);
+   eltMain.addEventListener("swipe", mainSwipeHandler);
 };
 
 // function p1Expanded(isExpanded) {
@@ -96,25 +96,14 @@ window.onload = function() {
 //    }
 // }
 
-function swipeHandler(e) {
+function mainSwipeHandler(e) {
    var direction = e.detail.direction;
    if (direction === 'right') {
       expandSidebarView(1);
    }else if (direction === 'left') {
       expandSidebarView(-1);
    }
-// alert(
-//    "Swipe:" +
-//    "\n start: " + detail.start +
-//    "\n end: " + detail.end +
-//    "\n dx: " + detail.dx +
-//    "\n dy: " + detail.dy +
-//    "\n dt: " + detail.dt +
-//    "\n vx: " + detail.vx +
-//    "\n vy: " + detail.vy +
-//    "\n direction: " + detail.direction +
-//    "\n angle: " + detail.angle
-// );
+// alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
 }
 
 function formatUsersList(isUserRequired) {
@@ -383,20 +372,24 @@ function authorizePicasa() {
    showMsg(
       "picasaLogin",
       [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
-      function() {
-         hideMsg();
-         var passwd = eltInp1.value + " " + eltInp2.value;
-         issueRequest(
-            "POST", "checkAccPss", passwd,
-            function(userName) { // whenDone
-               hideMsg();
-               users.addUser(userName, passwd, "picasa");
-               formatUsersList(false);
-            },
-            function(rc, val) {  // whenFailed
-               simpleMsg("error", i18n("badLogin"));
-            }
-         );
+      function() {     // whenDone
+         if ((eltInp1.value.length === 0) || (eltInp2.value.length === 0)) {
+            shakeMsg();
+         }else {
+            hideMsg();
+            var passwd = eltInp1.value + " " + eltInp2.value;
+            issueRequest(
+               "POST", "checkAccPss", passwd,
+               function(userName) { // whenDone
+                  hideMsg();
+                  users.addUser(userName, passwd, "picasa");
+                  formatUsersList(false);
+               },
+               function(rc, val) {  // whenFailed
+                  simpleMsg("error", i18n("badLogin"));
+               }
+            );
+         }
       }
    );
 }
