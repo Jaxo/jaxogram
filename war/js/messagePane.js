@@ -1,56 +1,75 @@
 function showMsg(idTitle, eltContents, whenDone) {
-   hideMsg();
-   var elt = buildMessagePane(idTitle, eltContents, whenDone);
-   elt.style.transitionProperty = "top";
-   elt.style.transitionDuration = "0.6s";
-   elt.style.opacity = "1.0";
-   elt.style.top='0px';
+   execute(
+      function(elt, args) {
+         buildMessagePane(elt, args);
+         elt.style.transitionProperty = "top";
+         elt.style.transitionDuration = "0.6s";
+         elt.style.opacity = "1.0";
+         elt.style.top='0px';
+      },
+      arguments
+   );
 }
 
 function alertMsg(idTitle, eltContents, whenDone) {
-   hideMsg();
-   var elt = buildMessagePane(idTitle, eltContents, whenDone);
-   elt.style.transitionProperty = "opacity";
-   elt.style.transitionDuration = "3s";
-   elt.style.top = "0";
-   setTimeout(
-      function() {
-         elt.style.opacity = "0";
-         elt.addEventListener(
-            "transitionend",
+   execute(
+      function(elt, args) {
+         buildMessagePane(elt, args);
+         elt.style.transitionProperty = "opacity";
+         elt.style.transitionDuration = "3s";
+         elt.style.top = "0";
+         setTimeout(
             function() {
-               elt.removeEventListener("transitionend", arguments.callee, true);
-               elt.style.transitionProperty = "none";
-               elt.style.transitionDuration = "0";
-               elt.style.top = "-100%";
-               elt.style.opacity = "1.0";
-            },
-            true
+               elt.style.opacity = "0";
+               elt.addEventListener(
+                  "transitionend",
+                  function() {
+                     elt.removeEventListener("transitionend", arguments.callee, true);
+                     hideMsg();
+                  },
+                  true
+               );
+            }, 1000
          );
-      }, 1000
+      },
+      arguments
    );
 }
 
 function confirmMsg(text, whenDone) {
-   var eltDiv = document.createElement("DIV");
-   eltDiv.style.padding = "2rem";
-   eltDiv.style.textAlign = "left";
-   eltDiv.textContent = text;
-   showMsg("confirm", [eltDiv], function() { hideMsg(); whenDone(); });
+   showMsg("confirm", [makeTextField(text)], function() { hideMsg(); whenDone(); });
 }
 
 function simpleMsg(idTitle, text) {
-   var eltDiv = document.createElement("DIV");
-   eltDiv.style.padding = "2rem";
-   eltDiv.style.textAlign = "left";
-   eltDiv.textContent = text;
-   alertMsg(idTitle, [eltDiv]);
+   alertMsg(idTitle, [makeTextField(text)]);
+}
+
+function execute(fct, args)
+{
+   var elt = document.getElementById("messagepane");
+   if (elt.staged) {
+      var obj = new Object();
+      obj.fct = fct;
+      obj.args = args;
+      if (!elt.promises) {
+         elt.promises = [obj];
+      }else {
+         elt.promises.push(obj);
+      }
+   }else {
+      elt.staged = "1";
+      fct(elt, args);
+   }
 }
 
 function hideMsg() {
    var elt = document.getElementById("messagepane");
    elt.style.top = '-100%';
    elt.style.opacity = "1.0";
+   elt.staged = elt.promises.shift();
+   if (elt.staged) {
+      elt.staged.fct(elt, elt.staged.args);
+   }
 }
 
 function shakeMsg() {
@@ -76,9 +95,8 @@ function shakeMsg() {
    );
 }
 
-function buildMessagePane(idTitle, eltContents, whenDone) {
+function buildMessagePane(eltMsg, args) {
    var eltCell;
-   var eltMsg = document.getElementById("messagepane");
    var eltRows = eltMsg.querySelectorAll(
       "div:first-child > div:first-child > table tr"
    );
@@ -86,22 +104,21 @@ function buildMessagePane(idTitle, eltContents, whenDone) {
    row.cells[0].onclick = hideMsg;
    eltCell = eltRows[0].cells[2];
    eltCell.className = "i18n";
-   eltCell.id = idTitle;
-   eltCell.childNodes[0].textContent = i18n(idTitle);
-   if (whenDone) {
+   eltCell.id = args[0];                      // idTitle
+   eltCell.childNodes[0].textContent = i18n(args[0]);
+   if (args[2]) {                             // whenDone
       row.cells[3].style.visibility = "visible";
       row.cells[4].style.visibility = "visible";
-      row.cells[4].onclick = whenDone;
+      row.cells[4].onclick = args[2];
    }else {
       row.cells[3].style.visibility = "hidden";
       row.cells[4].style.visibility = "hidden";
    }
    eltCell = eltRows[1].cells[0];
-   // eltCell.replaceChild(eltContents, eltCell.childNodes[0]);
    while (eltCell.hasChildNodes()) {
       eltCell.removeChild(eltCell.lastChild);
    }
-   eltContents.forEach(
+   args[1].forEach(                           // eltContents
       function(elt) { eltCell.appendChild(elt); }
    );
    return eltMsg;
@@ -125,5 +142,13 @@ function makeInputField(name, type) {
 
 function getInputFieldContainer(inputField) {
    return inputField.parentNode.parentNode;
+}
+
+function makeTextField(text) {
+   var eltDiv = document.createElement("DIV");
+   eltDiv.style.padding = "2rem";
+   eltDiv.style.textAlign = "left";
+   eltDiv.textContent = text;
+   return eltDiv;
 }
 

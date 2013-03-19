@@ -367,6 +367,7 @@ function authorize() {
 }
 
 function authorizePicasa() {
+   hideMsg();
    var eltInp1 = makeInputField("login");
    var eltInp2 = makeInputField("passwd", "password");
    showMsg(
