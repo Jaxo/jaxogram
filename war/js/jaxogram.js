@@ -1,7 +1,7 @@
 var users;
 var authKey;
 var isPackaged = true;
-var server_url = "http://jaxogram.appspot.com/jaxogram";
+var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://5.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
