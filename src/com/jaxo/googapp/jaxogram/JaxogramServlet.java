@@ -95,10 +95,8 @@ public class JaxogramServlet extends HttpServlet
                resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
                resp.setHeader("Location", redirect);
             }else {
-               MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-               String memKey = req.getParameter("JXK");
-               memcache.put(
-                  memKey,
+               MemcacheServiceFactory.getMemcacheService().put(
+                  req.getParameter("JXK"),
                   "{\"VRF\":\"" + verifier + "\", \"NET\":\"" + net + "\"}",
                   Expiration.byDeltaSeconds(300) // 5 minutes
                );
