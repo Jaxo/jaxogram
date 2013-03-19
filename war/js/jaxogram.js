@@ -172,37 +172,46 @@ function formatUsersList(isUserRequired) {
    }
 }
 
+function isAlbumIdRequired() {
+   return ((users.getNet() !== "twitter") && (users.getNet() !== "flickr"));
+}
+
 function resetAlbumsList() {
-   var elt;
-   var smallElt;
-   var italicElt;
-   var ulElt;
-
-   smallElt = document.createElement("SMALL");
-   smallElt.className = "i18n";
-   smallElt.id = "photoAlbum";
-   smallElt.appendChild(document.createTextNode(i18n("photoAlbum")));
-   italicElt = document.createElement("I");
-   italicElt.id = "albumTitle";
-   if (users.getAlbumTitle()) {
-      italicElt.textContent = users.getAlbumTitle();
+   if (!isAlbumIdRequired()) {
+      document.getElementById("jgUsersAid").style.display = "none";
    }else {
-      italicElt.className = "i18n";
-      italicElt.appendChild(document.createTextNode(i18n("albumTitle")));
-   }
-   ulElt = document.createElement("UL");
-   ulElt.id = "albumList";
-   ulElt.setAttribute("role", "radiogroup");
-   ulElt.onclick = function(event) { changeAlbum(this, event); };
+      var elt;
+      var smallElt;
+      var italicElt;
+      var ulElt;
 
-   elt = document.getElementById("jgUsersAid");
-   while (elt.hasChildNodes()) {
-      elt.removeChild(elt.lastChild);
+      smallElt = document.createElement("SMALL");
+      smallElt.className = "i18n";
+      smallElt.id = "photoAlbum";
+      smallElt.appendChild(document.createTextNode(i18n("photoAlbum")));
+      italicElt = document.createElement("I");
+      italicElt.id = "albumTitle";
+      if (users.getAlbumTitle()) {
+         italicElt.textContent = users.getAlbumTitle();
+      }else {
+         italicElt.className = "i18n";
+         italicElt.appendChild(document.createTextNode(i18n("albumTitle")));
+      }
+      ulElt = document.createElement("UL");
+      ulElt.id = "albumList";
+      ulElt.setAttribute("role", "radiogroup");
+      ulElt.onclick = function(event) { changeAlbum(this, event); };
+
+      elt = document.getElementById("jgUsersAid");
+      while (elt.hasChildNodes()) {
+         elt.removeChild(elt.lastChild);
+      }
+      elt.appendChild(smallElt);
+      elt.appendChild(document.createElement("BR"));
+      elt.appendChild(italicElt);
+      elt.appendChild(ulElt);
+      elt.style.display = "";
    }
-   elt.appendChild(smallElt);
-   elt.appendChild(document.createElement("BR"));
-   elt.appendChild(italicElt);
-   elt.appendChild(ulElt);
 }
 
 function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
@@ -560,7 +569,7 @@ function pickAndUpload(event) {
    if (!users.hasSome()) {
       formatUsersList(true);
    }else {
-      var albumId = users.getAlbumId();
+      var albumId = isAlbumIdRequired()? users.getAlbumId() : "NoNeedFor";
       if (!albumId) {
          event.stopPropagation();
          dispatcher.on(
