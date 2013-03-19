@@ -369,7 +369,7 @@ public class OAuthClient {
     * response indicates success; merely return it.
     */
    public OAuthResponseMessage access(
-      OAuthMessage request,  net.oauth.ParameterStyle style
+      OAuthMessage request, net.oauth.ParameterStyle style
    ) throws IOException {
       HttpMessage httpRequest = HttpMessage.newRequest(request, style);
       HttpResponseMessage httpResponse = http.execute(httpRequest, httpParameters);
