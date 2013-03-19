@@ -47,15 +47,24 @@ function simpleMsg(idTitle, text) {
 function execute(fct, args)
 {
    var elt = document.getElementById("messagepane");
+   if (elt.promises === undefined) {
+      elt.promises = [];
+      new GestureDetector(elt).startDetecting();
+      elt.addEventListener(
+         "swipe",
+         function(e) {
+            var direction = e.detail.direction;
+            if (e.detail.direction === 'up') {
+               hideMsg();
+            }
+         }
+      );
+   }
    if (elt.staged) {
       var obj = new Object();
       obj.fct = fct;
       obj.args = args;
-      if (!elt.promises) {
-         elt.promises = [obj];
-      }else {
-         elt.promises.push(obj);
-      }
+      elt.promises.push(obj);
    }else {
       elt.staged = "1";
       fct(elt, args);
@@ -73,7 +82,7 @@ function hideMsg() {
 }
 
 function shakeMsg() {
-   var eltMsg = document.getElementById("messagepane");
+   var elt = document.getElementById("messagepane");
    var count = 0;
    var timer = setInterval(
       function() {
@@ -89,15 +98,15 @@ function shakeMsg() {
             case 4: delta = 0; break;
             }
          }
-         eltMsg.style.transform = "translateX(" + delta + "rem)";
+         elt.style.transform = "translateX(" + delta + "rem)";
       },
       32
    );
 }
 
-function buildMessagePane(eltMsg, args) {
+function buildMessagePane(elt, args) {
    var eltCell;
-   var eltRows = eltMsg.querySelectorAll(
+   var eltRows = elt.querySelectorAll(
       "div:first-child > div:first-child > table tr"
    );
    var row = eltRows[0];
@@ -119,9 +128,9 @@ function buildMessagePane(eltMsg, args) {
       eltCell.removeChild(eltCell.lastChild);
    }
    args[1].forEach(                           // eltContents
-      function(elt) { eltCell.appendChild(elt); }
+      function(eltItem) { eltCell.appendChild(eltItem); }
    );
-   return eltMsg;
+   return elt;
 }
 
 function makeInputField(name, type) {

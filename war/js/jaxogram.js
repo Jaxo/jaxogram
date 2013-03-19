@@ -65,14 +65,6 @@ window.onload = function() {
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
    document.getElementById("whoAmI").onclick = whoAmI;
 
-// document.getElementById("p1").addEventListener(
-//    'transitionend',
-//    function(event) {
-//       p1Expanded(event.target.attributes["aria-expanded"].value == "true");
-//    },
-//    false
-// );
-
    var dfltLocale = navigator.language || navigator.userLanguage;
    formatUsersList(false);
    translateBody(dfltLocale);
@@ -84,27 +76,19 @@ window.onload = function() {
 // }
    var eltMain = document.getElementById("main");
    new GestureDetector(eltMain).startDetecting();
-   eltMain.addEventListener("swipe", mainSwipeHandler);
+   eltMain.addEventListener(
+      "swipe",
+      function(e) {
+         // alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
+         var direction = e.detail.direction;
+         if (direction === 'right') {
+            expandSidebarView(1);
+         }else if (direction === 'left') {
+            expandSidebarView(-1);
+         }
+      }
+   );
 };
-
-// function p1Expanded(isExpanded) {
-//    var style = document.getElementById("btnSecond").style;
-//    if (isExpanded) {
-//       style.display ="";
-//    }else {
-//       style.display = "none";
-//    }
-// }
-
-function mainSwipeHandler(e) {
-   var direction = e.detail.direction;
-   if (direction === 'right') {
-      expandSidebarView(1);
-   }else if (direction === 'left') {
-      expandSidebarView(-1);
-   }
-// alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
-}
 
 function formatUsersList(isUserRequired) {
    resetAlbumsList();
