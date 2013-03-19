@@ -173,7 +173,11 @@ function formatUsersList(isUserRequired) {
 }
 
 function isAlbumIdRequired() {
-   return ((users.getNet() !== "twitter") && (users.getNet() !== "flickr"));
+   return (
+      users.hasSome() &&
+      (users.getNet() !== "twitter") &&
+      (users.getNet() !== "flickr")
+   );
 }
 
 function resetAlbumsList() {
