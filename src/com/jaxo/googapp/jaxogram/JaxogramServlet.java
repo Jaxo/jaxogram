@@ -116,14 +116,16 @@ public class JaxogramServlet extends HttpServlet
 
             if (op.equals("getVerifier")) {
                // issued repeatedly by packaged application
-               MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
-               String memKey = req.getParameter("JXK");
-               String val = (String)memcache.get(memKey);
+               MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
+               String key = req.getParameter("JXK");
+               String val;
+               for (int i=0; ((val=(String)cache.get(key))==null)&&(i < 20); ++i) {
+                  try { Thread.sleep(1000); }catch (InterruptedException e) {}
+               }
                if (val == null) {
-                  // TODO To avoid repeated calls, should I wait here a bit?
                   val = "???";
                }else {
-                  memcache.delete(memKey);
+                  cache.delete(key);
                }
                writer.print(val); // { "VRF":"(verifier)", "NET":"(facebook)" }
 
