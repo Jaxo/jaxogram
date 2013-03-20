@@ -64,6 +64,7 @@ public class JaxogramServlet extends HttpServlet
 //*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
 //*/  );
       String op = req.getParameter("OP");
+      int restVersion = (req.getParameter("V") == null)? 0 : Integer.parseInt(req.getParameter("V"));
 //*/  logger.info("OP:" + op);
 
       resp.setContentType("text/plain");
@@ -89,7 +90,8 @@ public class JaxogramServlet extends HttpServlet
                String redirect = (
                   req.getParameter("referer") +
                   "?OP=backCall" + "&NET=" + net +
-                  "&VRF=" + URLEncoder.encode(verifier, "UTF-8")
+                  ((restVersion == 0)? "&verifier=" : "&VRF=") +
+                  URLEncoder.encode(verifier, "UTF-8")
                );
 //*/           logger.info("Callback from orkut => proxy to " + redirect);
                resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
@@ -97,7 +99,10 @@ public class JaxogramServlet extends HttpServlet
             }else {
                MemcacheServiceFactory.getMemcacheService().put(
                   req.getParameter("JXK"),
-                  "{\"VRF\":\"" + verifier + "\", \"NET\":\"" + net + "\"}",
+                  (
+                     (restVersion == 0)?
+                     verifier : "{\"VRF\":\""+verifier+"\", \"NET\":\""+net+"\"}"
+                  ),
                   Expiration.byDeltaSeconds(300) // 5 minutes
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
@@ -125,6 +130,7 @@ public class JaxogramServlet extends HttpServlet
                }else {
                   cache.delete(key);
                }
+               // in REST version 0, this was just the verifier string
                writer.print(val); // { "VRF":"(verifier)", "NET":"(facebook)" }
 
             }else if (op.equals("postAccPss")) {
@@ -142,7 +148,7 @@ public class JaxogramServlet extends HttpServlet
 
             }else if (op.equals("getUrl")) {
                HttpSession session = req.getSession(true);
-               String net = req.getParameter("NET");
+               String net = (restVersion == 0)? "orkut" : req.getParameter("NET");
                String authorizeUrl;
                String referer = req.getHeader("referer");
                if (referer != null) {
@@ -155,7 +161,7 @@ public class JaxogramServlet extends HttpServlet
                }
                String callbackUrl = (
                   getBaseUrl(req) +  // callback URL
-                  "/jaxogram?OP=backCall&NET=" + net + referer
+                  "/jaxogram?OP=backCall&V=" + restVersion + "&NET=" + net + referer
                );
                OAuthorizer authorizer = makeAuthorizer(net);
                authorizeUrl = authorizer.requestAuthURL(callbackUrl);
@@ -164,9 +170,11 @@ public class JaxogramServlet extends HttpServlet
 
             }else if (op.equals("getAccPss")) {
                HttpSession session = req.getSession(true);
-               OAuthorizer authorizer = makeAuthorizer(req.getParameter("NET"));
+               OAuthorizer authorizer = makeAuthorizer(
+                  (restVersion == 0)? "orkut" : req.getParameter("NET")
+               );
                String[] vals = authorizer.authenticate(
-                  req.getParameter("VRF"),
+                  req.getParameter((restVersion == 0)? "verifier" : "VRF"),
                   (OAuthAccessor)session.getAttribute("accessor")
                );
                String accessPass = vals[0];
@@ -180,7 +188,7 @@ public class JaxogramServlet extends HttpServlet
 
             }else {
                Network network = makeNetwork(
-                  req.getParameter("NET"),
+                  (restVersion == 0)? "orkut" : req.getParameter("NET"),
                   (String)req.getSession(true).getAttribute("accesspass")
                );
                if (op.equals("whoAmI")) {

@@ -1,9 +1,9 @@
 var users;
 var authKey;
 var isPackaged = true;
-var server_url = "http://11.jaxogram.appspot.com/jaxogram";
+var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
-// var server_url = "http://5.jaxogram.appspot.com/jaxogram";
+// var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
 
 window.onload = function() {
@@ -683,7 +683,7 @@ function issueRequestStd(what, whenDone) {
 }
 
 function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
-   var query = "?OP=" + op;
+   var query = "?OP=" + op + "&V=1";    // REST version #1
    if (method === "GET") query += values;
    var xhr = new XMLHttpRequest({mozSystem: true});
    if (xhr.withCredentials === undefined) {

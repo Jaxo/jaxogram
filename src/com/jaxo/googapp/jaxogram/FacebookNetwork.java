@@ -15,7 +15,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-/**/ import java.util.logging.Logger;
+//*/ import java.util.logging.Logger;
 
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
@@ -34,7 +34,7 @@ import org.apache.commons.io.IOUtils;
 */
 public class FacebookNetwork extends OAuthorizer implements Network
 {
-   /**/ private static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.FacebookNetwork");
+   //*/ private static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.FacebookNetwork");
    private static final String CONSUMER_KEY = "139995292843954";
    private static final String CONSUMER_SECRET = "10b0780013a8bd1de859e28f531faebf";
    private static final String OAUTH_REQUEST_URL = "https://graph.facebook.com";
@@ -73,7 +73,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
    public String requestAuthURL(String callbackUrl) throws Exception
    {
       accessor.tokenSecret = URLEncoder.encode(callbackUrl,"UTF-8");
-      /**/ logger.info("request auth URL");
+      //*/ logger.info("request auth URL");
       return (
          OAUTH_AUTHORIZATION_URL +
          "?client_id=" + consumer.consumerKey +
@@ -134,7 +134,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
             );
          }
       }
-      /**/ logger.info("authenticate: \n\turi:\"" + givenAccessor.tokenSecret + "\"\n\tresponse code: " + response.getStatusCode() + "\n\taccess token: \"" + ((accessToken == null)?"[NONE]" : accessToken) + "\"\n\tuser name: \"" + ((userName == null)?"[NONE]" : userName) + "\"\n\tresponse value: \"" + body + "\"" );
+      //*/ logger.info("authenticate: \n\turi:\"" + givenAccessor.tokenSecret + "\"\n\tresponse code: " + response.getStatusCode() + "\n\taccess token: \"" + ((accessToken == null)?"[NONE]" : accessToken) + "\"\n\tuser name: \"" + ((userName == null)?"[NONE]" : userName) + "\"\n\tresponse value: \"" + body + "\"" );
       if ((accessToken == null) || (userName == null)) {
          throw new Exception("RC=" + response.getStatusCode() + "\n" + body);
       }
@@ -282,7 +282,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
       String body = IOUtils.toString(
          response.getBody(), response.getContentCharset()
       );
-      /**/ logger.info("GET " + path + " " + query + " RC:" + response.getStatusCode() + "\n\t\"" + body + "\"");
+      //*/ logger.info("GET " + path + " " + query + " RC:" + response.getStatusCode() + "\n\t\"" + body + "\"");
       if (response.getStatusCode() != 200) {
          throw new Exception("RC=" + response.getStatusCode() + "\n" + body);
       }
