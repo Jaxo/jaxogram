@@ -129,6 +129,7 @@ function formatUsersList(isUserRequired) {
       while (elt.hasChildNodes()) {
          elt.removeChild(elt.lastChild);
       }
+      elt.setAttribute("aria-expanded", "false");
       smallElt = document.createElement("SMALL");
       smallElt.className = "i18n";
       smallElt.id = "loginAs";
