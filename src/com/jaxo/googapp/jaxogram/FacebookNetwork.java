@@ -128,7 +128,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
             client.getHttpParameters()
          );
          if (response.getStatusCode() == 200) {
-            userName = jsonGet(
+            userName = JsonIterator.get(
                IOUtils.toString(response.getBody(), response.getContentCharset()),
                "name"
             );
@@ -147,7 +147,16 @@ public class FacebookNetwork extends OAuthorizer implements Network
    +-------------------------------------------------------------------------*/
    public String whoIsAsJson(String id) throws Exception {
       // We do not take "id" into account (we suppose it's "me")
-      return get("/me", null);
+      JsonIterator it = new JsonIterator(get("/me", "fields=name,gender"));
+      StringBuilder sb = new StringBuilder();
+      sb.append("{\"name\":{\"givenName\":\"").
+      append(it.next("name")).
+      append("\",\"familyName\":\" \"},").
+//    append("\"birthday\":\"\",").
+      append("\"gender\":\"").
+      append(it.next("gender")).
+      append("\"}");
+      return sb.toString();
    }
 
    /*--------------------------------------------------------listAlbumsAsJson-+
@@ -161,7 +170,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
       );
       String title;
       String id;
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       sb.append('[');
       boolean first = true;
       while (
@@ -178,7 +187,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
          append("\",\"title\":\"").append(title);
          if (
             ((url = it.next("cover_photo")) != null) &&
-            ((url = jsonGet(get("/"+url, "fields=source"), "source")) != null)
+            ((url = JsonIterator.get(get("/"+url, "fields=source"), "source")) != null)
          ) {
             sb.append("\",\"thumbnailUrl\":\"").append(url);
          }
@@ -287,44 +296,6 @@ public class FacebookNetwork extends OAuthorizer implements Network
          throw new Exception("RC=" + response.getStatusCode() + "\n" + body);
       }
       return body;
-   }
-
-   /*---------------------------------------------------- class JsonIterator -+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   static class JsonIterator {
-      String m_data;
-      int m_start;
-      JsonIterator(String data) {
-         m_data = data;
-         m_start = -1;
-      }
-      String next(String name) {
-         name = "\"" + name + "\"";
-         int start = m_data.indexOf(name, m_start+1);
-         if (start >= 0) {
-            m_start = m_data.indexOf('"', start+name.length()+1) + 1;
-            return m_data.substring(m_start, m_start=m_data.indexOf('"', m_start));
-         }else {
-            return null;
-         }
-      }
-   }
-
-   /*-----------------------------------------------------------------jsonGet-+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   static String jsonGet(String data, String name) {
-      name = "\"" + name + "\"";
-      int start = data.indexOf(name);
-      if (start >= 0) {
-         start = data.indexOf('"', start+name.length()+1) + 1;
-         return data.substring(start, data.indexOf('"', start));
-      }else {
-         return null;
-      }
    }
 }
 /*===========================================================================*/
