@@ -130,7 +130,7 @@ var localeValues = {
       'fr-FR':"Annuler",
       'pt-BR':"Cancelar",
       'es-ES':"Cancelar"
-   }, infos: {
+   }, info: {
       'en-US':"Info",
       'fr-FR':"Information",
       'pt-BR':"Informação",
