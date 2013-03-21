@@ -5,6 +5,24 @@ var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
+var networks = [
+   {
+      name: "orkut",
+      url: "http://www.orkut.com",
+   },{
+      name: "flickr",
+      url: "http://www.flickr.com",
+   },{
+      name: "picasa",
+      url: "http://picasa.goggle.com",
+   },{
+      name: "twitter",
+      url: "https://mobile.twitter.com",
+   },{
+      name: "facebook",
+      url: "http://www.facebook.com"
+   }
+];
 
 window.onload = function() {
    var loc = window.location;
@@ -63,7 +81,7 @@ window.onload = function() {
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
-   document.getElementById("whoAmI").onclick = whoAmI;
+   // document.getElementById("whoAmI").onclick = whoAmI;
 
    var dfltLocale = navigator.language || navigator.userLanguage;
    formatUsersList(false);
@@ -89,6 +107,33 @@ window.onload = function() {
       }
    );
 };
+
+function setGoForItButton() {
+   var elt = document.getElementById("go4it");
+   if (!users.hasSome() || networks.every(
+         function(network) {
+            if (network.name !== users.getNet()) {
+               return true;    // pursue...
+            }else {
+               var imgElt = document.createElement("IMG");
+               imgElt.src = "images/" + network.name + "Logo.png";
+               while (elt.hasChildNodes()) {
+                  elt.removeChild(elt.lastChild);
+               }
+               elt.appendChild(imgElt);
+               elt.onclick = function(event) {
+                  event.stopPropagation();
+                  browseTo(network.url);
+               }
+               elt.style.display = "";
+               return false;
+            }
+         }
+      )
+   ) {
+      elt.style.display = "none";
+   }
+}
 
 function formatUsersList(isUserRequired) {
    resetAlbumsList();
@@ -171,6 +216,7 @@ function formatUsersList(isUserRequired) {
          elt.appendChild(btnElt);
       }
    }
+   setGoForItButton();
 }
 
 function isAlbumIdRequired() {
@@ -319,6 +365,7 @@ function changeLogin(elt, event) {
          document.getElementById('jgUserName').textContent = users.getUserName();
          document.getElementById('jgUserNet').src = "../images/" + users.getNet() + "Logo.png";
          resetAlbumsList();
+         setGoForItButton();
          tellAccessPass();
       }
    }
@@ -348,8 +395,9 @@ function fitImage(img) {
 
 function authorize() {
    var eltContainer = document.createElement("DIV");
-   ["orkut", "flickr", "picasa", "twitter", "facebook"].forEach(
-      function(name) {
+   networks.forEach(
+      function(network) {
+         var name = network.name;
          var elt = document.createElement("IMG");
          elt.className = "buttonLike";
          elt.src= "images/" + name + "Logo.png";
@@ -404,6 +452,7 @@ function authorizeThruOAuth(net) {
          // navigate to it as a top browser window
          if (isPackaged) {        // if packaged, do NOT leave the app!
             browseTo(oauthUrl);   // use a mozbrowser, instead
+            getVerifier();
          }else {                  // if not packaged, we can leave the page
             window.location.href = oauthUrl;
          }
@@ -421,13 +470,10 @@ function browseTo(targetUrl) {
    browserFrame.classList.add('iframebox');
    pane.appendChild(browserFrame);
    pane.style.visibility = "visible";
-
    browserFrame.src = targetUrl;
-
    document.querySelector("footer").style.visibility="hidden";
    document.getElementById("btnMainImage").style.backgroundImage = "url(style/images/close.png)";
    document.getElementById("btnMain").onclick = browseQuit;
-   getVerifier();
 }
 
 function browseQuit() {
@@ -435,7 +481,7 @@ function browseQuit() {
    pane.innerHTML = "";
    pane.style.visibility = "hidden";
    document.querySelector("footer").style.visibility = "visible";
-   document.getElementById("btnMainImage").style.backgroundImage = "url(style/images/menu.png)";
+   resetSidebarButton();
    document.getElementById("btnMain").onclick = toggleSidebarView;
 }
 

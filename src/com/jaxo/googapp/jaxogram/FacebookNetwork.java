@@ -222,7 +222,6 @@ public class FacebookNetwork extends OAuthorizer implements Network
    )
    throws Exception
    {
-      // TODO album id is not yet used
       MultipartEntity entity = new MultipartEntity();
       entity.addField("message", title, "UTF-8");
       entity.addFile("file", "tmpfile." + type, "image/" + type, image);

@@ -107,7 +107,7 @@ function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
    var btnMainStyle = document.getElementById('btnMainImage').style;
    var bodyStyle = document.getElementById('main').style;
    var sidebarStyle = document.getElementById('sidebar').style;
-   if ((bodyStyle.left != "80%") && (v >= 0)) {
+   if ((bodyStyle.left !== "80%") && (v >= 0)) {
       btnMainStyle.backgroundImage = "url(style/images/back.png)";
       bodyStyle.left = "80%";
       bodyStyle.right = "-80%";
@@ -119,6 +119,16 @@ function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
       bodyStyle.right = "0%";
       sidebarStyle.left = "-80%";
       sidebarStyle.right = "100%";
+   }
+}
+
+function resetSidebarButton() {
+   var btnMainStyle = document.getElementById('btnMainImage').style;
+   var bodyStyle = document.getElementById('main').style;
+   if (bodyStyle.left !== "80%") {
+      btnMainStyle.backgroundImage = "url(style/images/menu.png)";
+   }else {
+      btnMainStyle.backgroundImage = "url(style/images/back.png)";
    }
 }
 
