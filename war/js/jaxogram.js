@@ -126,6 +126,7 @@ function setGoForItButton() {
             }else {
                var imgElt = document.createElement("IMG");
                imgElt.src = "images/" + network.name + "Logo.png";
+               imgElt.style.width = "7rem";
                while (elt.hasChildNodes()) {
                   elt.removeChild(elt.lastChild);
                }
