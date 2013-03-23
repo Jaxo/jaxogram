@@ -1,33 +1,42 @@
 var users;
-var authKey;
-var isPackaged = true;
 var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
+var oauthNetwork = {
+   name: "oauth",
+   url: null,
+   win: null,
+   key: "0",
+   timer: null
+}
 var networks = [
    {
       name: "orkut",
       url: "http://www.orkut.com",
+      win: null
    },{
       name: "flickr",
       url: "http://www.flickr.com",
+      win: null
    },{
       name: "picasa",
       url: "http://picasa.goggle.com",
+      win: null
    },{
       name: "twitter",
-      url: "https://mobile.twitter.com",
+      url: "http://mobile.twitpic.com",
+      win: null
    },{
       name: "facebook",
-      url: "http://www.facebook.com"
+      url: "http://www.facebook.com",
+      win: null
    }
 ];
 
 window.onload = function() {
    var loc = window.location;
    if (loc.protocol !== "app:") {
-      isPackaged = false;
       var host = loc.host;
       if (host.indexOf("appspot") >= 0) {              // appspot default, or versioned
          server_url = "http://" + host + "/jaxogram";
@@ -123,7 +132,7 @@ function setGoForItButton() {
                elt.appendChild(imgElt);
                elt.onclick = function(event) {
                   event.stopPropagation();
-                  browseTo(network.url);
+                  browseTo(network);
                }
                elt.style.display = "";
                return false;
@@ -444,18 +453,22 @@ function authorizePicasa() {
 function authorizeThruOAuth(net) {
    hideMsg();
    // make a pseudo-random key )between 100000 and 200000
-   authKey = (Math.floor(Math.random() * 100000) + 100000).toString();
+   oauthNetwork.key = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
    issueRequest(
-      "GET", "getUrl", "&JXK=" + authKey + "&NET=" + net,
+      "GET", "getUrl", "&JXK=" + oauthNetwork.key + "&NET=" + net,
       function(oauthUrl) {        // whenDone
-         // navigate to it as a top browser window
-         if (isPackaged) {        // if packaged, do NOT leave the app!
-            browseTo(oauthUrl);   // use a mozbrowser, instead
-            getVerifier();
-         }else {                  // if not packaged, we can leave the page
-            window.location.href = oauthUrl;
-         }
+         oauthNetwork.url = oauthUrl;
+         browseTo(oauthNetwork);  // open a new browser window
+         oauthNetwork.win.addEventListener(
+            "close",
+            function(event) {
+               oauthNetwork.win = null;
+               clearTimeout(oauthNetwork.timer);
+            },
+            false
+         );
+         getVerifier();           // wait 'til it returns with the verifier
       },
       function(rc, val) {         // whenFailed
          simpleMsg("error", "authorize RC:" + rc + "\n" + val);
@@ -463,48 +476,40 @@ function authorizeThruOAuth(net) {
    );
 }
 
-function browseTo(targetUrl) {
-   var pane = document.getElementById("browserpane");
-   var browserFrame = document.createElement('iframe');
-   browserFrame.setAttribute('mozbrowser', 'true');
-   browserFrame.classList.add('iframebox');
-   pane.appendChild(browserFrame);
-   pane.style.visibility = "visible";
-   browserFrame.src = targetUrl;
-   document.querySelector("footer").style.visibility="hidden";
-   document.getElementById("btnMainImage").style.backgroundImage = "url(style/images/close.png)";
-   document.getElementById("btnMain").onclick = browseQuit;
-}
-
-function browseQuit() {
-   var pane = document.getElementById("browserpane");
-   pane.innerHTML = "";
-   pane.style.visibility = "hidden";
-   document.querySelector("footer").style.visibility = "visible";
-   resetSidebarButton();
-   document.getElementById("btnMain").onclick = toggleSidebarView;
+function browseTo(network) {
+   if (!network.win || network.win.closed) {
+      network.win = window.open(network.url, network.name);
+   }else {
+      network.win.focus();
+   }
 }
 
 /*
-| for packaged application, this is the way appspot tells us the verifier
+| wait until appspot obtained the verifier in its cache
 */
 function getVerifier() {
    issueRequest(
-      "GET", "getVerifier", "&JXK=" + authKey,
+      "GET", "getVerifier", "&JXK=" + oauthNetwork.key,
       function(val) {     // whenDone
-         if (val === "???") {
-            setTimeout(getVerifier, 1000);
-         }else {
-            browseQuit();
-            var obj = JSON.parse(val);
-            registerUser(obj.VRF, obj.NET);
-            formatUsersList(false);
+         var win = oauthNetwork.win;
+         if (win && !win.closed) {
+            if (val === "???") {
+               oauthNetwork.timer = setTimeout(getVerifier, 1000);
+            }else {
+               win.close();
+               var obj = JSON.parse(val);
+               registerUser(obj.VRF, obj.NET);
+               formatUsersList(false);
+            }
          }
       },
       function(rc, val) { // whenFailed
+         var win = oauthNetwork.win;
+         if (win && !win.closed) win.close();
          simpleMsg("error", "getVerifier RC:" + rc);
       }
    );
+   document.getElementById("progresspane").style.visibility='hidden';
 }
 
 function registerUser(verifier, net) {

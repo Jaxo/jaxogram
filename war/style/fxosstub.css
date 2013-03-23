@@ -536,26 +536,6 @@ li[aria-selected=true], li[role=listbox] {
   width: 100%;
 }
 
-#browserpane {
-  /* background: #FFF; */
-  position: absolute;
-  width: 100%;
-  left: 0;
-  top: 5rem;
-  bottom: 0rem;
-  /* opacity: 0.9; */
-  z-index: 5;
-  visibility: hidden;
-}
-
-.iframebox {
-  background: rgba(190, 190, 190, 0.7);
-  width: calc(100% - 3rem);
-  height: calc(100% - 3rem);
-  border: 1px solid #BAA;
-  margin: 1rem;
-}
-
 /* Alas, FF 17 does not implement it yet...   */
 /* So, I did a JS work-around: fitImages()    */
 /* .imgbox tr td img {                        */

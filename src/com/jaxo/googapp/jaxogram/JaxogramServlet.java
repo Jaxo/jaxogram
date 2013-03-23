@@ -72,37 +72,45 @@ public class JaxogramServlet extends HttpServlet
 
       try {
          if (op.equals("backCall")) {
-            /*
-            | Call back from Orkut, Twitter, etc...
-            | regular WEB app:
-            |    pass the oauth_verifier back to origin (redirect to the referer page)
-            | packaged app
-            |    store the verifier in device local storage
-            |    return an iframe contents
-            */
-            String referer = req.getParameter("referer");
-            String net = req.getParameter("NET");
-            String verifier = req.getParameter("oauth_verifier");
-            if (verifier == null) { // Facebook!
-               verifier = req.getParameter("code");
-            }
-            if (referer != null) {
-               String redirect = (
-                  req.getParameter("referer") +
-                  "?OP=backCall" + "&NET=" + net +
-                  ((restVersion == 0)? "&verifier=" : "&VRF=") +
-                  URLEncoder.encode(verifier, "UTF-8")
-               );
-//*/           logger.info("Callback from orkut => proxy to " + redirect);
-               resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
-               resp.setHeader("Location", redirect);
+            if (restVersion == 0) {
+               /*
+               | Call back from Orkut
+               | regular WEB app:
+               |    pass the oauth_verifier back to origin (redirect to the referer page)
+               | packaged app
+               |    store the verifier in device local storage
+               |    return an iframe contents
+               */
+               String referer = req.getParameter("referer");
+               String net = req.getParameter("NET");
+               String verifier = req.getParameter("oauth_verifier");
+               if (referer != null) {
+                  String redirect = (
+                     req.getParameter("referer") +
+                     "?OP=backCall" + "&NET=" + net +
+                     "&verifier=" + URLEncoder.encode(verifier, "UTF-8")
+                  );
+//*/              logger.info("Callback from orkut => proxy to " + redirect);
+                  resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
+                  resp.setHeader("Location", redirect);
+               }else {
+                  MemcacheServiceFactory.getMemcacheService().put(
+                     req.getParameter("JXK"),
+                     verifier,
+                     Expiration.byDeltaSeconds(300) // 5 minutes
+                  );
+                  resp.setStatus(HttpServletResponse.SC_CREATED);
+               }
             }else {
+               // OAuth callback: store the verifier in device local storage
+               String net = req.getParameter("NET");
+               String verifier = req.getParameter("oauth_verifier");
+               if (verifier == null) { // Facebook!
+                  verifier = req.getParameter("code");
+               }
                MemcacheServiceFactory.getMemcacheService().put(
                   req.getParameter("JXK"),
-                  (
-                     (restVersion == 0)?
-                     verifier : "{\"VRF\":\""+verifier+"\", \"NET\":\""+net+"\"}"
-                  ),
+                  "{\"VRF\":\"" + verifier + "\", \"NET\":\"" + net + "\"}",
                   Expiration.byDeltaSeconds(300) // 5 minutes
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
@@ -148,23 +156,35 @@ public class JaxogramServlet extends HttpServlet
 
             }else if (op.equals("getUrl")) {
                HttpSession session = req.getSession(true);
-               String net = (restVersion == 0)? "orkut" : req.getParameter("NET");
-               String authorizeUrl;
-               String referer = req.getHeader("referer");
-               if (referer != null) {
-                  referer = "&referer=" +  URLEncoder.encode(referer, "UTF-8");
-               }else if ((referer = req.getParameter("JXK")) != null) {
-                  referer = "&JXK=" + referer;
+               String net;
+               String callbackUrl;
+               if (restVersion == 0) {
+                  String referer = req.getHeader("referer");
+                  if (referer != null) {
+                     referer = "&referer=" +  URLEncoder.encode(referer, "UTF-8");
+                  }else if ((referer = req.getParameter("JXK")) != null) {
+                     referer = "&JXK=" + referer;
+                  }else {
+                     referer = "";
+            //       throw new Exception("Invalid CORS header (null referer)");
+                  }
+                  net = "orkut";
+                  callbackUrl = (
+                     getBaseUrl(req) +  // callback URL
+                     "/jaxogram?OP=backCall&V=" + restVersion +
+                     "&NET=" + net + referer
+                  );
                }else {
-                  referer = "";
-         //       throw new Exception("Invalid CORS header (null referer)");
+                  net = req.getParameter("NET");
+                  callbackUrl = (
+                     getBaseUrl(req) +  // callback URL
+                     "/jaxogram?OP=backCall&V=" + restVersion +
+                     "&NET=" + net +
+                     "&JXK=" + req.getParameter("JXK")
+                  );
                }
-               String callbackUrl = (
-                  getBaseUrl(req) +  // callback URL
-                  "/jaxogram?OP=backCall&V=" + restVersion + "&NET=" + net + referer
-               );
                OAuthorizer authorizer = makeAuthorizer(net);
-               authorizeUrl = authorizer.requestAuthURL(callbackUrl);
+               String authorizeUrl = authorizer.requestAuthURL(callbackUrl);
                session.setAttribute("accessor", authorizer.getAccessor());
                writer.print(authorizeUrl);
 
