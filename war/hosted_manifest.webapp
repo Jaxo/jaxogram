@@ -30,5 +30,16 @@
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
     "geolocation": { "description": "Geotag photos" },
     "storage": { "description": "Use local storage for access tokens" }
+  },
+
+  "activities": {
+    "share": {
+      "filters": {
+        "type": "image/*"
+       },
+      "disposition": "inline",
+      "returnValue": true,
+      "href": "/share.html"
+    }
   }
 }
