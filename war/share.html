@@ -6,21 +6,57 @@
    <!-- META http-equiv="pragma" content="no-cache" -->
    <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
    <LINK rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+   <SCRIPT type="text/javascript" src="js/fxosstub.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/localStorage.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/gestureDetector.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/jgusers.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/dispatcher.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/i18n.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/messagePane.js"></SCRIPT>
+   <SCRIPT type="text/javascript" src="js/base.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/share.js"></SCRIPT>
    <TITLE>Jaxogram Share Activity</TITLE>
 </HEAD>
 <BODY>
    <HEADER>
+     <DIV id="btnMain"><IMG id="btnMainImage" style="background-image:url(style/images/close.png)"/></DIV>
      <H1>Jaxogram <SMALL>web</SMALL></H1>
    </HEADER>
    <DIV id="main">
-     <DIV id="p0" class="body" aria-expanded="true">
-     <H1>Jaxo Photos Sharing</H1>
-     <PRE id="log">** No Message **</PRE>
-     <BUTTON id="OK">OK!</BUTTON>
+      <UL id="sidebarMenu" class="menuList">
+        <LI role="listbox" id="jgUsersIn"></LI>
+        <LI role="listbox" id="jgUsersAid"></LI>
+        <LI role="listbox">
+           <SMALL class="i18n" id="language"></SMALL><BR/><i id="usedLang"></i>
+           <UL role="radiogroup" id="changeLanguage">
+              <LI class="i18n" id="en-US"></LI>
+              <LI class="i18n" id="es-ES"></LI>
+              <LI class="i18n" id="pt-BR"></LI>
+              <LI class="i18n" id="fr-FR"></LI>
+           </UL>
+        </LI>
+      </UL>
    </DIV>
    <DIV id="messagepane"><DIV><DIV>
+      <TABLE>
+         <TR>
+            <TD><IMG src="style/images/close.png"></TD>
+            <TD><IMG src="style/images/separator.png"></TD>
+            <TD>&nbsp;</TD>
+            <TD><IMG src="style/images/separator.png"/></TD>
+            <TD><IMG src="style/images/ok.png"/></TD>
+         </TR><TR>
+            <TD colspan="5" style="text-align:center">&nbsp;Abracadabraalcazar</TD>
+         </TR>
+      </TABLE>
+   </DIV></DIV></DIV>
+   <DIV id="progresspane"><DIV id=progress></DIV></DIV>
+   <FOOTER>
+      <TABLE id="footerTable">
+        <TR>
+          <TD class="i18n" id="uploadFromShare"></TD>
+        </TR>
+      </TABLE>
+   </FOOTER>
 </BODY>
 </HTML>
