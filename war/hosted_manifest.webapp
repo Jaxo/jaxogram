@@ -37,7 +37,7 @@
       "filters": {
         "type": "image/*"
        },
-      "disposition": "window",
+      "disposition": "inline",
       "returnValue": true,
       "href": "/share.html"
     }
