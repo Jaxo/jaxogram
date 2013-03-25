@@ -35,7 +35,7 @@ var networks = [
 ];
 var setNavigateButton = function() { alert("no navigation button"); };
 
-function whenIndexLoaded() {
+window.onload = function() {
    var loc = window.location;
    if (loc.protocol !== "app:") {
       var host = loc.host;
@@ -52,8 +52,15 @@ function whenIndexLoaded() {
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
-   var params = getQueryParams();
+   if (loc.pathname.indexOf("share.html") != -1) {
+      whenShareLoaded();
+   }else {
+      whenIndexLoaded();
+   }
+}
 
+function whenIndexLoaded() {
+   var params = getQueryParams();
    if (params.OP === "backCall") {
       /*
       | this occurs for non-packaged applications only:
@@ -62,7 +69,6 @@ function whenIndexLoaded() {
       */
       registerUser(params.VRF, params.NET);
    }
-
    dispatcher.on(
       "install_changed",
       function action(state, version) {
@@ -79,7 +85,6 @@ function whenIndexLoaded() {
          }
       }
    );
-
    setInstallButton("btnInstall");
    fitImage(document.getElementById('photoImage'));
    window.addEventListener("resize", fitImages, false);
@@ -464,7 +469,9 @@ function authorizeThruOAuth(net) {
       "GET", "getUrl", "&JXK=" + oauthNetwork.key + "&NET=" + net,
       function(oauthUrl) {        // whenDone
          oauthNetwork.url = oauthUrl;
+         console.error("browseTo..." + oauthNetwork.url);
          browseTo(oauthNetwork);  // open a new browser window
+         console.error("got a window " + oauthNetwork.win);
          oauthNetwork.win.addEventListener(
             "close",
             function(event) {
@@ -483,6 +490,7 @@ function authorizeThruOAuth(net) {
 
 function browseTo(network) {
    if (!network.win || network.win.closed) {
+      console.error("attempt to open window...");
       network.win = window.open(network.url, network.name);
    }else {
       network.win.focus();
@@ -767,4 +775,121 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
    }else {
       xhr.send(values);
    }
+}
+
+/*================================= share ===================================*/
+
+function whenShareLoaded() {
+   navigator.mozApps.getSelf().onsuccess = function() {
+      if (this.result) {
+         var version = this.result.manifest.version;
+         if (version) {
+            document.querySelector("header h1 small").textContent = version;
+         }
+      }
+   }
+   setNavigateButton = setUploadFromShareButton;
+
+   // Listeners
+   document.getElementById("sidebarMenu").onclick = menuListClicked;
+   document.getElementById("jgUsersAid").onclick = listAlbums;
+   document.getElementById("changeLanguage").onclick = changeLanguage;
+
+   var dfltLocale = navigator.language || navigator.userLanguage;
+   document.getElementById('usedLang').textContent = i18n(dfltLocale);
+   document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
+   translateBody(dfltLocale);
+   document.getElementById("jgUsersIn").style.display = "none";
+   document.getElementById("jgUsersAid").style.display = "none";
+   document.getElementById("footerTable").parentElement.style.display = "none";
+
+   try {
+      navigator.mozSetMessageHandler(
+         "activity",
+         function(issuer) {
+            if (!users.hasSome()) {
+               authorize();
+            }else {
+               formatUsersList(true);
+            }
+            document.getElementById("btnMain").onclick = function() {
+               issuer.postResult("shared");
+            }
+            document.getElementById("uploadFromShare").onclick = function(event) {
+               event.stopPropagation();
+               uploadFromShare(issuer);
+            }
+         }
+      );
+   }catch (error) {
+      simpleMsg("Error", error);
+   }
+};
+
+function setUploadFromShareButton() {   // aka setNavigateButton
+   var elt = document.getElementById("uploadFromShare");
+   if (!users.hasSome() || networks.every(
+         function(network) {
+            if (network.name !== users.getNet()) {
+               return true;    // pursue...
+            }else {
+               elt.textContent = i18n(elt.id, network.name);
+               elt.style.display = "";
+               return false;
+            }
+         }
+      )
+   ) {
+      elt.style.display = "none";
+   }
+}
+
+function uploadFromShare(issuer) {
+   if (!users.hasSome()) {
+      formatUsersList(true);
+   }else {
+      var albumId = isAlbumIdRequired()? users.getAlbumId() : "NoNeedFor";
+      if (!albumId) {
+         dispatcher.on(
+            "albumsListed",
+            function action(albumsCount) {
+               dispatcher.off("albumsListed", action);
+               if (albumsCount > 0) {
+                  simpleMsg("warning", i18n("selectOrCreateAlbum"));
+               }else {
+                  createAlbum(false);
+               }
+            }
+         );
+         // show the appropriate panel for selecting the default album
+         document.getElementById("jgUsersAid").click();
+      }else {
+         uploadShared(issuer, albumId);
+      }
+   }
+}
+
+function uploadShared(issuer, albumId) {
+   var data = issuer.source.data;
+   var blobs = data.blobs;
+   var filenames = data.filenames;
+   blobs.forEach(
+      function(blob, index) {
+         // var filename = filenames[index];
+         issueRequest(
+            "POST",
+            "postImageData&NET=" + users.getNet() +
+            "&AID=" + albumId,
+            blob,
+            function(val) {     // whenDone
+               issuer.postResult("shared");
+            },
+            function(rc, val) { // whenFailed
+               simpleMsg("error", "RC: " + rc);
+               // issuer.postResult("shared");
+            },
+            "image/jpeg"
+         );
+      }
+   );
 }
