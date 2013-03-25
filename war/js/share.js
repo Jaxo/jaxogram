@@ -1,4 +1,4 @@
-window.onload = function() {
+function whenShareLoaded() {
    var loc = window.location;
    if (loc.protocol !== "app:") {
       var host = loc.host;
@@ -14,29 +14,44 @@ window.onload = function() {
    createDispatcher();
    users = new JgUsers();
 
+   navigator.mozApps.getSelf().onsuccess = function() {
+      if (this.result) {
+         var version = this.result.manifest.version;
+         if (version) {
+            document.querySelector("header h1 small").textContent = version;
+         }
+      }
+   }
+   setNavigateButton = setUploadFromShareButton;
+
    // Listeners
-   // document.getElementById("btnMain").onclick = ???
    document.getElementById("sidebarMenu").onclick = menuListClicked;
    document.getElementById("jgUsersAid").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
 
    var dfltLocale = navigator.language || navigator.userLanguage;
-   formatUsersList(false);
-   translateBody(dfltLocale);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
+   translateBody(dfltLocale);
+   document.getElementById("jgUsersIn").style.display = "none";
+   document.getElementById("jgUsersAid").style.display = "none";
+   document.getElementById("footerTable").parentElement.style.display = "none";
+
    try {
       navigator.mozSetMessageHandler(
          "activity",
          function(issuer) {
-            if (issuer.source.name === "share") {
-               document.getElementById("btnMain").onclick = function() {
-            /**/  console.warn("share: closed");
-                  issuer.postResult("shared");
-               }
-               document.getElementById("uploadFromShare").onclick = function() {
-                  uploadFromShare(issuer);
-               }
+            if (!users.hasSome()) {
+               authorize();
+            }else {
+               formatUsersList(true);
+            }
+            document.getElementById("btnMain").onclick = function() {
+               issuer.postResult("shared");
+            }
+            document.getElementById("uploadFromShare").onclick = function(event) {
+               event.stopPropagation();
+               uploadFromShare(issuer);
             }
          }
       );
@@ -44,6 +59,24 @@ window.onload = function() {
       simpleMsg("Error", error);
    }
 };
+
+function setUploadFromShareButton() {   // aka setNavigateButton
+   var elt = document.getElementById("uploadFromShare");
+   if (!users.hasSome() || networks.every(
+         function(network) {
+            if (network.name !== users.getNet()) {
+               return true;    // pursue...
+            }else {
+               elt.textContent = i18n(elt.id, network.name);
+               elt.style.display = "";
+               return false;
+            }
+         }
+      )
+   ) {
+      elt.style.display = "none";
+   }
+}
 
 function uploadFromShare(issuer) {
    if (!users.hasSome()) {

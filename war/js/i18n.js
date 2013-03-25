@@ -13,7 +13,7 @@ var localeValues = {
    }, uploadFromShare: {
       'en-US':"Upload picture to %1",
       'fr-FR':"Téĺécharger sur %1",
-      'pt-BR':"upload de imagem para o %1",
+      'pt-BR':"Upload de imagem para o %1",
       'es-ES':"Sube imágenes de %1"
    }, whoAmI: {
       'en-US':"Who am I?",
@@ -106,10 +106,10 @@ var localeValues = {
       'pt-BR':"\"%1\" álbum criado.",
       'es-ES':"Album \"%1\" creada."
    }, chooseNetwork: {
-      'en-US':"Please, choose a social network",
-      'fr-FR':"Choisissez votre réseau social",
-      'pt-BR':"Escolher uma rede social",
-      'es-ES':"Elige una red social"
+      'en-US':"Social network",
+      'fr-FR':"Réseau social",
+      'pt-BR':"Rede social",
+      'es-ES':"Red social"
    }, picasaLogin: {
       'en-US':"Login to Picasa …",
       'fr-FR':"Connexion à Picasa …",

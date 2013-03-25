@@ -1,6 +1,6 @@
 {
   "name": "Jaxogram",
-  "version": "11.6h",
+  "version": "11.7h",
   "description": "Jaxo's Photo Sharing App",
   "locales": {
     "en": { "description": "Jaxo's Photo Sharing App" },
@@ -37,7 +37,7 @@
       "filters": {
         "type": "image/*"
        },
-      "disposition": "inline",
+      "disposition": "window",
       "returnValue": true,
       "href": "/share.html"
     }
