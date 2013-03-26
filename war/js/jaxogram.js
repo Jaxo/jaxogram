@@ -33,7 +33,6 @@ var networks = [
       win: null
    }
 ];
-var setNavigateButton = function() { alert("no navigation button"); };
 
 window.onload = function() {
    var loc = window.location;
@@ -52,15 +51,8 @@ window.onload = function() {
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
-   if (loc.pathname.indexOf("share.html") != -1) {
-      whenShareLoaded();
-   }else {
-      whenIndexLoaded();
-   }
-}
-
-function whenIndexLoaded() {
    var params = getQueryParams();
+
    if (params.OP === "backCall") {
       /*
       | this occurs for non-packaged applications only:
@@ -69,12 +61,14 @@ function whenIndexLoaded() {
       */
       registerUser(params.VRF, params.NET);
    }
+
    dispatcher.on(
       "install_changed",
       function action(state, version) {
          if (
             (state === "uninstalled") && !users.hasSome() &&
-            (params.OP !== "backCall")
+            (params.OP !== "backCall") &&
+            (params.OP !== "share")
          ) {
             confirmMsg(
                i18n('betterInstall'),
@@ -85,10 +79,10 @@ function whenIndexLoaded() {
          }
       }
    );
+
    setInstallButton("btnInstall");
    fitImage(document.getElementById('photoImage'));
    window.addEventListener("resize", fitImages, false);
-   setNavigateButton = setGoForItButton;
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
@@ -100,8 +94,10 @@ function whenIndexLoaded() {
    // document.getElementById("whoAmI").onclick = whoAmI;
 
    var dfltLocale = navigator.language || navigator.userLanguage;
-   formatUsersList(false);
+   document.getElementById("jgUsersAid").style.display = "none";
+   document.getElementById("footerRow2").style.display = "none";
    translateBody(dfltLocale);
+   formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
 // window.onerror = function(msg, url, linenumber){
@@ -122,10 +118,26 @@ function whenIndexLoaded() {
          }
       }
    );
+   /**/ if (!navigator.mozSetMessageHandler) {
+   /**/    var b1 = document.createElement("BUTTON");
+   /**/    b1.style.position = "absolute";
+   /**/    b1.style.top = "5rem";
+   /**/    b1.style.right = "0";
+   /**/    b1.style.zIndex = 100;
+   /**/    b1.textContent = "Test share";
+   /**/    b1.onclick = function() { handleShareMessage(); }
+   /**/    document.body.appendChild(b1);
+   /**/ }else
+   try {
+      navigator.mozSetMessageHandler("activity", handleShareMessage);
+   }catch (error) {
+      simpleMsg("error", error);
+   }
 };
 
-function setGoForItButton() {   // aka setNavigateButton
-   var elt = document.getElementById("go4it");
+function setNetworkButtons() {
+   var eltGo4It = document.getElementById("go4it");
+   var eltShare = document.getElementById("uploadFromShare");
    if (!users.hasSome() || networks.every(
          function(network) {
             if (network.name !== users.getNet()) {
@@ -134,21 +146,24 @@ function setGoForItButton() {   // aka setNavigateButton
                var imgElt = document.createElement("IMG");
                imgElt.src = "images/" + network.name + "Logo.png";
                imgElt.style.width = "7rem";
-               while (elt.hasChildNodes()) {
-                  elt.removeChild(elt.lastChild);
+               while (eltGo4It.hasChildNodes()) {
+                  eltGo4It.removeChild(eltGo4It.lastChild);
                }
-               elt.appendChild(imgElt);
-               elt.onclick = function(event) {
+               eltGo4It.appendChild(imgElt);
+               eltGo4It.onclick = function(event) {
                   event.stopPropagation();
                   browseTo(network);
                }
-               elt.style.display = "";
+               eltGo4It.style.display = "";
+               eltShare.textContent = i18n(eltShare.id, network.name);
+               eltShare.style.display = "";
                return false;
             }
          }
       )
    ) {
-      elt.style.display = "none";
+      eltGo4It.style.display = "none";
+      eltShare.textContent = i18n(eltShare.id, "???");
    }
 }
 
@@ -208,34 +223,30 @@ function formatUsersList(isUserRequired) {
       elt.appendChild(italicElt);
       elt.appendChild(ulElt);
       elt.style.display = "";
-      document.getElementById("footerTable").parentElement.style.display = "";
       tellAccessPass();
    }else {
+      document.getElementById("jgUsersIn").style.display = "none";
+//    var elt = document.getElementById("jgUsersIn");
+//    var btnElt = document.createElement("BUTTON");
+//    var spanElt = document.createElement("SPAN");
+//    btnElt.onclick = function(event) {
+//       authorize();
+//       event.stopPropagation();
+//    }
+//    spanElt.className = "i18n";
+//    spanElt.id = "newLogin";
+//    spanElt.appendChild(document.createTextNode(i18n("newLogin")));
+//    btnElt.appendChild(spanElt);
+//
+//    while (elt.hasChildNodes()) {
+//       elt.removeChild(elt.lastChild);
+//    }
+//    elt.appendChild(btnElt);
       if (isUserRequired) {
-         confirmMsg(
-            i18n("requestAuth"),
-            function() { authorize(); }
-         );
-      }else {
-         var elt = document.getElementById("jgUsersIn");
-         var btnElt = document.createElement("BUTTON");
-         var spanElt = document.createElement("SPAN");
-         btnElt.onclick = function(event) {
-            authorize();
-            event.stopPropagation();
-         }
-         spanElt.className = "i18n";
-         spanElt.id = "newLogin";
-         spanElt.appendChild(document.createTextNode(i18n("newLogin")));
-         btnElt.appendChild(spanElt);
-
-         while (elt.hasChildNodes()) {
-            elt.removeChild(elt.lastChild);
-         }
-         elt.appendChild(btnElt);
+         authorize();
       }
    }
-   setNavigateButton();
+   setNetworkButtons();
 }
 
 function isAlbumIdRequired() {
@@ -384,7 +395,7 @@ function changeLogin(elt, event) {
          document.getElementById('jgUserName').textContent = users.getUserName();
          document.getElementById('jgUserNet').src = "../images/" + users.getNet() + "Logo.png";
          resetAlbumsList();
-         setNavigateButton();
+         setNetworkButtons();
          tellAccessPass();
       }
    }
@@ -779,69 +790,32 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
 
 /*================================= share ===================================*/
 
-function whenShareLoaded() {
-   navigator.mozApps.getSelf().onsuccess = function() {
-      if (this.result) {
-         var version = this.result.manifest.version;
-         if (version) {
-            document.querySelector("header h1 small").textContent = version;
-         }
-      }
+function handleShareMessage(issuer) {
+   document.getElementById("btnInstall").style.visibility = "hidden";
+   document.getElementById("uploadFromShare").onclick = function(event) {
+      event.stopPropagation();
+      uploadFromShare(issuer);
    }
-   setNavigateButton = setUploadFromShareButton;
-
-   // Listeners
-   document.querySelector(".menuList").onclick = menuListClicked;
-   document.getElementById("jgUsersAid").onclick = listAlbums;
-   document.getElementById("changeLanguage").onclick = changeLanguage;
-
-   var dfltLocale = navigator.language || navigator.userLanguage;
-   document.getElementById('usedLang').textContent = i18n(dfltLocale);
-   document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
-   translateBody(dfltLocale);
-   document.getElementById("jgUsersIn").style.display = "none";
-   document.getElementById("jgUsersAid").style.display = "none";
-   document.getElementById("footerTable").parentElement.style.display = "none";
-
-   try {
-      navigator.mozSetMessageHandler(
-         "activity",
-         function(issuer) {
-            if (!users.hasSome()) {
-               authorize();
-            }else {
-               formatUsersList(true);
-            }
-            document.getElementById("btnMain").onclick = function() {
-               issuer.postResult("shared");
-            }
-            document.getElementById("uploadFromShare").onclick = function(event) {
-               event.stopPropagation();
-               uploadFromShare(issuer);
-            }
-         }
-      );
-   }catch (error) {
-      simpleMsg("Error", error);
+   expandSidebarView(-1);
+   document.getElementById('btnMainImage').style.backgroundImage = "url(style/images/close.png)";
+   document.getElementById("btnMain").onclick = function() {
+      whenShareUploadFailed(issuer, "canceled");
    }
-};
+   document.getElementById("corepane").style.display = "none";
+   document.getElementById("menupane").className = "drawee";
+   document.getElementById("footerRow1").style.display = "none";
+   document.getElementById("footerRow2").style.display = "";
+}
 
-function setUploadFromShareButton() {   // aka setNavigateButton
-   var elt = document.getElementById("uploadFromShare");
-   if (!users.hasSome() || networks.every(
-         function(network) {
-            if (network.name !== users.getNet()) {
-               return true;    // pursue...
-            }else {
-               elt.textContent = i18n(elt.id, network.name);
-               elt.style.display = "";
-               return false;
-            }
-         }
-      )
-   ) {
-      elt.style.display = "none";
-   }
+function finishShareActivity() {
+   document.getElementById("uploadFromShare").onclick = "";
+   document.getElementById("footerRow2").style.display = "none";
+   document.getElementById("footerRow1").style.display = "";
+   document.getElementById("menupane").className = "drawer";
+   document.getElementById("corepane").style.display = "";
+   document.getElementById("btnMain").onclick = toggleSidebarView;
+   resetSidebarButton();
+   document.getElementById("btnInstall").style.visibility = "visible";
 }
 
 function uploadFromShare(issuer) {
@@ -864,32 +838,41 @@ function uploadFromShare(issuer) {
          // show the appropriate panel for selecting the default album
          document.getElementById("jgUsersAid").click();
       }else {
-         uploadShared(issuer, albumId);
+         /**/ if (!issuer) finishShareActivity(); else
+         uploadShared(issuer, albumId, issuer.source.data, 0);
       }
    }
 }
 
-function uploadShared(issuer, albumId) {
-   var data = issuer.source.data;
-   var blobs = data.blobs;
-   var filenames = data.filenames;
-   blobs.forEach(
-      function(blob, index) {
-         // var filename = filenames[index];
-         issueRequest(
-            "POST",
-            "postImageData&NET=" + users.getNet() +
-            "&AID=" + albumId,
-            blob,
-            function(val) {     // whenDone
-               issuer.postResult("shared");
-            },
-            function(rc, val) { // whenFailed
-               simpleMsg("error", "RC: " + rc);
-               // issuer.postResult("shared");
-            },
-            "image/jpeg"
-         );
-      }
-   );
+function uploadShared(issuer, albumId, data, index) {
+   if (index === -1) {
+      whenShareUploadFailed(issuer, "RC: " + data);
+   }else if (index >= data.blobs.length) {
+      whenShareUploadOk(issuer);
+   }else {
+      issueRequest(
+         "POST",
+         "postImageData&NET=" + users.getNet() +
+         // "&FNM=" + data.filenames[index] +
+         "&AID=" + albumId,
+         data.blobs[index],
+         function(val) {        // whenDone
+            uploadShared(issuer, albumId, data, ++index);
+         },
+         function(rc, val) {    // whenFailed
+            uploadShared(issuer, albumId, rc, -1);
+         },
+         "image/jpeg"
+      );
+   }
+}
+
+function whenShareUploadFailed(issuer, message) {
+   finishShareActivity();
+   if (issuer) issuer.postError(message);
+}
+
+function whenShareUploadOk(issuer) {
+   finishShareActivity();
+   if (issuer) issuer.postResult({result: "ok"});
 }

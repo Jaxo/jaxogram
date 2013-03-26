@@ -39,7 +39,7 @@
       },
       "disposition": "window",
       "returnValue": true,
-      "href": "/share.html"
+      "href": "/index.html?OP=share"
     }
   }
 }

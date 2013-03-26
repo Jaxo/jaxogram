@@ -40,11 +40,6 @@ var localeValues = {
       'fr-FR':"Pour installer, appuyez sur la flèche droite dans Safari, puis \"Ajouter à l'écran d'accueil\"",
       'pt-BR':"Para instalar, pressione a seta para a frente no Safari e toque \"Adicionar à Tela Início\"",
       'es-ES':"Para instalarlo, pulse la flecha de avance en Safari y toca \"Añadir a pantalla de inicio\""
-   }, requestAuth: {
-      'en-US':"Your authorization is required\nto let Jaxogram access your data.\nProceed to granting?",
-      'fr-FR':"Vous devrez donner votre autorisation\nd'accèder à vos données.\nContinuer ?",
-      'pt-BR':"Sua autorização é necessária\npara deixar Jaxogram acessar seus dados.\nProsseguir a concessão?",
-      'es-ES':"Se requiere su autorización\npara que Jaxogram acceder a sus datos.\nProceda a la concesión?"
    }, noFileApi: {
       'en-US':"The file API isn't supported on this browser yet.",
       'fr-FR':"Pas d'interface 'File' pour ce navigateur",
