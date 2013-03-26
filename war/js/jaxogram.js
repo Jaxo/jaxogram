@@ -469,9 +469,9 @@ function authorizeThruOAuth(net) {
       "GET", "getUrl", "&JXK=" + oauthNetwork.key + "&NET=" + net,
       function(oauthUrl) {        // whenDone
          oauthNetwork.url = oauthUrl;
-         console.error("browseTo..." + oauthNetwork.url);
+//*/     console.error("browseTo..." + oauthNetwork.url);
          browseTo(oauthNetwork);  // open a new browser window
-         console.error("got a window " + oauthNetwork.win);
+//*/     console.error("got a window " + oauthNetwork.win);
          oauthNetwork.win.addEventListener(
             "close",
             function(event) {
@@ -490,7 +490,7 @@ function authorizeThruOAuth(net) {
 
 function browseTo(network) {
    if (!network.win || network.win.closed) {
-      console.error("attempt to open window...");
+//*/  console.error("attempt to open window...");
       network.win = window.open(network.url, network.name);
    }else {
       network.win.focus();
