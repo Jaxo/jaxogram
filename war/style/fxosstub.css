@@ -102,13 +102,34 @@ header td:active {
   background-color: #0095dd; /* was e66000 */
 }
 
-#main {
+.drawee {
   position: fixed;
-  left: 0px;
-  right: 0;
+  left: 0%;
+  right: 0%;
   top: 5rem;
   bottom: 5rem;
   transition: 0.4s;
+}
+
+.drawee[aria-shrunk=true] {
+  left: 80%;
+  right: -80%;
+}
+
+.drawer {
+   position: absolute;
+   left: -80%;
+   right: 100%;
+   top: 6rem;
+   bottom: 6rem;
+   margin-right: 0rem;
+   opacity: 1;
+   transition: 0.4s;
+   overflow-y: auto;
+}
+.drawer[aria-expanded=true] {
+   left: 0;
+   right: 20%;
 }
 
 .body {
@@ -127,17 +148,6 @@ header td:active {
 .body[aria-expanded=true] {
    opacity: 1;
    z-index: 1;
-}
-
-.body#sidebar {
-   left: 0;
-   right: 100%;
-   top: 6rem;
-   bottom: 6rem;
-   margin-right: 0rem;
-   opacity: 1;
-   transition: 0.4s;
-   overflow-y: auto;
 }
 
 #glasspane {

@@ -92,7 +92,7 @@ function whenIndexLoaded() {
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
-   document.getElementById("sidebarMenu").onclick = menuListClicked;
+   document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("jgUsersAid").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
@@ -108,7 +108,7 @@ function whenIndexLoaded() {
 //    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
 //    return true;
 // }
-   var eltMain = document.getElementById("main");
+   var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
    eltMain.addEventListener(
       "swipe",
@@ -791,7 +791,7 @@ function whenShareLoaded() {
    setNavigateButton = setUploadFromShareButton;
 
    // Listeners
-   document.getElementById("sidebarMenu").onclick = menuListClicked;
+   document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("jgUsersAid").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
 
