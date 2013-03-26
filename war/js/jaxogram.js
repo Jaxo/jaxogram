@@ -120,11 +120,12 @@ window.onload = function() {
    );
    /**/ if (!navigator.mozSetMessageHandler) {
    /**/    var b1 = document.createElement("BUTTON");
+   /**/    b1.id = "testshare";
    /**/    b1.style.position = "absolute";
    /**/    b1.style.top = "5rem";
    /**/    b1.style.right = "0";
    /**/    b1.style.zIndex = 100;
-   /**/    b1.textContent = "Test share";
+   /**/    b1.textContent = "share mode";
    /**/    b1.onclick = function() { handleShareMessage(); }
    /**/    document.body.appendChild(b1);
    /**/ }else
@@ -791,6 +792,7 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
 /*================================= share ===================================*/
 
 function handleShareMessage(issuer) {
+   /**/ if (!issuer) document.getElementById("testshare").style.display = "none";
    document.getElementById("btnInstall").style.visibility = "hidden";
    document.getElementById("uploadFromShare").onclick = function(event) {
       event.stopPropagation();
@@ -838,7 +840,7 @@ function uploadFromShare(issuer) {
          // show the appropriate panel for selecting the default album
          document.getElementById("jgUsersAid").click();
       }else {
-         /**/ if (!issuer) finishShareActivity(); else
+         /**/ if (!issuer) whenShareUploadOk(issuer); else
          uploadShared(issuer, albumId, issuer.source.data, 0);
       }
    }
@@ -870,9 +872,11 @@ function uploadShared(issuer, albumId, data, index) {
 function whenShareUploadFailed(issuer, message) {
    finishShareActivity();
    if (issuer) issuer.postError(message);
+   /**/ else document.getElementById("testshare").style.display = "";
 }
 
 function whenShareUploadOk(issuer) {
    finishShareActivity();
    if (issuer) issuer.postResult({result: "ok"});
+   /**/ else document.getElementById("testshare").style.display = "";
 }
