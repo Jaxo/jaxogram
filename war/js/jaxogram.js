@@ -95,7 +95,6 @@ window.onload = function() {
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
-   // document.getElementById("whoAmI").onclick = whoAmI;
 
    var dfltLocale = navigator.language || navigator.userLanguage;
    document.getElementById("jgUsersAid").style.display = "none";
@@ -569,36 +568,6 @@ function tellAccessPass()
       function(val) {},   // whenDone
       function(rc, val) { // whenFailed
          simpleMsg("error", "tellAccess RC: " + rc + "\n" + val);
-      }
-   );
-}
-
-function whoAmI() {
-   issueRequestStd(
-      'whoAmI',
-       function(person) {
-          var value;
-          value = person.name.givenName;
-          if (!value) value = "?";
-          document.getElementById("p2_givenName").textContent = value;
-          value = person.name.familyName;
-          if (!value) value = "?";
-          document.getElementById("p2_familyName").textContent = value;
-//        document.getElementById("p2_thumbnail").setAttribute(
-//           "src", person.thumbnailUrl
-//        );
-          value = person.gender;
-          if (!value) value = "?";
-          document.getElementById("p2_gender").textContent = value;
-          value = person.birthday;
-          if (!value) {
-             value = "?";
-          }else {
-             var date = new Date(value);
-             value = date.getDate() + " " + i18n('months')[date.getMonth()];
-          }
-          document.getElementById("p2_birthday").textContent = value;
-          expandPage("p2");
       }
    );
 }
