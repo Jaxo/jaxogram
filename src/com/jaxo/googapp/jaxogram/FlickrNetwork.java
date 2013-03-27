@@ -258,5 +258,76 @@ public class FlickrNetwork extends OAuthorizer implements Network
       }
       return payload.trim();
    }
+
+   // SIMPLIFIED, getting read of all oauth.client bullshit (invented by Orkut?)
+// public String uploadPhoto(
+//    String albumId,
+//    String title,
+//    byte[] image,
+//    String type // png, gif, or jpg.  see: ~/fxos/orkut/java/src/com/google/orkut/client/api/UploadPhotoTx.java
+// )
+// throws Exception
+// {
+//    ArrayList<Map.Entry<String, String>> params;
+//    params = new ArrayList<Map.Entry<String, String>>();
+//    OAuthMessage request = accessor.newRequestMessage(
+//       OAuthMessage.POST,
+//       UPLOAD_URL,
+//       params,
+//       new ByteArrayInputStream(image)
+//    );
+//    HttpMessage httpRequest = makeNewRequest(request);
+//    HttpResponseMessage httpResponse = client.getHttpClient().execute(
+//       httpRequest,
+//       client.getHttpParameters()
+//    );
+//    String foo = IOUtils.toString(
+//       httpResponse.getBody(),
+//       httpResponse.getContentCharset()
+//    );
+//    return foo;
+//    // Example of JSON responses
+//    // {"errors":
+//    //    [
+//    //       {
+//    //          "message": "Bad Authentication data",
+//    //          "code":215
+//    //        }
+//    //    ]
+//    // }
+// }
+//
+// // see net.oauth.http.HttpMessage.newRequest()
+// public static HttpMessage makeNewRequest(OAuthMessage request) throws Exception
+// {
+//    List<Map.Entry<String, String>> headers;
+//    InputStream body = request.getBodyAsStream();
+//    String url = request.URL;
+//    headers = new ArrayList<Map.Entry<String, String>>(request.getHeaders());
+//    if (body == null) throw new Exception("no BODY");
+//    {
+//       headers.add(new OAuth.Parameter("Authorization", request.getAuthorizationHeader(null)));
+//       // Write the non-OAuth parameters in the body
+//       MultipartEntity entity = new MultipartEntity();
+//       for (Map.Entry<String, String> parameter : request.getParameters()) {
+//          if (!parameter.getKey().startsWith("oauth_")) {
+//             entity.addField(
+//                parameter.getKey(),   // not OAuth.percentEncode
+//                parameter.getValue(),
+//                request.getBodyEncoding()
+//             );
+//          }
+//       }
+//       entity.addStream("photo", "tmpfile.jpg", "image/jpeg", body);
+//       headers.add(new OAuth.Parameter("Content-Type", entity.getContentType()));
+//       // headers.add(new OAuth.Parameter(CONTENT_LENGTH, Integer.toString(form.length)));
+//       body = entity.getBody();
+//    }
+//    HttpMessage httpRequest = new HttpMessage(
+//       request.method, new URL(url), body
+//    );
+//    httpRequest.headers.addAll(headers);
+//    return httpRequest;
+// }
 }
 /*===========================================================================*/
