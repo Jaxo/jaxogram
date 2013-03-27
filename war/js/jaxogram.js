@@ -25,6 +25,10 @@ var networks = [
       win: null
    },{
       name: "twitter",
+      url: "http://www.twitter.com",
+      win: null
+   },{
+      name: "twitpic",
       url: "http://mobile.twitpic.com",
       win: null
    },{
@@ -254,6 +258,7 @@ function isAlbumIdRequired() {
    return (
       users.hasSome() &&
       (users.getNet() !== "twitter") &&
+      (users.getNet() !== "twitpic") &&
       (users.getNet() !== "flickr")
    );
 }

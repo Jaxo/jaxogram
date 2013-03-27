@@ -300,6 +300,8 @@ public class JaxogramServlet extends HttpServlet
          return new FacebookNetwork(accessPass);
       }else if (net.equals("twitter")) {
          return new TwitterNetwork(accessPass);
+      }else if (net.equals("twitpic")) {
+         return new TwitpicNetwork(accessPass);
       }else if (net.equals("flickr")) {
          return new FlickrNetwork(accessPass);
       }else if (net.equals("picasa")) {
@@ -321,6 +323,8 @@ public class JaxogramServlet extends HttpServlet
          return new FacebookNetwork();
       }else if (net.equals("twitter")) {
          return new TwitterNetwork();
+      }else if (net.equals("twitpic")) {
+         return new TwitpicNetwork();
       }else if (net.equals("flickr")) {
          return new FlickrNetwork();
       }else if (net.equals("orkut")){

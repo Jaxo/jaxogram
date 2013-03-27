@@ -13,6 +13,7 @@ package com.jaxo.googapp.jaxogram;
 
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
+import net.oauth.OAuthMessage;
 import net.oauth.OAuthServiceProvider;
 import net.oauth.client.OAuthClient;
 import net.oauth.client.jnetclient.JNetClient;
@@ -77,6 +78,17 @@ public abstract class OAuthorizer
    +-------------------------------------------------------------------------*/
    public String getAccessPass() {
       return accessor.accessToken + " " + accessor.tokenSecret;
+   }
+
+   /*-----------------------------------------------------------getAuthHeader-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public String getAuthHeader(String url) throws Exception
+   {
+      OAuthMessage msg = new OAuthMessage("POST", url, null, null);
+      msg.addRequiredParameters(accessor);
+      return msg.getAuthorizationHeader(null);
    }
 }
 
