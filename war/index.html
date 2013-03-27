@@ -24,7 +24,7 @@
      </TR></TABLE>
      <H1>Jaxogram <SMALL>web</SMALL></H1>
    </HEADER>
-   <DIV id="main">
+   <DIV id="corepane" class="drawee">
      <DIV id="p0" class="body" aria-expanded="true">
         <DIV class="i18n" id="p0_top"></DIV>
         <DIV id="p0_bot">
@@ -65,8 +65,8 @@
         </TABLE>
      </DIV>
    </DIV>
-   <DIV id="sidebar" class="body">
-      <UL id="sidebarMenu" class="menuList">
+   <DIV id="menupane" class="drawer">
+      <UL class="menuList">
         <LI role="listbox" id="jgUsersIn"></LI>
         <LI role="listbox" id="jgUsersAid"></LI>
         <LI role="listbox">
@@ -100,9 +100,11 @@
 
    <FOOTER>
       <TABLE id="footerTable">
-        <TR>
+        <TR id="footerRow1">
           <TD class="i18n" id="pickAndUpload"></TD>
           <TD id="go4it"></TD>
+        </TR><TR id="footerRow2">
+          <TD class="i18n" id="uploadFromShare"></TD>
         </TR>
       </TABLE>
    </FOOTER>

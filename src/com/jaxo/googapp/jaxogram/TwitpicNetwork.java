@@ -11,10 +11,9 @@
 */
 package com.jaxo.googapp.jaxogram;
 
-import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
@@ -26,29 +25,31 @@ import net.oauth.http.MultipartEntity;
 import org.apache.commons.io.IOUtils;
 //*/ import java.util.logging.Logger;
 
-/*-- class TwitterNetwork --+
+/*-- class TwitpicNetwork --+
 *//**
 *
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class TwitterNetwork extends OAuthorizer implements Network
+public class TwitpicNetwork extends OAuthorizer implements Network
 {
-   //*/ private static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.TwitterNetwork");
-   private static final String CONSUMER_KEY = "taYsxDzNvPrx6tFemKe6Zw";
-   private static final String CONSUMER_SECRET = "0SW9ZzuyGXOB4ienpBCcWyd0r0V2zOAOQRgVLjdYww";
+   //*/ private static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.TwitpicNetwork");
+   private static final String CONSUMER_KEY = "1GuuuKkVr2VqZrQRJJ3pkw";
+   private static final String CONSUMER_SECRET = "aWyTrSFTXYBb2ddL67tdb1i8xRGJnNF67c3LkGadFs";
    private static final String OAUTH_REQUEST_URL = "https://api.twitter.com/oauth/request_token";
    private static final String OAUTH_AUTHORIZATION_URL = "https://api.twitter.com/oauth/authorize";
    private static final String OAUTH_ACCESS_URL = "https://api.twitter.com/oauth/access_token";
-   private static final String UPLOAD_URL = "https://api.twitter.com/1.1/statuses/update_with_media.json";
-   private static final String OLD_UPLOAD_URL = "https://upload.twitter.com/1/statuses/update_with_media.json";
 
+   private static final String API_KEY = "7348580b4263e5703fc3cb97e7ba3283"; // TWitPic
+   private static final String UPLOAD_URL = "http://api.twitpic.com/2/upload.json";
+   private static final String CREDENTIALS_URL = "https://api.twitter.com/1/account/verify_credentials.json";
+   private static final String REALM_URL = "http://api.twitter.com";
 
-   /*----------------------------------------------------------TwitterNetwork-+
+   /*----------------------------------------------------------TwitpicNetwork-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public TwitterNetwork() throws Exception {
+   public TwitpicNetwork() throws Exception {
       super(
          CONSUMER_KEY,
          CONSUMER_SECRET,
@@ -58,11 +59,11 @@ public class TwitterNetwork extends OAuthorizer implements Network
       );
    }
 
-   /*----------------------------------------------------------TwitterNetwork-+
+   /*----------------------------------------------------------TwitpicNetwork-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public TwitterNetwork(String accessPass) throws Exception {
+   public TwitpicNetwork(String accessPass) throws Exception {
       this();
       String[] p = accessPass.split(" ");
       if (p.length != 2) {
@@ -146,7 +147,7 @@ public class TwitterNetwork extends OAuthorizer implements Network
       append("15799571").
       append("\",\"title\":\"").append("Dummy").
       append("\",\"description\":\"").
-      append("Unused for Twitter").
+      append("Unused for Twitpic").
       append("\",\"thumbnailUrl\":\"").append("").
       append("\"}]");
       return sb.toString();
@@ -172,40 +173,63 @@ public class TwitterNetwork extends OAuthorizer implements Network
    )
    throws Exception
    {
+      List<OAuth.Parameter> headers = new ArrayList<OAuth.Parameter>();
       MultipartEntity entity = new MultipartEntity();
-      entity.addField(
-         "status", "This picture was sent by Jaxogram", "ISO-8859-1"
+      entity.addField("key", API_KEY, "UTF-8");
+      entity.addField("message", title, "UTF-8");
+      entity.addFile("media", "tmpfile." + type, "image/" + type, image);
+      headers.add(
+         new OAuth.Parameter(
+            "X-Verify-Credentials-Authorization",
+            accessor.newRequestMessage(
+               OAuthMessage.GET, CREDENTIALS_URL, null, null
+            ).getAuthorizationHeader(REALM_URL)
+         )
       );
-      entity.addStream(
-         "media[]", "tmpfile.jpg", "image/jpeg", new ByteArrayInputStream(image)
+      headers.add(
+         new OAuth.Parameter(
+            "X-Auth-Service-Provider",
+            CREDENTIALS_URL
+         )
+      );
+      headers.add(
+         new OAuth.Parameter(
+            net.oauth.http.HttpMessage.CONTENT_TYPE,
+            entity.getContentType()
+         )
       );
       HttpMessage httpRequest = new HttpMessage(
-         "POST", new URL(UPLOAD_URL), entity.getBody()
+         OAuthMessage.POST,
+         new URL(UPLOAD_URL),
+         entity.getBody()
       );
-      List<Map.Entry<String, String>> headers = httpRequest.headers;
-      headers.add(new OAuth.Parameter("Authorization", getAuthHeader(UPLOAD_URL)));
-      headers.add(new OAuth.Parameter("Content-Type", entity.getContentType()));
-      // headers.add(new OAuth.Parameter(CONTENT_LENGTH, Integer.toString(form.length)));
-
-      HttpResponseMessage httpResponse = client.getHttpClient().execute(
+      httpRequest.headers.addAll(headers);
+      HttpResponseMessage response = client.getHttpClient().execute(
          httpRequest,
          client.getHttpParameters()
       );
-      return IOUtils.toString(
-         httpResponse.getBody(),
-         httpResponse.getContentCharset()
-      );
+      return IOUtils.toString(response.getBody(), response.getContentCharset());
       // Example of JSON responses
-      // {"request":
-      //    "\/1\/statuses\/update_with_media.json",
-      //    "error":"Missing or invalid url parameter."
+      // {
+      //    "id":"cag6rj",
+      //    "text":"Jaxogram Test",
+      //    "url":"http:\/\/twitpic.com\/cag6rj",
+      //    "width":100,
+      //    "height":100,
+      //    "size":5045,
+      //    "type":"png",
+      //    "timestamp":"Mon, 11 Mar 2013 11:10:16 +0000",
+      //    "user":{
+      //       "id":3186471,
+      //       "screen_name": "jaxosystems"
+      //    }
       // }
-      // {"errors":
+      // { "errors":
       //    [
       //       {
-      //          "message": "Bad Authentication data",
-      //          "code":215
-      //        }
+      //         "code":401,
+      //         "message":"Could not authenticate you (invalid application key)."
+      //       }
       //    ]
       // }
    }

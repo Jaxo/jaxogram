@@ -1,6 +1,6 @@
 {
   "name": "Jaxogram",
-  "version": "11.6h",
+  "version": "11.7h",
   "description": "Jaxo's Photo Sharing App",
   "locales": {
     "en": { "description": "Jaxo's Photo Sharing App" },
@@ -30,5 +30,16 @@
     "device-storage:pictures": { "description": "Share photos", "access": "readcreate" },
     "geolocation": { "description": "Geotag photos" },
     "storage": { "description": "Use local storage for access tokens" }
+  },
+
+  "activities": {
+    "share": {
+      "filters": {
+        "type": "image/*"
+      },
+      "disposition": "window",
+      "returnValue": true,
+      "href": "/index.html?OP=share"
+    }
   }
 }

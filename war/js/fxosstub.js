@@ -105,30 +105,26 @@ function toggleSidebarView() {
 
 function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
    var btnMainStyle = document.getElementById('btnMainImage').style;
-   var bodyStyle = document.getElementById('main').style;
-   var sidebarStyle = document.getElementById('sidebar').style;
-   if ((bodyStyle.left !== "80%") && (v >= 0)) {
+   var drawee = document.getElementById('corepane');
+   var drawer = document.getElementById('menupane');
+   var expanded = (drawer.getAttribute("aria-expanded") === "true");
+   if (!expanded && (v >= 0)) {
       btnMainStyle.backgroundImage = "url(style/images/back.png)";
-      bodyStyle.left = "80%";
-      bodyStyle.right = "-80%";
-      sidebarStyle.left = "0%";
-      sidebarStyle.right = "20%"; /* (100-80)% */
+      drawee.setAttribute("aria-shrunk", "true");
+      drawer.setAttribute("aria-expanded", "true");
    }else if (v <= 0) {
       btnMainStyle.backgroundImage = "url(style/images/menu.png)";
-      bodyStyle.left = "0%";
-      bodyStyle.right = "0%";
-      sidebarStyle.left = "-80%";
-      sidebarStyle.right = "100%";
+      drawee.setAttribute("aria-shrunk", "false");
+      drawer.setAttribute("aria-expanded", "false");
    }
 }
 
 function resetSidebarButton() {
    var btnMainStyle = document.getElementById('btnMainImage').style;
-   var bodyStyle = document.getElementById('main').style;
-   if (bodyStyle.left !== "80%") {
-      btnMainStyle.backgroundImage = "url(style/images/menu.png)";
-   }else {
+   if (document.getElementById('menupane').getAttribute("aria-expanded") === "true") {
       btnMainStyle.backgroundImage = "url(style/images/back.png)";
+   }else {
+      btnMainStyle.backgroundImage = "url(style/images/menu.png)";
    }
 }
 

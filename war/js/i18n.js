@@ -10,6 +10,11 @@ var localeValues = {
       'fr-FR':"Partager une photo",
       'pt-BR':"Foto Compartilhar",
       'es-ES':"Compartir fotos"
+   }, uploadFromShare: {
+      'en-US':"Upload picture to %1",
+      'fr-FR':"Téĺécharger sur %1",
+      'pt-BR':"Upload de imagem para o %1",
+      'es-ES':"Sube imágenes de %1"
    }, whoAmI: {
       'en-US':"Who am I?",
       'fr-FR':"Qui suis-je ?",
@@ -35,11 +40,6 @@ var localeValues = {
       'fr-FR':"Pour installer, appuyez sur la flèche droite dans Safari, puis \"Ajouter à l'écran d'accueil\"",
       'pt-BR':"Para instalar, pressione a seta para a frente no Safari e toque \"Adicionar à Tela Início\"",
       'es-ES':"Para instalarlo, pulse la flecha de avance en Safari y toca \"Añadir a pantalla de inicio\""
-   }, requestAuth: {
-      'en-US':"Your authorization is required\nto let Jaxogram access your data.\nProceed to granting?",
-      'fr-FR':"Vous devrez donner votre autorisation\nd'accèder à vos données.\nContinuer ?",
-      'pt-BR':"Sua autorização é necessária\npara deixar Jaxogram acessar seus dados.\nProsseguir a concessão?",
-      'es-ES':"Se requiere su autorización\npara que Jaxogram acceder a sus datos.\nProceda a la concesión?"
    }, noFileApi: {
       'en-US':"The file API isn't supported on this browser yet.",
       'fr-FR':"Pas d'interface 'File' pour ce navigateur",
@@ -101,10 +101,10 @@ var localeValues = {
       'pt-BR':"\"%1\" álbum criado.",
       'es-ES':"Album \"%1\" creada."
    }, chooseNetwork: {
-      'en-US':"Please, choose a social network",
-      'fr-FR':"Choisissez votre réseau social",
-      'pt-BR':"Escolher uma rede social",
-      'es-ES':"Elige una red social"
+      'en-US':"Social network",
+      'fr-FR':"Réseau social",
+      'pt-BR':"Rede social",
+      'es-ES':"Red social"
    }, picasaLogin: {
       'en-US':"Login to Picasa …",
       'fr-FR':"Connexion à Picasa …",

@@ -25,6 +25,10 @@ var networks = [
       win: null
    },{
       name: "twitter",
+      url: "http://www.twitter.com",
+      win: null
+   },{
+      name: "twitpic",
       url: "http://mobile.twitpic.com",
       win: null
    },{
@@ -67,7 +71,8 @@ window.onload = function() {
       function action(state, version) {
          if (
             (state === "uninstalled") && !users.hasSome() &&
-            (params.OP !== "backCall")
+            (params.OP !== "backCall") &&
+            (params.OP !== "share")
          ) {
             confirmMsg(
                i18n('betterInstall'),
@@ -85,7 +90,7 @@ window.onload = function() {
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
-   document.getElementById("sidebarMenu").onclick = menuListClicked;
+   document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("jgUsersAid").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
@@ -93,15 +98,17 @@ window.onload = function() {
    // document.getElementById("whoAmI").onclick = whoAmI;
 
    var dfltLocale = navigator.language || navigator.userLanguage;
-   formatUsersList(false);
+   document.getElementById("jgUsersAid").style.display = "none";
+   document.getElementById("footerRow2").style.display = "none";
    translateBody(dfltLocale);
+   formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
 // window.onerror = function(msg, url, linenumber){
 //    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
 //    return true;
 // }
-   var eltMain = document.getElementById("main");
+   var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
    eltMain.addEventListener(
       "swipe",
@@ -115,10 +122,27 @@ window.onload = function() {
          }
       }
    );
+   /**/ if (!navigator.mozSetMessageHandler) {
+   /**/    var b1 = document.createElement("BUTTON");
+   /**/    b1.id = "testshare";
+   /**/    b1.style.position = "absolute";
+   /**/    b1.style.top = "5rem";
+   /**/    b1.style.right = "0";
+   /**/    b1.style.zIndex = 100;
+   /**/    b1.textContent = "share mode";
+   /**/    b1.onclick = function() { handleShareMessage(); }
+   /**/    document.body.appendChild(b1);
+   /**/ }else
+   try {
+      navigator.mozSetMessageHandler("activity", handleShareMessage);
+   }catch (error) {
+      simpleMsg("error", error);
+   }
 };
 
-function setGoForItButton() {
-   var elt = document.getElementById("go4it");
+function setNetworkButtons() {
+   var eltGo4It = document.getElementById("go4it");
+   var eltShare = document.getElementById("uploadFromShare");
    if (!users.hasSome() || networks.every(
          function(network) {
             if (network.name !== users.getNet()) {
@@ -127,21 +151,24 @@ function setGoForItButton() {
                var imgElt = document.createElement("IMG");
                imgElt.src = "images/" + network.name + "Logo.png";
                imgElt.style.width = "7rem";
-               while (elt.hasChildNodes()) {
-                  elt.removeChild(elt.lastChild);
+               while (eltGo4It.hasChildNodes()) {
+                  eltGo4It.removeChild(eltGo4It.lastChild);
                }
-               elt.appendChild(imgElt);
-               elt.onclick = function(event) {
+               eltGo4It.appendChild(imgElt);
+               eltGo4It.onclick = function(event) {
                   event.stopPropagation();
                   browseTo(network);
                }
-               elt.style.display = "";
+               eltGo4It.style.display = "";
+               eltShare.textContent = i18n(eltShare.id, network.name);
+               eltShare.style.display = "";
                return false;
             }
          }
       )
    ) {
-      elt.style.display = "none";
+      eltGo4It.style.display = "none";
+      eltShare.textContent = i18n(eltShare.id, "???");
    }
 }
 
@@ -200,39 +227,38 @@ function formatUsersList(isUserRequired) {
       elt.appendChild(imgNetElt);
       elt.appendChild(italicElt);
       elt.appendChild(ulElt);
+      elt.style.display = "";
       tellAccessPass();
    }else {
+      document.getElementById("jgUsersIn").style.display = "none";
+//    var elt = document.getElementById("jgUsersIn");
+//    var btnElt = document.createElement("BUTTON");
+//    var spanElt = document.createElement("SPAN");
+//    btnElt.onclick = function(event) {
+//       authorize();
+//       event.stopPropagation();
+//    }
+//    spanElt.className = "i18n";
+//    spanElt.id = "newLogin";
+//    spanElt.appendChild(document.createTextNode(i18n("newLogin")));
+//    btnElt.appendChild(spanElt);
+//
+//    while (elt.hasChildNodes()) {
+//       elt.removeChild(elt.lastChild);
+//    }
+//    elt.appendChild(btnElt);
       if (isUserRequired) {
-         confirmMsg(
-            i18n("requestAuth"),
-            function() { authorize(); }
-         );
-      }else {
-         var elt = document.getElementById("jgUsersIn");
-         var btnElt = document.createElement("BUTTON");
-         var spanElt = document.createElement("SPAN");
-         btnElt.onclick = function(event) {
-            authorize();
-            event.stopPropagation();
-         }
-         spanElt.className = "i18n";
-         spanElt.id = "newLogin";
-         spanElt.appendChild(document.createTextNode(i18n("newLogin")));
-         btnElt.appendChild(spanElt);
-
-         while (elt.hasChildNodes()) {
-            elt.removeChild(elt.lastChild);
-         }
-         elt.appendChild(btnElt);
+         authorize();
       }
    }
-   setGoForItButton();
+   setNetworkButtons();
 }
 
 function isAlbumIdRequired() {
    return (
       users.hasSome() &&
       (users.getNet() !== "twitter") &&
+      (users.getNet() !== "twitpic") &&
       (users.getNet() !== "flickr")
    );
 }
@@ -375,7 +401,7 @@ function changeLogin(elt, event) {
          document.getElementById('jgUserName').textContent = users.getUserName();
          document.getElementById('jgUserNet').src = "../images/" + users.getNet() + "Logo.png";
          resetAlbumsList();
-         setGoForItButton();
+         setNetworkButtons();
          tellAccessPass();
       }
    }
@@ -460,7 +486,9 @@ function authorizeThruOAuth(net) {
       "GET", "getUrl", "&JXK=" + oauthNetwork.key + "&NET=" + net,
       function(oauthUrl) {        // whenDone
          oauthNetwork.url = oauthUrl;
+//*/     console.error("browseTo..." + oauthNetwork.url);
          browseTo(oauthNetwork);  // open a new browser window
+//*/     console.error("got a window " + oauthNetwork.win);
          oauthNetwork.win.addEventListener(
             "close",
             function(event) {
@@ -479,6 +507,7 @@ function authorizeThruOAuth(net) {
 
 function browseTo(network) {
    if (!network.win || network.win.closed) {
+//*/  console.error("attempt to open window...");
       network.win = window.open(network.url, network.name);
    }else {
       network.win.focus();
@@ -702,6 +731,7 @@ function uploadFile(albumId) {
             "POST", "postImageFile&NET=" + users.getNet(), formData,
             function(val) {     // whenDone
                expandPage("p1");
+               // FIXME (albumId may be null)
                simpleMsg("info", i18n("imageUploaded", users.getAlbumTitle()));
             },
             function(rc, val) { // whenFailed
@@ -762,4 +792,96 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
    }else {
       xhr.send(values);
    }
+}
+
+/*================================= share ===================================*/
+
+function handleShareMessage(issuer) {
+   /**/ if (!issuer) document.getElementById("testshare").style.display = "none";
+   document.getElementById("btnInstall").style.visibility = "hidden";
+   document.getElementById("uploadFromShare").onclick = function(event) {
+      event.stopPropagation();
+      uploadFromShare(issuer);
+   }
+   expandSidebarView(-1);
+   document.getElementById('btnMainImage').style.backgroundImage = "url(style/images/close.png)";
+   document.getElementById("btnMain").onclick = function() {
+      whenShareUploadFailed(issuer, "canceled");
+   }
+   document.getElementById("corepane").style.display = "none";
+   document.getElementById("menupane").className = "drawee";
+   document.getElementById("footerRow1").style.display = "none";
+   document.getElementById("footerRow2").style.display = "";
+}
+
+function finishShareActivity() {
+   document.getElementById("uploadFromShare").onclick = "";
+   document.getElementById("footerRow2").style.display = "none";
+   document.getElementById("footerRow1").style.display = "";
+   document.getElementById("menupane").className = "drawer";
+   document.getElementById("corepane").style.display = "";
+   document.getElementById("btnMain").onclick = toggleSidebarView;
+   resetSidebarButton();
+   document.getElementById("btnInstall").style.visibility = "visible";
+}
+
+function uploadFromShare(issuer) {
+   if (!users.hasSome()) {
+      formatUsersList(true);
+   }else {
+      var albumId = isAlbumIdRequired()? users.getAlbumId() : "NoNeedFor";
+      if (!albumId) {
+         dispatcher.on(
+            "albumsListed",
+            function action(albumsCount) {
+               dispatcher.off("albumsListed", action);
+               if (albumsCount > 0) {
+                  simpleMsg("warning", i18n("selectOrCreateAlbum"));
+               }else {
+                  createAlbum(false);
+               }
+            }
+         );
+         // show the appropriate panel for selecting the default album
+         document.getElementById("jgUsersAid").click();
+      }else {
+         /**/ if (!issuer) whenShareUploadOk(issuer); else
+         uploadShared(issuer, albumId, issuer.source.data, 0);
+      }
+   }
+}
+
+function uploadShared(issuer, albumId, data, index) {
+   if (index === -1) {
+      whenShareUploadFailed(issuer, "RC: " + data);
+   }else if (index >= data.blobs.length) {
+      whenShareUploadOk(issuer);
+   }else {
+      issueRequest(
+         "POST",
+         "postImageData&NET=" + users.getNet() +
+         // "&FNM=" + data.filenames[index] +
+         "&AID=" + albumId,
+         data.blobs[index],
+         function(val) {        // whenDone
+            uploadShared(issuer, albumId, data, ++index);
+         },
+         function(rc, val) {    // whenFailed
+            uploadShared(issuer, albumId, rc, -1);
+         },
+         "image/jpeg"
+      );
+   }
+}
+
+function whenShareUploadFailed(issuer, message) {
+   finishShareActivity();
+   if (issuer) issuer.postError(message);
+   /**/ else document.getElementById("testshare").style.display = "";
+}
+
+function whenShareUploadOk(issuer) {
+   finishShareActivity();
+   if (issuer) issuer.postResult({result: "ok"});
+   /**/ else document.getElementById("testshare").style.display = "";
 }
