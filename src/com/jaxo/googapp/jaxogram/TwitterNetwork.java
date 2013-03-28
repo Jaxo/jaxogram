@@ -13,6 +13,7 @@ package com.jaxo.googapp.jaxogram;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,9 +41,7 @@ public class TwitterNetwork extends OAuthorizer implements Network
    private static final String OAUTH_REQUEST_URL = "https://api.twitter.com/oauth/request_token";
    private static final String OAUTH_AUTHORIZATION_URL = "https://api.twitter.com/oauth/authorize";
    private static final String OAUTH_ACCESS_URL = "https://api.twitter.com/oauth/access_token";
-   private static final String UPLOAD_URL = "https://api.twitter.com/1.1/statuses/update_with_media.json";
-   private static final String OLD_UPLOAD_URL = "https://upload.twitter.com/1/statuses/update_with_media.json";
-
+   private static final String API_URL = "https://api.twitter.com/1.1";
 
    /*----------------------------------------------------------TwitterNetwork-+
    *//**
@@ -123,15 +122,33 @@ public class TwitterNetwork extends OAuthorizer implements Network
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String whoIsAsJson(String id) throws Exception {
-      // TODO
-      StringBuilder sb = new StringBuilder();
-      sb.append("{\"name\":{\"givenName\":\"").
-      append("Not Yet Implemented").
-      append("\",\"familyName\":\" \"},").
-//    append("\"birthday\":\"\",").
-      append("\"gender\":\"\"}");
-      return sb.toString();
+   public String whoIsAsJson(String screenName) throws Exception {
+      String url = API_URL + "/users/show.json";
+      ArrayList<Map.Entry<String, String>> params;
+      params = new ArrayList<Map.Entry<String, String>>();
+      params.add(new OAuth.Parameter("screen_name", screenName));
+
+      HttpMessage httpRequest = new HttpMessage(
+         "GET", getAuthURL("GET", url, params), null  // null is the body
+      );
+      HttpResponseMessage httpResponse = client.getHttpClient().execute(
+         httpRequest,
+         client.getHttpParameters()
+      );
+      String foo = IOUtils.toString(
+         httpResponse.getBody(),
+         httpResponse.getContentCharset()
+      );
+      return foo;
+
+//    StringBuilder sb = new StringBuilder();
+//    sb.append("{\"name\":{\"givenName\":\"").
+//    append("Not Yet Implemented").
+//    append("\",\"familyName\":\" \"},").
+////  append("\"birthday\":\"\",").
+//    append("\"gender\":\"\"}");
+//    return sb.toString();
+
    }
 
    /*--------------------------------------------------------listAlbumsAsJson-+
@@ -172,6 +189,7 @@ public class TwitterNetwork extends OAuthorizer implements Network
    )
    throws Exception
    {
+      String url = API_URL + "/statuses/update_with_media.json";
       MultipartEntity entity = new MultipartEntity();
       entity.addField(
          "status", "This picture was sent by Jaxogram", "ISO-8859-1"
@@ -180,10 +198,13 @@ public class TwitterNetwork extends OAuthorizer implements Network
          "media[]", "tmpfile.jpg", "image/jpeg", new ByteArrayInputStream(image)
       );
       HttpMessage httpRequest = new HttpMessage(
-         "POST", new URL(UPLOAD_URL), entity.getBody()
+         "POST", new URL(url), entity.getBody()
       );
       List<Map.Entry<String, String>> headers = httpRequest.headers;
-      headers.add(new OAuth.Parameter("Authorization", getAuthHeader(UPLOAD_URL)));
+      headers.add(new OAuth.Parameter(
+         "Authorization",
+         getAuthHeader("POST", url))
+      );
       headers.add(new OAuth.Parameter("Content-Type", entity.getContentType()));
       // headers.add(new OAuth.Parameter(CONTENT_LENGTH, Integer.toString(form.length)));
 

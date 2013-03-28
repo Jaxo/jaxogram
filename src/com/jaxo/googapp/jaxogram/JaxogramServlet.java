@@ -212,7 +212,8 @@ public class JaxogramServlet extends HttpServlet
                   (String)req.getSession(true).getAttribute("accesspass")
                );
                if (op.equals("whoAmI")) {
-                  writer.println(network.whoIsAsJson(null));
+//                writer.println(network.whoIsAsJson(null));
+                  writer.println(network.whoIsAsJson("jaxo")); // FIXME (screenName)
 
                }else if (op.equals("listAlbums")) {
                   writer.println(network.listAlbumsAsJson());

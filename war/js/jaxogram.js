@@ -131,7 +131,22 @@ window.onload = function() {
    /**/    b1.style.zIndex = 100;
    /**/    b1.textContent = "share mode";
    /**/    b1.onclick = function() { handleShareMessage(); }
+   /**/    var b2 = document.createElement("BUTTON");
+   /**/    b2.id = "twitshow";
+   /**/    b2.style.position = "absolute";
+   /**/    b2.style.top = "9rem";
+   /**/    b2.style.right = "0";
+   /**/    b2.style.zIndex = 100;
+   /**/    b2.textContent = "Twit Show";
+   /**/    b2.onclick = function() {
+   /**/       issueRequestStd(
+   /**/          'whoAmI',
+   /**/          function(person) {
+   /**/          }
+   /**/       );
+   /**/    }
    /**/    document.body.appendChild(b1);
+   /**/    document.body.appendChild(b2);
    /**/ }else
    try {
       navigator.mozSetMessageHandler("activity", handleShareMessage);

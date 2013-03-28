@@ -11,6 +11,11 @@
 */
 package com.jaxo.googapp.jaxogram;
 
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+
+import net.oauth.OAuth;
 import net.oauth.OAuthAccessor;
 import net.oauth.OAuthConsumer;
 import net.oauth.OAuthMessage;
@@ -84,11 +89,29 @@ public abstract class OAuthorizer
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String getAuthHeader(String url) throws Exception
+   public String getAuthHeader(String method, String url) throws Exception
    {
-      OAuthMessage msg = new OAuthMessage("POST", url, null, null);
+      // usually, method is POST
+      OAuthMessage msg = new OAuthMessage(method, url, null, null);
       msg.addRequiredParameters(accessor);
-      return msg.getAuthorizationHeader(null);
+      return msg.getAuthorizationHeader(null);  // null: realm
+   }
+
+   /*--------------------------------------------------------------getAuthURL-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public URL getAuthURL(
+      String method,
+      String url,
+      List<Map.Entry<String, String>> params
+   )
+   throws Exception
+   {
+      // usually, method is GET
+      OAuthMessage msg = new OAuthMessage(method, url, params, null);
+      msg.addRequiredParameters(accessor);
+      return new URL(OAuth.addParameters(url, msg.getParameters()));
    }
 }
 
