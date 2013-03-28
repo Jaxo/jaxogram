@@ -95,6 +95,7 @@ window.onload = function() {
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
+   document.getElementById("clearPhoto").onclick = function() { expandPage("p0"); };
 
    var dfltLocale = navigator.language || navigator.userLanguage;
    document.getElementById("jgUsersAid").style.display = "none";

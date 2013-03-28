@@ -545,6 +545,15 @@ li[aria-selected=true], li[role=listbox] {
   height: 100%;
   width: 100%;
 }
+.imgclr {
+   position:absolute;
+   right:2rem;
+   bottom:1.5rem;
+   z-index:2
+}
+.imgclr:active {
+  background-color: #0095dd;
+}
 
 /* Alas, FF 17 does not implement it yet...   */
 /* So, I did a JS work-around: fitImages()    */
