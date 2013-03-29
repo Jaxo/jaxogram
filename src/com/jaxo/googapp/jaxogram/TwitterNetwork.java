@@ -105,17 +105,26 @@ public class TwitterNetwork extends OAuthorizer implements Network
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
+   public String authenticate(String verifier, OAuthAccessor givenAccessor)
    throws Exception
    {
       OAuthMessage response = client.getAccessToken(
          givenAccessor, null,
          OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
       );
-      return new String[] {
-         givenAccessor.accessToken + " " + givenAccessor.tokenSecret,
-         response.getParameter("screen_name")
-      };
+      accessor.accessToken = givenAccessor.accessToken;
+      accessor.tokenSecret = givenAccessor.tokenSecret;
+      String screenName = response.getParameter("screen_name");
+      String data = whoIsAsJson(screenName);
+      return (
+         new StringBuilder().
+         append("{ \"accessPass\":\"").
+         append(givenAccessor.accessToken).append(' ').append(givenAccessor.tokenSecret).
+         append("\", \"userName\":\"").append(JsonIterator.get(data, "name")).
+         append("\", \"screenName\":\"").append(screenName).
+         append("\", \"imageUrl\":\"").append(JsonIterator.get(data,"profile_image_url")).
+         append("\"}")
+      ).toString();
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+
@@ -135,11 +144,10 @@ public class TwitterNetwork extends OAuthorizer implements Network
          httpRequest,
          client.getHttpParameters()
       );
-      String foo = IOUtils.toString(
+      return IOUtils.toString(
          httpResponse.getBody(),
          httpResponse.getContentCharset()
       );
-      return foo;
 
 //    StringBuilder sb = new StringBuilder();
 //    sb.append("{\"name\":{\"givenName\":\"").

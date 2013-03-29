@@ -123,7 +123,7 @@ public class OrkutNetwork extends OAuthorizer implements Network
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
+   public String authenticate(String verifier, OAuthAccessor givenAccessor)
    throws Exception
    {
       String userName;
@@ -143,10 +143,16 @@ public class OrkutNetwork extends OAuthorizer implements Network
          OrkutPerson person = profile.getProfile();
          userName = person.getGivenName() + " " + person.getFamilyName();
       }
-      return new String[] {
-         givenAccessor.accessToken + " " + givenAccessor.tokenSecret,
-         userName
-      };
+      return (
+         new StringBuilder().
+         append("{\"accessPass\":\"").
+         append(givenAccessor.accessToken).
+         append(' ').
+         append(givenAccessor.tokenSecret).
+         append("\", \"userName\":\"").
+         append(userName).
+         append("\"}")
+      ).toString();
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+

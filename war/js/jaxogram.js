@@ -565,9 +565,11 @@ function registerUser(verifier, net) {
          var obj = JSON.parse(val);
          // alert(dump(obj));
          users.addUser(
-            decodeURIComponent(obj.userName),
-            decodeURIComponent(obj.accessPass),
-            net
+            obj.userName,
+            obj.accessPass,
+            net,
+            obj.screenName,
+            obj.imageUrl
          );
          formatUsersList(false);
       },

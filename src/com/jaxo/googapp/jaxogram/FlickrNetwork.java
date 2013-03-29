@@ -106,17 +106,23 @@ public class FlickrNetwork extends OAuthorizer implements Network
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
+   public String authenticate(String verifier, OAuthAccessor givenAccessor)
    throws Exception
    {
       OAuthMessage response = client.getAccessToken(
          givenAccessor, null,
          OAuth.newList(OAuth.OAUTH_VERIFIER, verifier)
       );
-      return new String[] {
-         givenAccessor.accessToken + " " + givenAccessor.tokenSecret,
-         response.getParameter("fullname")
-      };
+      return (
+         new StringBuilder().
+         append("{ \"accessPass\":\"").
+         append(givenAccessor.accessToken).
+         append(' ').
+         append(givenAccessor.tokenSecret).
+         append("\", \"userName\":\"").
+         append(response.getParameter("fullname")).
+         append("\" }")
+      ).toString();
    }
 
    /*------------------------------------------------------------------fooBar-+

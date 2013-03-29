@@ -86,7 +86,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   public String[] authenticate(String verifier, OAuthAccessor givenAccessor)
+   public String authenticate(String verifier, OAuthAccessor givenAccessor)
    throws Exception
    {
       String body;
@@ -138,7 +138,14 @@ public class FacebookNetwork extends OAuthorizer implements Network
       if ((accessToken == null) || (userName == null)) {
          throw new Exception("RC=" + response.getStatusCode() + "\n" + body);
       }
-      return new String[] { accessToken, userName };
+      return (
+         new StringBuilder().
+         append("{ \"accessPass\":\"").
+         append(accessToken).
+         append("\", \"userName\":\"").
+         append(userName).
+         append("\" }")
+      ).toString();
    }
 
    /*-------------------------------------------------------------whoIsAsJson-+

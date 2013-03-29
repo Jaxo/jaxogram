@@ -193,18 +193,27 @@ public class JaxogramServlet extends HttpServlet
                OAuthorizer authorizer = makeAuthorizer(
                   (restVersion == 0)? "orkut" : req.getParameter("NET")
                );
-               String[] vals = authorizer.authenticate(
+               String data = authorizer.authenticate(
                   req.getParameter((restVersion == 0)? "verifier" : "VRF"),
                   (OAuthAccessor)session.getAttribute("accessor")
                );
-               String accessPass = vals[0];
-               String userName = vals[1];
-               session.setAttribute("accesspass", accessPass);
-               writer.printf(
-                  "{ \"accessPass\":\"%s\", \"userName\":\"%s\" }",    // JSON
-                  URLEncoder.encode(accessPass, "UTF-8").replace("+", "%20"),  // arghhhh
-                  URLEncoder.encode(userName, "UTF-8").replace("+", "%20")
+               session.setAttribute(
+                  "accesspass",
+                  JsonIterator.get(data, "accessPass")
                );
+               writer.printf(data);
+//             String[] vals = authorizer.authenticate(
+//                req.getParameter((restVersion == 0)? "verifier" : "VRF"),
+//                (OAuthAccessor)session.getAttribute("accessor")
+//             );
+//             String accessPass = vals[0];
+//             String userName = vals[1];
+//             session.setAttribute("accesspass", accessPass);
+//             writer.printf(
+//                "{ \"accessPass\":\"%s\", \"userName\":\"%s\" }",    // JSON
+//                URLEncoder.encode(accessPass, "UTF-8").replace("+", "%20"),  // arghhhh
+//                URLEncoder.encode(userName, "UTF-8").replace("+", "%20")
+//             );
 
             }else {
                Network network = makeNetwork(

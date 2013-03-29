@@ -36,7 +36,7 @@ public abstract class OAuthorizer
    OAuthClient client;
 
    public abstract String requestAuthURL(String callbackUrl) throws Exception;
-   public abstract String[] authenticate(String verifier, OAuthAccessor accessor) throws Exception;
+   public abstract String authenticate(String verifier, OAuthAccessor accessor) throws Exception;
 
    /*-------------------------------------------------------------OAuthorizer-+
    *//**

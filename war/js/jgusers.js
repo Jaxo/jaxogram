@@ -32,10 +32,12 @@ function JgUsers() {
    this.hasSome = function() {
       return users.length != 0;
    }
-   this.addUser = function(userName, userPass, userNet) {
+   this.addUser = function(userName, userPass, userNet, usrImg, userScreen) {
       if (userName != null) {
          selectedIndex = users.length;
-         users.push(new JgUserItem(userName, userPass, userNet));
+         users.push(
+            new JgUserItem(userName, userPass, userNet, usrImg, userScreen)
+         );
          rewriteUsers();
       }
    }
@@ -112,10 +114,12 @@ function JgUsers() {
    }
 }
 
-function JgUserItem(userName, userPass, userNet) {
+function JgUserItem(userName, userPass, userNet, userImg, userScreen) {
    this.n = userName;
    this.p = userPass;
    this.t = userNet;
-   this.ai = null;  // album id
-   this.tt = null;  // album title
+   this.i = userImg; // image url
+   this.s = userScreen; // screen name
+   this.ai = null;   // album id
+   this.tt = null;   // album title
 }
