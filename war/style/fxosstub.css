@@ -577,29 +577,6 @@ li[aria-selected=true], li[role=listbox] {
    height: 1.2rem;
 }
 
-/* ------ Page 2 ------*/
-#p2 table {        /*   */
-   background-color: #ccc;
-   width: 100%;
-   height: 100%;
-}
-#p2 table, tr, td {
-   font-size:1.5rem;
-}
-#p2 td {
-   padding: 1rem;
-}
-#p2 tr:first-child td {
-   vertical-align: top;
-   color: black;
-   font-size: 2.8rem;
-   height: 100%;
-}
-#p2 legend {
-   color: #444;
-   font-size: 1rem;
-}
-
 /* ------ Page 0 ------*/
 #p0 {
    text-shadow:#aaa 0px 1px 0, #000 0 -1px 0;
@@ -627,6 +604,53 @@ li[aria-selected=true], li[role=listbox] {
     color: white;
 }
 
+/* ------ Page 2 ------*/
+
+.p2_user{
+  overflow: hidden;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  height: 0;
+  color: white;
+  /* background: #f5f5f5; */
+  -moz-transition: height 500ms;
+}
+
+.p2_user.active{
+  height: 5rem;
+}
+
+.p2_user #p2_userImage {
+  float: left;
+  margin-right: 1rem;
+}
+
+.p2_msg {
+  width: 100%;
+  height: 18rem;
+  position: relative;
+  padding: 0;
+}
+
+#p2_msgCount{
+  position: absolute;
+  right: 1rem;
+  bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+#p2_msgText {
+  -moz-box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #D1D1D1;
+  border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
+  font-size: 1.4rem;
+}
+
 #upldFile {
    display: none;
 }
+

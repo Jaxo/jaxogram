@@ -14,6 +14,12 @@ function JgUsers() {
    this.getNet = function() {
       return users[selectedIndex].t;
    }
+   this.getImageUrl = function() {
+      return users[selectedIndex].i;
+   }
+   this.getScreenName = function() {
+      return users[selectedIndex].s;
+   }
    this.getAlbumTitle = function() {
       if (users.length != 0) {
          return users[selectedIndex].tt;

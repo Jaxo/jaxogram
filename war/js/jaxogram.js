@@ -138,13 +138,7 @@ window.onload = function() {
    /**/    b2.style.right = "0";
    /**/    b2.style.zIndex = 100;
    /**/    b2.textContent = "Twit Show";
-   /**/    b2.onclick = function() {
-   /**/       issueRequestStd(
-   /**/          'whoAmI',
-   /**/          function(person) {
-   /**/          }
-   /**/       );
-   /**/    }
+   /**/    b2.onclick = function() { openTwitterPage(b2); }
    /**/    document.body.appendChild(b1);
    /**/    document.body.appendChild(b2);
    /**/ }else
@@ -154,6 +148,37 @@ window.onload = function() {
       simpleMsg("error", error);
    }
 };
+
+function openTwitterPage(btn) {
+   document.getElementById("p2_userImage").src = users.getImageUrl();
+   document.getElementById("p2_userName").textContent = users.getUserName();
+   document.getElementById("p2_userScreenName").textContent = "@" + users.getScreenName();
+   document.querySelector(".p2_user").classList.add("active");
+   var countElt = document.getElementById("p2_msgCount");
+   var textElt = document.getElementById("p2_msgText");
+   var setCounter = function() {
+      var remain = 116 - textElt.value.length;
+      if (remain < 0) {
+         textElt.value = textElt.value.substring(0, 116);
+         remain = 116 - textElt.value.length;
+      }
+      countElt.textContent = remain;
+      if (remain > 20) {
+         countElt.style.color = "#9b9b9b";
+      }else {
+         countElt.style.color = "#C80000";
+      }
+   };
+   textElt.addEventListener("keyup", function() { setCounter(); }, false);
+   setCounter();
+   expandPage("p2");
+   btn.onclick = function() { closeTwitterPage(); }
+};
+
+function closeTwitterPage() {
+   expandPage("p0");
+   this.onclick = openTwitterPage(this);
+}
 
 function setNetworkButtons() {
    var eltGo4It = document.getElementById("go4it");
@@ -568,8 +593,8 @@ function registerUser(verifier, net) {
             obj.userName,
             obj.accessPass,
             net,
-            obj.screenName,
-            obj.imageUrl
+            obj.imageUrl,
+            obj.screenName
          );
          formatUsersList(false);
       },
