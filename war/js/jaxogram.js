@@ -85,8 +85,8 @@ window.onload = function() {
    );
 
    setInstallButton("btnInstall");
-   fitImage(document.getElementById('photoImage'));
    window.addEventListener("resize", fitImages, false);
+   fitImages();
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
@@ -168,6 +168,12 @@ function openTwitterPage(btn) {
       }else {
          countElt.style.color = "#C80000";
       }
+   };
+   var picture = document.getElementById("p2_picture");
+   picture.src = "../images/joe.jpg";
+   document.getElementById("p2_clear").onclick = function() {
+      picture.style.visibility = "hidden";
+      this.style.visibility = "hidden";
    };
    textElt.addEventListener("keyup", function() { setCounter(); }, false);
    setCounter();
@@ -455,18 +461,23 @@ function changeLanguage(event) {
 
 function fitImages() {
    // workaround, until "object-fit:contain;" gets implemented
-   // fitImage(document.getElementById('barImageIn'));
-   fitImage(document.getElementById('photoImage'));
-}
-function fitImage(img) {
-   var s;
-   var elt = document.getElementById("p1");
-   if ((elt.offsetHeight * img.offsetWidth)<(img.offsetHeight * elt.offsetWidth)) {
-      s = "height:100%";
-   }else {
-      s = "width:100%";
+   var images = document.querySelectorAll(".imgbox img");
+   for (var i=0; i < images.length; ++i) {
+      var img = images[i];
+      img.onload = function() { fitImage(this); }
+      fitImage(img);
    }
-   img.setAttribute("style", s);
+}
+
+function fitImage(img) {
+   var elt = img.parentNode;
+   if ((elt.offsetHeight * img.offsetWidth)<(img.offsetHeight * elt.offsetWidth)) {
+      img.style.width = "";
+      img.style.height = "100%";
+   }else {
+      img.style.width = "100%";
+      img.style.height = "";
+   }
 }
 
 function authorize() {

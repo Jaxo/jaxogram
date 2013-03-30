@@ -510,51 +510,6 @@ li[aria-selected=true], li[role=listbox] {
 
 /*-- Styles specific to jaxogram --*/
 
-.body textarea {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  overflow: hidden;
-  display: block;
-  position: relative;
-  resize: none;
-  height: 100%;
-  width: 100%;
-  padding: 0.5rem 1rem;
-  /* border: 1px solid #D1D1D1; */
-  border: none;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
-  font-family: "Open Sans",Sans-serif;
-  font-size: 1.6rem;
-}
-
-.body textarea[disabled] {
-   color: #016696;
-}
-
-.imgbox {
-  background-color:#fff;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  display: block;
-  /* position: absolute; */
-  overflow: hidden;
-  border: 1px solid #D1D1D1;
-  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
-  text-align: center;
-  height: 100%;
-  width: 100%;
-}
-.imgclr {
-   position:absolute;
-   right:2rem;
-   bottom:1.5rem;
-   z-index:2
-}
-.imgclr:active {
-  background-color: #0095dd;
-}
-
 /* Alas, FF 17 does not implement it yet...   */
 /* So, I did a JS work-around: fitImages()    */
 /* .imgbox tr td img {                        */
@@ -605,10 +560,33 @@ li[aria-selected=true], li[role=listbox] {
 }
 
 /* ------ Page 2 ------*/
+.imgbox {
+  /* background-color:#fff; */
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  display: block;
+  /* position: absolute; */
+  padding-top: 16rem;
+  overflow: hidden;
+  border: 1px solid #D1D1D1;
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+.imgclr {
+   position:absolute;
+   right:2rem;
+   bottom:1.5rem;
+   z-index:2
+}
+.imgclr:active {
+  background-color: #0095dd;
+}
 
 .p2_user{
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin: 0.5rem;
   font-size: 1.8rem;
   height: 0;
   color: white;
@@ -626,8 +604,9 @@ li[aria-selected=true], li[role=listbox] {
 }
 
 .p2_msg {
+  padding: 1rem
   width: 100%;
-  height: 18rem;
+  height: 10rem;
   position: relative;
   padding: 0;
 }
@@ -648,6 +627,28 @@ li[aria-selected=true], li[role=listbox] {
   border: 1px solid #D1D1D1;
   border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
   font-size: 1.4rem;
+}
+
+.body textarea {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  overflow: hidden;
+  display: block;
+  position: relative;
+  resize: none;
+  height: 100%;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  /* border: 1px solid #D1D1D1; */
+  border: none;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+  font-family: "Open Sans",Sans-serif;
+  font-size: 1.6rem;
+}
+
+.body textarea[disabled] {
+   color: #016696;
 }
 
 #upldFile {
