@@ -95,7 +95,6 @@ window.onload = function() {
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickAndUpload").onclick = pickAndUpload;
-   document.getElementById("clearPhoto").onclick = function() { expandPage("p0"); };
 
    var dfltLocale = navigator.language || navigator.userLanguage;
    document.getElementById("jgUsersAid").style.display = "none";
@@ -122,6 +121,14 @@ window.onload = function() {
          }
       }
    );
+   /**/ var b2 = document.createElement("BUTTON");
+   /**/ b2.id = "B2";
+   /**/ b2.style.position = "absolute";
+   /**/ b2.style.top = "9rem";
+   /**/ b2.style.right = "0";
+   /**/ b2.style.zIndex = 100;
+   /**/ b2.textContent = "Send!";
+   /**/ document.body.appendChild(b2);
    /**/ if (!navigator.mozSetMessageHandler) {
    /**/    var b1 = document.createElement("BUTTON");
    /**/    b1.id = "testshare";
@@ -131,16 +138,7 @@ window.onload = function() {
    /**/    b1.style.zIndex = 100;
    /**/    b1.textContent = "share mode";
    /**/    b1.onclick = function() { handleShareMessage(); }
-   /**/    var b2 = document.createElement("BUTTON");
-   /**/    b2.id = "twitshow";
-   /**/    b2.style.position = "absolute";
-   /**/    b2.style.top = "9rem";
-   /**/    b2.style.right = "0";
-   /**/    b2.style.zIndex = 100;
-   /**/    b2.textContent = "Twit Show";
-   /**/    b2.onclick = function() { openTwitterPage(b2); }
    /**/    document.body.appendChild(b1);
-   /**/    document.body.appendChild(b2);
    /**/ }else
    try {
       navigator.mozSetMessageHandler("activity", handleShareMessage);
@@ -149,7 +147,25 @@ window.onload = function() {
    }
 };
 
-function openTwitterPage(btn) {
+function addCaption(imageData, uploader, args) {
+   // args[args.length] = "pouffiasse";
+   var imgElt = document.createElement("IMG");
+   imgElt.src = URL.createObjectURL(imageData);
+   imgElt.onload = function() { URL.revokeObjectURL(this.src); };
+// if (users.getNet() === "twitter") {
+      openTwitterPage(
+         imgElt,
+         function() {
+            uploader.apply(this, args);
+         },
+         args
+      );
+// }else {
+//    uploader.apply(this, args);
+// }
+}
+
+function openTwitterPage(imgElt, whenDone, args) {
    document.getElementById("p2_userImage").src = users.getImageUrl();
    document.getElementById("p2_userName").textContent = users.getUserName();
    document.getElementById("p2_userScreenName").textContent = "@" + users.getScreenName();
@@ -169,16 +185,24 @@ function openTwitterPage(btn) {
          countElt.style.color = "#C80000";
       }
    };
-   var picture = document.getElementById("p2_picture");
-   picture.src = "../images/joe.jpg";
+   var oldImgElt = document.getElementById("p2_picture");
+   imgElt.id = "p2_picture";
    document.getElementById("p2_clear").onclick = function() {
-      picture.style.visibility = "hidden";
+      imgElt.style.visibility = "hidden";
       this.style.visibility = "hidden";
    };
+   oldImgElt.parentNode.replaceChild(imgElt, oldImgElt);
+   fitImage(imgElt);
    textElt.addEventListener("keyup", function() { setCounter(); }, false);
    setCounter();
    expandPage("p2");
-   btn.onclick = function() { closeTwitterPage(); }
+   document.getElementById("B2").onclick = whenDone;
+   /*
+   Response:
+      var res = JSON.parse(xhr.responseText);
+      var id_str = res.entities.media[0].id_str;
+      var ex_url = res.entities.media[0].expanded_url;
+   */
 };
 
 function closeTwitterPage() {
@@ -696,9 +720,9 @@ function pickAndUpload(event) {
          document.getElementById("jgUsersAid").click();
          expandSidebarView(1);
       }else {
-         try {
+         if (typeof MozActivity !== "undefined") {
             uploadPick(albumId);
-         }catch (err) {
+         }else {
             uploadFile(albumId);
          }
       }
@@ -708,29 +732,49 @@ function pickAndUpload(event) {
 function uploadPick(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
    a.onsuccess = function(e) {
-      issueRequest(
-         "POST",
-         "postImageData&NET=" + users.getNet() + "&AID=" + albumId,
+      addCaption(
          a.result.blob,
-         function(val) {     // whenDone
-            expandPage("p1");
-            simpleMsg("info", i18n('imageUploaded', users.getAlbumTitle()));
-         },
-         function(rc, val) { // whenFailed
-            simpleMsg("error", "RC: " + rc);
-         },
-         "image/jpeg"
+         issueRequest,
+         [
+            "POST",
+            "postImageData&NET=" + users.getNet() + "&AID=" + albumId,
+            a.result.blob,
+            function(val) {     // whenDone
+               expandPage("p0"); // stop p2!
+               simpleMsg("info", i18n('imageUploaded', users.getAlbumTitle()));
+            },
+            function(rc, val) { // whenFailed
+               simpleMsg("error", "RC: " + rc);
+            },
+            "image/jpeg"
+         ]
       );
-      try {
-         var url = URL.createObjectURL(a.result.blob);
-         var img = document.getElementById('photoImage');
-         img.src = url;
-         img.onload = function() { URL.revokeObjectURL(url); };
-      }catch (error) {
-         simpleMsg("error", "Local error: " + error);
-      }
    };
    a.onerror = function() { simpleMsg("error", i18n('pickImageError')); };
+}
+
+function uploadShared(issuer, query, index) {
+   if (!issuer || (index >= issuer.source.data.blobs.length)) {
+      whenShareUploadOk(issuer);
+   }else {
+      var imageBlob = issuer.source.data.blobs[index];
+      addCaption(
+         imageBlob,
+         issueRequest,
+         [
+            "POST",
+            query,
+            imageBlob,
+            function(val) {        // whenDone
+               uploadShared(issuer, query, ++index);
+            },
+            function(rc, val) {    // whenFailed
+               whenShareUploadFailed(issuer, "RC: " + rc);
+            },
+            "image/jpeg"
+         ]
+      );
+   }
 }
 
 function uploadFile(albumId) {
@@ -748,24 +792,25 @@ function uploadFile(albumId) {
          formData.append("MAX_FILE_SIZE", "1000000");
          formData.append("IMG", file.name.substr(-3));
          formData.append("AID", albumId);
-//       formData.append("TIT", "my title");
+   //    formData.append("TIT", "my title");
          formData.append("upldFile", file);
-         issueRequest(
-            "POST", "postImageFile&NET=" + users.getNet(), formData,
-            function(val) {     // whenDone
-               expandPage("p1");
-               // FIXME (albumId may be null)
-               simpleMsg("info", i18n("imageUploaded", users.getAlbumTitle()));
-            },
-            function(rc, val) { // whenFailed
-               simpleMsg("error", "RC: " + rc);
-            }
+         addCaption(
+            file,
+            issueRequest,
+            [
+               "POST",
+               "postImageFile&NET=" + users.getNet(),
+               formData,
+               function(val) {     // whenDone
+                  expandPage("p0");  // stop p2!
+                  // FIXME (albumId may be null)
+                  simpleMsg("info", i18n("imageUploaded", users.getAlbumTitle()));
+               },
+               function(rc, val) { // whenFailed
+                  simpleMsg("error", "RC: " + rc);
+               }
+            ]
          );
-         var reader = new FileReader();
-         reader.onload = function (event) {
-            document.getElementById("photoImage").src = event.target.result;
-         };
-         reader.readAsDataURL(file);
       }
    };
    elt.click();
@@ -868,34 +913,17 @@ function uploadFromShare(issuer) {
          // show the appropriate panel for selecting the default album
          document.getElementById("jgUsersAid").click();
       }else {
-         /**/ if (!issuer) whenShareUploadOk(issuer); else
-         uploadShared(issuer, albumId, issuer.source.data, 0);
+         uploadShared(
+            issuer,
+            "postImageData&NET=" + users.getNet() +
+            // "&FNM=" + data.filenames[index] +
+            "&AID=" + albumId,
+            0
+         );
       }
    }
 }
-
-function uploadShared(issuer, albumId, data, index) {
-   if (index === -1) {
-      whenShareUploadFailed(issuer, "RC: " + data);
-   }else if (index >= data.blobs.length) {
-      whenShareUploadOk(issuer);
-   }else {
-      issueRequest(
-         "POST",
-         "postImageData&NET=" + users.getNet() +
-         // "&FNM=" + data.filenames[index] +
-         "&AID=" + albumId,
-         data.blobs[index],
-         function(val) {        // whenDone
-            uploadShared(issuer, albumId, data, ++index);
-         },
-         function(rc, val) {    // whenFailed
-            uploadShared(issuer, albumId, rc, -1);
-         },
-         "image/jpeg"
-      );
-   }
-}
+/* uploadShared(issuer, query, index) is here */
 
 function whenShareUploadFailed(issuer, message) {
    finishShareActivity();
