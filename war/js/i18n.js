@@ -10,11 +10,6 @@ var localeValues = {
       'fr-FR':"Partager une photo",
       'pt-BR':"Foto Compartilhar",
       'es-ES':"Compartir fotos"
-   }, uploadFromShare: {
-      'en-US':"Upload picture to %1",
-      'fr-FR':"Téĺécharger sur %1",
-      'pt-BR':"Upload de imagem para o %1",
-      'es-ES':"Sube imágenes de %1"
    }, whoAmI: {
       'en-US':"Who am I?",
       'fr-FR':"Qui suis-je ?",

@@ -94,11 +94,10 @@ window.onload = function() {
    document.getElementById("jgUsersAid").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
-   document.getElementById("pickAndUpload").onclick = pickAndUpload;
+   document.getElementById("pickAndUpload").onclick = uploadPicture;
 
    var dfltLocale = navigator.language || navigator.userLanguage;
    document.getElementById("jgUsersAid").style.display = "none";
-   document.getElementById("footerRow2").style.display = "none";
    translateBody(dfltLocale);
    formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
@@ -137,11 +136,14 @@ window.onload = function() {
    /**/    b1.style.right = "0";
    /**/    b1.style.zIndex = 100;
    /**/    b1.textContent = "share mode";
-   /**/    b1.onclick = function() { handleShareMessage(); }
+   /**/    b1.onclick = function() { uploadPicture(null, "?"); }
    /**/    document.body.appendChild(b1);
    /**/ }else
    try {
-      navigator.mozSetMessageHandler("activity", handleShareMessage);
+      navigator.mozSetMessageHandler(
+         "activity",
+         function(issuer) { uploadPicture(null, issuer); }
+      );
    }catch (error) {
       simpleMsg("error", error);
    }
@@ -150,8 +152,12 @@ window.onload = function() {
 function addCaption(imageData, uploader, args) {
    // args[args.length] = "pouffiasse";
    var imgElt = document.createElement("IMG");
-   imgElt.src = URL.createObjectURL(imageData);
-   imgElt.onload = function() { URL.revokeObjectURL(this.src); };
+   if (imageData == null) {
+      imgElt.src = "images/joe.jpg";
+   }else {
+      imgElt.src = URL.createObjectURL(imageData);
+   }
+// FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
 // if (users.getNet() === "twitter") {
       openTwitterPage(
          imgElt,
@@ -165,7 +171,8 @@ function addCaption(imageData, uploader, args) {
 // }
 }
 
-function openTwitterPage(imgElt, whenDone, args) {
+function openTwitterPage(imgElt, whenDone, args)
+{
    document.getElementById("p2_userImage").src = users.getImageUrl();
    document.getElementById("p2_userName").textContent = users.getUserName();
    document.getElementById("p2_userScreenName").textContent = "@" + users.getScreenName();
@@ -185,6 +192,7 @@ function openTwitterPage(imgElt, whenDone, args) {
          countElt.style.color = "#C80000";
       }
    };
+
    var oldImgElt = document.getElementById("p2_picture");
    imgElt.id = "p2_picture";
    document.getElementById("p2_clear").onclick = function() {
@@ -212,7 +220,6 @@ function closeTwitterPage() {
 
 function setNetworkButtons() {
    var eltGo4It = document.getElementById("go4it");
-   var eltShare = document.getElementById("uploadFromShare");
    if (!users.hasSome() || networks.every(
          function(network) {
             if (network.name !== users.getNet()) {
@@ -230,15 +237,12 @@ function setNetworkButtons() {
                   browseTo(network);
                }
                eltGo4It.style.display = "";
-               eltShare.textContent = i18n(eltShare.id, network.name);
-               eltShare.style.display = "";
                return false;
             }
          }
       )
    ) {
       eltGo4It.style.display = "none";
-      eltShare.textContent = i18n(eltShare.id, "???");
    }
 }
 
@@ -698,13 +702,13 @@ function createAlbum(isDirect) {
    );
 }
 
-function pickAndUpload(event) {
+function uploadPicture(event, issuer) {
    if (!users.hasSome()) {
       formatUsersList(true);
    }else {
       var albumId = isAlbumIdRequired()? users.getAlbumId() : "NoNeedFor";
       if (!albumId) {
-         event.stopPropagation();
+         if (event) event.stopPropagation();
          dispatcher.on(
             "albumsListed",
             function action(albumsCount) {
@@ -720,16 +724,18 @@ function pickAndUpload(event) {
          document.getElementById("jgUsersAid").click();
          expandSidebarView(1);
       }else {
-         if (typeof MozActivity !== "undefined") {
-            uploadPick(albumId);
+         if (issuer) {
+            uploadPictureAsShared(issuer, albumId, 0);
+         }else if (typeof MozActivity !== "undefined") {
+            uploadPictureAsPicked(albumId);
          }else {
-            uploadFile(albumId);
+            uploadPictureAsFile(albumId);
          }
       }
    }
 }
 
-function uploadPick(albumId) {
+function uploadPictureAsPicked(albumId) {
    var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
    a.onsuccess = function(e) {
       addCaption(
@@ -753,23 +759,35 @@ function uploadPick(albumId) {
    a.onerror = function() { simpleMsg("error", i18n('pickImageError')); };
 }
 
-function uploadShared(issuer, query, index) {
-   if (!issuer || (index >= issuer.source.data.blobs.length)) {
-      whenShareUploadOk(issuer);
+function uploadPictureAsShared(issuer, albumId, index) {
+   var debug = (issuer === "?");
+   if (
+/**/  (
+/**/     !debug && (
+            index >= issuer.source.data.blobs.length
+/**/     )
+/**/  ) || (debug && (index >= 1))
+   ) {
+      // finishShareActivity();
+/**/  if (!debug)
+      issuer.postResult({result: "ok"});
    }else {
-      var imageBlob = issuer.source.data.blobs[index];
+      var imageBlob = /**/  debug? null :
+      issuer.source.data.blobs[index];
       addCaption(
          imageBlob,
          issueRequest,
          [
             "POST",
-            query,
+            "postImageData&NET=" + users.getNet() + "&AID=" + albumId,
             imageBlob,
             function(val) {        // whenDone
-               uploadShared(issuer, query, ++index);
+               uploadPictureAsShared(issuer, albumId, ++index);
             },
             function(rc, val) {    // whenFailed
-               whenShareUploadFailed(issuer, "RC: " + rc);
+               // finishShareActivity();
+               /**/ if (!debug)
+               issuer.postError(message);
             },
             "image/jpeg"
          ]
@@ -777,7 +795,7 @@ function uploadShared(issuer, query, index) {
    }
 }
 
-function uploadFile(albumId) {
+function uploadPictureAsFile(albumId) {
    var elt = document.getElementById('upldFile');
    elt.onchange = function() {
       if (typeof window.FileReader !== 'function') {
@@ -860,79 +878,4 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
    }else {
       xhr.send(values);
    }
-}
-
-/*================================= share ===================================*/
-
-function handleShareMessage(issuer) {
-   /**/ if (!issuer) document.getElementById("testshare").style.display = "none";
-   document.getElementById("btnInstall").style.visibility = "hidden";
-   document.getElementById("uploadFromShare").onclick = function(event) {
-      event.stopPropagation();
-      uploadFromShare(issuer);
-   }
-   expandSidebarView(-1);
-   document.getElementById('btnMainImage').style.backgroundImage = "url(style/images/close.png)";
-   document.getElementById("btnMain").onclick = function() {
-      whenShareUploadFailed(issuer, "canceled");
-   }
-   document.getElementById("corepane").style.display = "none";
-   document.getElementById("menupane").className = "drawee";
-   document.getElementById("footerRow1").style.display = "none";
-   document.getElementById("footerRow2").style.display = "";
-}
-
-function finishShareActivity() {
-   document.getElementById("uploadFromShare").onclick = "";
-   document.getElementById("footerRow2").style.display = "none";
-   document.getElementById("footerRow1").style.display = "";
-   document.getElementById("menupane").className = "drawer";
-   document.getElementById("corepane").style.display = "";
-   document.getElementById("btnMain").onclick = toggleSidebarView;
-   resetSidebarButton();
-   document.getElementById("btnInstall").style.visibility = "visible";
-}
-
-function uploadFromShare(issuer) {
-   if (!users.hasSome()) {
-      formatUsersList(true);
-   }else {
-      var albumId = isAlbumIdRequired()? users.getAlbumId() : "NoNeedFor";
-      if (!albumId) {
-         dispatcher.on(
-            "albumsListed",
-            function action(albumsCount) {
-               dispatcher.off("albumsListed", action);
-               if (albumsCount > 0) {
-                  simpleMsg("warning", i18n("selectOrCreateAlbum"));
-               }else {
-                  createAlbum(false);
-               }
-            }
-         );
-         // show the appropriate panel for selecting the default album
-         document.getElementById("jgUsersAid").click();
-      }else {
-         uploadShared(
-            issuer,
-            "postImageData&NET=" + users.getNet() +
-            // "&FNM=" + data.filenames[index] +
-            "&AID=" + albumId,
-            0
-         );
-      }
-   }
-}
-/* uploadShared(issuer, query, index) is here */
-
-function whenShareUploadFailed(issuer, message) {
-   finishShareActivity();
-   if (issuer) issuer.postError(message);
-   /**/ else document.getElementById("testshare").style.display = "";
-}
-
-function whenShareUploadOk(issuer) {
-   finishShareActivity();
-   if (issuer) issuer.postResult({result: "ok"});
-   /**/ else document.getElementById("testshare").style.display = "";
 }
