@@ -1,3 +1,4 @@
+var pendingPhotos = [];  // array of blobs or files
 var users;
 var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
@@ -94,10 +95,11 @@ window.onload = function() {
    document.getElementById("jgUsersAid").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
    document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
-   document.getElementById("pickAndUpload").onclick = uploadPicture;
+   document.getElementById("pickPhoto").onclick = pickPhoto;
+   // document.getElementById("jgUsersAid").style.display = "none";
+   document.getElementById("footerRow2").style.display = "none";
 
    var dfltLocale = navigator.language || navigator.userLanguage;
-   document.getElementById("jgUsersAid").style.display = "none";
    translateBody(dfltLocale);
    formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
@@ -120,106 +122,22 @@ window.onload = function() {
          }
       }
    );
-   /**/ var b2 = document.createElement("BUTTON");
-   /**/ b2.id = "B2";
-   /**/ b2.style.position = "absolute";
-   /**/ b2.style.top = "9rem";
-   /**/ b2.style.right = "0";
-   /**/ b2.style.zIndex = 100;
-   /**/ b2.textContent = "Send!";
-   /**/ document.body.appendChild(b2);
-   /**/ if (!navigator.mozSetMessageHandler) {
-   /**/    var b1 = document.createElement("BUTTON");
-   /**/    b1.id = "testshare";
-   /**/    b1.style.position = "absolute";
-   /**/    b1.style.top = "5rem";
-   /**/    b1.style.right = "0";
-   /**/    b1.style.zIndex = 100;
-   /**/    b1.textContent = "share mode";
-   /**/    b1.onclick = function() { uploadPicture(null, "?"); }
-   /**/    document.body.appendChild(b1);
-   /**/ }else
-   try {
+   if (navigator.mozSetMessageHandler) {
       navigator.mozSetMessageHandler(
          "activity",
-         function(issuer) { uploadPicture(null, issuer); }
-      );
-   }catch (error) {
-      simpleMsg("error", error);
-   }
-};
-
-function addCaption(imageData, uploader, args) {
-   // args[args.length] = "pouffiasse";
-   var imgElt = document.createElement("IMG");
-   if (imageData == null) {
-      imgElt.src = "images/joe.jpg";
-   }else {
-      imgElt.src = URL.createObjectURL(imageData);
-   }
-// FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
-// if (users.getNet() === "twitter") {
-      openTwitterPage(
-         imgElt,
          function() {
-            uploader.apply(this, args);
-         },
-         args
+            blobs = issuer.source.data.blobs;
+            for (var i=0; i < blobs.length; ++i) {
+               pendingPhotos.push(blobs[i]);
+            }
+            startUpload();
+         }
       );
-// }else {
-//    uploader.apply(this, args);
-// }
-}
-
-function openTwitterPage(imgElt, whenDone, args)
-{
-   document.getElementById("p2_userImage").src = users.getImageUrl();
-   document.getElementById("p2_userName").textContent = users.getUserName();
-   document.getElementById("p2_userScreenName").textContent = "@" + users.getScreenName();
-   document.querySelector(".p2_user").classList.add("active");
-   var countElt = document.getElementById("p2_msgCount");
-   var textElt = document.getElementById("p2_msgText");
-   var setCounter = function() {
-      var remain = 116 - textElt.value.length;
-      if (remain < 0) {
-         textElt.value = textElt.value.substring(0, 116);
-         remain = 116 - textElt.value.length;
-      }
-      countElt.textContent = remain;
-      if (remain > 20) {
-         countElt.style.color = "#9b9b9b";
-      }else {
-         countElt.style.color = "#C80000";
-      }
-   };
-
-   var oldImgElt = document.getElementById("p2_picture");
-   imgElt.id = "p2_picture";
-   document.getElementById("p2_clear").onclick = function() {
-      imgElt.style.visibility = "hidden";
-      this.style.visibility = "hidden";
-   };
-   oldImgElt.parentNode.replaceChild(imgElt, oldImgElt);
-   fitImage(imgElt);
-   textElt.addEventListener("keyup", function() { setCounter(); }, false);
-   setCounter();
-   expandPage("p2");
-   document.getElementById("B2").onclick = whenDone;
-   /*
-   Response:
-      var res = JSON.parse(xhr.responseText);
-      var id_str = res.entities.media[0].id_str;
-      var ex_url = res.entities.media[0].expanded_url;
-   */
+   }
 };
-
-function closeTwitterPage() {
-   expandPage("p0");
-   this.onclick = openTwitterPage(this);
-}
 
 function setNetworkButtons() {
-   var eltGo4It = document.getElementById("go4it");
+   var eltButton = document.getElementById("connectTo");
    if (!users.hasSome() || networks.every(
          function(network) {
             if (network.name !== users.getNet()) {
@@ -228,21 +146,21 @@ function setNetworkButtons() {
                var imgElt = document.createElement("IMG");
                imgElt.src = "images/" + network.name + "Logo.png";
                imgElt.style.width = "7rem";
-               while (eltGo4It.hasChildNodes()) {
-                  eltGo4It.removeChild(eltGo4It.lastChild);
+               while (eltButton.hasChildNodes()) {
+                  eltButton.removeChild(eltButton.lastChild);
                }
-               eltGo4It.appendChild(imgElt);
-               eltGo4It.onclick = function(event) {
+               eltButton.appendChild(imgElt);
+               eltButton.onclick = function(event) {
                   event.stopPropagation();
                   browseTo(network);
                }
-               eltGo4It.style.display = "";
+               eltButton.style.display = "";
                return false;
             }
          }
       )
    ) {
-      eltGo4It.style.display = "none";
+      eltButton.style.display = "none";
    }
 }
 
@@ -305,22 +223,6 @@ function formatUsersList(isUserRequired) {
       tellAccessPass();
    }else {
       document.getElementById("jgUsersIn").style.display = "none";
-//    var elt = document.getElementById("jgUsersIn");
-//    var btnElt = document.createElement("BUTTON");
-//    var spanElt = document.createElement("SPAN");
-//    btnElt.onclick = function(event) {
-//       authorize();
-//       event.stopPropagation();
-//    }
-//    spanElt.className = "i18n";
-//    spanElt.id = "newLogin";
-//    spanElt.appendChild(document.createTextNode(i18n("newLogin")));
-//    btnElt.appendChild(spanElt);
-//
-//    while (elt.hasChildNodes()) {
-//       elt.removeChild(elt.lastChild);
-//    }
-//    elt.appendChild(btnElt);
       if (isUserRequired) {
          authorize();
       }
@@ -338,8 +240,11 @@ function isAlbumIdRequired() {
 }
 
 function resetAlbumsList() {
+   var albums = document.getElementById("jgUsersAid");
+   while (albums.hasChildNodes()) albums.removeChild(albums.lastChild);
    if (!isAlbumIdRequired()) {
-      document.getElementById("jgUsersAid").style.display = "none";
+      albums.style.display = "none";
+      albums.setAttribute("aria-expanded", "false");
    }else {
       var elt;
       var smallElt;
@@ -363,16 +268,13 @@ function resetAlbumsList() {
       ulElt.setAttribute("role", "radiogroup");
       ulElt.onclick = function(event) { changeAlbum(this, event); };
 
-      elt = document.getElementById("jgUsersAid");
-      while (elt.hasChildNodes()) {
-         elt.removeChild(elt.lastChild);
-      }
-      elt.appendChild(smallElt);
-      elt.appendChild(document.createElement("BR"));
-      elt.appendChild(italicElt);
-      elt.appendChild(ulElt);
-      elt.style.display = "";
+      albums.appendChild(smallElt);
+      albums.appendChild(document.createElement("BR"));
+      albums.appendChild(italicElt);
+      albums.appendChild(ulElt);
+      albums.style.display = "";
    }
+   if (users.hasSome()) startUpload(); // if any photo are queued
 }
 
 function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
@@ -441,6 +343,7 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       albumTitleElt.className = "i18n";
       albumTitleElt.textContent = i18n("albumTitle");
    }
+   // startUpload();
 }
 
 function changeAlbum(elt, event) {
@@ -450,6 +353,7 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
+   startUpload();
 }
 
 function changeLogin(elt, event) {
@@ -668,7 +572,7 @@ function listAlbums(event) {
          'listAlbums',
          function(albums) {
             formatAlbumsList(albums, ulChildElt);
-            dispatcher.post("albumsListed", albums.length);
+//          dispatcher.post("albumsListed", albums.length);   zigou
          }
       );
    }
@@ -702,136 +606,155 @@ function createAlbum(isDirect) {
    );
 }
 
-function uploadPicture(event, issuer) {
-   if (!users.hasSome()) {
-      formatUsersList(true);
+function pickPhoto(event) {
+   if (typeof MozActivity !== "undefined") {
+      var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
+      a.onsuccess = function(e) {
+         pendingPhotos.push(a.result.blob);
+         startUpload();
+      };
+      a.onerror = function() {
+         simpleMsg("error", i18n('pickImageError'));
+      };
    }else {
-      var albumId = isAlbumIdRequired()? users.getAlbumId() : "NoNeedFor";
-      if (!albumId) {
-         if (event) event.stopPropagation();
-         dispatcher.on(
-            "albumsListed",
-            function action(albumsCount) {
-               dispatcher.off("albumsListed", action);
-               if (albumsCount > 0) {
-                  simpleMsg("warning", i18n("selectOrCreateAlbum"));
-               }else {
-                  createAlbum(false);
-               }
-            }
-         );
-         // show the appropriate panel for selecting the default album
-         document.getElementById("jgUsersAid").click();
-         expandSidebarView(1);
-      }else {
-         if (issuer) {
-            uploadPictureAsShared(issuer, albumId, 0);
-         }else if (typeof MozActivity !== "undefined") {
-            uploadPictureAsPicked(albumId);
+      var elt = document.getElementById('upldFile');
+      elt.onchange = function() {
+         if (!this.files) {
+            simpleMsg("error", i18n("noFileApiProp"));
+         }else if (!this.files[0]) {
+            simpleMsg("error", i18n("noFileSelected"));
          }else {
-            uploadPictureAsFile(albumId);
+            for (var i=0; i < this.files.length; ++i) {
+               pendingPhotos.push(this.files[i]);
+            }
+            startUpload();
          }
       }
+      elt.click();
    }
 }
 
-function uploadPictureAsPicked(albumId) {
-   var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
-   a.onsuccess = function(e) {
-      addCaption(
-         a.result.blob,
-         issueRequest,
-         [
-            "POST",
-            "postImageData&NET=" + users.getNet() + "&AID=" + albumId,
-            a.result.blob,
-            function(val) {     // whenDone
-               expandPage("p0"); // stop p2!
-               simpleMsg("info", i18n('imageUploaded', users.getAlbumTitle()));
-            },
-            function(rc, val) { // whenFailed
-               simpleMsg("error", "RC: " + rc);
-            },
-            "image/jpeg"
-         ]
-      );
-   };
-   a.onerror = function() { simpleMsg("error", i18n('pickImageError')); };
-}
-
-function uploadPictureAsShared(issuer, albumId, index) {
-   var debug = (issuer === "?");
-   if (
-/**/  (
-/**/     !debug && (
-            index >= issuer.source.data.blobs.length
-/**/     )
-/**/  ) || (debug && (index >= 1))
-   ) {
-      // finishShareActivity();
-/**/  if (!debug)
-      issuer.postResult({result: "ok"});
+function startUpload() {
+   if (pendingPhotos.length == 0) {
+      finishUpload();
    }else {
-      var imageBlob = /**/  debug? null :
-      issuer.source.data.blobs[index];
-      addCaption(
-         imageBlob,
-         issueRequest,
-         [
-            "POST",
-            "postImageData&NET=" + users.getNet() + "&AID=" + albumId,
-            imageBlob,
-            function(val) {        // whenDone
-               uploadPictureAsShared(issuer, albumId, ++index);
-            },
-            function(rc, val) {    // whenFailed
-               // finishShareActivity();
-               /**/ if (!debug)
-               issuer.postError(message);
-            },
-            "image/jpeg"
-         ]
-      );
+      document.getElementById("footerRow1").style.display = "none";
+      document.getElementById("uploadPhoto").style.display = "none";
+      document.getElementById("cancel").onclick = function() {
+         pendingPhotos.shift();
+         startUpload();
+      }
+      document.getElementById("footerRow2").style.display = "";
+      if (!users.hasSome()) {
+         formatUsersList(true);
+      }else if (isAlbumIdRequired() && (users.getAlbumId() == null)) {
+         // show the appropriate panel for selecting an album
+         var albumsPane = document.getElementById("jgUsersAid");
+         expandSidebarView(1);
+         if (albumsPane.getAttribute("aria-expanded") !== "true") {
+            albumsPane.click();
+         }else {
+            var albums = document.getElementById("albumList").childNodes;
+            var albumsCount = 0;
+            for (var i=0, max=albums.length; i < max; ++i)
+            {
+               if (albums[i].nodeType != 3) ++albumsCount;
+            }
+            if (albumsCount > 0) {
+               simpleMsg("warning", i18n("selectOrCreateAlbum"));
+            }else {
+               createAlbum(false);
+            }
+         }
+      }else {
+         expandSidebarView(-1);
+         document.getElementById("uploadPhoto").style.display = "";
+         uploadPhotos();
+      }
    }
 }
 
-function uploadPictureAsFile(albumId) {
-   var elt = document.getElementById('upldFile');
-   elt.onchange = function() {
-      if (typeof window.FileReader !== 'function') {
-         simpleMsg("error", i18n("noFileApi"));
-      }else if (!this.files) {
-         simpleMsg("error", i18n("noFileApiProp"));
-      }else if (!this.files[0]) {
-         simpleMsg("error", i18n("noFileSelected"));
+function finishUpload() {
+   expandPage("p0"); // stop p2!
+   document.getElementById("footerRow2").style.display = "none";
+   document.getElementById("footerRow1").style.display = "";
+}
+
+function uploadPhotos() {
+   if (pendingPhotos.length == 0) {
+      finishUpload();
+      if (users.getAlbumId()) {
+         simpleMsg("info", i18n('imageUploadedIn', users.getAlbumTitle()));
       }else {
-         var file = this.files[0];
+         simpleMsg("info", i18n('imageUploaded'));
+      }
+      // if (issuer) issuer.postResult({result: "ok"});
+   }else {
+      document.getElementById("p2_userImage").src = users.getImageUrl();
+      document.getElementById("p2_userName").textContent = users.getUserName();
+      document.getElementById("p2_userScreenName").textContent = "@" + users.getScreenName();
+      // document.querySelector(".p2_user").classList.add("active");
+      var countElt = document.getElementById("p2_msgCount");
+      var textElt = document.getElementById("p2_msgText");
+      var setCounter = function() {
+         var remain = 116 - textElt.value.length;
+         if (remain < 0) {
+            textElt.value = textElt.value.substring(0, 116);
+            remain = 116 - textElt.value.length;
+         }
+         countElt.textContent = remain;
+         if (remain > 20) {
+            countElt.style.color = "#9b9b9b";
+         }else {
+            countElt.style.color = "#C80000";
+         }
+      };
+      var imgData = pendingPhotos[0];
+      var imgElt = document.createElement("IMG");
+      imgElt.src = URL.createObjectURL(imgData);
+   // FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
+      imgElt.id = "p2_picture";
+      document.getElementById("p2_clear").onclick = function() {
+         imgElt.style.visibility = "hidden";
+         this.style.visibility = "hidden";
+      };
+      var oldImgElt = document.getElementById("p2_picture");
+      oldImgElt.parentNode.replaceChild(imgElt, oldImgElt);
+      fitImage(imgElt);
+      textElt.addEventListener("keyup", function() { setCounter(); }, false);
+      setCounter();
+      expandPage("p2");
+      var uploadBtn = document.getElementById("uploadPhoto");
+      uploadBtn.style.display = "";
+      uploadBtn.onclick = function() {
+         pendingPhotos.shift();
          var formData = new FormData();
          formData.append("MAX_FILE_SIZE", "1000000");
-         formData.append("IMG", file.name.substr(-3));
-         formData.append("AID", albumId);
-   //    formData.append("TIT", "my title");
-         formData.append("upldFile", file);
-         addCaption(
-            file,
-            issueRequest,
-            [
-               "POST",
-               "postImageFile&NET=" + users.getNet(),
-               formData,
-               function(val) {     // whenDone
-                  expandPage("p0");  // stop p2!
-                  // FIXME (albumId may be null)
-                  simpleMsg("info", i18n("imageUploaded", users.getAlbumTitle()));
-               },
-               function(rc, val) { // whenFailed
-                  simpleMsg("error", "RC: " + rc);
-               }
-            ]
+      // formData.append("IMG", file.name.substr(-3));
+         if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
+      // formData.append("TIT", "my title");
+      // formData.append("TXT", textElt.value);
+         formData.append("upldFile", imgData);
+         issueRequest(
+            "POST",
+            "postImageFile&NET=" + users.getNet(),
+            formData,
+            function(val) {        // whenDone
+               uploadPhotos();
+            },
+            function(rc, val) {    // whenFailed
+               finishUpload();
+               // if (issuer) issuer.postError(message);
+            }
          );
       }
+      /*
+      Response:
+         var res = JSON.parse(xhr.responseText);
+         var id_str = res.entities.media[0].id_str;
+         var ex_url = res.entities.media[0].expanded_url;
+      */
    };
-   elt.click();
 }
 
 function issueRequestStd(what, whenDone) {
@@ -851,7 +774,7 @@ function issueRequestStd(what, whenDone) {
    }
 }
 
-function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
+function issueRequest(method, op, values, whenDone, whenFailed) {
    var query = "?OP=" + op + "&V=1";    // REST version #1
    if (method === "GET") query += values;
    var xhr = new XMLHttpRequest({mozSystem: true});
@@ -861,7 +784,6 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
    }
    xhr.withCredentials = true;
    xhr.open(method, server_url + query, true);
-   if (contentType) xhr.setRequestHeader("Content-Type", contentType);
    xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
          document.getElementById("progresspane").style.visibility='hidden';
@@ -879,3 +801,4 @@ function issueRequest(method, op, values, whenDone, whenFailed, contentType) {
       xhr.send(values);
    }
 }
+

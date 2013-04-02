@@ -82,13 +82,16 @@
    <DIV id="progresspane"><DIV id=progress></DIV></DIV>
 
    <!-- Fallback if "no "Pick" MozActivity -->
-   <INPUT type='file' id='upldFile'/>
+   <INPUT type='file' id='upldFile' multiple accept="image/"/>
 
    <FOOTER>
       <TABLE id="footerTable">
-        <TR>
-          <TD class="i18n" id="pickAndUpload"></TD>
-          <TD id="go4it"></TD>
+        <TR id="footerRow1">
+          <TD class="i18n" id="pickPhoto"></TD>
+          <TD id="connectTo"></TD>
+        </TR><TR id="footerRow2">
+          <TD class="i18n" id="uploadPhoto"></TD>
+          <TD class="i18n" id="cancel"></TD>
         </TR>
       </TABLE>
    </FOOTER>

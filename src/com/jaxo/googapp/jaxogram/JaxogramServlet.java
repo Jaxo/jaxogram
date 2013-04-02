@@ -202,18 +202,6 @@ public class JaxogramServlet extends HttpServlet
                   JsonIterator.get(data, "accessPass")
                );
                writer.printf(data);
-//             String[] vals = authorizer.authenticate(
-//                req.getParameter((restVersion == 0)? "verifier" : "VRF"),
-//                (OAuthAccessor)session.getAttribute("accessor")
-//             );
-//             String accessPass = vals[0];
-//             String userName = vals[1];
-//             session.setAttribute("accesspass", accessPass);
-//             writer.printf(
-//                "{ \"accessPass\":\"%s\", \"userName\":\"%s\" }",    // JSON
-//                URLEncoder.encode(accessPass, "UTF-8").replace("+", "%20"),  // arghhhh
-//                URLEncoder.encode(userName, "UTF-8").replace("+", "%20")
-//             );
 
             }else {
                Network network = makeNetwork(
@@ -238,9 +226,9 @@ public class JaxogramServlet extends HttpServlet
                }else if (op.startsWith("postImage")) {
                   String imgType = "jpg";
                   String imgTitle = "(No Title)";
-                  String albumId = "5830280253747333482";
+                  String albumId = "";
                   byte[] image = null;
-                  if (op.equals("postImageData")) {
+                  if (op.equals("postImageData")) {     // restVersion 0 only
                      for (
                         @SuppressWarnings("unchecked")
                         Enumeration<String> names = req.getParameterNames();

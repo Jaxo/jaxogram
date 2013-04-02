@@ -588,15 +588,14 @@ li[aria-selected=true], li[role=listbox] {
   overflow: hidden;
   margin: 0.5rem;
   font-size: 1.8rem;
-  height: 0;
+  height: 5rem;  /* height: 0; */
   color: white;
-  /* background: #f5f5f5; */
-  -moz-transition: height 500ms;
+  /* -moz-transition: height 500ms; */
 }
 
-.p2_user.active{
-  height: 5rem;
-}
+/* .p2_user.active{  */
+/*   height: 5rem;   */
+/* }                 */
 
 .p2_user #p2_userImage {
   float: left;

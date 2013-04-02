@@ -5,11 +5,16 @@ var localeValues = {
       'fr-FR':"Installer",
       'pt-BR':"Instalar",
       'es-ES':"Instalar"
-   }, pickAndUpload: {
+   }, uploadPhoto: {
       'en-US':"Share Photo",
-      'fr-FR':"Partager une photo",
+      'fr-FR':"Partager la photo",
       'pt-BR':"Foto Compartilhar",
-      'es-ES':"Compartir fotos"
+      'es-ES':"Compartir foto"
+   }, pickPhoto: {
+      'en-US':"Select Photo",
+      'fr-FR':"Chosir la photo",
+      'pt-BR':"Selecione a foto",
+      'es-ES':"Selecciona la foto"
    }, whoAmI: {
       'en-US':"Who am I?",
       'fr-FR':"Qui suis-je ?",
@@ -85,11 +90,16 @@ var localeValues = {
       'fr-FR':"Erreur lors de la sélection de la photo",
       'pt-BR':"Falha seleccionando uma foto",
       'es-ES':"La falta seleccionar una foto"
-   }, imageUploaded: {
+   }, imageUploadedIn: {
       'en-US':"Photo successfully uploaded in album \"%1\"",
       'fr-FR':"Photo insérée dans l'album \"%1\"",
       'pt-BR':"Foto carregado com sucesso em álbum \"%1\"",
       'es-ES':"Foto cargado correctamente en el álbum \"%1\""
+   }, imageUploaded: {
+      'en-US':"Photo successfully uploaded",
+      'fr-FR':"Photo insérée",
+      'pt-BR':"Foto carregado com sucesso",
+      'es-ES':"Foto cargado correctamente"
    }, albumCreated: {
       'en-US':"Album \"%1\" was created",
       'fr-FR':"L'album \"%1\" a été créé.",
