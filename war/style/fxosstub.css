@@ -569,7 +569,7 @@ li[aria-selected=true], li[role=listbox] {
 .imgbox {
   display: block;
   position: absolute;
-  top:16rem;
+  top:15rem;
   bottom: 0;
   margin-bottom:0.5rem;
   /* border: 1px solid #D1D1D1; */
@@ -580,7 +580,7 @@ li[aria-selected=true], li[role=listbox] {
 .imgclr {
    position:absolute;
    right:1.5rem;
-   top:16rem;
+   top:15rem;
    z-index:2
 }
 .imgclr:active {
@@ -612,7 +612,7 @@ li[aria-selected=true], li[role=listbox] {
 .p2_msg {
   padding: 0 1rem 0 1rem;
   position: relative;
-  height: 9rem;
+  height: 8rem;
 }
 
 #p2_msgCount{

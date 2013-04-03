@@ -224,6 +224,7 @@ public class FacebookNetwork extends OAuthorizer implements Network
    public String uploadPhoto(
       String albumId,
       String title,
+      String text,
       byte[] image,
       String type // png, gif, or jpg.
    )

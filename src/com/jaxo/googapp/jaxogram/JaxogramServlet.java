@@ -227,6 +227,7 @@ public class JaxogramServlet extends HttpServlet
                   String imgType = "jpg";
                   String imgTitle = "(No Title)";
                   String albumId = "";
+                  String text = "";
                   byte[] image = null;
                   if (op.equals("postImageData")) {     // restVersion 0 only
                      for (
@@ -263,6 +264,8 @@ public class JaxogramServlet extends HttpServlet
                               imgTitle = values;
                            }else if (name.equals("AID")) {
                               albumId = values;
+                           }else if (name.equals("TXT")) {
+                              text = values;
                            }
                         }else {
                            InputStream in = item.openStream();
@@ -274,7 +277,7 @@ public class JaxogramServlet extends HttpServlet
                   if (image == null) {
                      throw new Exception("Image data not found");
                   }
-                  network.uploadPhoto(albumId, imgTitle, image, imgType);
+                  network.uploadPhoto(albumId, imgTitle, text, image, imgType);
 //*/              writer.println("Successfully uploaded to album #" + albumId);
                }
             }

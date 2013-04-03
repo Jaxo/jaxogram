@@ -735,7 +735,7 @@ function uploadPhotos() {
       // formData.append("IMG", file.name.substr(-3));
          if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
       // formData.append("TIT", "my title");
-      // formData.append("TXT", textElt.value);
+         formData.append("TXT", textElt.value);
          formData.append("upldFile", imgData);
          issueRequest(
             "POST",
