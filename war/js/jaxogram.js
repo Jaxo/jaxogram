@@ -125,7 +125,7 @@ window.onload = function() {
    if (navigator.mozSetMessageHandler) {
       navigator.mozSetMessageHandler(
          "activity",
-         function() {
+         function(issuer) {
             blobs = issuer.source.data.blobs;
             for (var i=0; i < blobs.length; ++i) {
                pendingPhotos.push(blobs[i]);
@@ -696,6 +696,7 @@ function uploadPhotos() {
       // document.querySelector(".p2_user").classList.add("active");
       var countElt = document.getElementById("p2_msgCount");
       var textElt = document.getElementById("p2_msgText");
+      textElt.value = "";
       var setCounter = function() {
          var remain = 116 - textElt.value.length;
          if (remain < 0) {
