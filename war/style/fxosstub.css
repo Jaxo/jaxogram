@@ -120,7 +120,7 @@ header td:active {
    position: absolute;
    left: -80%;
    right: 100%;
-   top: 6rem;
+   top: 5.7rem;
    bottom: 6rem;
    margin-right: 0rem;
    opacity: 1;
@@ -136,13 +136,19 @@ header td:active {
   position: absolute;
   left: 0;
   right: 0;
-  top: 1rem;
-  bottom: 1rem;
-  margin-left: 1rem;
-  margin-right: 1rem;
+  top: 0.6rem;
+  bottom: 0.6rem;
+  margin-left: 0.6rem;
+  margin-right: 0.6rem;
   opacity: 0;
   transition: opacity 0.2s;
   z-index: -1;
+  background-color: #3e4449;
+  border-left: 1px solid #B0B0B0;
+  border-top: 1px solid #B0B0B0;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
 }
 
 .body[aria-expanded=true] {
@@ -561,23 +567,20 @@ li[aria-selected=true], li[role=listbox] {
 
 /* ------ Page 2 ------*/
 .imgbox {
-  /* background-color:#fff; */
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   display: block;
-  /* position: absolute; */
-  padding-top: 16rem;
-  overflow: hidden;
-  border: 1px solid #D1D1D1;
-  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
+  position: absolute;
+  top:16rem;
+  bottom: 0;
+  margin-bottom:0.5rem;
+  /* border: 1px solid #D1D1D1; */
+  /* border-radius: 0.5rem 0.5rem 0.5rem 0.5rem; */
   text-align: center;
-  height: 100%;
   width: 100%;
 }
 .imgclr {
    position:absolute;
-   right:2rem;
-   bottom:1.5rem;
+   right:1.5rem;
+   top:16rem;
    z-index:2
 }
 .imgclr:active {
@@ -602,52 +605,37 @@ li[aria-selected=true], li[role=listbox] {
   margin-right: 1rem;
 }
 
+.p2_user #p2_netImage {
+  float: right;
+}
+
 .p2_msg {
-  padding: 1rem;
-  width: 100%;
-  height: 10rem;
+  padding: 0 1rem 0 1rem;
   position: relative;
-  padding: 0;
+  height: 9rem;
 }
 
 #p2_msgCount{
   position: absolute;
-  right: 1rem;
+  right: 2rem;
   bottom: 0.5rem;
   font-size: 2rem;
 }
 
 #p2_msgText {
   -moz-box-sizing: border-box;
-  display: block;
-  width: 100%;
-  height: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid #D1D1D1;
-  border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
-  font-size: 1.4rem;
-}
-
-.body textarea {
-  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  overflow: hidden;
-  display: block;
-  position: relative;
   resize: none;
-  height: 100%;
+  border: 1px dotted #9B9B9B;
+  /* border: 2px dashed #323537; */
+  border-radius: 0.8rem 0.8rem 0.8rem 0.8rem;
   width: 100%;
+  height: 100%;
   padding: 0.5rem 1rem;
-  /* border: 1px solid #D1D1D1; */
-  border: none;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
-  font-family: "Open Sans",Sans-serif;
-  font-size: 1.6rem;
-}
-
-.body textarea[disabled] {
-   color: #016696;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.4rem;
+  color:#F0F0F0;
+  background-color: transparent;
 }
 
 #upldFile {

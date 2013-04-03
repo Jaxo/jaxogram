@@ -572,7 +572,6 @@ function listAlbums(event) {
          'listAlbums',
          function(albums) {
             formatAlbumsList(albums, ulChildElt);
-//          dispatcher.post("albumsListed", albums.length);   zigou
          }
       );
    }
@@ -691,6 +690,7 @@ function uploadPhotos() {
       // if (issuer) issuer.postResult({result: "ok"});
    }else {
       document.getElementById("p2_userImage").src = users.getImageUrl();
+      document.getElementById("p2_netImage").src = "images/" + users.getNet() + "Logo.png";
       document.getElementById("p2_userName").textContent = users.getUserName();
       document.getElementById("p2_userScreenName").textContent = "@" + users.getScreenName();
       // document.querySelector(".p2_user").classList.add("active");
@@ -711,16 +711,18 @@ function uploadPhotos() {
       };
       var imgData = pendingPhotos[0];
       var imgElt = document.createElement("IMG");
+      var clrElt = document.getElementById("p2_clear");
       imgElt.src = URL.createObjectURL(imgData);
    // FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
       imgElt.id = "p2_picture";
-      document.getElementById("p2_clear").onclick = function() {
-         imgElt.style.visibility = "hidden";
-         this.style.visibility = "hidden";
-      };
       var oldImgElt = document.getElementById("p2_picture");
       oldImgElt.parentNode.replaceChild(imgElt, oldImgElt);
       fitImage(imgElt);
+      clrElt.style.visibility = "visible";
+      clrElt.onclick = function() {
+         imgElt.style.visibility = "hidden";
+         this.style.visibility = "hidden";
+      };
       textElt.addEventListener("keyup", function() { setCounter(); }, false);
       setCounter();
       expandPage("p2");
