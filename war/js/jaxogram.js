@@ -697,7 +697,7 @@ function uploadPhotos() {
       var countElt = document.getElementById("p2_msgCount");
       var textElt = document.getElementById("p2_msgText");
       textElt.value = "";
-      var setCounter = function() {
+      var setCounter = function(event) {
          var remain = 116 - textElt.value.length;
          if (remain < 0) {
             textElt.value = textElt.value.substring(0, 116);
@@ -709,6 +709,10 @@ function uploadPhotos() {
          }else {
             countElt.style.color = "#C80000";
          }
+         if (event && (event.keyCode === 13)) this.blur();
+//       if (event) {
+//          textElt.value = String.fromCharCode(event.keyCode).charCodeAt(0)+ " " + textElt.value;
+//       }
       };
       var imgData = pendingPhotos[0];
       var imgElt = document.createElement("IMG");
@@ -724,7 +728,7 @@ function uploadPhotos() {
          imgElt.style.visibility = "hidden";
          this.style.visibility = "hidden";
       };
-      textElt.addEventListener("keyup", function() { setCounter(); }, false);
+      textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
       var uploadBtn = document.getElementById("uploadPhoto");
