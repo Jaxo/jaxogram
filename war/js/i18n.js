@@ -85,6 +85,11 @@ var localeValues = {
       'fr-FR':"Veuiller confirmer la suppression\nde l'utilisateur %2 \"%1\".",
       'pt-BR':"Tem certeza de que deseja excluir\no %2 login para \"%1\"?",
       'es-ES':"¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?"
+   }, p2_msgText: {
+      'en-US':"Type a comment here (title or tweet)",
+      'fr-FR':"Entrez ici un commentaire (titre ou tweet)",
+      'pt-BR':"Digite um comentário aqui (título ou twittar)",
+      'es-ES':"Escriba un comentario aquí (título o Twitter)"
    }, pickImageError: {
       'en-US':"The selection of the photo has failed",
       'fr-FR':"Erreur lors de la sélection de la photo",
@@ -286,7 +291,12 @@ function translateBody(newLocale) {
    var elts = document.getElementsByClassName('i18n');
    for (var i=0, max=elts.length; i < max; ++i) {
       var elt = elts[i];
-      elt.textContent = i18n(elt.id);
+      if (elt.nodeName === "TEXTAREA") {
+         // this is a bit hacky (use multiple classes?)
+         elt.placeholder = i18n(elt.id);
+      }else {
+         elt.textContent = i18n(elt.id);
+      }
    }
 }
 
