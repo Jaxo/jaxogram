@@ -136,20 +136,15 @@ window.onload = function() {
    }
 };
 
-function setNetworkButtons() {
+function onNetworkChange() {
    var eltButton = document.getElementById("connectTo");
    if (!users.hasSome() || networks.every(
          function(network) {
             if (network.name !== users.getNet()) {
                return true;    // pursue...
             }else {
-               var imgElt = document.createElement("IMG");
+               var imgElt = document.getElementById("p0_img");
                imgElt.src = "images/" + network.name + "Logo.png";
-               imgElt.style.width = "7rem";
-               while (eltButton.hasChildNodes()) {
-                  eltButton.removeChild(eltButton.lastChild);
-               }
-               eltButton.appendChild(imgElt);
                eltButton.onclick = function(event) {
                   event.stopPropagation();
                   browseTo(network);
@@ -227,7 +222,7 @@ function formatUsersList(isUserRequired) {
          authorize();
       }
    }
-   setNetworkButtons();
+   onNetworkChange();
 }
 
 function isAlbumIdRequired() {
@@ -379,7 +374,7 @@ function changeLogin(elt, event) {
          document.getElementById('jgUserName').textContent = users.getUserName();
          document.getElementById('jgUserNet').src = "../images/" + users.getNet() + "Logo.png";
          resetAlbumsList();
-         setNetworkButtons();
+         onNetworkChange();
          tellAccessPass();
       }
    }
@@ -639,7 +634,7 @@ function startUpload() {
    }else {
       document.getElementById("footerRow1").style.display = "none";
       document.getElementById("uploadPhoto").style.display = "none";
-      document.getElementById("cancel").onclick = function() {
+      document.getElementById("cancelPhoto").onclick = function() {
          pendingPhotos.shift();
          startUpload();
       }
@@ -692,7 +687,7 @@ function uploadPhotos() {
       document.getElementById("p2_userImage").src = users.getImageUrl();
       document.getElementById("p2_netImage").src = "images/" + users.getNet() + "Logo.png";
       document.getElementById("p2_userName").textContent = users.getUserName();
-      document.getElementById("p2_userScreenName").textContent = "@" + users.getScreenName();
+      document.getElementById("p2_userScreenName").textContent = users.getScreenName();
       // document.querySelector(".p2_user").classList.add("active");
       var countElt = document.getElementById("p2_msgCount");
       var textElt = document.getElementById("p2_msgText");

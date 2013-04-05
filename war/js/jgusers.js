@@ -18,6 +18,17 @@ function JgUsers() {
       return users[selectedIndex].i;
    }
    this.getScreenName = function() {
+      var val = users[selectedIndex].s;
+      if (val) {
+         return "@" + val;
+      }else {
+         val = users[selectedIndex].tt;
+         if (val) {
+            return val;
+         }else {
+            return "";
+         }
+      }
       return users[selectedIndex].s;
    }
    this.getAlbumTitle = function() {
