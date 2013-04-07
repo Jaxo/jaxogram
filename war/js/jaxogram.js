@@ -1,4 +1,5 @@
 var pendingPhotos = [];  // array of blobs or files
+var upldPhotosCount = 0;
 var users;
 var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
@@ -92,22 +93,30 @@ window.onload = function() {
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
    document.querySelector(".menuList").onclick = menuListClicked;
-   document.getElementById("jgUsersAid").onclick = listAlbums;
+   document.getElementById("mn_albums").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
-   document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
+   // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
-   // document.getElementById("jgUsersAid").style.display = "none";
+   document.getElementById("uploadPhoto").onclick = uploadPhoto;
+   document.getElementById("cancelPhoto").onclick = function() {
+      pendingPhotos.shift();
+      uploadPhotos();
+   };
+   document.getElementById("logins").onclick = function(event) {
+      changeLogin(this, event);
+   };
+   // document.getElementById("mn_albums").style.display = "none";
    document.getElementById("footerRow2").style.display = "none";
-
+   document.getElementById("connectTo").onclick = function(event) {
+      event.stopPropagation();
+      browseTo(users.getNet());
+   };
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
    formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
-// window.onerror = function(msg, url, linenumber){
-//    alert('Error: ' + msg + '\nURL: ' + url + '\n@ line: ' + linenumber);
-//    return true;
-// }
+
    var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
    eltMain.addEventListener(
@@ -130,32 +139,32 @@ window.onload = function() {
             for (var i=0; i < blobs.length; ++i) {
                pendingPhotos.push(blobs[i]);
             }
-            startUpload();
+            uploadPhotos();
          }
       );
    }
 };
 
-function onNetworkChange() {
-   var eltButton = document.getElementById("connectTo");
-   if (!users.hasSome() || networks.every(
-         function(network) {
-            if (network.name !== users.getNet()) {
-               return true;    // pursue...
-            }else {
-               var imgElt = document.getElementById("p0_img");
-               imgElt.src = "images/" + network.name + "Logo.png";
-               eltButton.onclick = function(event) {
-                  event.stopPropagation();
-                  browseTo(network);
-               }
-               eltButton.style.display = "";
-               return false;
-            }
-         }
-      )
-   ) {
-      eltButton.style.display = "none";
+function onNetworkChange()
+{
+   var connectTo = document.getElementById("connectTo");
+   if (users.hasSome()) {
+      var netImage = "../images/" + users.getNet() + "Logo.png";
+      document.getElementById("connectTo").style.display = "";
+      document.getElementById("mn_userName").textContent = users.getUserName();
+      document.getElementById("p2_userName").textContent = users.getUserName();
+      document.getElementById("p2_userImage").src = users.getImageUrl();
+      document.getElementById("mn_netImage").src = netImage;
+      document.getElementById("p0_netImage").src = netImage;
+      document.getElementById("p2_netImage").src = netImage;
+      document.getElementById("p2_userScreenName").textContent = users.getScreenName();
+   }else {
+      document.getElementById("mn_user").style.display = "none";
+      document.getElementById("p2_userName").textContent = i18n("noNetwork");
+      document.getElementById("p2_userImage").src = "";
+      document.getElementById("p0_netImage").src = "";
+      document.getElementById("p2_netImage").src = "";
+      document.getElementById("connectTo").style.display = "none";
    }
 }
 
@@ -163,27 +172,24 @@ function formatUsersList(isUserRequired) {
    resetAlbumsList();
    if (users.hasSome()) {
       var elt;
-      var liElt;
-      var smallElt;
-      var imgNetElt;
-      var italicElt;
-      var ulElt = document.createElement("UL");
-      ulElt.setAttribute("role", "radiogroup");
-      ulElt.onclick = function(event) { changeLogin(this, event); };
-
-      liElt = document.createElement("LI");
-      liElt.className = "i18n";
-      liElt.id = "newLogin";
-      liElt.onclick = function(event) {
+      var itmElt;
+      var ulElt = document.getElementById("logins");
+      while (ulElt.hasChildNodes()) {
+         ulElt.removeChild(ulElt.lastChild);
+      }
+      itmElt = document.createElement("LI");
+      itmElt.className = "i18n";
+      itmElt.id = "newLogin";
+      itmElt.onclick = function(event) {
          authorize();
          event.stopPropagation();
       };
-      liElt.appendChild(document.createTextNode(i18n("newLogin")));
-      ulElt.appendChild(liElt);
+      itmElt.appendChild(document.createTextNode(i18n("newLogin")));
+      ulElt.appendChild(itmElt);
       users.forEach(
          function(name, pass, albumTitle, isSelected, net) {
             var imgElt = document.createElement("IMG");
-            var itmElt = document.createElement("LI");
+            itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
             imgElt.src = "../images/" + net + "SmallLogo.png";
@@ -194,30 +200,13 @@ function formatUsersList(isUserRequired) {
             ulElt.appendChild(itmElt);
          }
       );
-      elt = document.getElementById("jgUsersIn");
-      while (elt.hasChildNodes()) {
-         elt.removeChild(elt.lastChild);
-      }
+      elt = document.getElementById("mn_user");
       elt.setAttribute("aria-expanded", "false");
-      smallElt = document.createElement("SMALL");
-      smallElt.className = "i18n";
-      smallElt.id = "loginAs";
-      smallElt.appendChild(document.createTextNode(i18n("loginAs")));
-      italicElt = document.createElement("I");
-      italicElt.id = "jgUserName";
-      italicElt.appendChild(document.createTextNode(users.getUserName()));
-      imgNetElt = document.createElement("IMG");
-      imgNetElt.id = "jgUserNet";
-      imgNetElt.src = "../images/" + users.getNet() + "Logo.png";
-      elt.appendChild(smallElt);
-      elt.appendChild(document.createElement("BR"));
-      elt.appendChild(imgNetElt);
-      elt.appendChild(italicElt);
       elt.appendChild(ulElt);
       elt.style.display = "";
       tellAccessPass();
    }else {
-      document.getElementById("jgUsersIn").style.display = "none";
+      document.getElementById("mn_user").style.display = "none";
       if (isUserRequired) {
          authorize();
       }
@@ -235,7 +224,7 @@ function isAlbumIdRequired() {
 }
 
 function resetAlbumsList() {
-   var albums = document.getElementById("jgUsersAid");
+   var albums = document.getElementById("mn_albums");
    while (albums.hasChildNodes()) albums.removeChild(albums.lastChild);
    if (!isAlbumIdRequired()) {
       albums.style.display = "none";
@@ -269,7 +258,7 @@ function resetAlbumsList() {
       albums.appendChild(ulElt);
       albums.style.display = "";
    }
-   if (users.hasSome()) startUpload(); // if any photo are queued
+   if (users.hasSome()) uploadPhotos(); // if any photo are queued
 }
 
 function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
@@ -338,7 +327,7 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       albumTitleElt.className = "i18n";
       albumTitleElt.textContent = i18n("albumTitle");
    }
-   // startUpload();
+   // uploadPhotos();
 }
 
 function changeAlbum(elt, event) {
@@ -348,7 +337,7 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
-   startUpload();
+   uploadPhotos();
 }
 
 function changeLogin(elt, event) {
@@ -371,8 +360,6 @@ function changeLogin(elt, event) {
          );
       }else {
          users.selectUserAt(index);
-         document.getElementById('jgUserName').textContent = users.getUserName();
-         document.getElementById('jgUserNet').src = "../images/" + users.getNet() + "Logo.png";
          resetAlbumsList();
          onNetworkChange();
          tellAccessPass();
@@ -592,7 +579,7 @@ function createAlbum(isDirect) {
                users.setAlbum(newAlbum.id, newAlbum.title);
                formatAlbumsList(
                   albums,
-                  document.getElementById("jgUsersAid").getElementsByTagName("UL")[0]
+                  document.getElementById("mn_albums").getElementsByTagName("UL")[0]
                );
             }
          );
@@ -605,7 +592,7 @@ function pickPhoto(event) {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
       a.onsuccess = function(e) {
          pendingPhotos.push(a.result.blob);
-         startUpload();
+         uploadPhotos();
       };
       a.onerror = function() {
          simpleMsg("error", i18n('pickImageError'));
@@ -621,50 +608,10 @@ function pickPhoto(event) {
             for (var i=0; i < this.files.length; ++i) {
                pendingPhotos.push(this.files[i]);
             }
-            startUpload();
+            uploadPhotos();
          }
       }
       elt.click();
-   }
-}
-
-function startUpload() {
-   if (pendingPhotos.length == 0) {
-      finishUpload();
-   }else {
-      document.getElementById("footerRow1").style.display = "none";
-      document.getElementById("uploadPhoto").style.display = "none";
-      document.getElementById("cancelPhoto").onclick = function() {
-         pendingPhotos.shift();
-         startUpload();
-      }
-      document.getElementById("footerRow2").style.display = "";
-      if (!users.hasSome()) {
-         formatUsersList(true);
-      }else if (isAlbumIdRequired() && (users.getAlbumId() == null)) {
-         // show the appropriate panel for selecting an album
-         var albumsPane = document.getElementById("jgUsersAid");
-         expandSidebarView(1);
-         if (albumsPane.getAttribute("aria-expanded") !== "true") {
-            albumsPane.click();
-         }else {
-            var albums = document.getElementById("albumList").childNodes;
-            var albumsCount = 0;
-            for (var i=0, max=albums.length; i < max; ++i)
-            {
-               if (albums[i].nodeType != 3) ++albumsCount;
-            }
-            if (albumsCount > 0) {
-               simpleMsg("warning", i18n("selectOrCreateAlbum"));
-            }else {
-               createAlbum(false);
-            }
-         }
-      }else {
-         expandSidebarView(-1);
-         document.getElementById("uploadPhoto").style.display = "";
-         uploadPhotos();
-      }
    }
 }
 
@@ -672,22 +619,20 @@ function finishUpload() {
    expandPage("p0"); // stop p2!
    document.getElementById("footerRow2").style.display = "none";
    document.getElementById("footerRow1").style.display = "";
+   if (upldPhotosCount > 0) {
+      simpleMsg("info", i18n('photosUploaded'), upldPhotosCount);
+      upldPhotosCount = 0;
+   }
+   // FIXME: if (issuer) issuer.postResult({result: "ok"});
 }
 
 function uploadPhotos() {
    if (pendingPhotos.length == 0) {
       finishUpload();
-      if (users.getAlbumId()) {
-         simpleMsg("info", i18n('imageUploadedIn', users.getAlbumTitle()));
-      }else {
-         simpleMsg("info", i18n('imageUploaded'));
-      }
-      // if (issuer) issuer.postResult({result: "ok"});
    }else {
-      document.getElementById("p2_userImage").src = users.getImageUrl();
-      document.getElementById("p2_netImage").src = "images/" + users.getNet() + "Logo.png";
-      document.getElementById("p2_userName").textContent = users.getUserName();
-      document.getElementById("p2_userScreenName").textContent = users.getScreenName();
+      document.getElementById("footerRow1").style.display = "none";
+      document.getElementById("footerRow2").style.display = "";
+
       // document.querySelector(".p2_user").classList.add("active");
       var countElt = document.getElementById("p2_msgCount");
       var textElt = document.getElementById("p2_msgText");
@@ -710,7 +655,7 @@ function uploadPhotos() {
       var imgElt = document.createElement("IMG");
       var clrElt = document.getElementById("p2_clear");
       imgElt.src = URL.createObjectURL(imgData);
-   // FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
+      // FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
       imgElt.id = "p2_picture";
       var oldImgElt = document.getElementById("p2_picture");
       oldImgElt.parentNode.replaceChild(imgElt, oldImgElt);
@@ -723,37 +668,68 @@ function uploadPhotos() {
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
-      var uploadBtn = document.getElementById("uploadPhoto");
-      uploadBtn.style.display = "";
-      uploadBtn.onclick = function() {
-         pendingPhotos.shift();
-         var formData = new FormData();
-         formData.append("MAX_FILE_SIZE", "1000000");
-      // formData.append("IMG", file.name.substr(-3));
-         if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
-      // formData.append("TIT", "my title");
-         formData.append("TXT", textElt.value);
-         formData.append("upldFile", imgData);
-         issueRequest(
-            "POST",
-            "postImageFile&NET=" + users.getNet(),
-            formData,
-            function(val) {        // whenDone
-               uploadPhotos();
-            },
-            function(rc, val) {    // whenFailed
-               finishUpload();
-               // if (issuer) issuer.postError(message);
-            }
-         );
+      isUploadable();
+   }
+}
+
+function isUploadable() {
+   if (!users.hasSome()) {
+      formatUsersList(true);
+      return false;
+   }else if (isAlbumIdRequired() && (users.getAlbumId() == null)) {
+      // show the appropriate panel for selecting an album
+      var albumsPane = document.getElementById("mn_albums");
+      expandSidebarView(1);
+      if (albumsPane.getAttribute("aria-expanded") !== "true") {
+         albumsPane.click();
+      }else {
+         var albums = document.getElementById("albumList").childNodes;
+         var albumsCount = 0;
+         for (var i=0, max=albums.length; i < max; ++i) {
+            if (albums[i].nodeType != 3) ++albumsCount;
+         }
+         if (albumsCount > 0) {
+            simpleMsg("warning", i18n("selectOrCreateAlbum"));
+         }else {
+            createAlbum(false);
+         }
       }
-      /*
-      Response:
-         var res = JSON.parse(xhr.responseText);
-         var id_str = res.entities.media[0].id_str;
-         var ex_url = res.entities.media[0].expanded_url;
-      */
-   };
+      return false;
+   }else {
+      expandSidebarView(-1);
+      return true;
+   }
+}
+
+function uploadPhoto() {
+   if (isUploadable()) {
+      var imgData = pendingPhotos.shift();
+      var formData = new FormData();
+      formData.append("MAX_FILE_SIZE", "1000000");
+   // formData.append("IMG", file.name.substr(-3));
+      if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
+      formData.append("TIT", document.getElementById("p2_msgText").value);
+      formData.append("upldFile", imgData);
+      issueRequest(
+         "POST",
+         "postImageFile&NET=" + users.getNet(),
+         formData,
+         function(val) {        // whenDone
+            /*
+            Response:
+               var res = JSON.parse(xhr.responseText);
+               var id_str = res.entities.media[0].id_str;
+               var ex_url = res.entities.media[0].expanded_url;
+            */
+            ++upldPhotosCount;
+            uploadPhotos();
+         },
+         function(rc, val) {    // whenFailed
+            finishUpload();
+            // FIXME: if (issuer) issuer.postError(message);
+         }
+      );
+   }
 }
 
 function issueRequestStd(what, whenDone) {
@@ -778,7 +754,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    if (method === "GET") query += values;
    var xhr = new XMLHttpRequest({mozSystem: true});
    if (xhr.withCredentials === undefined) {
-      simpleMsg("error", "Sorry: your browser doesn't handle cross-site requests");
+      simpleMsg("error", "Sorry: can't do cross-site requests");
       return;
    }
    xhr.withCredentials = true;

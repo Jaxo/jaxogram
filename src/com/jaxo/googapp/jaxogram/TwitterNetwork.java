@@ -192,7 +192,6 @@ public class TwitterNetwork extends OAuthorizer implements Network
    public String uploadPhoto(
       String albumId,
       String title,
-      String text,
       byte[] image,
       String type // png, gif, or jpg.  see: ~/fxos/orkut/java/src/com/google/orkut/client/api/UploadPhotoTx.java
    )
@@ -200,9 +199,7 @@ public class TwitterNetwork extends OAuthorizer implements Network
    {
       String url = API_URL + "/statuses/update_with_media.json";
       MultipartEntity entity = new MultipartEntity();
-      entity.addField(
-         "status", text, "ISO-8859-1"
-      );
+      entity.addField("status", title, "ISO-8859-1");
       entity.addStream(
          "media[]", "tmpfile.jpg", "image/jpeg", new ByteArrayInputStream(image)
       );

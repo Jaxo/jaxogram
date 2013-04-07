@@ -95,16 +95,11 @@ var localeValues = {
       'fr-FR':"Erreur lors de la sélection de la photo",
       'pt-BR':"Falha seleccionando uma foto",
       'es-ES':"La falta seleccionar una foto"
-   }, imageUploadedIn: {
-      'en-US':"Photo successfully uploaded in album \"%1\"",
-      'fr-FR':"Photo insérée dans l'album \"%1\"",
-      'pt-BR':"Foto carregado com sucesso em álbum \"%1\"",
-      'es-ES':"Foto cargado correctamente en el álbum \"%1\""
-   }, imageUploaded: {
-      'en-US':"Photo successfully uploaded",
-      'fr-FR':"Photo insérée",
-      'pt-BR':"Foto carregado com sucesso",
-      'es-ES':"Foto cargado correctamente"
+   }, photosUploaded: {
+      'en-US':"%2 photo(s) successfully uploaded",
+      'fr-FR':"%2 photo(s) insérée(s)",
+      'pt-BR':"%2 foto(s) carregado com sucesso",
+      'es-ES':"%2 foto(s) cargado correctamente"
    }, albumCreated: {
       'en-US':"Album \"%1\" was created",
       'fr-FR':"L'album \"%1\" a été créé.",
@@ -115,6 +110,11 @@ var localeValues = {
       'fr-FR':"Réseau social",
       'pt-BR':"Rede social",
       'es-ES':"Red social"
+   }, noNetwork: {
+      'en-US':"No social network currently defined.",
+      'fr-FR':"Il n'y a aucun réseau social défini.",
+      'pt-BR':"Nenhuma rede social atualmente definido.",
+      'es-ES':"No hay red social que actualmente definido."
    }, picasaLogin: {
       'en-US':"Login to Picasa …",
       'fr-FR':"Connexion à Picasa …",

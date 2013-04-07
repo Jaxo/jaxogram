@@ -538,12 +538,12 @@ li[aria-selected=true], li[role=listbox] {
 /*    -webkit-object-fit:contain;             */
 /* }                                          */
 
-#jgUsersIn img {
+#mn_user img {
    margin-right: 0.7rem;
    height: 1.6rem;
 }
 
-#jgUsersIn ul img {
+#mn_user ul img {
    position: relative;
    height: 1.2rem;
 }
@@ -552,7 +552,7 @@ li[aria-selected=true], li[role=listbox] {
 #p0 {
    text-shadow:#aaa 0px 1px 0, #000 0 -1px 0;
 }
-#p0_img {
+#p0_netImage {
    position: absolute;
    left:1.5rem;top:1.5rem;
 }

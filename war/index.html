@@ -26,7 +26,7 @@
    </HEADER>
    <DIV id="corepane" class="drawee">
      <DIV id="p0" class="body" aria-expanded="true">
-        <IMG id="p0_img"/>
+        <IMG id="p0_netImage"/>
         <DIV class="i18n" id="p0_top"></DIV>
         <DIV id="p0_bot">
            <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
@@ -54,10 +54,15 @@
 
    <DIV id="menupane" class="drawer">
       <UL class="menuList">
-        <LI role="listbox" id="jgUsersIn"></LI>
-        <LI role="listbox" id="jgUsersAid"></LI>
+        <LI role="listbox" id="mn_user">
+           <SMALL id="loginAs"></SMALL><BR/>
+           <IMG id="mn_netImage"/>
+           <I id="mn_userName"></I>
+           <UL id="logins" role="radiogroup"></UL>
+        </LI>
+        <LI role="listbox" id="mn_albums"></LI>
         <LI role="listbox">
-           <SMALL class="i18n" id="language"></SMALL><BR/><i id="usedLang"></i>
+           <SMALL class="i18n" id="language"></SMALL><BR/><I id="usedLang"></I>
            <UL role="radiogroup" id="changeLanguage">
               <LI class="i18n" id="en-US"></LI>
               <LI class="i18n" id="es-ES"></LI>
@@ -76,7 +81,7 @@
             <TD><IMG src="style/images/separator.png"/></TD>
             <TD><IMG src="style/images/ok.png"/></TD>
          </TR><TR>
-            <TD colspan="5" style="text-align:center">&nbsp;Abracadabraalcazar</TD>
+            <TD colspan="5" style="text-align:center">&nbsp;</TD>
          </TR>
       </TABLE>
    </DIV></DIV></DIV>

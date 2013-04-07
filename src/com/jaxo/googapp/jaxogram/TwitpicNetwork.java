@@ -174,7 +174,6 @@ public class TwitpicNetwork extends OAuthorizer implements Network
    public String uploadPhoto(
       String albumId,
       String title,
-      String text,
       byte[] image,
       String type // png, gif, or jpg.  see: ~/fxos/orkut/java/src/com/google/orkut/client/api/UploadPhotoTx.java
    )
