@@ -107,10 +107,6 @@ window.onload = function() {
    };
    // document.getElementById("mn_albums").style.display = "none";
    document.getElementById("footerRow2").style.display = "none";
-   document.getElementById("connectTo").onclick = function(event) {
-      event.stopPropagation();
-      browseTo(users.getNet());
-   };
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
    formatUsersList(true);
@@ -147,10 +143,21 @@ window.onload = function() {
 
 function onNetworkChange()
 {
-   var connectTo = document.getElementById("connectTo");
    if (users.hasSome()) {
-      var netImage = "../images/" + users.getNet() + "Logo.png";
-      document.getElementById("connectTo").style.display = "";
+      var networkName = users.getNet();
+      var netImage = "../images/" + networkName + "Logo.png";
+      var connectTo = document.getElementById("connectTo");
+      for (var i=0, max = networks.length; i < max; ++i) {
+         var network = networks[i];
+         if (network.name === networkName) {
+            connectTo.onclick = function(event) {
+               event.stopPropagation();
+               browseTo(network);
+            };
+            break;
+         }
+      }
+      connectTo.style.display = "";
       document.getElementById("mn_userName").textContent = users.getUserName();
       document.getElementById("p2_userName").textContent = users.getUserName();
       document.getElementById("p2_userImage").src = users.getImageUrl();
@@ -715,6 +722,12 @@ function uploadPhoto() {
          "postImageFile&NET=" + users.getNet(),
          formData,
          function(val) {        // whenDone
+            try {
+               var media = JSON.parse(val).entities.media[0];
+               var idStr = media.id_str;
+               var expandedUrl = media.expanded_url;
+            }catch (error) {
+            }
             /*
             Response:
                var res = JSON.parse(xhr.responseText);

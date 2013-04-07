@@ -274,7 +274,9 @@ public class JaxogramServlet extends HttpServlet
                   if (image == null) {
                      throw new Exception("Image data not found");
                   }
-                  network.uploadPhoto(albumId, imgTitle, image, imgType);
+                  writer.println(
+                     network.uploadPhoto(albumId, imgTitle, image, imgType)
+                  );
 //*/              writer.println("Successfully uploaded to album #" + albumId);
                }
             }
