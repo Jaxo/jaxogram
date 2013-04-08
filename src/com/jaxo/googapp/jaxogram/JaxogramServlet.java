@@ -30,9 +30,12 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.io.IOUtils;
 
-import com.google.appengine.api.memcache.Expiration;
-import com.google.appengine.api.memcache.MemcacheService;
-import com.google.appengine.api.memcache.MemcacheServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 //*/ import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
@@ -94,24 +97,19 @@ public class JaxogramServlet extends HttpServlet
                   resp.setStatus(HttpServletResponse.SC_SEE_OTHER);
                   resp.setHeader("Location", redirect);
                }else {
-                  MemcacheServiceFactory.getMemcacheService().put(
-                     req.getParameter("JXK"),
-                     verifier,
-                     Expiration.byDeltaSeconds(300) // 5 minutes
-                  );
+                  putVerifierInStore(req.getParameter("JXK"), verifier);
                   resp.setStatus(HttpServletResponse.SC_CREATED);
                }
             }else {
-               // OAuth callback: store the verifier in device local storage
+               // OAuth callback: store the verifier in appspot storage
                String net = req.getParameter("NET");
                String verifier = req.getParameter("oauth_verifier");
                if (verifier == null) { // Facebook!
                   verifier = req.getParameter("code");
                }
-               MemcacheServiceFactory.getMemcacheService().put(
+               putVerifierInStore(
                   req.getParameter("JXK"),
-                  "{\"VRF\":\"" + verifier + "\", \"NET\":\"" + net + "\"}",
-                  Expiration.byDeltaSeconds(300) // 5 minutes
+                  "{\"VRF\":\"" + verifier + "\", \"NET\":\"" + net + "\"}"
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
             }
@@ -127,19 +125,7 @@ public class JaxogramServlet extends HttpServlet
 
             if (op.equals("getVerifier")) {
                // issued repeatedly by packaged application
-               MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
-               String key = req.getParameter("JXK");
-               String val;
-               for (int i=0; ((val=(String)cache.get(key))==null)&&(i < 20); ++i) {
-                  try { Thread.sleep(1000); }catch (InterruptedException e) {}
-               }
-               if (val == null) {
-                  val = "???";
-               }else {
-                  cache.delete(key);
-               }
-               // in REST version 0, this was just the verifier string
-               writer.print(val); // { "VRF":"(verifier)", "NET":"(facebook)" }
+               writer.print(getVerifierFromStore(req.getParameter("JXK")));
 
             }else if (op.equals("postAccPss")) {
                InputStream in = req.getInputStream();
@@ -344,5 +330,64 @@ public class JaxogramServlet extends HttpServlet
       if ((port != 80) && (port != 443)) sb.append(':').append(port);
       return sb.toString();
    }
+
+   /*------------------------------------------------------putVerifierInStore-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   private void putVerifierInStore(String jxk, String val) {
+      Entity verif = new Entity(KeyFactory.createKey("Verif", jxk));
+      verif.setProperty("val", val);
+      DatastoreServiceFactory.getDatastoreService().put(verif);
+   }
+
+   /*----------------------------------------------------getVerifierFromStore-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   private String getVerifierFromStore(String jxk) {
+      String val = "???";
+      Key key = KeyFactory.createKey("Verif", jxk);
+      DatastoreService store = DatastoreServiceFactory.getDatastoreService();
+      for (int i=0; (i < 20); ++i) {
+         try {
+            val = store.get(key).getProperty("val").toString();
+            store.delete(key);
+            break;
+         }catch (EntityNotFoundException e2) {
+            try { Thread.sleep(1000); }catch (InterruptedException e1) {}
+         }
+      }
+      return val;
+   }
+
+   /*------------------------------------------------------putVerifierInCache-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+// public  void putVerifierInCache(String jxk, String val) {
+//    MemcacheServiceFactory.getMemcacheService().put(
+//       jxk, val, Expiration.byDeltaSeconds(300) // 5 minutes
+//    );
+// }
+
+   /*----------------------------------------------------getVerifierFromCache-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+// public  String getVerifierFromCache(String jxk) {
+//    String val = null;
+//    MemcacheService cache = MemcacheServiceFactory.getMemcacheService();
+//    for (int i=0; ((val=(String)cache.get(jxk))==null) && (i < 20); ++i) {
+//       try { Thread.sleep(1000); }catch (InterruptedException e) {}
+//    }
+//    if (val == null) {
+//       return "???";
+//    }else {
+//       cache.delete(jxk);
+//       return val;
+//    }
+// }
 }
+
 /*===========================================================================*/
