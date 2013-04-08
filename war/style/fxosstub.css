@@ -172,7 +172,7 @@ header td:active {
 #messagepane {
    position:absolute;
    width: 100%;
-   top:-100%;
+   top:-150%;
    height:100%;
    display:table;
    z-index:2;

@@ -5,7 +5,7 @@ function showMsg(idTitle, eltContents, whenDone) {
          elt.style.transitionProperty = "top";
          elt.style.transitionDuration = "0.6s";
          elt.style.opacity = "1.0";
-         elt.style.top='0px';
+         elt.style.top = "0";
       },
       arguments
    );
@@ -73,7 +73,7 @@ function execute(fct, args)
 
 function hideMsg() {
    var elt = document.getElementById("messagepane");
-   elt.style.top = '-100%';
+   elt.style.top = '-150%';
    elt.style.opacity = "1.0";
    elt.staged = elt.promises.shift();
    if (elt.staged) {
