@@ -96,10 +96,10 @@ var localeValues = {
       'pt-BR':"Falha seleccionando uma foto",
       'es-ES':"La falta seleccionar una foto"
    }, photosUploaded: {
-      'en-US':"%2 photo(s) successfully uploaded",
-      'fr-FR':"%2 photo(s) insérée(s)",
-      'pt-BR':"%2 foto(s) carregado com sucesso",
-      'es-ES':"%2 foto(s) cargado correctamente"
+      'en-US':"%1 photo(s) successfully uploaded",
+      'fr-FR':"%1 photo(s) insérée(s)",
+      'pt-BR':"%1 foto(s) carregado com sucesso",
+      'es-ES':"%1 foto(s) cargado correctamente"
    }, albumCreated: {
       'en-US':"Album \"%1\" was created",
       'fr-FR':"L'album \"%1\" a été créé.",

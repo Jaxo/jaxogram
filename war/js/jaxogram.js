@@ -627,7 +627,7 @@ function finishUpload() {
    document.getElementById("footerRow2").style.display = "none";
    document.getElementById("footerRow1").style.display = "";
    if (upldPhotosCount > 0) {
-      simpleMsg("info", i18n('photosUploaded'), upldPhotosCount);
+      simpleMsg("info", i18n('photosUploaded', upldPhotosCount));
       upldPhotosCount = 0;
    }
    // FIXME: if (issuer) issuer.postResult({result: "ok"});
