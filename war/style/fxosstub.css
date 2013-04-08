@@ -123,6 +123,7 @@ header td:active {
    top: 5.7rem;
    bottom: 6rem;
    margin-right: 0rem;
+   margin-left: 0.5rem;
    opacity: 1;
    transition: 0.4s;
    overflow-y: auto;
