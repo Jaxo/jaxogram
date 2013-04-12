@@ -1,9 +1,9 @@
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
 var users;
-var server_url = "http://jaxogram.appspot.com/jaxogram";
+// var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
-// var server_url = "http://11.jaxogram.appspot.com/jaxogram";
+var server_url = "http://12.jaxogram.appspot.com/jaxogram"; // FIXME
 // var server_url = "http://localhost:8888/jaxogram";
 var oauthNetwork = {
    name: "oauth",
@@ -92,6 +92,7 @@ window.onload = function() {
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
+   document.getElementById("btnPay").onclick = purchase;
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn_albums").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
@@ -790,3 +791,24 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    }
 }
 
+/*========== PURCHASE (beta) ============*/
+
+function purchase() {
+   // check if navigaror.mozPay exists!
+   issueRequest(
+      "GET", "purchase", "",
+      function(jwt) { // whenDone
+         var req = navigator.mozPay([jwt]);
+         req.onsuccess = function() {
+            alert("OK Doki!");
+         };
+         req.onerror = function() {
+            alert("Yiiirk!" + this.error.name);
+            // console.log('navigator.mozPay() error: ' + this.error.name);
+         }
+      },
+      function(rc, val) {  // whenFailed
+         simpleMsg("error", "Server didn't accept the purchase"); // FIXME (i18n)
+      }
+   );
+}

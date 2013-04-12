@@ -36,7 +36,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-//*/ import java.util.logging.Logger;
+/**/ import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -63,9 +63,9 @@ public class JaxogramServlet extends HttpServlet
    public void doPost(HttpServletRequest req, HttpServletResponse resp)
    throws IOException
    {
-//*/  Logger logger = Logger.getLogger(
-//*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
-//*/  );
+/**/  Logger logger = Logger.getLogger(
+/**/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
+/**/  );
       String op = req.getParameter("OP");
       int restVersion = (req.getParameter("V") == null)? 0 : Integer.parseInt(req.getParameter("V"));
 //*/  logger.info("OP:" + op);
@@ -113,6 +113,32 @@ public class JaxogramServlet extends HttpServlet
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
             }
+
+         }else if (op.equals("purchase")) {
+            String userId = "12345678";
+            // FIXME: pass it in the req, then use a poll loop
+            writer.printf(
+               Jwt.makePurchaseOrder(
+                  userId,
+                  getBaseUrl(req) +
+                  "/jaxogram?OP=payment&V=" + restVersion +
+                  "&agree="  // YES or NO
+               )
+            );
+
+         }else if (op.equals("payment")) {
+            boolean isAgreed = req.getParameter("agree").equals("YES");
+            String notice = Jwt.getPaymentNotice(req.getParameter("notice"));
+            String transacId = JsonIterator.get(notice, "transactionID");
+/**/        logger.info(
+/**/           "OP: " + op +
+/**/           "\n\tagreed: " + isAgreed +
+/**/           "\n\transacId: " + transacId +
+/**/           "\n\notice:\n\t" + notice
+/**/        );
+            // FIXME: use a poll, like for putVerifier / getVerifier
+            writer.printf(transacId);
+
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
                resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));
@@ -263,7 +289,6 @@ public class JaxogramServlet extends HttpServlet
                   writer.println(
                      network.uploadPhoto(albumId, imgTitle, image, imgType)
                   );
-//*/              writer.println("Successfully uploaded to album #" + albumId);
                }
             }
          }

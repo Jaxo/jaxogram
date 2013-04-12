@@ -13,7 +13,9 @@ package com.jaxo.googapp.jaxogram;
 
 /*-- class JsonIterator --+
 *//**
-* A very simple JSon parser, fast and powerful enough for what we want.
+* A very simple and naive JSon parser,
+* fast and powerful enough for what we want.
+* You may prefer to use json-simple ...
 *
 * @author  Pierre G. Richard
 * @version $Id: $
