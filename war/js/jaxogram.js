@@ -92,7 +92,7 @@ window.onload = function() {
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
-   document.getElementById("btnPay").onclick = purchase;
+   setBuyButton();
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn_albums").onclick = listAlbums;
    document.getElementById("changeLanguage").onclick = changeLanguage;
@@ -793,22 +793,71 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
 
 /*========== PURCHASE (beta) ============*/
 
+function setBuyButton() {
+   localStorage.removeItem("jgPayment");  // FIXME
+   var elt = document.getElementById("btnBuy");
+   if (
+      (navigator.mozPay === undefined) ||
+      (users.getPayState() === "granted")
+   ) {
+      elt.style.display = "none";
+   }else {
+      elt.onclick = purchase;
+   }
+}
+
 function purchase() {
-   // check if navigaror.mozPay exists!
+   var elt = document.getElementById("btnBuy");
+   elt.style.display = "none";
+   // FIXME: check if navigator.mozPay exists!
    issueRequest(
       "GET", "purchase", "",
       function(jwt) { // whenDone
+         /*
+         | extract the productData from the returned JWT.
+         | It is the stringized key (keyToString)
+         | of the "Pay" kind entity in Google App Datastore
+         */
+         var ix = 1+jwt.indexOf('.');
+         var uid = JSON.parse(
+            atob(jwt.substring(ix, jwt.indexOf('.', ix)))
+         ).request.productData;
          var req = navigator.mozPay([jwt]);
-         req.onsuccess = function() {
-            alert("OK Doki!");
-         };
-         req.onerror = function() {
-            alert("Yiiirk!" + this.error.name);
-            // console.log('navigator.mozPay() error: ' + this.error.name);
+         req.onsuccess = function() { getPayment(elt, uid); };
+         req.onerror = function() {  // mozPay failed
+            simpleMsg("error", "Pay process" + this.error.name);
+            elt.style.display = "";
          }
       },
-      function(rc, val) {  // whenFailed
+      function(rc, val) {  // whenFailed (e.g.: we didn't generate the JWT)
          simpleMsg("error", "Server didn't accept the purchase"); // FIXME (i18n)
+         elt.style.display = "";
       }
    );
+}
+
+function getPayment(elt, uid) {
+   issueRequest(
+      "GET", "getPayment", "&PYK=" + uid,
+      function(val) {     // whenDone
+         users.setPayment(uid, val);
+         var msg;
+         if (val === "granted") {
+            msg = "Your payment has been granted.\nThank you for using Jaxogram."
+         }else {
+            elt.style.display = "";
+            if (val == "denied") {
+               msg = "Your payment was denied.\nYou may reissue later.";
+            }else {
+               msg = "Payment in process.  Please, wait then press again the purchase button";
+            }
+         }
+         simpleMsg("info", msg);
+      },
+      function(rc, val) { // whenFailed
+         simpleMsg("error", "Payment not received\nRC:" + rc);
+         elt.style.display = "";
+      }
+   );
+   document.getElementById("progresspane").style.visibility='hidden';
 }

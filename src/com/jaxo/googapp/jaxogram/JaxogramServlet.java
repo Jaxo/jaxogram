@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServlet;
@@ -36,7 +37,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-/**/ import java.util.logging.Logger;
+//*/ import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -63,9 +64,9 @@ public class JaxogramServlet extends HttpServlet
    public void doPost(HttpServletRequest req, HttpServletResponse resp)
    throws IOException
    {
-/**/  Logger logger = Logger.getLogger(
-/**/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
-/**/  );
+//*/  Logger logger = Logger.getLogger(
+//*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
+//*/  );
       String op = req.getParameter("OP");
       int restVersion = (req.getParameter("V") == null)? 0 : Integer.parseInt(req.getParameter("V"));
 //*/  logger.info("OP:" + op);
@@ -115,29 +116,55 @@ public class JaxogramServlet extends HttpServlet
             }
 
          }else if (op.equals("purchase")) {
-            String userId = "12345678";
-            // FIXME: pass it in the req, then use a poll loop
-            writer.printf(
+            Entity pay = new Entity("Pay");
+            pay.setProperty("state", "pending");
+            pay.setProperty("created", new Date());
+            DatastoreServiceFactory.getDatastoreService().put(pay);
+            writer.print(
                Jwt.makePurchaseOrder(
-                  userId,
+                  KeyFactory.keyToString(pay.getKey()),
                   getBaseUrl(req) +
                   "/jaxogram?OP=payment&V=" + restVersion +
                   "&agree="  // YES or NO
                )
             );
 
-         }else if (op.equals("payment")) {
-            boolean isAgreed = req.getParameter("agree").equals("YES");
+         }else if (op.equals("payment")) {                                                                                                                                                                                                                                                                                                                                        //    \"agpzfmpheG9ncmFtcgkLEgNQYXkYAQw\"
             String notice = Jwt.getPaymentNotice(req.getParameter("notice"));
-            String transacId = JsonIterator.get(notice, "transactionID");
-/**/        logger.info(
-/**/           "OP: " + op +
-/**/           "\n\tagreed: " + isAgreed +
-/**/           "\n\transacId: " + transacId +
-/**/           "\n\notice:\n\t" + notice
-/**/        );
-            // FIXME: use a poll, like for putVerifier / getVerifier
-            writer.printf(transacId);
+            DatastoreService store = DatastoreServiceFactory.getDatastoreService();
+            Entity pay = store.get(
+               KeyFactory.stringToKey(
+                  JsonIterator.get(notice, "productData")
+               )
+            );
+            if (req.getParameter("agree").equals("YES")) {
+               pay.setProperty("state", "granted");
+               pay.setProperty(
+                  "notice",
+                  new com.google.appengine.api.datastore.Text(notice)
+               );
+            }else {
+               pay.setProperty("state", "denied");
+            }
+            store.put(pay);
+            writer.print(JsonIterator.get(notice, "transactionID"));
+
+         }else if (op.equals("getPayment")) {
+            DatastoreService store = DatastoreServiceFactory.getDatastoreService();
+            Key key = KeyFactory.stringToKey(req.getParameter("PYK"));
+            String val = "unknown";
+            for (int i=0; i < 60; ++i) {
+               val = store.get(key).getProperty("state").toString();
+               if (val.equals("granted")) {
+                  break;
+               }else if (val.equals("denied")) {
+                  store.delete(key);
+                  break;
+               }else {
+                  try { Thread.sleep(1000); }catch (InterruptedException e1) {}
+               }
+            }
+            writer.print(val);
 
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
@@ -213,7 +240,7 @@ public class JaxogramServlet extends HttpServlet
                   "accesspass",
                   JsonIterator.get(data, "accessPass")
                );
-               writer.printf(data);
+               writer.print(data);
 
             }else {
                Network network = makeNetwork(

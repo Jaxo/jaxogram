@@ -5,6 +5,20 @@ function JgUsers() {
    var users = [];
    readUsers();
 
+   this.getPayState = function() {
+      var payment = localStorage.getItem("jgPayment");
+      if (payment == null) {
+         return "none";
+      }else {
+         return JSON.parse(payment).s;
+      }
+   }
+   this.setPayment = function(payKey, state) {
+      localStorage.setItem(
+         "jgPayment",
+         JSON.stringify(new JgPayment(payKey, state))
+      );
+   }
    this.getAccessPass = function() {
       return users[selectedIndex].p;
    }
@@ -139,4 +153,9 @@ function JgUserItem(userName, userPass, userNet, userImg, userScreen) {
    this.s = userScreen; // screen name
    this.ai = null;   // album id
    this.tt = null;   // album title
+}
+
+function JgPayment(payKey, state) {
+   this.pk = payKey;
+   this.s = state;
 }
