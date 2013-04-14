@@ -794,24 +794,83 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
 /*========== PURCHASE (beta) ============*/
 
 function setBuyButton() {
-   localStorage.removeItem("jgPayment");  // FIXME
-   var elt = document.getElementById("btnBuy");
-   if (
-      (navigator.mozPay === undefined) ||
-      (users.getPayState() === "granted")
-   ) {
-      elt.style.display = "none";
-   }else {
-      elt.onclick = purchase;
+        /*
+        | DEBUG only.
+        | For production:
+        |    remove the setBuyButton function
+        |    rename setRealBuyButton into setBuyButton
+        |    (or change slash-start-star-slash to slash-slash-star-slash)
+        |
+        */
+/**/    if (navigator.mozPay === undefined) {
+/**/       document.getElementById("btnBuy").style.display = "none";
+/**/    }else {
+/**/       document.querySelector("header").insertAdjacentHTML(
+/**/          "afterEnd",
+/**/          "<DIV id='BT_Test' style='padding:1rem;margin:3rem;background-color:rgba(255, 255, 127, 0.8);position:absolute;z-index:100;font-size:1.5rem'>" +
+/**/          "<DIV style='margin-bottom:2rem;font-size:1.8rem;padding:1rem;text-align:center;background-color:rgba(60,20,20,0.5);color:white'>Internal Test of the Buy Process</DIV>" +
+/**/          "User's Payment was... <BR/>" +
+/**/          "<FORM name='BT_Form'>" +
+/**/          "<INPUT type='radio' name='g1' value='1' checked>Granted</INPUT><BR/>" +
+/**/          "<INPUT type='radio' name='g1' value='0'>Denied</INPUT><BR/>" +
+/**/          "<HR/>" +
+/**/          "Payment Provider... <BR/>" +
+/**/          "<INPUT type='radio' name='g2' value='1' checked>answered &lt; 1mn</INPUT><BR/>" +
+/**/          "<INPUT type='radio' name='g2' value='2'>did answer late</INPUT><BR/>" +
+/**/          "<INPUT type='radio' name='g2' value='0'>did not answer</INPUT><BR/>" +
+/**/          "<HR/>" +
+/**/          "<BUTTON id='BT_Apply' style='width:8rem;margin:1rem;float:left'>Apply</BUTTON>" +
+/**/          "<BUTTON id='BT_Skip' style='width:8rem;margin:1rem;float:right'>Skip</BUTTON>" +
+/**/          "</FORM>" +
+/**/          "</DIV>"
+/**/       );
+/**/       document.BT_Form.onsubmit = function() {
+/**/          document.getElementById("BT_Test").style.visibility = "hidden";
+/**/          return false;
+/**/       };
+/**/       document.getElementById("BT_Apply").onclick = function() {
+/**/          var answered;
+/**/          var granted;
+/**/          localStorage.removeItem("jgPayment");
+/**/          var g1 = document.BT_Form.g1;
+/**/          for (var i=0; i < g1.length; ++i) {
+/**/             if (g1[i].checked == true) {
+/**/                granted = g1[i].value;
+/**/                break;
+/**/             }
+/**/          }
+/**/          var g2 = document.BT_Form.g2;
+/**/          for (var i=0; i < g2.length; ++i) {
+/**/             if (g2[i].checked == true) {
+/**/                answered = g2[i].value;
+/**/                break;
+/**/             }
+/**/          }
+/**/          var elt = document.getElementById("btnBuy");
+/**/          elt.style.display = "";
+/**/          elt.onclick = function() {
+/**/             purchase("&test=1"+ granted + answered);
+/**/          }
+/**/       }
+/**/       document.getElementById("BT_Skip").onclick = setRealBuyButton;
+/**/    }
+/**/ }
+/**/
+/**/ function setRealBuyButton() {
+   if ((navigator.mozPay !== undefined) && (users.getPayState() !== "granted")) {
+      var elt = document.getElementById("btnBuy");
+      elt.style.display = "";
+      elt.onclick = function() { purchase("test=111"); };
+      // for marketplace, just do: elt.onclick = purchase;
    }
 }
 
-function purchase() {
+function purchase(test) {
    var elt = document.getElementById("btnBuy");
    elt.style.display = "none";
-   // FIXME: check if navigator.mozPay exists!
+   if (!test) test = "";
    issueRequest(
-      "GET", "purchase", "",
+      "GET", "purchase", test,
       function(jwt) { // whenDone
          /*
          | extract the productData from the returned JWT.

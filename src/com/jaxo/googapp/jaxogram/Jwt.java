@@ -24,6 +24,16 @@ class Jwt {
    private static final String ALGO = "HmacSHA256";
    private static final String HDR_SHA_256 = "{\"typ\":\"JWT\",\"alg\":\"HS256\"}";
 
+   static String payKey = "?";
+   static String paySecret = "?";
+   static final String payKeySimulated = "18d91518-2fd1-42a8-8a3c-54dfccb2e6e4";
+   static final String paySecretSimulated = "86c001ce38c23aca8a729fb6e4723e232fb726c1d3d3e609a6d02ea7787946916e4f1c90fc3c3b92ab9046329937d810";
+   static final String productName = "Jaxogram";
+   static final String productId = "f97e7b94-56a7-4184-b4f1-e02a1be2886d";
+   static final String productDescr = "Jaxo\'s Photo Sharing App";
+   static final int productPrice = 1;
+   static final long TEN_YEARS_AS_SECS = 10 * 366 * 24 * 60 * 60;
+
    /*----------------------------------------------------------------toBase64-+
    *//**
    *//*
@@ -75,22 +85,34 @@ class Jwt {
       return new String(Base64.decode(vals[1].getBytes(ENC)), ENC);
    }
 
-   static final String payKey = "18d91518-2fd1-42a8-8a3c-54dfccb2e6e4";
-   static final String paySecret = "86c001ce38c23aca8a729fb6e4723e232fb726c1d3d3e609a6d02ea7787946916e4f1c90fc3c3b92ab9046329937d810";
-   static final String productName = "Jaxogram";
-   static final String productId = "f97e7b94-56a7-4184-b4f1-e02a1be2886d";
-   static final String productDescr = "Jaxo\'s Photo Sharing App";
-   static final int productPrice = 1;
-   static final long TEN_YEARS_AS_SECS = 10 * 366 * 24 * 60 * 60;
-
    /*-------------------------------------------------------makePurchaseOrder-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
    static public String makePurchaseOrder(
       String userId,
-      String backUrl
+      String backUrl,
+      String test
    ) throws Exception {
+      String simulate = "";
+      String extra = "";
+      if (test != null) {
+         payKey = payKeySimulated;
+         paySecret = paySecretSimulated;
+         StringBuilder sb = new StringBuilder("\n  ,\"simulate\": { \"result\": \"");
+         if (test.charAt(1) == '1') {      // 0:denied, 1:granted,
+            sb.append("postback");
+         }else {
+            sb.append("chargeback").append("\", \"reason\": \"").append("some reason");
+         }
+         sb.append("\" }");
+         simulate = sb.toString();
+         if (test.charAt(2) == '0') {      // 0:no answer, 2:late answer
+            extra = "&A=N";
+         }else if (test.charAt(2) == '2') {
+            extra = "&A=L";
+         }
+      }
       return encode(
          "{\"iss\": \"" + payKey + "\"" +
          "\n,\"aud\": \"marketplace.firefox.com\"" +
@@ -103,9 +125,9 @@ class Jwt {
          "\n  ,\"name\": \"" + productName + "\"" +
          "\n  ,\"description\": \"" + productDescr + "\"" +
          "\n  ,\"productData\": \"" + userId + "\"" +
-         "\n  ,\"postbackURL\": \"" + backUrl + "YES\"" +
-         "\n  ,\"chargebackURL\": \"" + backUrl + "NO\"" +
-         "\n  ,\"simulate\": { \"result\": \"postback\" }" +
+         "\n  ,\"postbackURL\": \"" + backUrl + "YES" + extra + "\"" +
+         "\n  ,\"chargebackURL\": \"" + backUrl + "NO" + extra + "\"" +
+         simulate +
          "\n  }" +
          "\n}"
       );

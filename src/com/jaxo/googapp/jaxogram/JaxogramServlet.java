@@ -126,25 +126,36 @@ public class JaxogramServlet extends HttpServlet
                   getBaseUrl(req) +
                   "/jaxogram?OP=payment&V=" + restVersion +
                   "&agree="  // YES or NO
+/*-*/             , req.getParameter("test")
                )
             );
 
          }else if (op.equals("payment")) {                                                                                                                                                                                                                                                                                                                                        //    \"agpzfmpheG9ncmFtcgkLEgNQYXkYAQw\"
             String notice = Jwt.getPaymentNotice(req.getParameter("notice"));
             DatastoreService store = DatastoreServiceFactory.getDatastoreService();
+            // Test...
+/*-*/       String answerType = req.getParameter("A");
+/*-*/       if (answerType != null) {   // 'N': no answer, or 'L': late Answer
+/*-*/          if (answerType.charAt(0) == 'N') {
+/*-*/             throw new Exception("Simulating no answer");
+/*-*/          }
+/*-*/       }else {
+/*-*/          answerType = "";
+/*-*/       }
             Entity pay = store.get(
                KeyFactory.stringToKey(
                   JsonIterator.get(notice, "productData")
                )
             );
             if (req.getParameter("agree").equals("YES")) {
-               pay.setProperty("state", "granted");
+/*-*/          pay.setProperty("state", "granted" + answerType);
                pay.setProperty(
                   "notice",
                   new com.google.appengine.api.datastore.Text(notice)
                );
             }else {
-               pay.setProperty("state", "denied");
+/*-*/          pay.setProperty("state", "denied" + answerType);
+               // reason ???
             }
             store.put(pay);
             writer.print(JsonIterator.get(notice, "transactionID"));
@@ -161,6 +172,14 @@ public class JaxogramServlet extends HttpServlet
                   store.delete(key);
                   break;
                }else {
+/*-*/             if (val.endsWith("L")) {
+/*-*/                Entity pay = store.get(key);
+/*-*/                pay.setProperty("state", val.substring(0, val.length()-1));
+/*-*/                store.put(pay);
+/*-*/                try { Thread.sleep(5000); }catch (InterruptedException e2) {}
+/*-*/                val = "pending";
+/*-*/                break;
+/*-*/             }
                   try { Thread.sleep(1000); }catch (InterruptedException e1) {}
                }
             }
