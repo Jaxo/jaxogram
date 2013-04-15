@@ -163,8 +163,8 @@ var localeValues = {
    }, testMode: {
       'en-US':"Test version.\nServer at\n%1",
       'fr-FR':"Version de test.\nServeur\n%1",
-      'pt-BR':"A versão de teste. Servidor\n%1",
-      'es-ES':"Prueba de versión.nServidor\n%1"
+      'pt-BR':"A versão de teste.\nServidor\n%1",
+      'es-ES':"Prueba de versión.\nServidor\n%1"
    }, selectOrCreateAlbum: {
       'en-US':"You need first to select or create the album in which the photo will be inserted",
       'fr-FR':"Vous devez d'abord sélectionner ou créer l'album dans lequel la photo sera insérée",
@@ -267,6 +267,31 @@ var localeValues = {
           "enero", "febrero", "marzo", "abril", "mayo", "junio",
           "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
       ]
+   }, date: {
+      'en-US':"%2 %3, %1 at %4:%5",
+      'fr-FR':"%3 %2 %1 à %4h%5",
+      'pt-BR':"%3 de %2 de %1, às %4h %5",
+      'es-ES':"%3 de %2 %1 a las %4h %5"
+   }, grantedPay: {
+      'en-US':"Your payment has been granted.\nThank you for using Jaxogram.",
+      'fr-FR':"Votre paiement a été effectué.\nMerci de votre confiance.",
+      'pt-BR':"O pagamento foi feito.\nObrigado por sua confiança.",
+      'es-ES':"Su pago se ha hecho.\nGracias por su confianza."
+   }, deniedPay: {
+      'en-US':"Your payment was denied.\nYou may reissue later.",
+      'fr-FR':"Votre paiement a été refusé.\nVous pouvez le réémettre plus tard.",
+      'pt-BR':"Seu pagamento foi negado.\nVocê pode reeditar mais tarde.",
+      'es-ES':"El pago fue denegado.\nNo puede volver a emitir más tarde."
+   }, pendingPay: {
+      'en-US':"Payment in process.\nPlease, later press again the purchase button",
+      'fr-FR':"Paiement en cours.\nRé-appuyez plus tard sur le bouton d'achat",
+      'pt-BR':"Pagamento em processo.\nDepois pressione novamente o botão de compra",
+      'es-ES':"Pago en proceso.\nDespués pulse de nuevo el botón de compra"
+   }, cancelPay: {
+      'en-US':"Since %1 your payment has not been confirmed. Should we cancel?",
+      'fr-FR':"Depuis %1, votre paiement n'a pas été confirmé. Faut-il l'annuler?",
+      'pt-BR':"Desde %1 o seu pagamento não foi confirmado. Devemos cancelar?",
+      'es-ES':"Desde %1, el pago no ha sido confirmado. ¿Hay que cancelar?"
    }
 }
 /*----------------- end of strings requiring translation --------------------*/
@@ -299,4 +324,15 @@ function translateBody(newLocale) {
       }
    }
 }
-
+function i18nDate(time) {
+   var date = new Date(+time);
+// date = new Date(1366018659077);
+   return i18n(
+      "date", 
+      date.getFullYear(),
+      (i18n("months"))[date.getMonth()],
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes()
+   );
+}

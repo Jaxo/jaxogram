@@ -3,22 +3,10 @@ function JgUsers() {
    var selectedIndex = 0;
    var that = this;
    var users = [];
+   var payment;
+   readPayment();
    readUsers();
 
-   this.getPayState = function() {
-      var payment = localStorage.getItem("jgPayment");
-      if (payment == null) {
-         return "none";
-      }else {
-         return JSON.parse(payment).s;
-      }
-   }
-   this.setPayment = function(payKey, state) {
-      localStorage.setItem(
-         "jgPayment",
-         JSON.stringify(new JgPayment(payKey, state))
-      );
-   }
    this.getAccessPass = function() {
       return users[selectedIndex].p;
    }
@@ -54,6 +42,33 @@ function JgUsers() {
    }
    this.getAlbumId = function() {
       return users[selectedIndex].ai;
+   }
+   this.getPayState = function() {
+      if (payment == null) {
+         return "none";
+      }else {
+         return payment.s;
+      }
+   }
+   this.getPayTime = function() {
+      if (payment == null) {
+         return 0;
+      }else {
+         return payment.d;
+      }
+   }
+   this.getPayKey = function() {
+      if (payment == null) {
+         return 0;
+      }else {
+         return payment.pk;
+      }
+   }
+   this.writePayment = function(payKey, pay) {
+      localStorage.setItem(
+         "jgPayment",
+         JSON.stringify(new JgPayment(payKey, pay))
+      );
    }
    this.setAlbum = function(albumId, albumTitle) {
       users[selectedIndex].ai = albumId;
@@ -133,6 +148,18 @@ function JgUsers() {
       }
       rewriteSelectedIndex(localStorage.getItem("jgSelectAt"));
    }
+   function readPayment() {
+      var value = localStorage.getItem("jgPayment");
+      if (value == null) {
+         payment = null;
+      }else {
+         payment = JSON.parse(value);
+      }
+   }
+   this.deletePayment = function() {
+      localStorage.removeItem("jgPayment");
+      payment = null;
+   }
    function rewriteUsers() {
       localStorage.setItem("jgUsers", JSON.stringify(users));
    }
@@ -155,7 +182,8 @@ function JgUserItem(userName, userPass, userNet, userImg, userScreen) {
    this.tt = null;   // album title
 }
 
-function JgPayment(payKey, state) {
+function JgPayment(payKey, pay) {
    this.pk = payKey;
-   this.s = state;
+   this.s = pay.state;
+   this.d = pay.date;
 }

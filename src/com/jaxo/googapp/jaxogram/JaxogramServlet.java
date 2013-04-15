@@ -37,7 +37,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-//*/ import java.util.logging.Logger;
+/**/ import java.util.logging.Logger;
+import com.google.appengine.api.datastore.Transaction;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -64,9 +65,9 @@ public class JaxogramServlet extends HttpServlet
    public void doPost(HttpServletRequest req, HttpServletResponse resp)
    throws IOException
    {
-//*/  Logger logger = Logger.getLogger(
-//*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
-//*/  );
+/**/  Logger logger = Logger.getLogger(
+/**/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
+/**/  );
       String op = req.getParameter("OP");
       int restVersion = (req.getParameter("V") == null)? 0 : Integer.parseInt(req.getParameter("V"));
 //*/  logger.info("OP:" + op);
@@ -120,15 +121,15 @@ public class JaxogramServlet extends HttpServlet
             pay.setProperty("state", "pending");
             pay.setProperty("created", new Date());
             DatastoreServiceFactory.getDatastoreService().put(pay);
-            writer.print(
-               Jwt.makePurchaseOrder(
-                  KeyFactory.keyToString(pay.getKey()),
-                  getBaseUrl(req) +
-                  "/jaxogram?OP=payment&V=" + restVersion +
-                  "&agree="  // YES or NO
-/*-*/             , req.getParameter("test")
-               )
+            String jwt = Jwt.makePurchaseOrder(
+               KeyFactory.keyToString(pay.getKey()),
+               getBaseUrl(req) +
+               "/jaxogram?OP=payment&V=" + restVersion +
+               "&agree="  // YES or NO
+/*-*/          , req.getParameter("test")
             );
+/**/        logger.info("JWT: " + jwt);
+            writer.print(jwt);
 
          }else if (op.equals("payment")) {                                                                                                                                                                                                                                                                                                                                        //    \"agpzfmpheG9ncmFtcgkLEgNQYXkYAQw\"
             String notice = Jwt.getPaymentNotice(req.getParameter("notice"));
@@ -163,28 +164,68 @@ public class JaxogramServlet extends HttpServlet
          }else if (op.equals("getPayment")) {
             DatastoreService store = DatastoreServiceFactory.getDatastoreService();
             Key key = KeyFactory.stringToKey(req.getParameter("PYK"));
-            String val = "unknown";
+            Entity pay = null;
+            long created = 0;
+            String state = "unknown";
             for (int i=0; i < 60; ++i) {
-               val = store.get(key).getProperty("state").toString();
-               if (val.equals("granted")) {
+               pay = store.get(key);
+               state = pay.getProperty("state").toString();
+               if (state.equals("granted")) {
                   break;
-               }else if (val.equals("denied")) {
+               }else if (state.equals("denied")) {
                   store.delete(key);
                   break;
                }else {
-/*-*/             if (val.endsWith("L")) {
-/*-*/                Entity pay = store.get(key);
-/*-*/                pay.setProperty("state", val.substring(0, val.length()-1));
+/*-*/             if (state.endsWith("L")) {
+/*-*/                pay.setProperty(  // trim the ending 'L'
+/*-*/                   "state",
+/*-*/                   state.substring(0, state.length()-1)
+/*-*/                );
 /*-*/                store.put(pay);
 /*-*/                try { Thread.sleep(5000); }catch (InterruptedException e2) {}
-/*-*/                val = "pending";
+/*-*/                state = "pending";
 /*-*/                break;
 /*-*/             }
                   try { Thread.sleep(1000); }catch (InterruptedException e1) {}
                }
             }
-            writer.print(val);
-
+            if (pay != null) {
+               created = ((Date)pay.getProperty("created")).getTime();
+            }
+            writer.print(
+               "{\"state\":\"" + state +
+               "\",\"date\":\"" + created +
+               "\"}"
+            );
+         }else if (op.equals("cancelPayment")) {
+            /*
+            | Be careful that we didn't already send an answer
+            | to the Payment Provider: the state must be "pending".
+            */
+            long created = 0;
+            String state = "unknown";
+            Key key = KeyFactory.stringToKey(req.getParameter("PYK"));
+            DatastoreService store = DatastoreServiceFactory.getDatastoreService();
+            Transaction txn = store.beginTransaction();
+            try {
+               Entity pay = store.get(key);
+               if (pay != null) {
+                  created = ((Date)pay.getProperty("created")).getTime();
+                  state = pay.getProperty("state").toString();
+                  if (state.equals("pending")) {
+                     store.delete(key);
+                     txn.commit();
+                     state = "denied";
+                  }
+               }
+            }finally {
+               if (txn.isActive()) txn.rollback();
+            }
+            writer.print(
+               "{\"state\":\"" + state +
+               "\",\"date\":\"" + created +
+               "\"}"
+            );
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
                resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));
@@ -340,7 +381,7 @@ public class JaxogramServlet extends HttpServlet
          }
       }catch (Exception e) {
          resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-//*/     e.printStackTrace();
+/**/     logger(Level.INFO, e.toString(), e);
          writer.print(e.getMessage());
       }
    }

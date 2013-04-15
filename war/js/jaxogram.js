@@ -67,7 +67,6 @@ window.onload = function() {
       */
       registerUser(params.VRF, params.NET);
    }
-
    dispatcher.on(
       "install_changed",
       function action(state, version) {
@@ -802,27 +801,34 @@ function setBuyButton() {
         |    (or change slash-start-star-slash to slash-slash-star-slash)
         |
         */
-/**/    if (navigator.mozPay === undefined) {
+/**/    if (navigator.mozPay === "toto") { // undefined) {   // FIXME
+/**/       // "granted", "1366018659077", "agpzfmpheG9ncmFtcgkLEgNQYXkYBgw"
 /**/       document.getElementById("btnBuy").style.display = "none";
 /**/    }else {
 /**/       document.querySelector("header").insertAdjacentHTML(
 /**/          "afterEnd",
 /**/          "<DIV id='BT_Test' style='padding:1rem;margin:3rem;background-color:rgba(255, 255, 127, 0.8);position:absolute;z-index:100;font-size:1.5rem'>" +
 /**/          "<DIV style='margin-bottom:2rem;font-size:1.8rem;padding:1rem;text-align:center;background-color:rgba(60,20,20,0.5);color:white'>Internal Test of the Buy Process</DIV>" +
-/**/          "User's Payment was... <BR/>" +
+/**/          "<SPAN id='BT_CurPay' style='color:red;font-size:1rem'></SPAN>" +
+/**/          "<BR/>Issue new(?) User's Payment<BR/>" +
 /**/          "<FORM name='BT_Form'>" +
 /**/          "<INPUT type='radio' name='g1' value='1' checked>Granted</INPUT><BR/>" +
 /**/          "<INPUT type='radio' name='g1' value='0'>Denied</INPUT><BR/>" +
 /**/          "<HR/>" +
 /**/          "Payment Provider... <BR/>" +
-/**/          "<INPUT type='radio' name='g2' value='1' checked>answered &lt; 1mn</INPUT><BR/>" +
-/**/          "<INPUT type='radio' name='g2' value='2'>did answer late</INPUT><BR/>" +
-/**/          "<INPUT type='radio' name='g2' value='0'>did not answer</INPUT><BR/>" +
+/**/          "<INPUT type='radio' name='g2' value='1' checked>answers &lt; 1mn</INPUT><BR/>" +
+/**/          "<INPUT type='radio' name='g2' value='2'>does answer late</INPUT><BR/>" +
+/**/          "<INPUT type='radio' name='g2' value='0'>does not answer</INPUT><BR/>" +
 /**/          "<HR/>" +
 /**/          "<BUTTON id='BT_Apply' style='width:8rem;margin:1rem;float:left'>Apply</BUTTON>" +
 /**/          "<BUTTON id='BT_Skip' style='width:8rem;margin:1rem;float:right'>Skip</BUTTON>" +
 /**/          "</FORM>" +
 /**/          "</DIV>"
+/**/       );
+/**/       document.getElementById("BT_CurPay").innerHTML = (
+/**/          users.getPayState() + " " +
+/**/          i18nDate(users.getPayTime()) + "<BR>" +
+/**/          users.getPayKey()
 /**/       );
 /**/       document.BT_Form.onsubmit = function() {
 /**/          document.getElementById("BT_Test").style.visibility = "hidden";
@@ -831,7 +837,7 @@ function setBuyButton() {
 /**/       document.getElementById("BT_Apply").onclick = function() {
 /**/          var answered;
 /**/          var granted;
-/**/          localStorage.removeItem("jgPayment");
+/**/          users.deletePayment();
 /**/          var g1 = document.BT_Form.g1;
 /**/          for (var i=0; i < g1.length; ++i) {
 /**/             if (g1[i].checked == true) {
@@ -850,6 +856,7 @@ function setBuyButton() {
 /**/          elt.style.display = "";
 /**/          elt.onclick = function() {
 /**/             purchase("&test=1"+ granted + answered);
+/**/             onclick = setRealBuyButton();
 /**/          }
 /**/       }
 /**/       document.getElementById("BT_Skip").onclick = setRealBuyButton;
@@ -860,7 +867,7 @@ function setBuyButton() {
    if ((navigator.mozPay !== undefined) && (users.getPayState() !== "granted")) {
       var elt = document.getElementById("btnBuy");
       elt.style.display = "";
-      elt.onclick = function() { purchase("test=111"); };
+      elt.onclick = function() { purchase("&test=111"); };
       // for marketplace, just do: elt.onclick = purchase;
    }
 }
@@ -869,52 +876,93 @@ function purchase(test) {
    var elt = document.getElementById("btnBuy");
    elt.style.display = "none";
    if (!test) test = "";
-   issueRequest(
-      "GET", "purchase", test,
-      function(jwt) { // whenDone
-         /*
-         | extract the productData from the returned JWT.
-         | It is the stringized key (keyToString)
-         | of the "Pay" kind entity in Google App Datastore
-         */
-         var ix = 1+jwt.indexOf('.');
-         var uid = JSON.parse(
-            atob(jwt.substring(ix, jwt.indexOf('.', ix)))
-         ).request.productData;
-         var req = navigator.mozPay([jwt]);
-         req.onsuccess = function() { getPayment(elt, uid); };
-         req.onerror = function() {  // mozPay failed
-            simpleMsg("error", "Pay process" + this.error.name);
+   if (users.getPayState() === "pending") {
+      getPayment(elt, users.getPayKey());
+   }else {
+      issueRequest(
+         "GET", "purchase", test,
+         function(jwt) { // whenDone
+            /*
+            | extract the productData from the returned JWT.
+            | It is the stringized key (keyToString)
+            | of the "Pay" kind entity in Google App Datastore
+            */
+            var ix = 1+jwt.indexOf('.');
+            var uid = JSON.parse(
+               atob(jwt.substring(ix, jwt.indexOf('.', ix)))
+            ).request.productData;
+            var req = navigator.mozPay([jwt]);
+            req.onsuccess = function() { getPayment(elt, uid); };
+            req.onerror = function() {  // mozPay failed
+               simpleMsg("error", "Pay process" + this.error.name);
+               elt.style.display = "";
+            }
+         },
+         function(rc, val) {  // whenFailed (e.g.: we didn't generate the JWT)
+            simpleMsg("error", "Payment request: server error\nRC:" + rc);
             elt.style.display = "";
          }
-      },
-      function(rc, val) {  // whenFailed (e.g.: we didn't generate the JWT)
-         simpleMsg("error", "Server didn't accept the purchase"); // FIXME (i18n)
-         elt.style.display = "";
-      }
-   );
+      );
+   }
 }
 
 function getPayment(elt, uid) {
    issueRequest(
       "GET", "getPayment", "&PYK=" + uid,
       function(val) {     // whenDone
-         users.setPayment(uid, val);
+         pay = JSON.parse(val);
          var msg;
-         if (val === "granted") {
-            msg = "Your payment has been granted.\nThank you for using Jaxogram."
+         if (pay.state === "granted") {
+            msg = i18n("grantedPay");
          }else {
             elt.style.display = "";
-            if (val == "denied") {
-               msg = "Your payment was denied.\nYou may reissue later.";
+            if (pay.state == "denied") {
+               msg = i18n("deniedPay");
             }else {
-               msg = "Payment in process.  Please, wait then press again the purchase button";
+               // assume pay.state is "pending"
+               if (users.getPayState() === "pending") { // for the 2nd time
+                  confirmMsg(
+                     i18n("cancelPay", i18nDate(new Date(users.getPayTime()))),
+                     function() { cancelPayment(elt, uid); }
+                  );
+                  return;
+               }else {
+                  msg = i18n("pendingPay");
+               }
             }
          }
+         users.writePayment(uid, pay);
          simpleMsg("info", msg);
       },
       function(rc, val) { // whenFailed
-         simpleMsg("error", "Payment not received\nRC:" + rc);
+         simpleMsg("error", "Payment response: Server error\nRC:" + rc);
+         elt.style.display = "";
+      }
+   );
+   document.getElementById("progresspane").style.visibility='hidden';
+}
+
+function cancelPayment(elt, uid) {
+   issueRequest(
+      "GET", "cancelPayment", "&PYK=" + uid,
+      function(val) {     // whenDone
+         pay = JSON.parse(val);
+         var msg;
+         if (pay.state === "granted") {  // payment granted in the meanwhile
+            msg = i18n("grantedPay");
+         }else {
+            elt.style.display = "";
+            if (pay.state == "denied") { // the regular case
+               msg = i18n("deniedPay");
+            }else {
+               msg = i18n("pendingPay"); // should not occur
+            }
+         }
+         users.writePayment(uid, pay);
+         simpleMsg("info", msg);
+      },
+      function(rc, val) { // whenFailed
+         simpleMsg("error", "Payment not cancelled\nRC:" + rc);
          elt.style.display = "";
       }
    );
