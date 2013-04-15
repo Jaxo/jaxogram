@@ -37,6 +37,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+/**/ import java.util.logging.Level;
 /**/ import java.util.logging.Logger;
 import com.google.appengine.api.datastore.Transaction;
 
@@ -381,7 +382,7 @@ public class JaxogramServlet extends HttpServlet
          }
       }catch (Exception e) {
          resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-/**/     logger(Level.INFO, e.toString(), e);
+/**/     logger.log(Level.INFO, e.toString(), e);
          writer.print(e.getMessage());
       }
    }
