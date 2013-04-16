@@ -888,9 +888,16 @@ function purchase(test) {
             | of the "Pay" kind entity in Google App Datastore
             */
             var ix = 1+jwt.indexOf('.');
-            var uid = JSON.parse(
-               atob(jwt.substring(ix, jwt.indexOf('.', ix)))
-            ).request.productData;
+var rfa = jwt.substring(ix, jwt.indexOf('.', ix));
+var sgb = atob(rfa.replace('+','-').replace('/','_'));
+var thc = JSON.parse(sgb);
+var uid = thc.request.productData;
+//          var uid = JSON.parse(
+//             atob(
+//                jwt.substring(ix, jwt.indexOf('.', ix)).
+//                replace('+','-').replace('/','_')
+//             )
+//          ).request.productData;
             var req = navigator.mozPay([jwt]);
             req.onsuccess = function() { getPayment(elt, uid); };
             req.onerror = function() {  // mozPay failed
