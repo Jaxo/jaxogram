@@ -267,6 +267,11 @@ var localeValues = {
           "enero", "febrero", "marzo", "abril", "mayo", "junio",
           "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
       ]
+   }, date: {
+      'en-US':"%2 %3, %1 at %4:%5",
+      'fr-FR':"%3 %2 %1 à %4h%5",
+      'pt-BR':"%3 de %2 de %1, às %4h %5",
+      'es-ES':"%3 de %2 %1 a las %4h %5"
    }
 }
 /*----------------- end of strings requiring translation --------------------*/
@@ -298,5 +303,16 @@ function translateBody(newLocale) {
          elt.textContent = i18n(elt.id);
       }
    }
+}
+function i18nDate(time) {
+   var date = new Date(+time);
+   return i18n(
+      "date", 
+      date.getFullYear(),
+      (i18n("months"))[date.getMonth()],
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes()
+   );
 }
 
