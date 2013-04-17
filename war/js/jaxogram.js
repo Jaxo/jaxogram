@@ -887,16 +887,15 @@ function purchase(test) {
             | It is the stringized key (keyToString)
             | of the "Pay" kind entity in Google App Datastore
             */
-            var ix = 1+jwt.indexOf('.');
+            var ix = 1 + jwt.indexOf('.');
 var rfa = jwt.substring(ix, jwt.indexOf('.', ix));
 var sgb = Base64.Url.decode(rfa);
 console.log(sgb);
 var thc = JSON.parse(sgb);
 var uid = thc.request.productData;
 //          var uid = JSON.parse(
-//             atob(
-//                jwt.substring(ix, jwt.indexOf('.', ix)).
-//                replace('+','-').replace('/','_')
+//             Base64.Url.decode(
+//                jwt.substring(ix, jwt.indexOf('.', ix))
 //             )
 //          ).request.productData;
             var req = navigator.mozPay([jwt]);
