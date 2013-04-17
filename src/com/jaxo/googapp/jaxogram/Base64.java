@@ -126,9 +126,7 @@ public class Base64
             b2 = b1>>2;
             break;
          case 1:
-            b2 = (b2 & 0x3);
-            b2 = b2 << 4;
-            b2 = b2 | (b1 >> 4);
+            b2 = ((b2 & 0x3) << 4) | (b1 >> 4);
             break;
          default: // case 2:
             outBuf[outIx++] = xlate[(byte)((b1>>6) | ((b2 & 0xF)<<2))];

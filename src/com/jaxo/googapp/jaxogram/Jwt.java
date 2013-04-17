@@ -77,7 +77,14 @@ class Jwt {
    +-------------------------------------------------------------------------*/
    static private String decode(String response) throws Exception {
       String[] ar = response.split("\\.", 3);
-      if (!ar[2].equals(new StringBuilder().append(ar[0]).append('.').append(ar[1].toString()))) {
+      if (
+         !ar[2].equals(
+            haskKey(
+               new StringBuilder().append(ar[0]).append('.').append(ar[1].
+               toString())
+            )
+         )
+      ) {
          throw new Exception("Invalid Signature");
       }
       return new String(Base64.Url.decode(ar[1].getBytes(ENC)), ENC);

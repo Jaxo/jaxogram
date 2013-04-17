@@ -889,7 +889,8 @@ function purchase(test) {
             */
             var ix = 1+jwt.indexOf('.');
 var rfa = jwt.substring(ix, jwt.indexOf('.', ix));
-var sgb = atob(rfa.replace('+','-').replace('/','_'));
+var sgb = Base64.Url.decode(rfa);
+console.log(sgb);
 var thc = JSON.parse(sgb);
 var uid = thc.request.productData;
 //          var uid = JSON.parse(

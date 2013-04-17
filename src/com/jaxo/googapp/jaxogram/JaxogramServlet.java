@@ -169,7 +169,7 @@ public class JaxogramServlet extends HttpServlet
             Entity pay = null;
             long created = 0;
             String state = "unknown";
-            for (int i=0; i < 60; ++i) {
+            for (int i=0; i < 40; ++i) {
                pay = store.get(key);
                state = pay.getProperty("state").toString();
                if (state.equals("granted")) {
