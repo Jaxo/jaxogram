@@ -79,9 +79,9 @@ class Jwt {
       String[] ar = response.split("\\.", 3);
       if (
          !ar[2].equals(
-            haskKey(
-               new StringBuilder().append(ar[0]).append('.').append(ar[1].
-               toString())
+            hashKey(
+               new StringBuilder().append(ar[0]).append('.').append(ar[1]).
+               toString()
             )
          )
       ) {
