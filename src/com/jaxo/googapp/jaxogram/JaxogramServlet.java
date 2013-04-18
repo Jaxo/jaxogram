@@ -37,6 +37,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+// FIXME (comment out debug stanzas)
 /**/ import java.util.logging.Level;
 /**/ import java.util.logging.Logger;
 import com.google.appengine.api.datastore.Transaction;
