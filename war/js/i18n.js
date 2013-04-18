@@ -332,7 +332,7 @@ var localeValues = {
       'fr-FR':"%3 %2 %1 à %4h%5",
       'pt-BR':"%3 de %2 de %1, às %4h %5",
       'es-ES':"%3 de %2 %1 a las %4h %5",
-      'pl-PL':"%3 de %2 %1 a las %4h %5"
+      'pl-PL':"%3 %2 %1 o %4:%5"
    }
 }
 /*----------------- end of strings requiring translation --------------------*/
@@ -368,7 +368,7 @@ function translateBody(newLocale) {
 function i18nDate(time) {
    var date = new Date(+time);
    return i18n(
-      "date", 
+      "date",
       date.getFullYear(),
       (i18n("months"))[date.getMonth()],
       date.getDate(),
