@@ -2,8 +2,8 @@ function JgUsers() {
    createLocalStorageIfNeeded();
    var selectedIndex = 0;
    var that = this;
-   var users = [];
-   var payment;
+   var users = [];  // n x JgUserItem
+   var payment;     // JgPayment
    readPayment();
    readUsers();
 
@@ -63,12 +63,6 @@ function JgUsers() {
       }else {
          return payment.pk;
       }
-   }
-   this.writePayment = function(payKey, pay) {
-      localStorage.setItem(
-         "jgPayment",
-         JSON.stringify(new JgPayment(payKey, pay))
-      );
    }
    this.setAlbum = function(albumId, albumTitle) {
       users[selectedIndex].ai = albumId;
@@ -148,18 +142,6 @@ function JgUsers() {
       }
       rewriteSelectedIndex(localStorage.getItem("jgSelectAt"));
    }
-   function readPayment() {
-      var value = localStorage.getItem("jgPayment");
-      if (value == null) {
-         payment = null;
-      }else {
-         payment = JSON.parse(value);
-      }
-   }
-   this.deletePayment = function() {
-      localStorage.removeItem("jgPayment");
-      payment = null;
-   }
    function rewriteUsers() {
       localStorage.setItem("jgUsers", JSON.stringify(users));
    }
@@ -169,6 +151,22 @@ function JgUsers() {
       }
       localStorage.setItem("jgSelectAt", index);
       selectedIndex = index;
+   }
+   function readPayment() {
+      var value = localStorage.getItem("jgPayment");
+      if (value == null) {
+         payment = null;
+      }else {
+         payment = JSON.parse(value);
+      }
+   }
+   this.writePayment = function(payKey, pay) {
+      payment = new JgPayment(payKey, pay);
+      localStorage.setItem("jgPayment", JSON.stringify(payment));
+   }
+   this.deletePayment = function() {
+      localStorage.removeItem("jgPayment");
+      payment = null;
    }
 }
 

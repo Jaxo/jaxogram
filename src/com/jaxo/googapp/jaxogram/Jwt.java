@@ -34,23 +34,30 @@ class Jwt {
    static final int productPrice = 1;
    static final long TEN_YEARS_AS_SECS = 10 * 366 * 24 * 60 * 60;
 
-   /*----------------------------------------------------------------toBase64-+
+   /*----------------------------------------------------------------base64Url-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   static private String toBase64(String in) throws Exception {
-      return toBase64(in.getBytes(ENC));
+   static private String base64Url(String in) throws Exception {
+      return base64Url(in.getBytes(ENC));
    }
 
-   /*----------------------------------------------------------------toBase64-+
+   /*----------------------------------------------------------------base64Url-+
    *//**
    *//*
    +-------------------------------------------------------------------------*/
-   static private String toBase64(byte[] in) throws Exception {
-      byte[] out = Base64.encode(in);
-      int len = out.length;
-      while ((--len > 0) && (out[len] == '='));
-      return new String(out, 0, len+1, ENC);
+   static private String hashKey(String in) throws Exception {
+      Mac mac = Mac.getInstance(ALGO);
+      mac.init(new SecretKeySpec(paySecret.getBytes(ENC), ALGO));
+      return base64Url(mac.doFinal(in.getBytes(ENC)));
+   }
+
+   /*----------------------------------------------------------------base64Url-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   static private String base64Url(byte[] inBuf) throws Exception {
+      return new String(Base64.Url.encode(inBuf), ENC);
    }
 
    /*------------------------------------------------------------------encode-+
@@ -58,13 +65,10 @@ class Jwt {
    *//*
    +-------------------------------------------------------------------------*/
    static private String encode(String claim) throws Exception {
-      Mac mac = Mac.getInstance(ALGO);
-      mac.init(new SecretKeySpec(paySecret.getBytes(ENC), ALGO));
       StringBuilder sb = new StringBuilder();
-      sb.append(toBase64(HDR_SHA_256)).append('.').append(toBase64(claim));
-      String sig = toBase64(mac.doFinal(sb.toString().getBytes(ENC)));
-      sb.append('.').append(sig);
-      return sb.toString();
+      sb.append(base64Url(HDR_SHA_256)).append('.').append(base64Url(claim));
+      String sig = hashKey(sb.toString());
+      return sb.append('.').append(sig).toString();
    }
 
    /*------------------------------------------------------------------decode-+
@@ -72,17 +76,18 @@ class Jwt {
    *//*
    +-------------------------------------------------------------------------*/
    static private String decode(String response) throws Exception {
-      Mac mac = Mac.getInstance(ALGO);
-      mac.init(new SecretKeySpec(paySecret.getBytes(ENC), ALGO));
-      String[] vals = response.split("\\.", 3);
-      StringBuilder sb = new StringBuilder();
-      sb.append(vals[0]).append('.').append(vals[1]);
-      String sig1 = toBase64(mac.doFinal(sb.toString().getBytes(ENC)));
-      String sig2 = vals[2].replace('-', '+').replace('_','/');
-      if (!sig2.equals(sig1)) {
+      String[] ar = response.split("\\.", 3);
+      if (
+         !ar[2].equals(
+            hashKey(
+               new StringBuilder().append(ar[0]).append('.').append(ar[1]).
+               toString()
+            )
+         )
+      ) {
          throw new Exception("Invalid Signature");
       }
-      return new String(Base64.decode(vals[1].getBytes(ENC)), ENC);
+      return new String(Base64.Url.decode(ar[1].getBytes(ENC)), ENC);
    }
 
    /*-------------------------------------------------------makePurchaseOrder-+

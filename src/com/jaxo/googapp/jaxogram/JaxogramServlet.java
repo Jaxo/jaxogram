@@ -117,6 +117,7 @@ public class JaxogramServlet extends HttpServlet
                resp.setStatus(HttpServletResponse.SC_CREATED);
             }
 
+         // see https://wiki.mozilla.org/WebAPI/WebPayment
          }else if (op.equals("purchase")) {
             Entity pay = new Entity("Pay");
             pay.setProperty("state", "pending");
@@ -168,7 +169,7 @@ public class JaxogramServlet extends HttpServlet
             Entity pay = null;
             long created = 0;
             String state = "unknown";
-            for (int i=0; i < 60; ++i) {
+            for (int i=0; i < 40; ++i) {
                pay = store.get(key);
                state = pay.getProperty("state").toString();
                if (state.equals("granted")) {
@@ -193,11 +194,13 @@ public class JaxogramServlet extends HttpServlet
             if (pay != null) {
                created = ((Date)pay.getProperty("created")).getTime();
             }
-            writer.print(
+            String payment = (
                "{\"state\":\"" + state +
                "\",\"date\":\"" + created +
                "\"}"
             );
+/**/        logger.info("Payment: " + payment);
+            writer.print(payment);
          }else if (op.equals("cancelPayment")) {
             /*
             | Be careful that we didn't already send an answer
@@ -222,11 +225,13 @@ public class JaxogramServlet extends HttpServlet
             }finally {
                if (txn.isActive()) txn.rollback();
             }
-            writer.print(
+            String payment = (
                "{\"state\":\"" + state +
                "\",\"date\":\"" + created +
                "\"}"
             );
+/**/        logger.info("Payment: " + payment);
+            writer.print(payment);
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
                resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));

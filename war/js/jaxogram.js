@@ -792,78 +792,68 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
 
 /*========== PURCHASE (beta) ============*/
 
+function doWipTest() {
+   // "granted", "1366018659077", "agpzfmpheG9ncmFtcgkLEgNQYXkYBgw"
+   document.querySelector("header").insertAdjacentHTML(
+      "afterEnd",
+      "<IMG id='BT_Wip' src='images/wip.png' style='position:absolute;z-index:120;left:2rem;bottom:8rem'/>" +
+      "<DIV id='BT_Test' style='display:none;padding:0.5rem;margin:3rem;background-color:rgba(255, 255, 127, 0.8);position:absolute;z-index:100;font-size:1.5rem'>" +
+      "<DIV style='margin-bottom:0.5rem;font-size:1.8rem;padding:1rem;text-align:center;background-color:rgba(60,20,20,0.5);color:white'>Internal Test of the Buy Process</DIV>" +
+      "<SPAN id='BT_CurPay' style='color:red;font-size:1rem'></SPAN>" +
+      "<HR/><SMALL>Issue User's Payment</SMALL>" +
+      "<FORM name='BT_Form'>" +
+      "<INPUT type='radio' name='g1' value='1' checked>Granted</INPUT><BR/>" +
+      "<INPUT type='radio' name='g1' value='0'>Denied</INPUT><BR/>" +
+      "<HR/>" +
+      "<SMALL>Payment Provider... </SMALL><BR/>" +
+      "<INPUT type='radio' name='g2' value='1' checked>answers &lt; 1mn</INPUT><BR/>" +
+      "<INPUT type='radio' name='g2' value='2'>does answer late</INPUT><BR/>" +
+      "<INPUT type='radio' name='g2' value='0'>does not answer</INPUT><BR/>" +
+      "<HR/>" +
+      "<BUTTON id='BT_Apply' style='width:8rem;margin:0.5rem;float:left'><IMG src='style/images/coins.png'</BUTTON>" +
+      "<BUTTON id='BT_Skip' style='width:8rem;margin:0.5rem;float:right'>Skip</BUTTON>" +
+      "</FORM>" +
+      "</DIV>"
+   );
+   document.getElementById("BT_Wip").onclick = function() {
+      this.style.visibility = "hidden";
+      document.getElementById("BT_CurPay").innerHTML = (
+         users.getPayState() + " " +
+         i18nDate(users.getPayTime()) + "<BR>" +
+         users.getPayKey()
+      );
+      document.getElementById("BT_Test").style.display = "";
+   }
+   document.BT_Form.onsubmit = function() {
+      document.getElementById("BT_Wip").style.visibility = "visible";
+      document.getElementById("BT_Test").style.display = "none";
+      return false;
+   };
+   document.getElementById("BT_Apply").onclick = function() {
+      var answered = '1';
+      var granted = '1';
+      users.deletePayment();
+      var g1 = document.BT_Form.g1;
+      for (var i=0; i < g1.length; ++i) {
+         if (g1[i].checked == true) {
+            granted = g1[i].value;
+            break;
+         }
+      }
+      var g2 = document.BT_Form.g2;
+      for (var i=0; i < g2.length; ++i) {
+         if (g2[i].checked == true) {
+            answered = g2[i].value;
+            break;
+         }
+      }
+      document.getElementById("btnBuy").style.display = "";
+      purchase("&test=1"+ granted + answered);
+   }
+}
+
 function setBuyButton() {
-        /*
-        | DEBUG only.
-        | For production:
-        |    remove the setBuyButton function
-        |    rename setRealBuyButton into setBuyButton
-        |    (or change slash-start-star-slash to slash-slash-star-slash)
-        |
-        */
-/**/    if (navigator.mozPay === "toto") { // undefined) {   // FIXME
-/**/       // "granted", "1366018659077", "agpzfmpheG9ncmFtcgkLEgNQYXkYBgw"
-/**/       document.getElementById("btnBuy").style.display = "none";
-/**/    }else {
-/**/       document.querySelector("header").insertAdjacentHTML(
-/**/          "afterEnd",
-/**/          "<DIV id='BT_Test' style='padding:1rem;margin:3rem;background-color:rgba(255, 255, 127, 0.8);position:absolute;z-index:100;font-size:1.5rem'>" +
-/**/          "<DIV style='margin-bottom:2rem;font-size:1.8rem;padding:1rem;text-align:center;background-color:rgba(60,20,20,0.5);color:white'>Internal Test of the Buy Process</DIV>" +
-/**/          "<SPAN id='BT_CurPay' style='color:red;font-size:1rem'></SPAN>" +
-/**/          "<BR/>Issue new(?) User's Payment<BR/>" +
-/**/          "<FORM name='BT_Form'>" +
-/**/          "<INPUT type='radio' name='g1' value='1' checked>Granted</INPUT><BR/>" +
-/**/          "<INPUT type='radio' name='g1' value='0'>Denied</INPUT><BR/>" +
-/**/          "<HR/>" +
-/**/          "Payment Provider... <BR/>" +
-/**/          "<INPUT type='radio' name='g2' value='1' checked>answers &lt; 1mn</INPUT><BR/>" +
-/**/          "<INPUT type='radio' name='g2' value='2'>does answer late</INPUT><BR/>" +
-/**/          "<INPUT type='radio' name='g2' value='0'>does not answer</INPUT><BR/>" +
-/**/          "<HR/>" +
-/**/          "<BUTTON id='BT_Apply' style='width:8rem;margin:1rem;float:left'>Apply</BUTTON>" +
-/**/          "<BUTTON id='BT_Skip' style='width:8rem;margin:1rem;float:right'>Skip</BUTTON>" +
-/**/          "</FORM>" +
-/**/          "</DIV>"
-/**/       );
-/**/       document.getElementById("BT_CurPay").innerHTML = (
-/**/          users.getPayState() + " " +
-/**/          i18nDate(users.getPayTime()) + "<BR>" +
-/**/          users.getPayKey()
-/**/       );
-/**/       document.BT_Form.onsubmit = function() {
-/**/          document.getElementById("BT_Test").style.visibility = "hidden";
-/**/          return false;
-/**/       };
-/**/       document.getElementById("BT_Apply").onclick = function() {
-/**/          var answered;
-/**/          var granted;
-/**/          users.deletePayment();
-/**/          var g1 = document.BT_Form.g1;
-/**/          for (var i=0; i < g1.length; ++i) {
-/**/             if (g1[i].checked == true) {
-/**/                granted = g1[i].value;
-/**/                break;
-/**/             }
-/**/          }
-/**/          var g2 = document.BT_Form.g2;
-/**/          for (var i=0; i < g2.length; ++i) {
-/**/             if (g2[i].checked == true) {
-/**/                answered = g2[i].value;
-/**/                break;
-/**/             }
-/**/          }
-/**/          var elt = document.getElementById("btnBuy");
-/**/          elt.style.display = "";
-/**/          elt.onclick = function() {
-/**/             purchase("&test=1"+ granted + answered);
-/**/             onclick = setRealBuyButton();
-/**/          }
-/**/       }
-/**/       document.getElementById("BT_Skip").onclick = setRealBuyButton;
-/**/    }
-/**/ }
-/**/
-/**/ function setRealBuyButton() {
+   /**/ doWipTest();
    if ((navigator.mozPay !== undefined) && (users.getPayState() !== "granted")) {
       var elt = document.getElementById("btnBuy");
       elt.style.display = "";
@@ -887,9 +877,11 @@ function purchase(test) {
             | It is the stringized key (keyToString)
             | of the "Pay" kind entity in Google App Datastore
             */
-            var ix = 1+jwt.indexOf('.');
+            var ix = 1 + jwt.indexOf('.');
             var uid = JSON.parse(
-               atob(jwt.substring(ix, jwt.indexOf('.', ix)))
+               Base64.Url.decode(
+                  jwt.substring(ix, jwt.indexOf('.', ix))
+               )
             ).request.productData;
             var req = navigator.mozPay([jwt]);
             req.onsuccess = function() { getPayment(elt, uid); };
@@ -922,7 +914,7 @@ function getPayment(elt, uid) {
                // assume pay.state is "pending"
                if (users.getPayState() === "pending") { // for the 2nd time
                   confirmMsg(
-                     i18n("cancelPay", i18nDate(new Date(users.getPayTime()))),
+                     i18n("cancelPay", i18nDate(users.getPayTime())),
                      function() { cancelPayment(elt, uid); }
                   );
                   return;
