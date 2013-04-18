@@ -346,7 +346,7 @@ var localeValues = {
       'es-ES':"El pago fue denegado.\nNo puede volver a emitir más tarde.",
       'pl-PL':"Twoja płatność została odrzucona.\nMożesz ponownie wystawić później."
    }, pendingPay: {
-      'en-US':"Payment in process.\nPlease, later press again the purchase button",
+      'en-US':"Payment not yet received.\nPlease, later press again the purchase button",
       'fr-FR':"Paiement en cours.\nRé-appuyez plus tard sur le bouton d'achat",
       'pt-BR':"Pagamento em processo.\nDepois pressione novamente o botão de compra",
       'es-ES':"Pago en proceso.\nDespués pulse de nuevo el botón de compra",

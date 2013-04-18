@@ -810,28 +810,28 @@ function doWipTest() {
       "<INPUT type='radio' name='g2' value='2'>does answer late</INPUT><BR/>" +
       "<INPUT type='radio' name='g2' value='0'>does not answer</INPUT><BR/>" +
       "<HR/>" +
-      "<BUTTON id='BT_Apply' style='width:8rem;margin:0.5rem;float:left'>Apply</BUTTON>" +
+      "<BUTTON id='BT_Apply' style='width:8rem;margin:0.5rem;float:left'><IMG src='style/images/coins.png'</BUTTON>" +
       "<BUTTON id='BT_Skip' style='width:8rem;margin:0.5rem;float:right'>Skip</BUTTON>" +
       "</FORM>" +
       "</DIV>"
    );
    document.getElementById("BT_Wip").onclick = function() {
       this.style.visibility = "hidden";
+      document.getElementById("BT_CurPay").innerHTML = (
+         users.getPayState() + " " +
+         i18nDate(users.getPayTime()) + "<BR>" +
+         users.getPayKey()
+      );
       document.getElementById("BT_Test").style.display = "";
    }
-   document.getElementById("BT_CurPay").innerHTML = (
-      users.getPayState() + " " +
-      i18nDate(users.getPayTime()) + "<BR>" +
-      users.getPayKey()
-   );
    document.BT_Form.onsubmit = function() {
       document.getElementById("BT_Wip").style.visibility = "visible";
       document.getElementById("BT_Test").style.display = "none";
       return false;
    };
    document.getElementById("BT_Apply").onclick = function() {
-      var answered;
-      var granted;
+      var answered = '1';
+      var granted = '1';
       users.deletePayment();
       var g1 = document.BT_Form.g1;
       for (var i=0; i < g1.length; ++i) {
@@ -847,11 +847,8 @@ function doWipTest() {
             break;
          }
       }
-      var elt = document.getElementById("btnBuy");
-      elt.style.display = "";
-      elt.onclick = function() {
-         purchase("&test=1"+ granted + answered);
-      }
+      document.getElementById("btnBuy").style.display = "";
+      purchase("&test=1"+ granted + answered);
    }
 }
 
@@ -881,16 +878,11 @@ function purchase(test) {
             | of the "Pay" kind entity in Google App Datastore
             */
             var ix = 1 + jwt.indexOf('.');
-var rfa = jwt.substring(ix, jwt.indexOf('.', ix));
-var sgb = Base64.Url.decode(rfa);
-console.log(sgb);
-var thc = JSON.parse(sgb);
-var uid = thc.request.productData;
-//          var uid = JSON.parse(
-//             Base64.Url.decode(
-//                jwt.substring(ix, jwt.indexOf('.', ix))
-//             )
-//          ).request.productData;
+            var uid = JSON.parse(
+               Base64.Url.decode(
+                  jwt.substring(ix, jwt.indexOf('.', ix))
+               )
+            ).request.productData;
             var req = navigator.mozPay([jwt]);
             req.onsuccess = function() { getPayment(elt, uid); };
             req.onerror = function() {  // mozPay failed
@@ -922,7 +914,7 @@ function getPayment(elt, uid) {
                // assume pay.state is "pending"
                if (users.getPayState() === "pending") { // for the 2nd time
                   confirmMsg(
-                     i18n("cancelPay", i18nDate(new Date(users.getPayTime()))),
+                     i18n("cancelPay", i18nDate(users.getPayTime())),
                      function() { cancelPayment(elt, uid); }
                   );
                   return;
