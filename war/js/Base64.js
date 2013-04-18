@@ -31,6 +31,7 @@ var Base64 = (
          var inBuf = unescape(encodeURIComponent(""+inString));
          var inLen = inBuf.length;
          var outLen = (((inLen << 2) / 3) + 3) & 0xFFFFFFFC;
+         if (!isPadded) outLen -= (3 + (-inLen % 3)) % 3;
          var outBuf = new Uint8Array(outLen);
          var iTimes = -1;
          var b1;
