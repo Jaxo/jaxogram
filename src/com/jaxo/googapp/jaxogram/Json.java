@@ -1,10 +1,9 @@
 /*
 * $Id: $
 *
-* (C) Copyright 2013 Jaxo Inc.  All rights reserved.
-* This work contains confidential trade secrets of Jaxo Inc.
-* Use, examination, copying, transfer and disclosure to others
-* are prohibited, except with the express written agreement of Jaxo.
+* (C) Copyright 2013 Jaxo Inc.
+*
+* Mozilla Public License 2.0
 *
 * Author:  Pierre G. Richard
 * Written: 4/21/2013
@@ -102,58 +101,6 @@ public class Json
       }else {
          throw new Exception("Not a JSON Root");
       }
-   }
-
-   private static void generate(Object parent, Writer out) throws IOException {
-      out.write(Tokenizer.BEGIN_OBJECT);
-      boolean isContinuation = false;
-      for (Member member : parent.members) {
-         if (isContinuation) {
-            out.write(Tokenizer.VALUE_SEPARATOR);
-         }else {
-            isContinuation = true;
-         }
-         generateString(member.getKey(), out);
-         out.write(Tokenizer.NAME_SEPARATOR);
-         generateValue(member.getValue(), out);
-      }
-      out.write(Tokenizer.END_OBJECT);
-   }
-
-   private static void generate(Array parent, Writer out) throws IOException {
-      out.write(Tokenizer.BEGIN_ARRAY);
-      boolean isContinuation = false;
-      for (java.lang.Object value : parent.values) {
-         if (isContinuation) {
-            out.write(Tokenizer.VALUE_SEPARATOR);
-         }else {
-            isContinuation = true;
-         }
-         generateValue(value, out);
-      }
-      out.write(Tokenizer.END_ARRAY);
-   }
-
-   private static void generateValue(java.lang.Object value, Writer out) throws IOException {
-      if (value == null) {
-         out.write("null");
-      }else if (
-         (value instanceof Double) ||
-         (value instanceof Long) ||
-         (value instanceof Boolean)
-      ) {
-         out.write(value.toString());
-      }else if (value instanceof String) {
-         generateString((String)value, out);
-      }else if (value instanceof Object) {
-         generate((Object)value, out);
-      }else if (value instanceof Array) {
-         generate((Array)value, out);
-      }
-   }
-
-   private static void generateString(String s, Writer out) throws IOException {
-      out.write("\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
    }
 
    private static class Tokenizer
@@ -389,6 +336,58 @@ public class Json
          }
       }
       return array;
+   }
+
+   private static void generate(Object parent, Writer out) throws IOException {
+      out.write(Tokenizer.BEGIN_OBJECT);
+      boolean isContinuation = false;
+      for (Member member : parent.members) {
+         if (isContinuation) {
+            out.write(Tokenizer.VALUE_SEPARATOR);
+         }else {
+            isContinuation = true;
+         }
+         generateString(member.getKey(), out);
+         out.write(Tokenizer.NAME_SEPARATOR);
+         generateValue(member.getValue(), out);
+      }
+      out.write(Tokenizer.END_OBJECT);
+   }
+
+   private static void generate(Array parent, Writer out) throws IOException {
+      out.write(Tokenizer.BEGIN_ARRAY);
+      boolean isContinuation = false;
+      for (java.lang.Object value : parent.values) {
+         if (isContinuation) {
+            out.write(Tokenizer.VALUE_SEPARATOR);
+         }else {
+            isContinuation = true;
+         }
+         generateValue(value, out);
+      }
+      out.write(Tokenizer.END_ARRAY);
+   }
+
+   private static void generateValue(java.lang.Object value, Writer out) throws IOException {
+      if (value == null) {
+         out.write("null");
+      }else if (
+         (value instanceof Double) ||
+         (value instanceof Long) ||
+         (value instanceof Boolean)
+      ) {
+         out.write(value.toString());
+      }else if (value instanceof String) {
+         generateString((String)value, out);
+      }else if (value instanceof Object) {
+         generate((Object)value, out);
+      }else if (value instanceof Array) {
+         generate((Array)value, out);
+      }
+   }
+
+   private static void generateString(String s, Writer out) throws IOException {
+      out.write("\"" + s.replace("\\", "\\\\").replace("\"", "\\\"") + "\"");
    }
 }
 /*===========================================================================*/

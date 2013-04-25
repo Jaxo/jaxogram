@@ -878,13 +878,13 @@ function purchase(test) {
             | of the "Pay" kind entity in Google App Datastore
             */
             var ix = 1 + jwt.indexOf('.');
-            var uid = JSON.parse(
+            var paykey = JSON.parse(
                Base64.Url.decode(
                   jwt.substring(ix, jwt.indexOf('.', ix))
                )
             ).request.productData;
             var req = navigator.mozPay([jwt]);
-            req.onsuccess = function() { getPayment(elt, uid); };
+            req.onsuccess = function() { getPayment(elt, paykey); };
             req.onerror = function() {  // mozPay failed
                simpleMsg("error", "Pay process" + this.error.name);
                elt.style.display = "";
@@ -898,9 +898,9 @@ function purchase(test) {
    }
 }
 
-function getPayment(elt, uid) {
+function getPayment(elt, paykey) {
    issueRequest(
-      "GET", "getPayment", "&PYK=" + uid,
+      "GET", "getPayment", "&PYK=" + paykey,
       function(val) {     // whenDone
          pay = JSON.parse(val);
          var msg;
@@ -915,7 +915,7 @@ function getPayment(elt, uid) {
                if (users.getPayState() === "pending") { // for the 2nd time
                   confirmMsg(
                      i18n("cancelPay", i18nDate(users.getPayTime())),
-                     function() { cancelPayment(elt, uid); }
+                     function() { cancelPayment(elt, paykey); }
                   );
                   return;
                }else {
@@ -923,7 +923,7 @@ function getPayment(elt, uid) {
                }
             }
          }
-         users.writePayment(uid, pay);
+         users.writePayment(paykey, pay);
          simpleMsg("info", msg);
       },
       function(rc, val) { // whenFailed
@@ -934,9 +934,9 @@ function getPayment(elt, uid) {
    document.getElementById("progresspane").style.visibility='hidden';
 }
 
-function cancelPayment(elt, uid) {
+function cancelPayment(elt, paykey) {
    issueRequest(
-      "GET", "cancelPayment", "&PYK=" + uid,
+      "GET", "cancelPayment", "&PYK=" + paykey,
       function(val) {     // whenDone
          pay = JSON.parse(val);
          var msg;
@@ -950,7 +950,7 @@ function cancelPayment(elt, uid) {
                msg = i18n("pendingPay"); // should not occur
             }
          }
-         users.writePayment(uid, pay);
+         users.writePayment(paykey, pay);
          simpleMsg("info", msg);
       },
       function(rc, val) { // whenFailed
