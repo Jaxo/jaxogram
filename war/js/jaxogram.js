@@ -92,9 +92,14 @@ window.onload = function() {
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
+   var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
+   for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
+      radioGroupNodes[i].addEventListener("click", radioClicked);
+//    radioGroupNodes[i].onclick = radioClicked;
+   }
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn_albums").onclick = listAlbums;
-   document.getElementById("changeLanguage").onclick = changeLanguage;
+   document.getElementById("changeLanguage").addEventListener("click", changeLanguage);
    // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
    document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
@@ -105,6 +110,10 @@ window.onload = function() {
    document.getElementById("logins").onclick = function(event) {
       changeLogin(this, event);
    };
+   document.getElementById("p2_clear").onclick = function() {
+      document.getElementById("p2_picture").style.visibility = "hidden";
+      this.style.visibility = "hidden";
+   };
    // document.getElementById("mn_albums").style.display = "none";
    document.getElementById("footerRow2").style.display = "none";
    var dfltLocale = navigator.language || navigator.userLanguage;
@@ -112,6 +121,7 @@ window.onload = function() {
    formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
+   document.getElementById("imgFilters").addEventListener("click", changeFilter);
 
    var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
@@ -140,6 +150,11 @@ window.onload = function() {
       );
    }
 };
+
+function changeFilter(event) {
+   var elt = getRealTarget(event);
+   alert(elt.cellIndex);
+}
 
 function onNetworkChange()
 {
@@ -659,19 +674,11 @@ function uploadPhotos() {
          if (event && (event.keyCode === 13)) this.blur();
       };
       var imgData = pendingPhotos[0];
-      var imgElt = document.createElement("IMG");
-      var clrElt = document.getElementById("p2_clear");
+      var imgElt = document.getElementById("p2_picture");
       imgElt.src = URL.createObjectURL(imgData);
+      imgElt.style.visibility = "";
       // FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
-      imgElt.id = "p2_picture";
-      var oldImgElt = document.getElementById("p2_picture");
-      oldImgElt.parentNode.replaceChild(imgElt, oldImgElt);
-      fitImage(imgElt);
-      clrElt.style.visibility = "visible";
-      clrElt.onclick = function() {
-         imgElt.style.visibility = "hidden";
-         this.style.visibility = "hidden";
-      };
+      document.getElementById("p2_clear").style.visibility = "visible";
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
