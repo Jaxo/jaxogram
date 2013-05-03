@@ -735,7 +735,7 @@ function filterAndUploadPhoto(imgRawBlob)
          // URL.revokeObjectURL(this.src);
          canvas.toBlob(
             function(imgFilteredBlob) {
-               doUploadPhoto(imgFilteredBlob);
+               uploadPhoto(imgFilteredBlob);
             }
          );
       };
@@ -746,11 +746,11 @@ function filterAndUploadPhoto(imgRawBlob)
          )
       );
    }else {
-      doUploadPhoto(imgRawBlob);
+      uploadPhoto(imgRawBlob);
    }
 }
 
-function doUploadPhoto(imgBlob) {
+function uploadPhoto(imgBlob) {
    var formData = new FormData();
    formData.append("MAX_FILE_SIZE", "1000000");
 // formData.append("IMG", file.name.substr(-3));
