@@ -97,7 +97,7 @@ window.onload = function() {
    document.getElementById("changeLanguage").onclick = changeLanguage;
    // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
-   document.getElementById("uploadPhoto").onclick = uploadPhoto;
+   document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
    document.getElementById("cancelPhoto").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
@@ -708,41 +708,80 @@ function isUploadable() {
    }
 }
 
-function uploadPhoto() {
+function tryUploadPhoto() {
    if (isUploadable()) {
-      var imgData = pendingPhotos.shift();
-      var formData = new FormData();
-      formData.append("MAX_FILE_SIZE", "1000000");
-   // formData.append("IMG", file.name.substr(-3));
-      if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
-      formData.append("TIT", document.getElementById("p2_msgText").value);
-      formData.append("upldFile", imgData);
-      issueRequest(
-         "POST",
-         "postImageFile&NET=" + users.getNet(),
-         formData,
-         function(val) {        // whenDone
-            try {
-               var media = JSON.parse(val).entities.media[0];
-               var idStr = media.id_str;
-               var expandedUrl = media.expanded_url;
-            }catch (error) {
-            }
-            /*
-            Response:
-               var res = JSON.parse(xhr.responseText);
-               var id_str = res.entities.media[0].id_str;
-               var ex_url = res.entities.media[0].expanded_url;
-            */
-            ++upldPhotosCount;
-            uploadPhotos();
-         },
-         function(rc, val) {    // whenFailed
-            finishUpload();
-            // FIXME: if (issuer) issuer.postError(message);
-         }
-      );
+      filterAndUploadPhoto(pendingPhotos.shift());
    }
+}
+
+var dataF = "<svg xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"f1\"><feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"/></filter></svg>";
+var data1 = (
+  "<svg width=\"8in\" height=\"5in\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
+  "<image filter=\"url(data:image/svg+xml," + escape(dataF) + "#f1)\"" +
+  " x=\"20\" y=\"20\" width=\"410px\" height=\"210px\" xlink:href=\""
+);
+var data2 = "\"></image></svg>";
+
+function filterAndUploadPhoto(imgRawBlob)
+{
+   if (1 === 1) {  // if filtered  FIXME
+      var canvas = document.createElement("CANVAS");
+      canvas.height = 400;
+      canvas.width = 600;
+      var ctx = canvas.getContext('2d');
+      var img = new Image();
+      img.onload = function() {
+         ctx.drawImage(img, 0, 0);
+         // URL.revokeObjectURL(this.src);
+         canvas.toBlob(
+            function(imgFilteredBlob) {
+               doUploadPhoto(imgFilteredBlob);
+            }
+         );
+      };
+      img.src = URL.createObjectURL(
+         new Blob(
+            [data1 + URL.createObjectURL(imgRawBlob) + data2],
+            {type:"image/svg+xml"}
+         )
+      );
+   }else {
+      doUploadPhoto(imgRawBlob);
+   }
+}
+
+function doUploadPhoto(imgBlob) {
+   var formData = new FormData();
+   formData.append("MAX_FILE_SIZE", "1000000");
+// formData.append("IMG", file.name.substr(-3));
+   if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
+   formData.append("TIT", document.getElementById("p2_msgText").value);
+   formData.append("upldFile", imgBlob);
+   issueRequest(
+      "POST",
+      "postImageFile&NET=" + users.getNet(),
+      formData,
+      function(val) {        // whenDone
+         try {
+            var media = JSON.parse(val).entities.media[0];
+            var idStr = media.id_str;
+            var expandedUrl = media.expanded_url;
+         }catch (error) {
+         }
+         /*
+         Response:
+            var res = JSON.parse(xhr.responseText);
+            var id_str = res.entities.media[0].id_str;
+            var ex_url = res.entities.media[0].expanded_url;
+         */
+         ++upldPhotosCount;
+         uploadPhotos();
+      },
+      function(rc, val) {    // whenFailed
+         finishUpload();
+         // FIXME: if (issuer) issuer.postError(message);
+      }
+   );
 }
 
 function issueRequestStd(what, whenDone) {
