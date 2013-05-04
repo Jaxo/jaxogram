@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META charset="UTF-8">
+
+<SCRIPT type="text/javascript">
+var pendingPhotos = [];  // array of blobs or files
+var filters = [
+   {
+      name: "f1",
+      value: "feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\""
+   },{
+      name: "f2",
+//    value: "feColorMatrix type=\"matrix\" values=\"0.4214 -0.0285 0.0652 0 0 0.0158 0.4596 -0.0172 0 0 -0.0575 0.0833 0.5279 0 0 0 0 0 1 0\""
+      value: "feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\""
+   },{
+      name: "f3",
+      value: "feColorMatrix type=\"matrix\" values=\"0.0000 0.0786 0.4759 0.0000 0.0000 0.2832 0.0000 -0.1354 0.0000 0.0000 -0.8039 0.0000 -0.0792 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\""
+   }
+];
+
+function doFilter(img, filter) {
+   var w = img.width;
+   var h = img.height;
+   var imgUrl = img.src;
+   var fId = filter.name;
+   var data = (
+     "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+     " width=\"" + w + "\" height=\"" + h + "\" >" +
+     "<image filter=\"url(data:image/svg+xml," +
+     escape(
+        "<svg xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"" + fId + "\"><" +
+        filter.value +
+        "/></filter></svg>"
+     ) +
+     "#" + fId + ")\"" +
+     " preserveAspectRatio=\"xMinYMin meet\"" +
+     " width=\"" + w + "\" height=\"" + h + "\" xlink:href=\"" +
+     imgUrl +
+     "\"></image></svg>"
+   );
+   return new Blob([data], {type:"image/svg+xml"});
+}
+
+window.onload = function() {
+   var inputElt = document.getElementById('upldFile');
+   inputElt.onchange = function() {
+      if (this.files && this.files[0]) {
+         for (var i=0; i < this.files.length; ++i) {
+            pendingPhotos.push(this.files[i]);
+         }
+//       var canvas = document.createElement("CANVAS");
+//       var ctx = canvas.getContext('2d');
+         var oImgData = pendingPhotos[0];
+         var oImg = document.getElementById("originalImage");
+         oImg.onload = function() {
+//          fImg.onload = function() {
+//             ctx.drawImage(fImg, 0, 0);
+               // URL.revokeObjectURL(this.src);
+//             canvas.toBlob(
+//                function(blob) {
+//                }
+//             );
+//          };
+            var f0Img = document.getElementById("filter0Image");
+            f0Img.src = URL.createObjectURL(doFilter(oImg, filters[0]));
+            var f1Img = document.getElementById("filter1Image");
+            f1Img.src = URL.createObjectURL(doFilter(oImg, filters[1]));
+            var f2Img = document.getElementById("filter2Image");
+            f2Img.src = URL.createObjectURL(doFilter(oImg, filters[2]));
+         }
+         oImg.src = URL.createObjectURL(oImgData);
+
+      }else {
+         alert("NO IMAGE");
+      }
+   }
+   inputElt.click();
+}
+</SCRIPT>
+</HEAD>
+<BODY>
+<DIV>
+   <IMG width="200px" id="originalImage"/>
+   <IMG id="filter0Image"/>
+   <IMG id="filter1Image"/>
+   <IMG id="filter2Image"/>
+</DIV>
+<INPUT type='file' id='upldFile' multiple accept="image/"/>
+</BODY>
+</HTML>
