@@ -1,10 +1,38 @@
-var pendingPhotos = [];  // array of blobs or files
-var upldPhotosCount = 0;
-var users;
 var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
+
+var pendingPhotos = [];  // array of blobs or files
+var upldPhotosCount = 0;
+var filters = [
+   {
+      name: "raw",
+      img: new Image(),
+      src: ""
+   },{
+      name: "f1",
+      value: "feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"",
+      src: ""
+   },{
+      name: "f2",
+      value: "feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      src: ""
+   },{
+      name: "f3",
+      value: "feColorMatrix type=\"matrix\" values=\"0.0000 0.0786 0.4759 0.0000 0.0000 0.2832 0.0000 -0.1354 0.0000 0.0000 -0.8039 0.0000 -0.0792 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      src: ""
+   },{
+      name: "f4",
+      value: "feColorMatrix type=\"matrix\" values=\"0.4214 -0.0285 0.0652 0 0 0.0158 0.4596 -0.0172 0 0 -0.0575 0.0833 0.5279 0 0 0 0 0 1 0\"",
+      src: ""
+   },{
+      name: "f5",
+      value: "feColorMatrix type=\"matrix\" values=\"0.5108 0.2115 0.0213 0.0000 0.0000 0.1325 0.6749 0.0448 0.0000 0.0000 0.2390 2.3897 0.6088 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      src: ""
+   }
+];
+var users;
 var oauthNetwork = {
    name: "oauth",
    url: null,
@@ -150,11 +178,6 @@ window.onload = function() {
       );
    }
 };
-
-function changeFilter(event) {
-   var elt = getRealTarget(event);
-   alert(elt.cellIndex);
-}
 
 function onNetworkChange()
 {
@@ -400,7 +423,7 @@ function fitImages() {
    var images = document.querySelectorAll(".imgbox img");
    for (var i=0; i < images.length; ++i) {
       var img = images[i];
-      img.onload = function() { fitImage(this); }
+      img.addEventListener("load", function() { fitImage(this); });
       fitImage(img);
    }
 }
@@ -673,17 +696,36 @@ function uploadPhotos() {
          }
          if (event && (event.keyCode === 13)) this.blur();
       };
-      var imgData = pendingPhotos[0];
-      var imgElt = document.getElementById("p2_picture");
-      imgElt.src = URL.createObjectURL(imgData);
-      imgElt.style.visibility = "";
-      // FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
+      foo1();
       document.getElementById("p2_clear").style.visibility = "visible";
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
       isUploadable();
    }
+}
+
+function changeFilter(event) {
+   var filterChoice = 0;
+   if (event) filterChoice = getRealTarget(event).cellIndex;
+   var imgElt = document.getElementById("p2_picture");
+   imgElt.style.visibility = "";
+   imgElt.src = filters[filterChoice].src;
+}
+
+function foo1() {
+   var imgRawElt = filters[0].img;
+   imgRawElt.onload = function() {
+      if (filters[0].src) URL.revokeObjectURL(filters[0].src);
+      filters[0].src = imgRawElt.src;
+      changeFilter();  // e.g: set it to raw
+      for (var i=1, max=filters.length; i < max; ++i) {
+         var filter = filters[i];
+         if (filter.src) URL.revokeObjectURL(filter.src);
+         filter.src = URL.createObjectURL(doFilter(imgRawElt, filter));
+      }
+   };
+   imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
 }
 
 function isUploadable() {
@@ -721,39 +763,47 @@ function tryUploadPhoto() {
    }
 }
 
-var dataF = "<svg xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"f1\"><feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"/></filter></svg>";
-var data1 = (
-  "<svg width=\"8in\" height=\"5in\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" +
-  "<image filter=\"url(data:image/svg+xml," + escape(dataF) + "#f1)\"" +
-  " x=\"20\" y=\"20\" width=\"410px\" height=\"210px\" xlink:href=\""
-);
-var data2 = "\"></image></svg>";
+function doFilter(img, filter) {
+   var w = img.width;
+   var h = img.height;
+   var imgUrl = img.src;
+   var fId = filter.name;
+   var data = (
+     "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+     " width=\"" + w + "\" height=\"" + h + "\" >" +
+     "<image filter=\"url(data:image/svg+xml," +
+     escape(
+        "<svg xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"" + fId + "\"><" +
+        filter.value +
+        "/></filter></svg>"
+     ) +
+     "#" + fId + ")\"" +
+     " preserveAspectRatio=\"xMinYMin meet\"" +
+     " width=\"" + w + "\" height=\"" + h + "\" xlink:href=\"" +
+     imgUrl +
+     "\"></image></svg>"
+   );
+   return new Blob([data], {type:"image/svg+xml"});
+}
 
 function filterAndUploadPhoto(imgRawBlob)
 {
-   if (1 === 1) {  // if filtered  FIXME
-      var canvas = document.createElement("CANVAS");
-      canvas.height = 400;
-      canvas.width = 600;
-      var ctx = canvas.getContext('2d');
-      var img = new Image();
-      img.onload = function() {
-         ctx.drawImage(img, 0, 0);
-         // URL.revokeObjectURL(this.src);
+   var filterNo = 1;   // FIXME
+   if (filterNo === 0) {
+      uploadPhoto(imgRawBlob);
+   }else {
+      var sentImg = new Image();
+      sentImg.onload = function() {
+         var canvas = document.createElement("CANVAS");
+         canvas.width = sentImg.width;
+         canvas.height = sentImg.height;
+         var ctx = canvas.getContext('2d');
+         ctx.drawImage(sentImg, 0, 0);
          canvas.toBlob(
-            function(imgFilteredBlob) {
-               uploadPhoto(imgFilteredBlob);
-            }
+            function(imgFilteredBlob) { uploadPhoto(imgFilteredBlob); }
          );
       };
-      img.src = URL.createObjectURL(
-         new Blob(
-            [data1 + URL.createObjectURL(imgRawBlob) + data2],
-            {type:"image/svg+xml"}
-         )
-      );
-   }else {
-      uploadPhoto(imgRawBlob);
+      sentImg.src = document.getElementById("p2_picture").src;
    }
 }
 
