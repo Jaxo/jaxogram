@@ -5,6 +5,7 @@ var server_url = "http://jaxogram.appspot.com/jaxogram";
 
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
+var filterChoice = 0;
 var filters = [
    {
       name: "raw",
@@ -706,7 +707,6 @@ function uploadPhotos() {
 }
 
 function changeFilter(event) {
-   var filterChoice = 0;
    if (event) filterChoice = getRealTarget(event).cellIndex;
    var imgElt = document.getElementById("p2_picture");
    imgElt.style.visibility = "";
@@ -788,19 +788,21 @@ function doFilter(img, filter) {
 
 function filterAndUploadPhoto(imgRawBlob)
 {
-   var filterNo = 1;   // FIXME
-   if (filterNo === 0) {
+   if (filterChoice === 0) {
       uploadPhoto(imgRawBlob);
    }else {
       var sentImg = new Image();
+      document.getElementById("progresspane").style.visibility="visible";
       sentImg.onload = function() {
          var canvas = document.createElement("CANVAS");
          canvas.width = sentImg.width;
          canvas.height = sentImg.height;
          var ctx = canvas.getContext('2d');
          ctx.drawImage(sentImg, 0, 0);
+         // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
          canvas.toBlob(
-            function(imgFilteredBlob) { uploadPhoto(imgFilteredBlob); }
+            function(imgFilteredBlob) { uploadPhoto(imgFilteredBlob); },
+            "image/jpeg", 0.95
          );
       };
       sentImg.src = document.getElementById("p2_picture").src;

@@ -36,7 +36,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-//*/ import java.util.logging.Logger;
+/**/ import java.util.logging.Logger;
+/**/ import java.util.logging.Level;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -63,9 +64,9 @@ public class JaxogramServlet extends HttpServlet
    public void doPost(HttpServletRequest req, HttpServletResponse resp)
    throws IOException
    {
-//*/  Logger logger = Logger.getLogger(
-//*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
-//*/  );
+/**/  Logger logger = Logger.getLogger(
+/**/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
+/**/  );
       String op = req.getParameter("OP");
       int restVersion = (req.getParameter("V") == null)? 0 : Integer.parseInt(req.getParameter("V"));
 //*/  logger.info("OP:" + op);
@@ -235,7 +236,7 @@ public class JaxogramServlet extends HttpServlet
                      IOUtils.closeQuietly(in);
                   }else { // (op.equals("postImageFile")) {
                      ServletFileUpload upload = new ServletFileUpload();
-                     upload.setSizeMax(500000);
+                     upload.setSizeMax(1000000);
                      // upload.setSizeMax(120000);
                      FileItemIterator iterator = upload.getItemIterator(req);
                      while (iterator.hasNext()) {
@@ -269,6 +270,7 @@ public class JaxogramServlet extends HttpServlet
          }
       }catch (Exception e) {
          resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+/**/     logger.log(Level.SEVERE, "in \"" + op + "\"\n" + e.toString());
 //*/     e.printStackTrace();
          writer.print(e.getMessage());
       }
