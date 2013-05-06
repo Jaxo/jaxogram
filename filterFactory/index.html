@@ -313,6 +313,20 @@ function makeColorMatrix() {
    }
 }
 
+function setVignette() {
+   var isVignetted = document.getElementById("vignetteChk").checked;
+   if (isVignetted) {
+      var opacity = parseInt(document.getElementById("vignette").value) / 100;
+      document.getElementById("vignetteVal").textContent =  opacity.toFixed(2);
+   }else {
+      opacity = 0;
+   }
+   var vignettes = document.querySelectorAll("img.vignette");
+   for (var i=0, max=vignettes.length; i < max; ++i) {
+      vignettes[i].style.opacity = opacity.toFixed(2);
+   }
+}
+
 function filterImage() {
    var filterValue = "";
    var colorMatrix = makeColorMatrix();
@@ -321,6 +335,7 @@ function filterImage() {
    var filterNoir = makeFilterNoir();
    var filterMoat = makeFilterMoat();
    var sharpen = makeSharpen();
+   setVignette();
    if (colorMatrix !== "") {
       filterValue += colorMatrix;
    }
@@ -385,6 +400,14 @@ window.onload = function() {
       }
    );
    filterImage();
+   var toto = document.getElementById("toto");
+   var vignettes = document.querySelectorAll("img.vignette");
+   for (var i=0, max=vignettes.length; i < max; ++i) {
+      var img = vignettes[i];
+      // img.style.transform = "scale(" + (450/485) + "," + (281/485) +")";
+      img.width = 450;   // toto.width;
+      img.height = 281;
+   };
 }
 
 </SCRIPT>
@@ -406,6 +429,7 @@ window.onload = function() {
          <TR><TD>
                <!-- style="width: 100%;" -->
             <IMG
+               id="toto"
                src="Cirques.jpg"
                alt="Cirques"
             />
@@ -417,8 +441,8 @@ window.onload = function() {
                src="Cirques.jpg"
                alt="Cirques"
             />
-            <DIV id="over1" style="position:absolute; left:0; top:0;z-index:10"/>
-               <IMG src="Vignette.png" style="visibility:hidden"/>
+            <DIV style="position:absolute; left:0; top:0;z-index:10"/>
+               <IMG class="vignette" src="Vignette.png"/>
             </DIV>
             </DIV>
          </TD></TR>
@@ -436,7 +460,8 @@ window.onload = function() {
                src="ClownFishes.jpg"
                alt="Clown Fishes"
             />
-            <DIV id="over1" style="position:absolute; left:0; top:0;z-index:10"/>GOOD BYE.</DIV>
+            <DIV style="position:absolute; left:0; top:0;z-index:10"/>
+               <IMG class="vignette" src="Vignette.png"/>
             </DIV>
          </TD></TR>
          <TR><TD colspan="2" style="height:0.5rem"></TD></TR>
@@ -452,8 +477,10 @@ window.onload = function() {
                  </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><SPAN id="rotateHueVal"></SPAN>
 <!--
                  </TD><TD disabled="disabled">Vignette</TD><TD disabled="disabled"><INPUT id="vignette" type="range" min="0" max="100"/><SPAN id="vignetteVal"></SPAN>
--->
                  </TD><TD colspan="2" align="center"><LABEL><INPUT id="vignette" type="checkbox"/>Vignette</LABEL></TD>
+-->
+                 </TD><TD>Vignette<INPUT id="vignetteChk" type="checkbox"/>
+                 </TD><TD><INPUT id="vignette" type="range" value="0" min="0" max="100"/><SPAN id=vignetteVal></SPAN>
                  </TD></TR>
                  <TR><TD>Blue</TD><TD><INPUT id="blue" type="range" value="33" min="0" max="100" step="1"/><SPAN id="blueVal"></SPAN>
                  </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-200" max="299"/><SPAN id="contrastVal"></SPAN>
