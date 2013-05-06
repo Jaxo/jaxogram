@@ -213,6 +213,8 @@ function makeComponentTransfer() {
       slope = 1 / (1 - (2*contrast));
       intercept = (1 - slope) / 2;
    }
+   slope = slope.toFixed(4);
+   intercept = intercept.toFixed(4);
    return (
       "<feComponentTransfer>" +
       "<feFuncR type='linear' slope='" + slope +
