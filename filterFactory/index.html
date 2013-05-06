@@ -50,6 +50,10 @@ td[disabled] {
    font-size:1.2rem;
    color:#F03030;
 }
+label {
+   font-size: 1rem;
+   font-weight: bold;
+}
 img.filtered {
 /*  filter: url(  */
 /*     "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscole\'><feColorMatrix type=\'matrix\' values=\'0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscole" */
@@ -73,8 +77,8 @@ var BA = 0.283;
 
 var filters = [
    "red", "green", "blue", "brightness", "saturation", "rotateHue",
-   "contrast", "blur", "invert", "opacity", "sepia", "drop",
-   "extra1", "extra2", "extra3"
+   "contrast", "blur", "invert", "opacity", "sepia", "dusk", "drop",
+   "extra1", "extra2", "extra3", "noir"
 ];
 
 function multiply(a, b) {
@@ -133,6 +137,22 @@ function doExtra3(d, vals) {
    return vals;
 }
 
+function doDusk(dusk, vals) {
+   if (!dusk) {
+      return vals;
+   }else {
+      return multiply(
+         vals,
+         [
+            1.0, 0, 0, 0, 0,
+            0, 0.2, 0, 0, 0,
+            0, 0, 0.2, 0, 0,
+            0, 0, 0, 1, 0
+         ]
+      );
+   }
+}
+
 function doSepia(sepia, vals) {
    if (!sepia) {
       return vals;
@@ -149,59 +169,49 @@ function doSepia(sepia, vals) {
    }
 }
 
+function makeGaussianBlur() {
+   var blur = parseInt(document.getElementById("blur").value);
+   document.getElementById("blurVal").textContent =  blur.toFixed(0);
+   if (blur == 0) {
+      return "";
+   }else {
+      return "<feGaussianBlur stdDeviation='" + blur + "'/>";
+   }
+}
+
+function makeFilterNoir() {
+   var noir = document.getElementById("noir").checked;
+   if (noir) {
+      return (
+         "<feGaussianBlur stdDeviation='1.5'/>" +
+         "<feComponentTransfer>" +
+           "<feFuncR type='discrete' tableValues='0 .5 1 1'/>" +
+           "<feFuncG type='discrete' tableValues='0 .5 1'/>" +
+           "<feFuncB type='discrete' tableValues='0'/>" +
+         "</feComponentTransfer>"
+      );
+   }else {
+      return "";
+   }
+}
+
 function makeComponentTransfer() {
-//    var contrast = parseInt(document.getElementById("contrast").value);
-//    document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
-// // if (contrast == 100) {
-// //    return "";
-// // }else {
-// //    contrast /= 100;
-//       var slope = 1;
-//       var intercept = 0;
-// //    var intercept = -((0.5 * contrast) + 0.5);
-//       return (
-//          "<feComponentTransfer>" +
-//          "<feFuncR type='linear' slope='" + slope +
-//          "' intercept='" + intercept + "'/>" +
-//          "<feFuncG type='linear' slope='" + slope +
-//          "' intercept='" + intercept + "'/>" +
-//          "<feFuncB type='linear' slope='" + slope +
-//          "' intercept='" + intercept + "'/>" +
-//          "</feComponentTransfer>"
-//       );
-// // }
-
-//     contrast /= 100;
-//     var slope = 1 + (2*contrast);
-//     var intercept = -contrast;
-//     return (
-//        "<feComponentTransfer>" +
-//        "<feFuncR type='linear' slope='" + slope +
-//        "' intercept='" + intercept + "'/>" +
-//        "<feFuncG type='linear' slope='" + slope +
-//        "' intercept='" + intercept + "'/>" +
-//        "<feFuncB type='linear' slope='" + slope +
-//        "' intercept='" + intercept + "'/>" +
-//        "</feComponentTransfer>"
-//     );
-
    var contrast = parseInt(document.getElementById("contrast").value);
    document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
+   contrast = (contrast/2) - 50;
    var slope;
    var intercept;
-// if (contrast == 0) {
-//    return "";
-// }else
-   contrast = (contrast/2) - 50;
-   contrast = -contrast;
-   if (contrast > 0) {
+   if (contrast == 0) {
+      return "";
+   }else if (contrast < 0) {
+      contrast = -contrast;
       contrast /= 100;
-      slope = 1 - (2*contrast);
       intercept = contrast;
+      slope = 1 - (2*contrast);
    }else {
-      contrast /= 400;
+      contrast /= 200;
       slope = 1 / (1 - (2*contrast));
-      intercept = contrast / slope;
+      intercept = (1 - slope) / 2;
    }
    return (
       "<feComponentTransfer>" +
@@ -213,7 +223,6 @@ function makeComponentTransfer() {
       "' intercept='" + intercept + "'/>" +
       "</feComponentTransfer>"
    );
-// }
 }
 
 function makeColorMatrix() {
@@ -242,11 +251,13 @@ function makeColorMatrix() {
    var extra3 = parseInt(document.getElementById("extra3").value);
    document.getElementById("extra3Val").textContent =  extra3.toFixed(0);
    var sepia = document.getElementById("sepia").checked;
+   var dusk = document.getElementById("dusk").checked;
 
    vals = saturate(saturation, vals);
    vals = rotateHue(hueRot, vals);
    vals = doExtra3(extra3, vals);
    vals = doSepia(sepia, vals);
+   vals = doDusk(dusk, vals);
    var isIdentity = true;
    var filterValue = "";
    for (var i=0, j=-1; i < 20; ++i) {
@@ -270,12 +281,22 @@ function filterImage() {
    var filterValue = "";
    var colorMatrix = makeColorMatrix();
    var componentTransfer = makeComponentTransfer();
+   var gaussianBlur = makeGaussianBlur();
+   var filterNoir = makeFilterNoir();
    if (colorMatrix !== "") {
       filterValue += colorMatrix;
    }
    if (componentTransfer != "") {
-      if (filterValue !== "") filterValue += "<BR/>";
+      if (filterValue !== "") filterValue += "\r\n";
       filterValue += componentTransfer;
+   }
+   if (gaussianBlur != "") {
+      if (filterValue !== "") filterValue += "\r\n";
+      filterValue += gaussianBlur;
+   }
+   if (filterNoir != "") {
+      if (filterValue !== "") filterValue += "\r\n";
+      filterValue += filterNoir;
    }
    document.getElementById("filterValue").innerHTML = filterValue;
    if (filterValue === "") {
@@ -290,7 +311,8 @@ function filterImage() {
          "<filter id='f0'>" +
          colorMatrix +
          componentTransfer +
-   //    "<feGaussianBlur stdDeviation='4" + "'>" +
+         gaussianBlur +
+         filterNoir +
          "</filter></svg>#f0"
       );
       var images = document.querySelectorAll("img.filtered");
@@ -304,7 +326,7 @@ function filterImage() {
 window.onload = function() {
    filters.forEach(
       function(name) {
-         if (name == "sepia") {
+         if ((name == "sepia") || (name == "dusk") || (name == "noir")) {
             document.getElementById(name).addEventListener('change', filterImage);
          }else {
             document.getElementById(name).addEventListener('input', filterImage);
@@ -325,7 +347,9 @@ window.onload = function() {
       <TBODY>
          <TR><TD colspan=2>
 
-            <TEXTAREA readonly placeholder="Please use Firefox Nightly for rendering the sliders" id="filterValue" rows="3" style="width:100%;margins:auto"></TEXTAREA>
+            <TEXTAREA readonly
+               placeholder="Please use Firefox Nightly for rendering the sliders"
+               id="filterValue" rows="4" style="width:100%;margins:auto"></TEXTAREA>
             <!-- BUTTON onclick="filterImage();">Refresh</button -->
          </TD></TR>
          <TR><TD>
@@ -369,12 +393,17 @@ window.onload = function() {
                  </TD><TD disabled="disabled">Opacity</TD><TD disabled="disabled"><INPUT id="opacity" type="range" min="0" max="100"/><SPAN id="opacityVal"></SPAN>
                  </TD></TR>
                  <TR><TD>Blue</TD><TD><INPUT id="blue" type="range" value="33" min="0" max="100" step="1"/><SPAN id="blueVal"></SPAN>
-                 </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-300" max="300"/><SPAN id="contrastVal"></SPAN>
-                 </TD><TD disabled="disabled">Drop Shadow</TD><TD disabled="disabled"><INPUT id="drop" type="range" min="0" max="100"/><SPAN id="dropVal"></SPAN>
+                 </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-200" max="299"/><SPAN id="contrastVal"></SPAN>
+                 </TD><TD disabled="disabled">Drop shadow</TD><TD disabled="disabled"><INPUT id="drop" type="range" min="0" max="100"/><SPAN id=dropVal></SPAN>
                  </TD></TR>
                  <TR><TD>Brightness</TD><TD><INPUT id="brightness" value="100" type="range"  min="0" max="100"/><SPAN id="brightnessVal"></SPAN>
-                 </TD><TD disabled="disabled">Blur</TD><TD disabled="disabled"><INPUT id="blur" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
-                 </TD><TD>Sepia</TD><TD><INPUT id="sepia" style="transform:scale(2,1.5)" type="checkbox"/><SPAN id="sepiaVal"></SPAN>
+                 </TD><TD>Blur</TD><TD><INPUT id="blur" value="0" type="range" min="0" max="10"/><SPAN id=blurVal></SPAN>
+                 </TD><TD colspan="2">
+                    <LABEL><INPUT id="sepia" type="checkbox"/>Sepia</LABEL>
+                    &nbsp; &nbsp;
+                    <LABEL><INPUT id="dusk" type="checkbox"/>Dusk</LABEL>
+                    &nbsp; &nbsp;
+                    <LABEL><INPUT id="noir" type="checkbox"/>Noir</LABEL>
                  </TD></TR>
                  <TR><TD disabled="disabled">Extra1</TD><TD disabled="disabled"><INPUT id="extra1" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
                  </TD><TD disabled="disabled">Extra2</TD><TD disabled="disabled"><INPUT id="extra2" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
