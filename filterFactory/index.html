@@ -51,9 +51,9 @@ td[disabled] {
    color:#F03030;
 }
 img.filtered {
-    filter: url(
-       "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscole\'><feColorMatrix type=\'matrix\' values=\'0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscole"
-    );
+/*  filter: url(  */
+/*     "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscole\'><feColorMatrix type=\'matrix\' values=\'0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscole" */
+/*  );            */
 }
 </STYLE>
 
@@ -72,57 +72,9 @@ var GA = 0.140;
 var BA = 0.283;
 
 var filters = [
-   {
-      name: "red",
-      doFilter: function() {
-         return doColorMatrix();
-      }
-   }, {
-      name: "green",
-      doFilter: function() {
-         return doColorMatrix();
-      }
-   }, {
-      name: "blue",
-      doFilter: function() {
-         return doColorMatrix();
-      }
-   }, {
-      name: "brightness",
-      doFilter: function() {
-         return doColorMatrix();
-      }
-   }, {
-      name: "saturation",
-      doFilter: function() {
-         return doColorMatrix();
-      }
-   }, {
-      name: "hue", // really: rotation of hue
-      doFilter: function() {
-         return doColorMatrix();
-      }
-   }, {
-      name: "contrast",
-      doFilter: function() {
-         return doColorMatrix();
-      }
-   }, {
-      name: "blur",
-      doFilter: function() { return null; }
-   }, {
-      name: "invert",
-      doFilter: function() { return null; }
-   }, {
-      name: "opacity",
-      doFilter: function() { return null; }
-   }, {
-      name: "sepia",
-      doFilter: function() { return null; }
-   }, {
-      name: "drop",
-      doFilter: function() { return null; }
-   }
+   "red", "green", "blue", "brightness", "saturation", "rotateHue",
+   "contrast", "blur", "invert", "opacity", "sepia", "drop",
+   "extra1", "extra2", "extra3"
 ];
 
 function multiply(a, b) {
@@ -139,6 +91,7 @@ function multiply(a, b) {
    }
    return res;
 }
+
 function saturate(s, vals) {
    if (s == 100) {
       return vals;
@@ -155,7 +108,8 @@ function saturate(s, vals) {
       );
    }
 }
-function hueRotate(d, vals) {
+
+function rotateHue(d, vals) {
    var rad = (d * Math.PI) / 180;
    var cos = Math.cos(rad);
    var sin = Math.sin(rad);
@@ -169,7 +123,7 @@ function hueRotate(d, vals) {
       ]
    );
 }
-function doContrast(d, vals) {
+function doExtra3(d, vals) {
    if (d != 100) {
       d /= 100;
       vals[0] *= (1-RW) * d;
@@ -179,7 +133,90 @@ function doContrast(d, vals) {
    return vals;
 }
 
-function doColorMatrix() {
+function doSepia(sepia, vals) {
+   if (!sepia) {
+      return vals;
+   }else {
+      return multiply(
+         vals,
+         [
+            0.280, 0.450, 0.05, 0, 0,
+            0.140, 0.390, 0.04, 0, 0,
+            0.080, 0.280, 0.03, 0, 0,
+            0, 0, 0, 1, 0
+         ]
+      );
+   }
+}
+
+function makeComponentTransfer() {
+//    var contrast = parseInt(document.getElementById("contrast").value);
+//    document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
+// // if (contrast == 100) {
+// //    return "";
+// // }else {
+// //    contrast /= 100;
+//       var slope = 1;
+//       var intercept = 0;
+// //    var intercept = -((0.5 * contrast) + 0.5);
+//       return (
+//          "<feComponentTransfer>" +
+//          "<feFuncR type='linear' slope='" + slope +
+//          "' intercept='" + intercept + "'/>" +
+//          "<feFuncG type='linear' slope='" + slope +
+//          "' intercept='" + intercept + "'/>" +
+//          "<feFuncB type='linear' slope='" + slope +
+//          "' intercept='" + intercept + "'/>" +
+//          "</feComponentTransfer>"
+//       );
+// // }
+
+//     contrast /= 100;
+//     var slope = 1 + (2*contrast);
+//     var intercept = -contrast;
+//     return (
+//        "<feComponentTransfer>" +
+//        "<feFuncR type='linear' slope='" + slope +
+//        "' intercept='" + intercept + "'/>" +
+//        "<feFuncG type='linear' slope='" + slope +
+//        "' intercept='" + intercept + "'/>" +
+//        "<feFuncB type='linear' slope='" + slope +
+//        "' intercept='" + intercept + "'/>" +
+//        "</feComponentTransfer>"
+//     );
+
+   var contrast = parseInt(document.getElementById("contrast").value);
+   document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
+   var slope;
+   var intercept;
+// if (contrast == 0) {
+//    return "";
+// }else
+   contrast = (contrast/2) - 50;
+   contrast = -contrast;
+   if (contrast > 0) {
+      contrast /= 100;
+      slope = 1 - (2*contrast);
+      intercept = contrast;
+   }else {
+      contrast /= 400;
+      slope = 1 / (1 - (2*contrast));
+      intercept = contrast / slope;
+   }
+   return (
+      "<feComponentTransfer>" +
+      "<feFuncR type='linear' slope='" + slope +
+      "' intercept='" + intercept + "'/>" +
+      "<feFuncG type='linear' slope='" + slope +
+      "' intercept='" + intercept + "'/>" +
+      "<feFuncB type='linear' slope='" + slope +
+      "' intercept='" + intercept + "'/>" +
+      "</feComponentTransfer>"
+   );
+// }
+}
+
+function makeColorMatrix() {
    var oldR = parseInt(document.getElementById("red").value);
    var oldG = parseInt(document.getElementById("green").value);
    var oldB = parseInt(document.getElementById("blue").value);
@@ -192,63 +229,89 @@ function doColorMatrix() {
    );
    var brightness = parseInt(document.getElementById("brightness").value);
    document.getElementById("brightnessVal").textContent =  brightness.toFixed(0);
-   var saturation = parseInt(document.getElementById("saturation").value);
-   document.getElementById("saturationVal").textContent =  saturation.toFixed(0);
-   var hue = parseInt(document.getElementById("hue").value); // hue rotation!
-   document.getElementById("hueVal").textContent =  hue.toFixed(0);
-   var contrast = parseInt(document.getElementById("contrast").value); // contrast rotation!
-   document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
    var vals = [
       (newR * (brightness/100))/100, 0, 0, 0, 0,
       0, (newG * (brightness/100))/100, 0, 0, 0,
       0, 0, (newB * (brightness/100))/100, 0, 0,
       0, 0, 0, 1, 0
    ];
+   var saturation = parseInt(document.getElementById("saturation").value);
+   document.getElementById("saturationVal").textContent =  saturation.toFixed(0);
+   var hueRot = parseInt(document.getElementById("rotateHue").value);
+   document.getElementById("rotateHueVal").textContent =  hueRot.toFixed(0);
+   var extra3 = parseInt(document.getElementById("extra3").value);
+   document.getElementById("extra3Val").textContent =  extra3.toFixed(0);
+   var sepia = document.getElementById("sepia").checked;
+
    vals = saturate(saturation, vals);
-   vals = hueRotate(hue, vals);
-   vals = doContrast(contrast, vals);
+   vals = rotateHue(hueRot, vals);
+   vals = doExtra3(extra3, vals);
+   vals = doSepia(sepia, vals);
+   var isIdentity = true;
    var filterValue = "";
-   for (var i=0; i < 20; ++i) {
+   for (var i=0, j=-1; i < 20; ++i) {
+      var v = vals[i];
+      if ((i%5) == 0) ++j;
+      if ((i%5) == j) { // diagonal
+         if (v != 1) isIdentity = false;
+      }else {
+         if (v != 0) isIdentity = false;
+      }
       filterValue += " " + vals[i].toFixed(4);
    }
-   document.getElementById("dbg").textContent = filterValue;
-   return (
-      "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
-      "<filter id='f" + this.name +
-      "'><feColorMatrix type='matrix' values='" +  filterValue +
-      "'/><feComponentTransfer>" +
-      "<feFuncR type='linear' slope='" + "2" + "' intercept='-(0.5 * " + "2" + " + 0.5)'/>" +
-      "<feFuncG type='linear' slope='" + "2" + "' intercept='-(0.5 * " + "2" + " + 0.5)'/>" +
-      "<feFuncB type='linear' slope='" + "2" + "' intercept='-(0.5 * " + "2" + " + 0.5)'/>" +
-      "</feComponentTransfer>" +
-//    "<feGaussianBlur stdDeviation='4" + "'>" +
-      "</filter></svg>#f" + this.name
-   );
+   if (!isIdentity) {
+      return "<feColorMatrix type='matrix' values='" +  filterValue + "'/>"
+   }else {
+      return ""; // no need for.
+   }
 }
 
-function applyFilter(url) {
-   var images = document.querySelectorAll("img.filtered");
-   for (var i=0, max=images.length; i < max; ++i) {
-      var img = images[i];
-      img.style.filter = "url(\"" + url + "\")";
-   };
-
+function filterImage() {
+   var filterValue = "";
+   var colorMatrix = makeColorMatrix();
+   var componentTransfer = makeComponentTransfer();
+   if (colorMatrix !== "") {
+      filterValue += colorMatrix;
+   }
+   if (componentTransfer != "") {
+      if (filterValue !== "") filterValue += "<BR/>";
+      filterValue += componentTransfer;
+   }
+   document.getElementById("filterValue").innerHTML = filterValue;
+   if (filterValue === "") {
+      var images = document.querySelectorAll("img.filtered");
+      for (var i=0, max=images.length; i < max; ++i) {
+         var img = images[i];
+         img.style.filter = "";
+      };
+   }else {
+      var url = (
+         "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
+         "<filter id='f0'>" +
+         colorMatrix +
+         componentTransfer +
+   //    "<feGaussianBlur stdDeviation='4" + "'>" +
+         "</filter></svg>#f0"
+      );
+      var images = document.querySelectorAll("img.filtered");
+      for (var i=0, max=images.length; i < max; ++i) {
+         var img = images[i];
+         img.style.filter = "url(\"" + url + "\")";
+      };
+   }
 }
+
 window.onload = function() {
    filters.forEach(
-      function(filter) {
-         var name = filter.name;
-         var elt = document.getElementById(name);
-         elt.addEventListener(
-            'input',
-            function() {
-               var url = filter.doFilter();
-               if (url != null) applyFilter(url);
-            }
-         );
+      function(name) {
+         if (name == "sepia") {
+            document.getElementById(name).addEventListener('change', filterImage);
+         }else {
+            document.getElementById(name).addEventListener('input', filterImage);
+         }
       }
    );
-   applyFilter(doColorMatrix());
+   filterImage();
 }
 
 </SCRIPT>
@@ -258,13 +321,13 @@ window.onload = function() {
 
 <BODY>
 <DIV>
-    <P style="font-size:small">Please use Firefox Nightly for rendering the sliders</P>
     <TABLE style="width: 85%;margin:auto">
-      <THEAD><TR>
-         <TH scope="col"></TH>
-         <TH scope="col"></TH>
-      </TR></THEAD>
       <TBODY>
+         <TR><TD colspan=2>
+
+            <TEXTAREA readonly placeholder="Please use Firefox Nightly for rendering the sliders" id="filterValue" rows="3" style="width:100%;margins:auto"></TEXTAREA>
+            <!-- BUTTON onclick="filterImage();">Refresh</button -->
+         </TD></TR>
          <TR><TD>
             <IMG
                style="width: 100%;"
@@ -302,16 +365,20 @@ window.onload = function() {
                  </TD><TD disabled="disabled">Invert</TD><TD disabled="disabled"><INPUT id="invert" type="range" min="0" max="100"/><SPAN id="invertVal"></SPAN>
                  </TD></TR>
                  <TR><TD>Green</TD><TD><INPUT id="green" type="range" value="33" min="0" max="100" step="1"/><SPAN id="greenVal"></SPAN>
-                 </TD><TD>Hue Rotation</TD><TD><INPUT id="hue" type="range" value="0" min="0" max="360"/><SPAN id="hueVal"></SPAN>
+                 </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><SPAN id="rotateHueVal"></SPAN>
                  </TD><TD disabled="disabled">Opacity</TD><TD disabled="disabled"><INPUT id="opacity" type="range" min="0" max="100"/><SPAN id="opacityVal"></SPAN>
                  </TD></TR>
                  <TR><TD>Blue</TD><TD><INPUT id="blue" type="range" value="33" min="0" max="100" step="1"/><SPAN id="blueVal"></SPAN>
-                 </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="0" max="500"/><SPAN id="contrastVal"></SPAN>
+                 </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-300" max="300"/><SPAN id="contrastVal"></SPAN>
                  </TD><TD disabled="disabled">Drop Shadow</TD><TD disabled="disabled"><INPUT id="drop" type="range" min="0" max="100"/><SPAN id="dropVal"></SPAN>
                  </TD></TR>
                  <TR><TD>Brightness</TD><TD><INPUT id="brightness" value="100" type="range"  min="0" max="100"/><SPAN id="brightnessVal"></SPAN>
                  </TD><TD disabled="disabled">Blur</TD><TD disabled="disabled"><INPUT id="blur" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
-                 </TD><TD disabled="disabled">Sepia</TD><TD disabled="disabled"><INPUT id="sepia" type="range" min="0" max="100"/><SPAN id="sepiaVal"></SPAN>
+                 </TD><TD>Sepia</TD><TD><INPUT id="sepia" style="transform:scale(2,1.5)" type="checkbox"/><SPAN id="sepiaVal"></SPAN>
+                 </TD></TR>
+                 <TR><TD disabled="disabled">Extra1</TD><TD disabled="disabled"><INPUT id="extra1" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
+                 </TD><TD disabled="disabled">Extra2</TD><TD disabled="disabled"><INPUT id="extra2" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
+                 </TD><TD>Extra3</TD><TD><INPUT id="extra3" value="100" type="range" min="0" max="500"/><SPAN id="extra3Val"></SPAN>
                  </TD></TR>
                </TBODY>
             </TABLE>
@@ -319,6 +386,5 @@ window.onload = function() {
       </TBODY>
     </TABLE>
   </DIV>
-  <DIV id="dbg" style="position:absolute; top:1rem; left:1rem"></DIV>
 </BODY></HTML>
 
