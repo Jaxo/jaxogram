@@ -77,8 +77,8 @@ var BA = 0.283;
 
 var filters = [
    "red", "green", "blue", "brightness", "saturation", "rotateHue",
-   "contrast", "blur", "invert", "opacity", "sepia", "dusk", "drop",
-   "extra1", "extra2", "extra3", "noir"
+   "contrast", "blur", "invert", "vignette", "sepia", "dusk", "sharpen",
+   "extra1", "extra2", "extra3", "noir", "moat"
 ];
 
 function multiply(a, b) {
@@ -195,6 +195,40 @@ function makeFilterNoir() {
    }
 }
 
+function makeFilterMoat() {
+   var moat = document.getElementById("moat").checked;
+   if (moat) {
+      return (
+         "<feConvolveMatrix order='5'" +
+         " kernelMatrix='" +
+         "1  1    1     1   1 " +
+         "1 -1.2 -1.2  -1.2 1 " +
+         "1 -1.2  -3   -1.2 1 " +
+         "1 -1.2 -1.2  -1.2 1 " +
+         "1  1  1  1  1'/>"
+      );
+   }else {
+      return "";
+   }
+}
+
+function makeSharpen(sharpen) {
+   var isSharpened = document.getElementById("sharpenChk").checked;
+   if (isSharpened) {
+      var sharpen = parseInt(document.getElementById("sharpen").value);
+      document.getElementById("sharpenVal").textContent =  sharpen.toFixed(0);
+      return (
+         "<feConvolveMatrix order='3'" +
+         " kernelMatrix='" +
+         " 1 -1  1 " +
+         "-1 " + -(sharpen/100) + " -1 " +
+         " 1 -1  1'/>"
+      );
+   }else {
+      return "";
+   }
+}
+
 function makeComponentTransfer() {
    var contrast = parseInt(document.getElementById("contrast").value);
    document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
@@ -285,6 +319,8 @@ function filterImage() {
    var componentTransfer = makeComponentTransfer();
    var gaussianBlur = makeGaussianBlur();
    var filterNoir = makeFilterNoir();
+   var filterMoat = makeFilterMoat();
+   var sharpen = makeSharpen();
    if (colorMatrix !== "") {
       filterValue += colorMatrix;
    }
@@ -299,6 +335,14 @@ function filterImage() {
    if (filterNoir != "") {
       if (filterValue !== "") filterValue += "\r\n";
       filterValue += filterNoir;
+   }
+   if (filterMoat != "") {
+      if (filterValue !== "") filterValue += "\r\n";
+      filterValue += filterMoat;
+   }
+   if (sharpen != "") {
+      if (filterValue !== "") filterValue += "\r\n";
+      filterValue += sharpen;
    }
    document.getElementById("filterValue").innerHTML = filterValue;
    if (filterValue === "") {
@@ -315,6 +359,8 @@ function filterImage() {
          componentTransfer +
          gaussianBlur +
          filterNoir +
+         filterMoat +
+         sharpen +
          "</filter></svg>#f0"
       );
       var images = document.querySelectorAll("img.filtered");
@@ -328,10 +374,13 @@ function filterImage() {
 window.onload = function() {
    filters.forEach(
       function(name) {
-         if ((name == "sepia") || (name == "dusk") || (name == "noir")) {
+         if ((name == "sepia") || (name == "dusk") || (name == "noir") || (name == "moat")) {
             document.getElementById(name).addEventListener('change', filterImage);
          }else {
             document.getElementById(name).addEventListener('input', filterImage);
+            if (name == "sharpen") {
+               document.getElementById(name+"Chk").addEventListener('change', filterImage);
+            }
          }
       }
    );
@@ -355,32 +404,40 @@ window.onload = function() {
             <!-- BUTTON onclick="filterImage();">Refresh</button -->
          </TD></TR>
          <TR><TD>
+               <!-- style="width: 100%;" -->
             <IMG
-               style="width: 100%;"
                src="Cirques.jpg"
                alt="Cirques"
             />
          </TD><TD>
+            <DIV style="position:relative">
+               <!-- style="position:absolute;left:0px;top:0px" -->
             <IMG
                class = "filtered"
-               style="width: 100%;"
                src="Cirques.jpg"
                alt="Cirques"
             />
+            <DIV id="over1" style="position:absolute; left:0; top:0;z-index:10"/>
+               <IMG src="Vignette.png" style="visibility:hidden"/>
+            </DIV>
+            </DIV>
          </TD></TR>
-         <TR><TD>
+         <TR><TD >
             <IMG
                style="width: 100%;"
                src="ClownFishes.jpg"
                alt="Clown Fishes"
             />
          </TD><TD>
+            <DIV style="position:relative">
+               <!-- style="width: 100%; position:absolute;left:0px;top:0px" -->
             <IMG
                class = "filtered"
-               style="width: 100%;"
                src="ClownFishes.jpg"
                alt="Clown Fishes"
             />
+            <DIV id="over1" style="position:absolute; left:0; top:0;z-index:10"/>GOOD BYE.</DIV>
+            </DIV>
          </TD></TR>
          <TR><TD colspan="2" style="height:0.5rem"></TD></TR>
          <TR><TD colspan="2">
@@ -388,15 +445,19 @@ window.onload = function() {
                <TBODY>
                  <TR><TD>Red</TD><TD><INPUT id="red" type="range" value="33" min="0" max="100" step="1"/><SPAN id=redVal></SPAN>
                  </TD><TD>Saturation</TD><TD><INPUT id="saturation" value="100" type="range"  min="-100" max="100"/><SPAN id="saturationVal"></SPAN>
-                 </TD><TD disabled="disabled">Invert</TD><TD disabled="disabled"><INPUT id="invert" type="range" min="0" max="100"/><SPAN id="invertVal"></SPAN>
+                 </TD><TD>Sharpen<INPUT id="sharpenChk" type="checkbox"/>
+                 </TD><TD><INPUT id="sharpen" type="range" value="100" min="0" max="100"/><SPAN id=sharpenVal></SPAN>
                  </TD></TR>
                  <TR><TD>Green</TD><TD><INPUT id="green" type="range" value="33" min="0" max="100" step="1"/><SPAN id="greenVal"></SPAN>
                  </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><SPAN id="rotateHueVal"></SPAN>
-                 </TD><TD disabled="disabled">Opacity</TD><TD disabled="disabled"><INPUT id="opacity" type="range" min="0" max="100"/><SPAN id="opacityVal"></SPAN>
+<!--
+                 </TD><TD disabled="disabled">Vignette</TD><TD disabled="disabled"><INPUT id="vignette" type="range" min="0" max="100"/><SPAN id="vignetteVal"></SPAN>
+-->
+                 </TD><TD colspan="2" align="center"><LABEL><INPUT id="vignette" type="checkbox"/>Vignette</LABEL></TD>
                  </TD></TR>
                  <TR><TD>Blue</TD><TD><INPUT id="blue" type="range" value="33" min="0" max="100" step="1"/><SPAN id="blueVal"></SPAN>
                  </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-200" max="299"/><SPAN id="contrastVal"></SPAN>
-                 </TD><TD disabled="disabled">Drop shadow</TD><TD disabled="disabled"><INPUT id="drop" type="range" min="0" max="100"/><SPAN id=dropVal></SPAN>
+                 </TD><TD disabled="disabled">Invert</TD><TD disabled="disabled"><INPUT id="invert" type="range" min="0" max="100"/><SPAN id="invertVal"></SPAN>
                  </TD></TR>
                  <TR><TD>Brightness</TD><TD><INPUT id="brightness" value="100" type="range"  min="0" max="100"/><SPAN id="brightnessVal"></SPAN>
                  </TD><TD>Blur</TD><TD><INPUT id="blur" value="0" type="range" min="0" max="10"/><SPAN id=blurVal></SPAN>
@@ -406,6 +467,8 @@ window.onload = function() {
                     <LABEL><INPUT id="dusk" type="checkbox"/>Dusk</LABEL>
                     &nbsp; &nbsp;
                     <LABEL><INPUT id="noir" type="checkbox"/>Noir</LABEL>
+                    &nbsp; &nbsp;
+                    <LABEL><INPUT id="moat" type="checkbox"/>Moat</LABEL>
                  </TD></TR>
                  <TR><TD disabled="disabled">Extra1</TD><TD disabled="disabled"><INPUT id="extra1" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
                  </TD><TD disabled="disabled">Extra2</TD><TD disabled="disabled"><INPUT id="extra2" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
