@@ -58,10 +58,10 @@ var networks = [
       name: "twitter",
       url: "http://www.twitter.com",
       win: null
-   },{
-      name: "twitpic",
-      url: "http://mobile.twitpic.com",
-      win: null
+// },{
+//    name: "twitpic",
+//    url: "http://mobile.twitpic.com",
+//    win: null
    },{
       name: "facebook",
       url: "http://www.facebook.com",
