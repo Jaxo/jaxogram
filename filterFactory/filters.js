@@ -14,7 +14,7 @@ var BA = 0.283;
 var filters = [
    "red", "green", "blue", "brightness", "saturation", "rotateHue",
    "contrast", "blur", "invert", "sepia", "dusk", "sharpen",
-   "extra1", "extra2", "extra3", "noir", "moat"
+   "extra2", "extra3", "noir", "moat"
 ];
 
 function initFilters() {
@@ -23,10 +23,14 @@ function initFilters() {
          if ((name == "sepia") || (name == "dusk") || (name == "noir") || (name == "moat")) {
             document.getElementById(name).addEventListener('change', filterImage);
          }else {
+if (!document.getElementById(name)) {
+   alert(name + " not found");
+}else {
             document.getElementById(name).addEventListener('input', filterImage);
             if (name == "sharpen") {
                document.getElementById(name+"Chk").addEventListener('change', filterImage);
             }
+}
          }
       }
    );
