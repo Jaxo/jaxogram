@@ -45,10 +45,22 @@ label {
    font-size: 1rem;
    font-weight: bold;
 }
+.vsliders div {
+  padding:0.2 1rem;
+  border-bottom-width: 3px;
+  border-bottom-style: solid;
+  display:inline;
+}
 .vsliders input {
-  color: green;
+  padding:0 0.05rem;
   width: 0.15rem;
   height: 18rem;
   margin: 0;
   /* -moz-transform: rotate(270deg) scale(1.0, 0.5); */
+}
+#vertVal {
+   position:absolute;
+   top:-0.2rem;left:0;
+   font-size:1.4rem;
+   color:red;
 }

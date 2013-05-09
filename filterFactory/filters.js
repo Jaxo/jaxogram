@@ -10,30 +10,50 @@ var BX = 0.928;  // 1-BW
 var RA = 0.143;
 var GA = 0.140;
 var BA = 0.283;
+var colorsLevels = [
+   [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000],
+   [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000],
+   [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000]
+];
 
 var filters = [
-   "red", "green", "blue", "brightness", "saturation", "rotateHue",
-   "contrast", "blur", "invert", "sepia", "dusk", "sharpen",
+   "brightness", "saturation", "rotateHue",
+   "contrast", "blur", "invert", "sepia", "dusk", "sharpen", "sharpenChk",
    "extra2", "extra3", "noir", "moat"
 ];
 
 function initFilters() {
    filters.forEach(
       function(name) {
-         if ((name == "sepia") || (name == "dusk") || (name == "noir") || (name == "moat")) {
-            document.getElementById(name).addEventListener('change', filterImage);
-         }else {
-if (!document.getElementById(name)) {
-   alert(name + " not found");
-}else {
-            document.getElementById(name).addEventListener('input', filterImage);
-            if (name == "sharpen") {
-               document.getElementById(name+"Chk").addEventListener('change', filterImage);
-            }
-}
+         var elt = document.getElementById(name);
+         if (elt.type === "checkbox") {
+            elt.addEventListener('change', filterImage);
+         }else if (elt.type === "range") {
+            elt.addEventListener('input', filterImage);
          }
       }
    );
+   var vertVal = document.getElementById("vertVal");
+   document.querySelector(".vsliders").onmouseout = function() {
+      vertVal.style.display = "none";
+   }
+   var vertSliders = document.querySelectorAll("input[orient='vertical']");
+   for (var i=0, max=vertSliders.length; i < max; ++i) {
+      var elt = vertSliders[i];
+      elt.onmouseover = function() {
+         vertVal.style.display = "";
+         vertVal.textContent = this.value;
+      }
+      elt.setAttribute("ix", i);
+      elt.oninput = updateColorsLevels;
+   }
+}
+
+function updateColorsLevels() {
+   vertVal.textContent = this.value;
+   var ix = parseInt(this.getAttribute("ix"));
+   colorsLevels[(ix/9)|0][ix%9] = ((parseInt(this.value))/255).toFixed(4);
+   filterImage();
 }
 
 function multiply(a, b) {
@@ -184,7 +204,7 @@ function makeSharpen(sharpen) {
    }
 }
 
-function makeComponentTransfer() {
+function makeContrast() {
    var contrast = parseInt(document.getElementById("contrast").value);
    document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
    contrast = (contrast/2) - 50;
@@ -216,23 +236,41 @@ function makeComponentTransfer() {
    );
 }
 
-function makeColorMatrix() {
-   var oldR = parseInt(document.getElementById("red").value);
-   var oldG = parseInt(document.getElementById("green").value);
-   var oldB = parseInt(document.getElementById("blue").value);
-   var newR = oldR + ((100-oldG)/2) + ((100-oldB)/2);
-   var newG = ((100-oldR)/2) + oldG + ((100-oldB)/2);
-   var newB = ((100-oldR)/2) + ((100-oldG)/2) + oldB;
-   document.getElementById("blueVal").textContent =  100 - (
-      parseInt(document.getElementById("redVal").textContent = (newR/3).toFixed(0)) +
-      parseInt(document.getElementById("greenVal").textContent = (newG/3).toFixed(0))
+function makeColorsLevels() {
+   var redLevels = "";
+   var greenLevels = "";
+   var blueLevels = "";
+   var colorsLevelsRow = colorsLevels[0];
+   redLevels += colorsLevelsRow[0];
+   for (var i=1; i < 9; ++i) {
+      redLevels += ", " + colorsLevelsRow[i];
+   }
+   var colorsLevelsRow = colorsLevels[1];
+   greenLevels += colorsLevelsRow[0];
+   for (var i=1; i < 9; ++i) {
+      greenLevels += ", " + colorsLevelsRow[i];
+   }
+   var colorsLevelsRow = colorsLevels[2];
+   blueLevels += colorsLevelsRow[0];
+   for (var i=1; i < 9; ++i) {
+      blueLevels += ", " + colorsLevelsRow[i];
+   }
+   return (
+      "<feComponentTransfer>" +
+      "<feFuncR type='table' tableValues='" + redLevels + "'/>" +
+      "<feFuncG type='table' tableValues='" + greenLevels + "'/>" +
+      "<feFuncB type='table' tableValues='" + blueLevels + "'/>" +
+      "</feComponentTransfer>"
    );
+}
+
+function makeColorMatrix() {
    var brightness = parseInt(document.getElementById("brightness").value);
    document.getElementById("brightnessVal").textContent =  brightness.toFixed(0);
    var vals = [
-      (newR * (brightness/100))/100, 0, 0, 0, 0,
-      0, (newG * (brightness/100))/100, 0, 0, 0,
-      0, 0, (newB * (brightness/100))/100, 0, 0,
+      brightness/100, 0, 0, 0, 0,
+      0, brightness/100, 0, 0, 0,
+      0, 0, brightness/100, 0, 0,
       0, 0, 0, 1, 0
    ];
    var saturation = parseInt(document.getElementById("saturation").value);
@@ -270,18 +308,22 @@ function makeColorMatrix() {
 
 function filterImage() {
    var filterValue = "";
+   var colorsLevels = makeColorsLevels();
    var colorMatrix = makeColorMatrix();
-   var componentTransfer = makeComponentTransfer();
+   var contrast = makeContrast();
    var gaussianBlur = makeGaussianBlur();
    var filterNoir = makeFilterNoir();
    var filterMoat = makeFilterMoat();
    var sharpen = makeSharpen();
+
+   filterValue = colorsLevels;
    if (colorMatrix !== "") {
+      if (filterValue !== "") filterValue += "\r\n";
       filterValue += colorMatrix;
    }
-   if (componentTransfer != "") {
+   if (contrast != "") {
       if (filterValue !== "") filterValue += "\r\n";
-      filterValue += componentTransfer;
+      filterValue += contrast;
    }
    if (gaussianBlur != "") {
       if (filterValue !== "") filterValue += "\r\n";
@@ -306,8 +348,9 @@ function filterImage() {
       var url = (
          "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
          "<filter id='f0'>" +
+         colorsLevels +
          colorMatrix +
-         componentTransfer +
+         contrast +
          gaussianBlur +
          filterNoir +
          filterMoat +
