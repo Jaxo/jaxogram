@@ -29,8 +29,24 @@ function buildImagesList(selectedIndex) {
 }
 
 window.onload = function() {
+   /*
+   avoid this:
+   "Sorry.\n" +
+   "For security reasons, \"vignettization\" cannot be applied\n"+
+   "to image data created outside of the browser.\n\n" +
+   "Please, use an image that has been obtained by pressing\n" +
+   "the \"Load additional images\" button."
+   */
+   var count = 0;
+   for (var i=0; i < imagesList.length; ++i) {
+      fileToBlob(
+         i,
+         function() { if (++count == imagesList.length) doOnLoad();}
+      );
+   }
+}
+function doOnLoad() {
    initFilters();
-
    document.getElementById('upldFile').onchange = function() {
       if (this.files && this.files[0]) {
          var curLen = imagesList.length;
@@ -84,4 +100,21 @@ window.onload = function() {
    buildImagesList();
 }
 
-
+function fileToBlob(i, whenDone) {
+   // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
+   var image = imagesList[i];
+   var img = new Image();
+   img.onload = function() {
+      var canvas = document.createElement("CANVAS");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      canvas.toBlob(
+         function(blob) {
+            image.src = URL.createObjectURL(blob);
+            whenDone();
+         }
+      );
+   }
+   img.src = image.src;
+}

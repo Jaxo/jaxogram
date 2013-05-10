@@ -375,7 +375,6 @@ function filterImage() {
          document.getElementById("vignettedImage").style.display = "none";
          filteredImage.style.filter = "url(\"" + url + "\")";
          filteredImage.style.display = "";
-
       }
    }
 }
@@ -383,17 +382,6 @@ function filterImage() {
 function vignetize(filterValue)
 {
    var img = document.getElementById("originalImage");
-   if (!img.src.startsWith("blob")) {
-      alert(
-        "Sorry.\n" +
-        "For security reasons, \"vignettization\" cannot be applied\n"+
-        "to image data created outside of the browser.\n\n" +
-        "Please, use an image that has been obtained by pressing\n" +
-        "the \"Load additional images\" button."
-      );
-      document.getElementById("vignetteChk").checked = false;
-      return;
-   }
    var f1 = "f1";
    var f2 = "f2";
    var f3 = "f3";
@@ -478,3 +466,4 @@ function vignetize(filterValue)
    vignettedImage.style.display = "";
    document.getElementById("filteredImage").style.display = "none";
 }
+
