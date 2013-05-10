@@ -10,6 +10,7 @@ var BX = 0.928;  // 1-BW
 var RA = 0.143;
 var GA = 0.140;
 var BA = 0.283;
+var colorsLevelsBase = [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000];
 var colorsLevels = [
    [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000],
    [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000],
@@ -20,7 +21,7 @@ var filters = [
    "brightness", "saturation", "rotateHue",
    "contrast", "blur", "sepia", "dusk", "sharpen", "sharpenChk",
    "extra2", "extra3", "noir", "moat",
-   "vignetteChk", "vigSize", "vigBrgt"
+   "vignetteChk", "vigRadius", "vigBright"
 
 ];
 
@@ -317,6 +318,7 @@ function filterImage() {
    var filterNoir = makeFilterNoir();
    var filterMoat = makeFilterMoat();
    var sharpen = makeSharpen();
+   var vigRadius, vigBright;
 
    filterValue = colorsLevels;
    if (colorMatrix !== "") {
@@ -343,8 +345,17 @@ function filterImage() {
       if (filterValue !== "") filterValue += "\r\n";
       filterValue += sharpen;
    }
-   document.getElementById("filterValue").innerHTML = filterValue;
    var isVignetted = document.getElementById("vignetteChk").checked;
+   if (isVignetted) {
+      if (filterValue !== "") filterValue += "\r\n";
+      vigRadius = parseInt(document.getElementById("vigRadius").value) / 100;
+      vigBright = parseInt(document.getElementById("vigBright").value) / 100;
+      document.getElementById("vigRadiusVal").textContent =  vigRadius;
+      document.getElementById("vigBrightVal").textContent =  vigBright;
+      filterValue += "<feVignette radius='" + vigRadius + "' bright='" + vigBright + "'/>";
+   }
+   document.getElementById("filterValue").innerHTML = filterValue;
+
    var originalImage = document.getElementById("originalImage");
    var filteredImage = document.getElementById("filteredImage");
    if (filterValue === "") {
@@ -380,7 +391,7 @@ function filterImage() {
             "</svg>"
          );
       }else {
-         svg = vignetize(baseFilter, originalImage);
+         svg = vignetize(baseFilter, originalImage, vigRadius, vigBright);
       }
       filteredImage.src = URL.createObjectURL(
          new Blob([svg], {type:"image/svg+xml"})
@@ -388,16 +399,14 @@ function filterImage() {
    }
 }
 
-function vignetize(baseFilter, originalImage)
+function vignetize(baseFilter, originalImage, r, b)
 {
    var f2 = "f2";
    var f3 = "f3";
    var f4 = "f4";
-   var border = 6;
+   // var border = 6;
    var w = originalImage.width;    // 450
    var h = originalImage.height;   // 281
-   var r = parseInt(document.getElementById("vigSize").value) / 100;
-   var b = parseInt(document.getElementById("vigBrgt").value) / 100;
    var m, t, u, p, q, cx, cy;
    if (h < w) {
       m = h;
@@ -412,6 +421,7 @@ function vignetize(baseFilter, originalImage)
       p = h/w;
       q = 1.0;
    }
+   var border = (m * 0.0214) | 0;
    return (
      "<svg width='" + m + "' height='" + m + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
        "<g transform='translate(" + t + "," + u + ")'>" +
