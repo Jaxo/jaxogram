@@ -345,50 +345,55 @@ function filterImage() {
    }
    document.getElementById("filterValue").innerHTML = filterValue;
    var isVignetted = document.getElementById("vignetteChk").checked;
+   var originalImage = document.getElementById("originalImage");
+   var fylteredImage = document.getElementById("fylteredImage");
    if (filterValue === "") {
-      document.getElementById("filteredImage").style.filter = "";
+      fylteredImage.src = originalImage.src;
    }else {
+      var dodo = (
+         colorsLevels +
+         colorMatrix +
+         contrast +
+         gaussianBlur +
+         filterNoir +
+         filterMoat +
+         sharpen
+      );
       if (isVignetted) {
-         vignetize(
-            colorsLevels +
-            colorMatrix +
-            contrast +
-            gaussianBlur +
-            filterNoir +
-            filterMoat +
-            sharpen
-         );
+         vignetize(dodo, originalImage);
       }else {
-         var url = (
-            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
-            "<filter id='f0'>" +
-            colorsLevels +
-            colorMatrix +
-            contrast +
-            gaussianBlur +
-            filterNoir +
-            filterMoat +
-            sharpen +
-            "</filter></svg>#f0"
+         var w = originalImage.width;
+         var h = originalImage.height;
+         var f1 = "f1";
+         var foo = (
+           "<svg width='" + w + "' height='" + h + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+               "<g>" +
+                  "<image xlink:href='" + originalImage.src +
+                  "' width='" + w + "' height='" + h + "' filter='url(data:image/svg+xml," +
+                  escape(
+                     "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f1 + "'>" +
+                     dodo +
+                     "</filter></svg>"
+                  ) +
+                  "#" + f1 + ")'></image>" +
+               "</g>" +
+           "</svg>"
          );
-         var filteredImage = document.getElementById("filteredImage");
-         document.getElementById("vignettedImage").style.display = "none";
-         filteredImage.style.filter = "url(\"" + url + "\")";
-         filteredImage.style.display = "";
+         var fylteredImage = document.getElementById("fylteredImage");
+         fylteredImage.src = URL.createObjectURL(new Blob([foo], {type:"image/svg+xml"}));
       }
    }
 }
 
-function vignetize(filterValue)
+function vignetize(filterValue, originalImage)
 {
-   var img = document.getElementById("originalImage");
    var f1 = "f1";
    var f2 = "f2";
    var f3 = "f3";
    var f4 = "f4";
    var border = 6;
-   var w = img.width;    // 450
-   var h = img.height;   // 281
+   var w = originalImage.width;    // 450
+   var h = originalImage.height;   // 281
    var r = parseInt(document.getElementById("vigSize").value) / 100;
    var b = parseInt(document.getElementById("vigBrgt").value) / 100;
    var m, t, u, p, q, cx, cy;
@@ -409,22 +414,17 @@ function vignetize(filterValue)
      "<svg width='" + m + "' height='" + m + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
        "<g transform='translate(" + t + "," + u + ")'>" +
          "<g>" +
-            "<image xlink:href='" + img.src +
+            "<image xlink:href='" + originalImage.src +
             "' width='" + w + "' height='" + h + "' filter='url(data:image/svg+xml," +
             escape(
                "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f1 + "'>" +
                filterValue +
-//k            "<feComponentTransfer>" +
-//k               "<feFuncR type='table' tableValues='0.0000 0.0627 0.1255 0.2118 0.2824 0.3412 0.4510 0.5451 0.6314 0.7059 0.7686 0.8118 0.8549 0.9059 0.9412 0.9686 1.0000'/>" +
-//k               "<feFuncG type='table' tableValues='0.0000 0.0471 0.0941 0.1451 0.2039 0.2745 0.3412 0.4196 0.4980 0.5686 0.6392 0.7216 0.7686 0.8157 0.8549 0.8824 0.8941'/>" +
-//k               "<feFuncB type='table' tableValues='0.0706 0.1608 0.2471 0.3216 0.3608 0.4471 0.5020 0.5529 0.5804 0.6118 0.6275 0.6588 0.6824 0.7255 0.7843 0.8706 1.0000'/>" +
-//k            "</feComponentTransfer>" +
                "</filter></svg>"
             ) +
             "#" + f1 + ")'></image>" +
          "</g>" +
          "<g>" +
-            "<image xlink:href='" + img.src +
+            "<image xlink:href='" + originalImage.src +
             "' width='" + w + "' height='" + h +
             "' filter='url(data:image/svg+xml," +
             escape(
@@ -461,9 +461,7 @@ function vignetize(filterValue)
        "</g>" +
      "</svg>"
    );
-   var vignettedImage = document.getElementById("vignettedImage");
-   vignettedImage.src = URL.createObjectURL(new Blob([foo], {type:"image/svg+xml"}));
-   vignettedImage.style.display = "";
-   document.getElementById("filteredImage").style.display = "none";
+   var fylteredImage = document.getElementById("fylteredImage");
+   fylteredImage.src = URL.createObjectURL(new Blob([foo], {type:"image/svg+xml"}));
 }
 

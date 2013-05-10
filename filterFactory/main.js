@@ -62,7 +62,6 @@ function doOnLoad() {
       }
    }
    document.getElementById("originalImage").onload = function() {
-      document.getElementById("filteredImage").src = this.src;
       filterImage();
    }
    document.getElementById('imagesList').onchange = function() {
