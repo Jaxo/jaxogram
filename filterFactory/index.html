@@ -32,15 +32,19 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
             <SELECT id="imagesList"></SELECT>
             <BUTTON id="upldPrev" disabled>&lt; Prev</BUTTON>
             <BUTTON id="upldNext" disabled>Next &gt;</BUTTON>
+         </TD></TR><TR><TD colspan="2">
+            <HR/>
          </TD></TR><TR><TD>
             <IMG id="originalImage" src="Cirques.jpg" alt="Original Image"/>
          </TD><TD align="right">
             <IMG id="filteredImage" src="Cirques.jpg" alt="Filtered Image"/>
-         </TD></TR><TR><TD colspan="2" style="height:0.5rem">
+            <IMG id="vignettedImage" style="display:none"/>
+         </TD></TR><TR><TD colspan="2">
+            <HR/>
          </TD></TR><TR><TD colspan="2">
             <DIV style="position:relative">
             <SPAN id="vertVal"></SPAN>
-            <TABLE class="sliders">
+            <TABLE border="1" class="sliders">
                <TBODY>
                  <TR>
                  <TD rowspan="5" colspan="2" class="vsliders" style="min-width:33rem">
@@ -84,13 +88,23 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
                  </TD>
 
                  </TR><TR>
-                 </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><BR/><SPAN id="rotateHueVal"></SPAN><I style="color:red">&deg;</I>
+                 </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><BR/><SPAN id="rotateHueVal">
                  </TD><TD>Brightness</TD><TD><INPUT id="brightness" value="100" type="range"  min="0" max="200"/><BR/><SPAN id="brightnessVal"></SPAN>
                  </TD>
 
                  </TR><TR>
                  </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-200" max="299"/><SPAN id="contrastVal"></SPAN>
-                 </TD><TD disabled="disabled">Invert</TD><TD disabled="disabled"><INPUT id="invert" type="range" min="0" max="100"/><SPAN id="invertVal"></SPAN>
+                 </TD><TD>Vignette<INPUT id="vignetteChk" type="checkbox"/>
+                 </TD><TD>
+                 <TABLE id="vignetteParams">
+                    <TR>
+                    <TD>Size:</TD><TD>&nbsp;<SPAN id="vigSizeVal">65</SPAN></TD>
+                    <TD><INPUT id="vigSize" type="range" value="65" min="0" max="100"/></TD>
+                    </TR><TR>
+                    <TD>Brgh:</TD><TD>&nbsp;<SPAN id="vigBrgtVal">60</SPAN></TD>
+                    <TD><INPUT id="vigBrgt" type="range" value="60" min="0" max="100"/></TD>
+                    </TR>
+                 </TABLE>
                  </TD>
 
                  </TR><TR>
@@ -117,8 +131,10 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
       </TBODY>
     </TABLE>
   </DIV>
+<DIV>
+</DIV>
   <DIV style="text-align:right;font-size:0.9rem;width:95%">
-     Copyright &copy; Jaxo Inc. 2013
+     Build 2013.05.10.08.51 &nbsp; &nbsp; Copyright &copy; Jaxo Inc. 2013
   </DIV>
 </BODY></HTML>
 

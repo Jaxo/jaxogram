@@ -18,8 +18,10 @@ var colorsLevels = [
 
 var filters = [
    "brightness", "saturation", "rotateHue",
-   "contrast", "blur", "invert", "sepia", "dusk", "sharpen", "sharpenChk",
-   "extra2", "extra3", "noir", "moat"
+   "contrast", "blur", "sepia", "dusk", "sharpen", "sharpenChk",
+   "extra2", "extra3", "noir", "moat",
+   "vignetteChk", "vigSize", "vigBrgt"
+
 ];
 
 function initFilters() {
@@ -342,22 +344,137 @@ function filterImage() {
       filterValue += sharpen;
    }
    document.getElementById("filterValue").innerHTML = filterValue;
+   var isVignetted = document.getElementById("vignetteChk").checked;
    if (filterValue === "") {
       document.getElementById("filteredImage").style.filter = "";
    }else {
-      var url = (
-         "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
-         "<filter id='f0'>" +
-         colorsLevels +
-         colorMatrix +
-         contrast +
-         gaussianBlur +
-         filterNoir +
-         filterMoat +
-         sharpen +
-         "</filter></svg>#f0"
-      );
-      document.getElementById("filteredImage").style.filter = "url(\"" + url + "\")";
+      if (isVignetted) {
+         vignetize(
+            colorsLevels +
+            colorMatrix +
+            contrast +
+            gaussianBlur +
+            filterNoir +
+            filterMoat +
+            sharpen
+         );
+      }else {
+         var url = (
+            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'>" +
+            "<filter id='f0'>" +
+            colorsLevels +
+            colorMatrix +
+            contrast +
+            gaussianBlur +
+            filterNoir +
+            filterMoat +
+            sharpen +
+            "</filter></svg>#f0"
+         );
+         var filteredImage = document.getElementById("filteredImage");
+         document.getElementById("vignettedImage").style.display = "none";
+         filteredImage.style.filter = "url(\"" + url + "\")";
+         filteredImage.style.display = "";
+
+      }
    }
 }
 
+function vignetize(filterValue)
+{
+   var img = document.getElementById("originalImage");
+   if (!img.src.startsWith("blob")) {
+      alert(
+        "Sorry.\n" +
+        "For security reasons, \"vignettization\" cannot be applied\n"+
+        "to image data created outside of the browser.\n\n" +
+        "Please, use an image that has been obtained by pressing\n" +
+        "the \"Load additional images\" button."
+      );
+      document.getElementById("vignetteChk").checked = false;
+      return;
+   }
+   var f1 = "f1";
+   var f2 = "f2";
+   var f3 = "f3";
+   var f4 = "f4";
+   var border = 6;
+   var w = img.width;    // 450
+   var h = img.height;   // 281
+   var r = parseInt(document.getElementById("vigSize").value) / 100;
+   var b = parseInt(document.getElementById("vigBrgt").value) / 100;
+   var m, t, u, p, q, cx, cy;
+   if (h < w) {
+      m = h;
+      t = (h-w)/2;       // -84
+      u = 0;             // 0
+      p = 1.0;
+      q = w/h;           // 1.6014
+   }else {
+      m = w;
+      t = 0;
+      u = (w-h)/2;
+      p = h/w;
+      q = 1.0;
+   }
+   var foo = (
+     "<svg width='" + m + "' height='" + m + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+       "<g transform='translate(" + t + "," + u + ")'>" +
+         "<g>" +
+            "<image xlink:href='" + img.src +
+            "' width='" + w + "' height='" + h + "' filter='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f1 + "'>" +
+               filterValue +
+//k            "<feComponentTransfer>" +
+//k               "<feFuncR type='table' tableValues='0.0000 0.0627 0.1255 0.2118 0.2824 0.3412 0.4510 0.5451 0.6314 0.7059 0.7686 0.8118 0.8549 0.9059 0.9412 0.9686 1.0000'/>" +
+//k               "<feFuncG type='table' tableValues='0.0000 0.0471 0.0941 0.1451 0.2039 0.2745 0.3412 0.4196 0.4980 0.5686 0.6392 0.7216 0.7686 0.8157 0.8549 0.8824 0.8941'/>" +
+//k               "<feFuncB type='table' tableValues='0.0706 0.1608 0.2471 0.3216 0.3608 0.4471 0.5020 0.5529 0.5804 0.6118 0.6275 0.6588 0.6824 0.7255 0.7843 0.8706 1.0000'/>" +
+//k            "</feComponentTransfer>" +
+               "</filter></svg>"
+            ) +
+            "#" + f1 + ")'></image>" +
+         "</g>" +
+         "<g>" +
+            "<image xlink:href='" + img.src +
+            "' width='" + w + "' height='" + h +
+            "' filter='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f2 + "'>" +
+               "<feGaussianBlur stdDeviation='2'/>" +
+               "<feColorMatrix type='matrix' values='" + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 1 0'/>" +
+               "</filter></svg>"
+            ) +
+            "#" + f2 +
+            ")' mask ='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'>" +
+               "<mask id='" + f3 +
+               "' maskUnits='objectBoundingBox' maskContentUnits='objectBoundingBox'>" +
+               "<rect x='0' y='0' width='1' height='1' stroke-width='0'" +
+               " fill='url(data:image/svg+xml," +
+               escape(
+                  "<svg xmlns='http://www.w3.org/2000/svg'><radialGradient id='" + f3 + "'" +
+                     " gradientUnits='objectBoundingBox' cx='" + (1/(2*p)) + "' cy='" + (1/(2*q)) + "' r='" + r + "'" +
+                     " gradientTransform='scale(" + p + "," + q + ")'" +
+                  ">" +
+                     "<stop offset='0.4' stop-color='#ffffff' stop-opacity='0'/>" +
+                     "<stop offset='0.6' stop-color='#ffffff' stop-opacity='1'/>" +
+                  "</radialGradient></svg>"
+               ) +
+               "#" + f3 + ")'/>" +
+               "</mask></svg>"
+            ) +
+            "#" + f3 + ")'></image>" +
+         "</g>" +
+         "<g fill='none' stroke='white' stroke-width='" + border + "' >" +
+           "<rect x='" + ((border/2)-t) + "' y='" + ((border/2)-u) + "' width='" + (m-border) + "' height='" + (m-border) + "'/>" +
+         "</g>" +
+       "</g>" +
+     "</svg>"
+   );
+   var vignettedImage = document.getElementById("vignettedImage");
+   vignettedImage.src = URL.createObjectURL(new Blob([foo], {type:"image/svg+xml"}));
+   vignettedImage.style.display = "";
+   document.getElementById("filteredImage").style.display = "none";
+}

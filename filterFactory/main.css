@@ -3,10 +3,11 @@ html, body {
   width: 100%;
   padding: 0;
   font-family: "Open Sans", sans-serif;
-  background-color: #D0D0D0
+  background-color: #808080
 }
 table {
    border-collapse: collapse;
+   width: 100%;
 }
 td[disabled] {
    opacity: 0.20;
@@ -14,22 +15,23 @@ td[disabled] {
 .sliders tr {
    height: 4rem;
    background-color:#B0B0B0;
-   border-bottom: solid 0.5rem #D0D0D0;
+   border-bottom: solid 0.5rem #808080;
 }
 .sliders tr:nth-child(odd) {
    background-color:#B0B0B0;
 }
 .sliders tr:first-child td:nth-child(odd) {
    border-left: none;
+   padding: 0;
 }
 .sliders tr:first-child td:nth-child(even) {
-  border-left: solid 0.5rem #D0D0D0;
+  border-left: solid 0.5rem #808080;
   font-size: 1rem;
   font-weight: bold;
   padding: 0 1rem;
 }
 .sliders td:nth-child(odd) {
-  border-left: solid 0.5rem #D0D0D0;
+  border-left: solid 0.5rem #808080;
   font-size: 1rem;
   font-weight: bold;
   padding: 0 1rem;
@@ -64,4 +66,20 @@ label {
    top:-0.2rem;left:0;
    font-size:1.4rem;
    color:red;
+}
+table #vignetteParams {
+   margin-left: -2rem;
+}
+table #vignetteParams tr {
+   height: 1.2rem;
+   border:none;
+}
+table #vignetteParams td {
+   padding: 0;
+   border:none;
+   font-size:0.8rem;
+   color:black;
+}
+table #vignetteParams td input {
+   width: 15rem;
 }
