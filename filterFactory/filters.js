@@ -346,48 +346,50 @@ function filterImage() {
    document.getElementById("filterValue").innerHTML = filterValue;
    var isVignetted = document.getElementById("vignetteChk").checked;
    var originalImage = document.getElementById("originalImage");
-   var fylteredImage = document.getElementById("fylteredImage");
+   var filteredImage = document.getElementById("filteredImage");
    if (filterValue === "") {
-      fylteredImage.src = originalImage.src;
+      filteredImage.src = originalImage.src;
    }else {
-      var dodo = (
-         colorsLevels +
-         colorMatrix +
-         contrast +
-         gaussianBlur +
-         filterNoir +
-         filterMoat +
-         sharpen
+      var w = originalImage.width;    // 450
+      var h = originalImage.height;   // 281
+      var baseFilter = (
+        "<g>" +
+           "<image xlink:href='" + originalImage.src +
+           "' width='" + w +
+           "' height='" + h +
+           "' filter='url(data:image/svg+xml," +
+           escape(
+              "<svg xmlns='http://www.w3.org/2000/svg'><filter id='f1'>" +
+              colorsLevels +
+              colorMatrix +
+              contrast +
+              gaussianBlur +
+              filterNoir +
+              filterMoat +
+              sharpen +
+              "</filter></svg>"
+           ) +
+           "#f1)'></image>" +
+        "</g>"
       );
-      if (isVignetted) {
-         vignetize(dodo, originalImage);
-      }else {
-         var w = originalImage.width;
-         var h = originalImage.height;
-         var f1 = "f1";
-         var foo = (
-           "<svg width='" + w + "' height='" + h + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
-               "<g>" +
-                  "<image xlink:href='" + originalImage.src +
-                  "' width='" + w + "' height='" + h + "' filter='url(data:image/svg+xml," +
-                  escape(
-                     "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f1 + "'>" +
-                     dodo +
-                     "</filter></svg>"
-                  ) +
-                  "#" + f1 + ")'></image>" +
-               "</g>" +
-           "</svg>"
+      var svg;
+      if (!isVignetted) {
+         svg = (
+            "<svg width='" + w + "' height='" + h + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+            baseFilter +
+            "</svg>"
          );
-         var fylteredImage = document.getElementById("fylteredImage");
-         fylteredImage.src = URL.createObjectURL(new Blob([foo], {type:"image/svg+xml"}));
+      }else {
+         svg = vignetize(baseFilter, originalImage);
       }
+      filteredImage.src = URL.createObjectURL(
+         new Blob([svg], {type:"image/svg+xml"})
+      );
    }
 }
 
-function vignetize(filterValue, originalImage)
+function vignetize(baseFilter, originalImage)
 {
-   var f1 = "f1";
    var f2 = "f2";
    var f3 = "f3";
    var f4 = "f4";
@@ -410,19 +412,10 @@ function vignetize(filterValue, originalImage)
       p = h/w;
       q = 1.0;
    }
-   var foo = (
+   return (
      "<svg width='" + m + "' height='" + m + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
        "<g transform='translate(" + t + "," + u + ")'>" +
-         "<g>" +
-            "<image xlink:href='" + originalImage.src +
-            "' width='" + w + "' height='" + h + "' filter='url(data:image/svg+xml," +
-            escape(
-               "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f1 + "'>" +
-               filterValue +
-               "</filter></svg>"
-            ) +
-            "#" + f1 + ")'></image>" +
-         "</g>" +
+         baseFilter +
          "<g>" +
             "<image xlink:href='" + originalImage.src +
             "' width='" + w + "' height='" + h +
@@ -461,7 +454,5 @@ function vignetize(filterValue, originalImage)
        "</g>" +
      "</svg>"
    );
-   var fylteredImage = document.getElementById("fylteredImage");
-   fylteredImage.src = URL.createObjectURL(new Blob([foo], {type:"image/svg+xml"}));
 }
 
