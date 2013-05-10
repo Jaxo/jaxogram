@@ -192,9 +192,9 @@ function makeFilterMoat() {
 
 function makeSharpen(sharpen) {
    var isSharpened = document.getElementById("sharpenChk").checked;
+   var sharpen = parseInt(document.getElementById("sharpen").value);
+   document.getElementById("sharpenVal").textContent =  sharpen.toFixed(0);
    if (isSharpened) {
-      var sharpen = parseInt(document.getElementById("sharpen").value);
-      document.getElementById("sharpenVal").textContent =  sharpen.toFixed(0);
       return (
          "<feConvolveMatrix order='3'" +
          " kernelMatrix='" +
@@ -346,12 +346,12 @@ function filterImage() {
       filterValue += sharpen;
    }
    var isVignetted = document.getElementById("vignetteChk").checked;
+   vigRadius = parseInt(document.getElementById("vigRadius").value) / 100;
+   vigBright = parseInt(document.getElementById("vigBright").value) / 100;
+   document.getElementById("vigRadiusVal").textContent =  vigRadius;
+   document.getElementById("vigBrightVal").textContent =  vigBright;
    if (isVignetted) {
       if (filterValue !== "") filterValue += "\r\n";
-      vigRadius = parseInt(document.getElementById("vigRadius").value) / 100;
-      vigBright = parseInt(document.getElementById("vigBright").value) / 100;
-      document.getElementById("vigRadiusVal").textContent =  vigRadius;
-      document.getElementById("vigBrightVal").textContent =  vigBright;
       filterValue += "<feVignette radius='" + vigRadius + "' bright='" + vigBright + "'/>";
    }
    document.getElementById("filterValue").innerHTML = filterValue;

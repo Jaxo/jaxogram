@@ -46,7 +46,8 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
             <TABLE class="sliders">
                <TBODY>
                  <TR>
-                 <TD rowspan="5" colspan="2" class="vsliders" style="min-width:33rem">
+                 <TD rowspan="5" colspan="2" class="vsliders">
+                    <DIV style="padding:0">
                     <DIV style="border-bottom-color:red">
                        <SPAN><INPUT id="red0" type="range" orient="vertical"   value="0" min="0" max="255" step="1"/></SPAN>
                        <SPAN><INPUT id="red1" type="range" orient="vertical"  value="32" min="0" max="255" step="1"/></SPAN>
@@ -80,27 +81,28 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
                        <SPAN><INPUT id="blue7" type="range" orient="vertical" value="224" min="0" max="255" step="1"/></SPAN>
                        <SPAN><INPUT id="blue8" type="range" orient="vertical" value="255" min="0" max="255" step="1"/></SPAN>
                     </DIV>
+                    </DIV>
                  </TD>
                  </TD><TD>Saturation</TD><TD><INPUT id="saturation" value="100" type="range"  min="-100" max="100"/><SPAN id="saturationVal"></SPAN>
-                 </TD><TD>Sharpen<INPUT id="sharpenChk" type="checkbox"/>
+                 </TD><TD>Sharpen<BR/><INPUT id="sharpenChk" type="checkbox"/>
                  </TD><TD><INPUT id="sharpen" type="range" value="100" min="0" max="100"/><SPAN id=sharpenVal></SPAN>
                  </TD>
 
                  </TR><TR>
-                 </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><BR/><SPAN id="rotateHueVal">
-                 </TD><TD>Brightness</TD><TD><INPUT id="brightness" value="100" type="range"  min="0" max="200"/><BR/><SPAN id="brightnessVal"></SPAN>
+                 </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><SPAN id="rotateHueVal">
+                 </TD><TD>Brightness</TD><TD><INPUT id="brightness" value="100" type="range"  min="0" max="200"/><SPAN id="brightnessVal"></SPAN>
                  </TD>
 
                  </TR><TR>
                  </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-200" max="299"/><SPAN id="contrastVal"></SPAN>
-                 </TD><TD>Vignette<INPUT id="vignetteChk" type="checkbox"/>
+                 </TD><TD>Vignette<BR/><INPUT id="vignetteChk" type="checkbox"/>
                  </TD><TD>
                  <TABLE id="vignetteParams">
                     <TR>
-                    <TD>Radius:</TD><TD>&nbsp;<SPAN id="vigRadiusVal">65</SPAN></TD>
+                    <TD>Radius:</TD><TD>&nbsp;<SPAN id="vigRadiusVal"></SPAN></TD>
                     <TD><INPUT id="vigRadius" type="range" value="65" min="0" max="100"/></TD>
                     </TR><TR>
-                    <TD>Brigth:</TD><TD>&nbsp;<SPAN id="vigBrightVal">60</SPAN></TD>
+                    <TD>Brigth:</TD><TD>&nbsp;<SPAN id="vigBrightVal"></SPAN></TD>
                     <TD><INPUT id="vigBright" type="range" value="60" min="0" max="100"/></TD>
                     </TR>
                  </TABLE>
