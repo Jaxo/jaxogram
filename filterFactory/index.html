@@ -9,9 +9,11 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
 <META charset="utf-8">
 <META name="viewport" content="width=device-width">
 
+<LINK rel="stylesheet" type="text/css" href="menu.css"/>
 <LINK rel="stylesheet" type="text/css" href="main.css"/>
 <SCRIPT type="text/javascript" src="main.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="filters.js"></SCRIPT>
+<SCRIPT type="text/javascript" src="FilesManager.js"></SCRIPT>
 
 <TITLE>Filters' factory<</TITLE>
 </HEAD>
@@ -26,12 +28,17 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
                id="filterValue" rows="4" style="width:100%;margins:auto"
             ></TEXTAREA>
             <!-- BUTTON onclick="filterImage();">Refresh</button -->
-         </TD></TR><TR><TD colspan="2">
+         </TD></TR><TR><TD>
             <INPUT type="file" id="upldFile" multiple accept="image/" style="display:none"/>
             <BUTTON id="upldBtn">Load additional images</BUTTON>
             <SELECT id="imagesList"></SELECT>
             <BUTTON id="upldPrev" disabled>&lt; Prev</BUTTON>
             <BUTTON id="upldNext" disabled>Next &gt;</BUTTON>
+         </TD><TD align="right">
+            <UL class = "menu">
+            <LI id="loadFilter">Load Filter</LI>
+            <LI id="saveFilter">Save Filter</LI>
+            </UL>
          </TD></TR><TR><TD colspan="2">
             <HR/>
          </TD></TR><TR><TD>
@@ -102,7 +109,7 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
                     <TD>Radius:</TD><TD>&nbsp;<SPAN id="vigRadiusVal"></SPAN></TD>
                     <TD><INPUT id="vigRadius" type="range" value="65" min="0" max="100"/></TD>
                     </TR><TR>
-                    <TD>Brigth:</TD><TD>&nbsp;<SPAN id="vigBrightVal"></SPAN></TD>
+                    <TD>Bright:</TD><TD>&nbsp;<SPAN id="vigBrightVal"></SPAN></TD>
                     <TD><INPUT id="vigBright" type="range" value="60" min="0" max="100"/></TD>
                     </TR>
                  </TABLE>

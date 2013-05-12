@@ -45,8 +45,21 @@ window.onload = function() {
       );
    }
 }
+function whenNewFilter(name, data) {
+   alert(name + " => \"" + data + "\"");
+}
+function getFilterData(name) {
+   return "Zigou gua leu bou (" +  name + ")";
+}
 function doOnLoad() {
    initFilters();
+   createFilesManager();
+   document.getElementById("loadFilter").appendChild(
+      filesmanager.openList(whenNewFilter)
+   );
+   document.getElementById("saveFilter").appendChild(
+      filesmanager.saveList(getFilterData)
+   );
    document.getElementById('upldFile').onchange = function() {
       if (this.files && this.files[0]) {
          var curLen = imagesList.length;
