@@ -47,11 +47,16 @@ window.onload = function() {
 }
 function onFilterOpened(name, data) {
    document.getElementById("filterName").textContent = name;
-   alert(name + " => \"" + data + "\""); // <== parse the data!
+   // FIXME: parse the data!
+   alert(
+      "Sorry: \"Load\" isn't implemented yet, but will be very soon.\n" +
+      "It should create the proper layout for this filter data:\n\n[" +
+      name + "]\n---------------\n" + data
+   );
 }
 function getFilterData(name) {
    document.getElementById("filterName").textContent = name;
-   return document.getElementById("filterValue");
+   return document.getElementById("filterValue").textContent;
 }
 function doOnLoad() {
    initFilters();

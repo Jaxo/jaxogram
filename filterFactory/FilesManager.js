@@ -1,20 +1,20 @@
 function createFilesManager() {
-   localStorage.removeItem("jaxo_filters");
-   localStorage.setItem(
-      "jaxo_filters",
-      JSON.stringify([
-         {
-            name: "Aurora",
-            data: "AaAaAaAa"
-         }, {
-            name: "Nicole #1",
-            data: "BbBbBbBb"
-         }, {
-            name: "Nicole #2",
-            data: "CcCcCcCc"
-         }
-      ])
-   );
+// localStorage.removeItem("jaxo_filters");
+// localStorage.setItem(
+//    "jaxo_filters",
+//    JSON.stringify([
+//       {
+//          name: "Aurora",
+//          data: "AaAaAaAa"
+//       }, {
+//          name: "Nicole #1",
+//          data: "BbBbBbBb"
+//       }, {
+//          name: "Nicole #2",
+//          data: "CcCcCcCc"
+//       }
+//    ])
+// );
    if (!window.filesmanager) {
       Object.defineProperty(
          window,
@@ -81,6 +81,7 @@ function createFilesManager() {
                            }
                         }
                         files[index].data = getFileData(files[index].name);
+                        localSave();
                         alert(files[index].name + " saved.");
                      },
                      configurable: false,
