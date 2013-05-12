@@ -190,6 +190,13 @@ public class JaxogramServlet extends HttpServlet
                );
                writer.printf(data);
 
+            }else if (op.equals("publish")) {
+//             resp.setContentType("application/octet-stream");
+               resp.setHeader(
+                  "Content-Disposition",
+                  "attachment; filename=\"filter.jxf\""
+               );
+               writer.print(req.getParameter("data"));
             }else {
                Network network = makeNetwork(
                   (restVersion == 0)? "orkut" : req.getParameter("NET"),
