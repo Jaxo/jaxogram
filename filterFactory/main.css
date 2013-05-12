@@ -91,3 +91,8 @@ table #vignetteParams td input {
    margin: 0 0 0 0.4rem;
    width: 12.5rem;
 }
+legend {
+   font-size:1.3rem;
+   color:#E0E0E0;
+   padding:0
+}

@@ -19,7 +19,7 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
 </HEAD>
 
 <BODY>
-<DIV>
+  <DIV>
     <TABLE style="width: 85%;margin:auto">
       <TBODY>
          <TR><TD colspan=2>
@@ -29,16 +29,26 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
             ></TEXTAREA>
             <!-- BUTTON onclick="filterImage();">Refresh</button -->
          </TD></TR><TR><TD>
+            <FIELDSET>
+            <LEGEND>&nbsp;Sample Images&nbsp;</LEGEND>
             <INPUT type="file" id="upldFile" multiple accept="image/" style="display:none"/>
-            <BUTTON id="upldBtn">Load additional images</BUTTON>
+            <BUTTON id="upldBtn">More images&hellip;</BUTTON>
             <SELECT id="imagesList"></SELECT>
             <BUTTON id="upldPrev" disabled>&lt; Prev</BUTTON>
             <BUTTON id="upldNext" disabled>Next &gt;</BUTTON>
-         </TD><TD align="right">
+            </FIELDSET>
+         </TD><TD>
+            <FIELDSET>
+            <LEGEND>&nbsp;Filters&nbsp;</LEGEND>
+            <INPUT type="file" id="filterFileInput" multiple accept="image/" style="display:none"/>
             <UL class = "menu">
-            <LI id="loadFilter">Load Filter</LI>
-            <LI id="saveFilter">Save Filter</LI>
+            <LI id="loadFilter">Load</LI>
+            <LI id="saveFilter">Save</LI>
+            <LI id="saveFilterAs">Save As</LI>
+            <LI id="importFilter">Import&hellip;</LI>
+            <LI id="exportFilter">Export&hellip;</LI>
             </UL>
+            </FIELDSET>
          </TD></TR><TR><TD colspan="2">
             <HR/>
          </TD></TR><TR><TD>
@@ -142,7 +152,7 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
 <DIV>
 </DIV>
   <DIV style="text-align:right;font-size:0.9rem;width:95%">
-     Build 2013.05.10.16.43 &nbsp; &nbsp; Copyright &copy; Jaxo Inc. 2013
+     Build 2013.05.12.16.21 &nbsp; &nbsp; Copyright &copy; Jaxo Inc. 2013
   </DIV>
 </BODY></HTML>
 

@@ -45,7 +45,7 @@ window.onload = function() {
       );
    }
 }
-function whenNewFilter(name, data) {
+function onFilterOpened(name, data) {
    alert(name + " => \"" + data + "\"");
 }
 function getFilterData(name) {
@@ -55,11 +55,30 @@ function doOnLoad() {
    initFilters();
    createFilesManager();
    document.getElementById("loadFilter").appendChild(
-      filesmanager.openList(whenNewFilter)
+      filesmanager.openList(onFilterOpened)
    );
-   document.getElementById("saveFilter").appendChild(
-      filesmanager.saveList(getFilterData)
-   );
+   document.getElementById("saveFilter").onclick = function() {
+      filesmanager.save(getFilterData);
+   };
+   document.getElementById("saveFilterAs").onclick = function() {
+      filesmanager.save(getFilterData, true);
+   };
+   document.getElementById("importFilter").onclick = function() {
+      var input = document.getElementById("filterFileInput");
+      input.onchange = function() { filesmanager.import(this.files); }
+      input.click();
+   }
+   document.getElementById("exportFilter").onclick = function() {
+      filesmanager.export(
+         "<P>POPOPO, dis</P>",
+         function() {
+            alert("OK");
+         },
+         function() {
+            alert("Bad");
+         }
+      );
+   };
    document.getElementById('upldFile').onchange = function() {
       if (this.files && this.files[0]) {
          var curLen = imagesList.length;

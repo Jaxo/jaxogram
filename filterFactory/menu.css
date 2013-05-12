@@ -1,5 +1,5 @@
 ul.menu {
-   font-size: 14px;
+   font-size: 13.5px;
    margin: 0;
    padding: 0;
    /* list-style: none; */
@@ -7,10 +7,10 @@ ul.menu {
 ul.menu li {
    display: block;
    position: relative;
-   float: right;
+   float: left;
    text-decoration: none;
    color: #303030;
-   padding: 2px 5px;
+   padding: 3px 5px;
    background:-moz-linear-gradient(top,#F8F8F8 0%,#B0B0B0 100%);
    margin-left: 8px;
    white-space: nowrap;
@@ -18,6 +18,12 @@ ul.menu li {
    border-radius: 4px;
 }
 ul.menu li:hover {
+   border-color: #fb9267;
+}
+ul.menu li:active {
+   padding-left:6px;
+   padding-right:4px;
+   background:-moz-linear-gradient(top,#B0B0B0 0%,#F8F8F8 100%);
    border-color: #fb9267;
 }
 ul.menu li.sepa {
@@ -44,7 +50,7 @@ ul.menu li ul {
 ul.menu li:hover ul {
    display: block;
 }
-ul.menu li ul li {
+ul.menu li ul li, ul.menu li:hover ul li:active {
    float: left;
    margin-left: 0;
    padding: 1px 0 1px 0;
@@ -58,7 +64,6 @@ ul.menu li:hover ul li:hover {
    color:white;
    background: #fb9267;
 }
-ul.menu li:hover ul li:hover {
-   color:white;
-   background: #fb9267;
+ul.menu li:hover ul li:active {
+   background: #cc653b
 }
