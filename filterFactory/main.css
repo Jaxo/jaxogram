@@ -96,3 +96,7 @@ legend {
    color:#E0E0E0;
    padding:0
 }
+legend > span {
+   font-weight: bold;
+   color: blue;
+}

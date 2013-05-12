@@ -162,20 +162,16 @@ function createFilesManager() {
                   localStorage.setItem("jaxo_filters", JSON.stringify(files));
                }
                //------------------------------------------
-               function doExport(data, whenDone, whenFailed) {
-                  var loc = window.location;
-                  var host = loc.host;
-                  if (host.indexOf("appspot") >= 0) {
-                     server_url = "http://" + host + "/jaxogram";
-                  }else {
-                     server_url = "http://localhost:8888/jaxogram"
-                  }
+               function doExport(data) {
                   var form = document.createElement("FORM");
                   var input = document.createElement("INPUT");
                   input.setAttribute("type", "hidden");
                   input.setAttribute("name", "data");
                   input.setAttribute("value", data);
-                  form.setAttribute("action", server_url + "?OP=publish");
+                  form.setAttribute(
+                     "action",
+                     "http://jaxogram.appspot.com/jaxogram?OP=publish"
+                  );
                   form.setAttribute("method", "POST");
                   form.style.display = "none";
                   form.appendChild(input);

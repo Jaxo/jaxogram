@@ -46,10 +46,12 @@ window.onload = function() {
    }
 }
 function onFilterOpened(name, data) {
-   alert(name + " => \"" + data + "\"");
+   document.getElementById("filterName").textContent = name;
+   alert(name + " => \"" + data + "\""); // <== parse the data!
 }
 function getFilterData(name) {
-   return "Zigou gua leu bou (" +  name + ")";
+   document.getElementById("filterName").textContent = name;
+   return document.getElementById("filterValue");
 }
 function doOnLoad() {
    initFilters();
@@ -69,15 +71,7 @@ function doOnLoad() {
       input.click();
    }
    document.getElementById("exportFilter").onclick = function() {
-      filesmanager.export(
-         "<P>POPOPO, dis</P>",
-         function() {
-            alert("OK");
-         },
-         function() {
-            alert("Bad");
-         }
-      );
+      filesmanager.export(document.getElementById("filterValue"));
    };
    document.getElementById('upldFile').onchange = function() {
       if (this.files && this.files[0]) {
