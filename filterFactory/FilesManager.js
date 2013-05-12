@@ -23,49 +23,14 @@ function createFilesManager() {
             function() {
                var filesmanager = {};
                var files = [];
+               var index = -1;
                var opList;
-               var svList;
                init();
                this.get = function() {
                   return filesmanager;
                };
                this.configurable = false;
                this.enumerable = true;
-
-               function init() {
-                  var item;
-                  opList = document.createElement("UL");
-                  svList = document.createElement("UL");
-                  item = document.createElement("LI");
-                  item.textContent = "New...";
-                  item.id = "fileNew";
-                  svList.appendChild(item);
-                  var temp = localStorage.getItem("jaxo_filters");
-                  if (temp) {
-                     files = JSON.parse(temp);
-                     for (var i=0; i < files.length; ++i) {
-                        if (i==0) {
-                           item = document.createElement("LI");
-                           item.className = "sepa";
-                           svList.appendChild(item);
-                        }
-                        var name = files[i].name;
-                        item = document.createElement("LI");
-                        item.textContent = name;
-                        item.id = "fileSv" + i;
-                        item.textContent = name;
-                        svList.appendChild(item);
-                        item = document.createElement("LI");
-                        item.textContent = name;
-                        item.id = "fileOp" + i;
-                        item.textContent = name;
-                        opList.appendChild(item);
-                     }
-                  }else {
-                     // opList.setAttribute("disabled", "true");
-                     files = [];
-                  }
-               }
                //------------------------------------------
                Object.defineProperty(
                   filesmanager,
@@ -75,10 +40,10 @@ function createFilesManager() {
                         opList.onclick = function(event) {
                            var elt = event.target;
                            if (elt.id && elt.id.startsWith("fileOp")) {
-                              var file = files[elt.id.substr(6)];
+                              index = elt.id.substr(6);
+                              var file = files[index];
                               whenFileOpened(file.name, file.data);
                            }
-                           event.stopPropagation();
                         }
                         return opList;
                      },
@@ -89,106 +54,136 @@ function createFilesManager() {
                //------------------------------------------
                Object.defineProperty(
                   filesmanager,
-                  "saveList",
+                  "save",
                   {
-                     value: function(getFileData) {
-                        svList.onclick = function(event) {
-                           var elt = event.target;
-                           var index = -1;
-                           if (elt.id) {
-                              if (elt.id.startsWith("fileSv")) {
-                                 index = elt.id.substr(6);
-                              }else if (elt.id === "fileNew") {
-                                 var name = prompt("Filter name:", "");
-                                 if (name) {
-                                    for (var i=0; ; ++i) {
-                                       if (i == files.length) {
-                                          var item;
-                                          index = i;
-                                          files.push({ name: name });
-                                          item = document.createElement("LI");
-                                          item.textContent = name;
-                                          item.id = "fileSv" + i;
-                                          this.appendChild(item);
-                                          item = document.createElement("LI");
-                                          item.textContent = name;
-                                          item.id = "fileOp" + i;
-                                          opList.appendChild(item);
-                                          // opList.removeAttribute("disabled");
-                                          break;
-                                       }else if (files[i].name === name) {
-                                          if (confirm("Replace?")) index = i;
-                                          break;
-                                       }
-                                    }
+                     value: function(getFileData, asCopy) {
+                        if ((index == -1) || asCopy) {
+                           var name = prompt("Filter name:", "");
+                           if (!name) {
+                              return;
+                           }else {
+                              for (var i=0; ; ++i) {
+                                 if (i == files.length) {
+                                    var item;
+                                    index = i;
+                                    files.push({ name: name });
+                                    item = document.createElement("LI");
+                                    item.textContent = name;
+                                    item.id = "fileOp" + i;
+                                    opList.appendChild(item);
+                                    break;
+                                 }else if (files[i].name === name) {
+                                    if (!confirm(name +" already exits.\nReplace?")) return;
+                                    index = i;
+                                    break;
                                  }
                               }
-                              if (index >= 0) {
-                                 files[index].data = getFileData(
-                                    files[index].name
-                                 );
-                              }
                            }
-                           event.stopPropagation();
                         }
-                        return svList;
+                        files[index].data = getFileData(files[index].name);
+                        alert(files[index].name + " saved.");
                      },
                      configurable: false,
                      enumerable: false
                   }
                );
                //------------------------------------------
-//             Object.defineProperty(
-//                filesmanager,
-//                "saveCurrent",
-//                {
-//                   value: function(getFileData) {
-//                      svList.onclick = function(event) {
-//                         var elt = event.target;
-//                         var index = -1;
-//                         if (elt.id) {
-//                            if (elt.id.startsWith("fileSv")) {
-//                               index = elt.id.substr(6);
-//                            }else if (elt.id === "fileNew") {
-//                               var name = prompt("Filter name:", "");
-//                               if (name) {
-//                                  for (var i=0; ; ++i) {
-//                                     if (i == files.length) {
-//                                        var item;
-//                                        index = i;
-//                                        files.push({ name: name });
-//                                        item = document.createElement("LI");
-//                                        item.textContent = name;
-//                                        item.id = "fileSv" + i;
-//                                        this.appendChild(item);
-//                                        item = document.createElement("LI");
-//                                        item.textContent = name;
-//                                        item.id = "fileOp" + i;
-//                                        opList.appendChild(item);
-//                                        // opList.removeAttribute("disabled");
-//                                        break;
-//                                     }else if (files[i].name === name) {
-//                                        if (confirm("Replace?")) index = i;
-//                                        break;
-//                                     }
-//                                  }
-//                               }
-//                            }
-//                            if (index >= 0) {
-//                               files[index].data = getFileData(
-//                                  files[index].name
-//                               );
-//                            }
-//                         }
-//                         event.stopPropagation();
-//                      }
-//                      return svList;
-//                   },
-//                   configurable: false,
-//                   enumerable: false
-//                }
-//             );
-//             //------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
+                  "import",
+                  {
+                     value: function(newFiles) {
+                        var self = this;
+                        if (newFiles) {
+                           var cnt = newFiles.length;
+                           for (var i=0, max=cnt; i < max; ++i) {
+                              doImport(
+                                 newFiles[i],
+                                 function() {
+                                    if (--cnt == 0) {
+                                       localSave.call(self);
+                                    }
+                                 }
+                              );
+                           }
+                        }
+                     },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+               //------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
+                  "export",
+                  {
+                     value: function(data, whenDone, whenFailed) {
+                        doExport(data, whenDone, whenFailed)
+                     },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+               //------------------------------------------
+               function init() {
+                  var item;
+                  opList = document.createElement("UL");
+                  var temp = localStorage.getItem("jaxo_filters");
+                  if (temp) {
+                     files = JSON.parse(temp);
+                     for (var i=0; i < files.length; ++i) {
+                        item = document.createElement("LI");
+                        item.textContent = files[i].name;
+                        item.id = "fileOp" + i;
+                        opList.appendChild(item);
+                     }
+                  }
+               }
+               //------------------------------------------
+               function doImport(file, whenDone) {
+                  var name = file.name;
+                  var reader = new FileReader();
+                  reader.onload = function(evt) {
+                     var ix = files.length;
+                     files.push({
+                        name: name,
+                        data: evt.target.result
+                     });
+                     item = document.createElement("LI");
+                     item.textContent = name;
+                     item.id = "fileOp" + ix;
+                     opList.appendChild(item);
+                     whenDone();
+                  };
+                  reader.readAsBinaryString(file);
+               }
+               //------------------------------------------
+               function localSave() {
+                  localStorage.setItem("jaxo_filters", JSON.stringify(files));
+               }
+               //------------------------------------------
+               function doExport(data, whenDone, whenFailed) {
+                  var loc = window.location;
+                  var host = loc.host;
+                  if (host.indexOf("appspot") >= 0) {
+                     server_url = "http://" + host + "/jaxogram";
+                  }else {
+                     server_url = "http://localhost:8888/jaxogram"
+                  }
+                  var form = document.createElement("FORM");
+                  var input = document.createElement("INPUT");
+                  input.setAttribute("type", "hidden");
+                  input.setAttribute("name", "data");
+                  input.setAttribute("value", data);
+                  form.setAttribute("action", server_url + "?OP=publish");
+                  form.setAttribute("method", "POST");
+                  form.style.display = "none";
+                  form.appendChild(input);
+                  document.body.appendChild(form);
+                  form.submit();
+                  document.body.removeChild(form);
+               }
+               //------------------------------------------
             }
          )()
       );
