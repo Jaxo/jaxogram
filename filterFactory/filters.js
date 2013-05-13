@@ -1,3 +1,4 @@
+var currentFilter;
 var xRW = 0.3086;
 var xGW = 0.6094;
 var xBW = 0.0820;
@@ -10,12 +11,6 @@ var BX = 0.928;  // 1-BW
 var RA = 0.143;
 var GA = 0.140;
 var BA = 0.283;
-var colorsLevelsBase = [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000];
-var colorsLevels = [
-   [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000],
-   [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000],
-   [0, 0.1255, 0.2510, 0.3765, 0.5020, 0.6274, 0.7529, 0.8784, 1.0000]
-];
 
 var filters = [
    "brightness", "saturation", "rotateHue",
@@ -48,15 +43,13 @@ function initFilters() {
          vertVal.textContent = this.value;
       }
       elt.setAttribute("ix", i);
-      elt.oninput = updateColorsLevels;
+      elt.oninput = function() {
+         vertVal.textContent = this.value;
+         currentFilter.updateColorsLevels(this.getAttribute("ix"), this.value);
+         filterImage();
+      }
    }
-}
-
-function updateColorsLevels() {
-   vertVal.textContent = this.value;
-   var ix = parseInt(this.getAttribute("ix"));
-   colorsLevels[(ix/9)|0][ix%9] = ((parseInt(this.value))/255).toFixed(4);
-   filterImage();
+   currentFilter = new Filter();
 }
 
 function multiply(a, b) {
@@ -148,8 +141,7 @@ function doSepia(sepia, vals) {
 }
 
 function makeGaussianBlur() {
-   var blur = parseInt(document.getElementById("blur").value);
-   document.getElementById("blurVal").textContent =  (blur/10).toFixed(2);
+   var blur = currentFilter.blur;
    if (blur == 0) {
       return "";
    }else {
@@ -158,8 +150,7 @@ function makeGaussianBlur() {
 }
 
 function makeFilterNoir() {
-   var noir = document.getElementById("noir").checked;
-   if (noir) {
+   if (currentFilter.noir) {
       return (
          "<feGaussianBlur stdDeviation='1.5'/>" +
          "<feComponentTransfer>" +
@@ -174,8 +165,7 @@ function makeFilterNoir() {
 }
 
 function makeFilterMoat() {
-   var moat = document.getElementById("moat").checked;
-   if (moat) {
+   if (currentFilter.moat) {
       return (
          "<feConvolveMatrix order='5'" +
          " kernelMatrix='" +
@@ -190,16 +180,13 @@ function makeFilterMoat() {
    }
 }
 
-function makeSharpen(sharpen) {
-   var isSharpened = document.getElementById("sharpenChk").checked;
-   var sharpen = parseInt(document.getElementById("sharpen").value);
-   document.getElementById("sharpenVal").textContent =  sharpen.toFixed(0);
-   if (isSharpened) {
+function makeSharpen() {
+   if (currentFilter.isSharpened) {
       return (
          "<feConvolveMatrix order='3'" +
          " kernelMatrix='" +
          " 1 -1  1 " +
-         "-1 " + -(sharpen/100) + " -1 " +
+         "-1 " + -(currentFilter.sharpen/100) + " -1 " +
          " 1 -1  1'/>"
       );
    }else {
@@ -208,9 +195,7 @@ function makeSharpen(sharpen) {
 }
 
 function makeContrast() {
-   var contrast = parseInt(document.getElementById("contrast").value);
-   document.getElementById("contrastVal").textContent =  contrast.toFixed(0);
-   contrast = (contrast/2) - 50;
+   var contrast = (currentFilter.contrast/2) - 50;
    var slope;
    var intercept;
    if (contrast == 0) {
@@ -240,56 +225,39 @@ function makeContrast() {
 }
 
 function makeColorsLevels() {
-   var redLevels = "";
-   var greenLevels = "";
-   var blueLevels = "";
-   var colorsLevelsRow = colorsLevels[0];
-   redLevels += colorsLevelsRow[0];
-   for (var i=1; i < 9; ++i) {
-      redLevels += ", " + colorsLevelsRow[i];
+   var levels;
+   var value = "";
+   levels = currentFilter.redLevels();
+   if (levels !== "") {
+      value += "<feFuncR type='table' tableValues='" + levels + "'/>";
    }
-   var colorsLevelsRow = colorsLevels[1];
-   greenLevels += colorsLevelsRow[0];
-   for (var i=1; i < 9; ++i) {
-      greenLevels += ", " + colorsLevelsRow[i];
+   levels = currentFilter.greenLevels();
+   if (levels !== "") {
+      value += "<feFuncG type='table' tableValues='" + levels + "'/>";
    }
-   var colorsLevelsRow = colorsLevels[2];
-   blueLevels += colorsLevelsRow[0];
-   for (var i=1; i < 9; ++i) {
-      blueLevels += ", " + colorsLevelsRow[i];
+   levels = currentFilter.blueLevels();
+   if (levels !== "") {
+      value += "<feFuncB type='table' tableValues='" + levels + "'/>";
    }
-   return (
-      "<feComponentTransfer>" +
-      "<feFuncR type='table' tableValues='" + redLevels + "'/>" +
-      "<feFuncG type='table' tableValues='" + greenLevels + "'/>" +
-      "<feFuncB type='table' tableValues='" + blueLevels + "'/>" +
-      "</feComponentTransfer>"
-   );
+   if (value !== "") {
+      value = "<feComponentTransfer>" + value + "</feComponentTransfer>"
+   }
+   return value;
 }
 
 function makeColorMatrix() {
-   var brightness = parseInt(document.getElementById("brightness").value);
-   document.getElementById("brightnessVal").textContent =  brightness.toFixed(0);
+   var brightness = currentFilter.brightness / 100;
    var vals = [
-      brightness/100, 0, 0, 0, 0,
-      0, brightness/100, 0, 0, 0,
-      0, 0, brightness/100, 0, 0,
+      brightness, 0, 0, 0, 0,
+      0, brightness, 0, 0, 0,
+      0, 0, brightness, 0, 0,
       0, 0, 0, 1, 0
    ];
-   var saturation = parseInt(document.getElementById("saturation").value);
-   document.getElementById("saturationVal").textContent =  saturation.toFixed(0);
-   var hueRot = parseInt(document.getElementById("rotateHue").value);
-   document.getElementById("rotateHueVal").textContent =  hueRot.toFixed(0);
-   var extra3 = parseInt(document.getElementById("extra3").value);
-   document.getElementById("extra3Val").textContent =  extra3.toFixed(0);
-   var sepia = document.getElementById("sepia").checked;
-   var dusk = document.getElementById("dusk").checked;
-
-   vals = saturate(saturation, vals);
-   vals = rotateHue(hueRot, vals);
-   vals = doExtra3(extra3, vals);
-   vals = doSepia(sepia, vals);
-   vals = doDusk(dusk, vals);
+   vals = saturate(currentFilter.saturation, vals);
+   vals = rotateHue(currentFilter.hueRot, vals);
+   vals = doExtra3(currentFilter.extra3, vals);
+   vals = doSepia(currentFilter.sepia, vals);
+   vals = doDusk(currentFilter.dusk, vals);
    var isIdentity = true;
    var filterValue = "";
    for (var i=0, j=-1; i < 20; ++i) {
@@ -310,6 +278,9 @@ function makeColorMatrix() {
 }
 
 function filterImage() {
+   currentFilter.refresh();
+   // alert(dump(currentFilter));
+   // alert(JSON.stringify(currentFilter));
    var filterValue = "";
    var colorsLevels = makeColorsLevels();
    var colorMatrix = makeColorMatrix();
@@ -318,7 +289,6 @@ function filterImage() {
    var filterNoir = makeFilterNoir();
    var filterMoat = makeFilterMoat();
    var sharpen = makeSharpen();
-   var vigRadius, vigBright;
 
    filterValue = colorsLevels;
    if (colorMatrix !== "") {
@@ -345,14 +315,9 @@ function filterImage() {
       if (filterValue !== "") filterValue += "\r\n";
       filterValue += sharpen;
    }
-   var isVignetted = document.getElementById("vignetteChk").checked;
-   vigRadius = parseInt(document.getElementById("vigRadius").value) / 100;
-   vigBright = parseInt(document.getElementById("vigBright").value) / 100;
-   document.getElementById("vigRadiusVal").textContent =  vigRadius;
-   document.getElementById("vigBrightVal").textContent =  vigBright;
-   if (isVignetted) {
+   if (currentFilter.isVignetted) {
       if (filterValue !== "") filterValue += "\r\n";
-      filterValue += "<feVignette radius='" + vigRadius + "' bright='" + vigBright + "'/>";
+      filterValue += "<feVignette radius='" + currentFilter.vigRadius + "' bright='" + currentFilter.vigBright + "'/>";
    }
    document.getElementById("filterValue").innerHTML = filterValue;
 
@@ -384,14 +349,14 @@ function filterImage() {
         "</g>"
       );
       var svg;
-      if (!isVignetted) {
+      if (!currentFilter.isVignetted) {
          svg = (
             "<svg width='" + w + "' height='" + h + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
             baseFilter +
             "</svg>"
          );
       }else {
-         svg = vignetize(baseFilter, originalImage, vigRadius, vigBright);
+         svg = vignetize(baseFilter, originalImage, currentFilter.vigRadius/100, currentFilter.vigBright/100);
       }
       filteredImage.src = URL.createObjectURL(
          new Blob([svg], {type:"image/svg+xml"})

@@ -45,19 +45,6 @@ window.onload = function() {
       );
    }
 }
-function onFilterOpened(name, data) {
-   document.getElementById("filterName").textContent = name;
-   // FIXME: parse the data!
-   alert(
-      "Sorry: \"Load\" isn't implemented yet, but will be very soon.\n" +
-      "It should create the proper layout for this filter data:\n\n[" +
-      name + "]\n---------------\n" + data
-   );
-}
-function getFilterData(name) {
-   document.getElementById("filterName").textContent = name;
-   return document.getElementById("filterValue").textContent;
-}
 function doOnLoad() {
    initFilters();
    createFilesManager();
@@ -76,7 +63,8 @@ function doOnLoad() {
       input.click();
    }
    document.getElementById("exportFilter").onclick = function() {
-      filesmanager.export(document.getElementById("filterValue"));
+      filesmanager.export(JSON.stringify(currentFilter));
+      // filesmanager.export(document.getElementById("filterValue"));
    };
    document.getElementById('upldFile').onchange = function() {
       if (this.files && this.files[0]) {
@@ -128,6 +116,17 @@ function doOnLoad() {
       selElt.onchange();
    }
    buildImagesList();
+}
+
+function onFilterOpened(name, data) {
+   document.getElementById("filterName").textContent = name;
+   currentFilter.restore(data);
+   filterImage();
+}
+function getFilterData(name) {
+   document.getElementById("filterName").textContent = name;
+   // return document.getElementById("filterValue").textContent;
+   return JSON.stringify(currentFilter);
 }
 
 function fileToBlob(i, whenDone) {

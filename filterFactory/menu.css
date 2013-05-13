@@ -33,9 +33,6 @@ ul.menu li.sepa {
    border: none;
    background: url(graypoint.png) repeat-x;
 }
-ul.menu li[class="sepa"]:hover {
-   background-color:blue !important;
-}
 ul.menu li ul {
    display: none;
    padding-left: 0;
