@@ -42,21 +42,25 @@ ul.menu li ul {
    text-align: left;
    position: absolute;
    background:#E0E0E0;
-   border-top: 1px solid white;
-   border-left: 1px solid white;
-   border-bottom: 1px solid #404040;
-   border-right: 1px solid #404040;
+   border-top: 1px solid #F0F0F0;
+   border-left: 1px solid #F0F0F0;
+   border-bottom: 1px solid #707070;
+   border-right: 1px solid #707070;
+   border-radius: 0.3rem;
+   z-index: 0;
 }
 ul.menu li:hover ul {
+   z-index: 1;
    display: block;
 }
 ul.menu li ul li, ul.menu li:hover ul li:active {
    float: left;
    margin-left: 0;
-   padding: 1px 0 1px 0;
+   padding: 2px 0 2px 0;
    width:calc(100% - 2px);
    min-width:80px;
    border-radius: 0;
+   border-style: none;
    background:none;
    font-size: 14px;
 }
