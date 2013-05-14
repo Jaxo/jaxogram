@@ -1,20 +1,5 @@
 function createFilesManager() {
-// localStorage.removeItem("jaxo_filters");
-// localStorage.setItem(
-//    "jaxo_filters",
-//    JSON.stringify([
-//       {
-//          name: "Aurora",
-//          data: "AaAaAaAa"
-//       }, {
-//          name: "Nicole #1",
-//          data: "BbBbBbBb"
-//       }, {
-//          name: "Nicole #2",
-//          data: "CcCcCcCc"
-//       }
-//    ])
-// );
+   // localStorage.removeItem("jaxo_filters");
    if (!window.filesmanager) {
       Object.defineProperty(
          window,
@@ -128,6 +113,7 @@ function createFilesManager() {
                //------------------------------------------
                function init() {
                   var item;
+/**/              var reqdFilterNames = ["nicole1.jxf", "nicole2.jxf"];
                   opList = document.createElement("UL");
                   var temp = localStorage.getItem("jaxo_filters");
                   if (temp) {
@@ -135,10 +121,33 @@ function createFilesManager() {
                      for (var i=0; i < files.length; ++i) {
                         item = document.createElement("LI");
                         item.textContent = files[i].name;
+/**/                    reqdFilterNames.forEach(
+/**/                       function(name, index) {
+/**/                          if (name === files[i].name) {
+/**/                             reqdFilterNames[index] = undefined;
+/**/                          }
+/**/                       }
+/**/                    );
                         item.id = "fileOp" + i;
                         opList.appendChild(item);
                      }
                   }
+/**/              reqdFilterNames.forEach(
+/**/                 function(name) {
+/**/                    if (name) {
+/**/                       readJsonFileFromServer(
+/**/                          name,
+/**/                          function(data) {
+/**/                             files.push({ name: name, data: data});
+/**/                             item = document.createElement("LI");
+/**/                             item.textContent = name;
+/**/                             item.id = "fileOp" + (files.length-1);
+/**/                             opList.appendChild(item);
+/**/                          }
+/**/                       )
+/**/                    }
+/**/                 }
+/**/              );
                }
                //------------------------------------------
                function doImport(file, whenDone) {
@@ -185,4 +194,20 @@ function createFilesManager() {
          )()
       );
    }
+}
+
+function readJsonFileFromServer(filePath, whenDone) {
+   var xhr = new XMLHttpRequest();
+   xhr.open("GET", filePath, true);
+   xhr.overrideMimeType("application/json");
+   xhr.onreadystatechange = function () {
+      if (this.readyState === 4) {
+         if ((this.status === 200) || (this.status === 0)) {
+            whenDone(this.responseText);
+         }else {
+            alert("Can't get \"" + filepath);
+         }
+      }
+   };
+   xhr.send();
 }

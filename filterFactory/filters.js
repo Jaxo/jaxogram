@@ -319,7 +319,7 @@ function filterImage() {
       if (filterValue !== "") filterValue += "\r\n";
       filterValue += "<feVignette radius='" + currentFilter.vigRadius + "' bright='" + currentFilter.vigBright + "'/>";
    }
-   document.getElementById("filterValue").innerHTML = filterValue;
+   // document.getElementById("filterValue").innerHTML = filterValue;
 
    var originalImage = document.getElementById("originalImage");
    var filteredImage = document.getElementById("filteredImage");

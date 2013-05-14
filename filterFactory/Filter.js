@@ -1,9 +1,9 @@
 function Filter() {
    this.refresh();
    this.colorsLevels = [
-      Filter.colorsLevelsBase,
-      Filter.colorsLevelsBase,
-      Filter.colorsLevelsBase
+      Filter.colorsLevelsBase.slice(0),
+      Filter.colorsLevelsBase.slice(0),
+      Filter.colorsLevelsBase.slice(0)
    ];
 }
 Filter.colorsLevelsBase = [
