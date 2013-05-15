@@ -45,6 +45,7 @@ window.onload = function() {
       );
    }
 }
+
 function doOnLoad() {
    initFilters();
    createFilesManager();
@@ -58,13 +59,31 @@ function doOnLoad() {
       filesmanager.save(getFilterData, true);
    };
    document.getElementById("importFilter").onclick = function() {
-      var input = document.getElementById("filterFileInput");
-      input.onchange = function() { filesmanager.import(this.files); }
-      input.click();
+      var name = prompt("Filter to import:", "");  // TEMPORARY
+      if (name) {
+         filesmanager.serverImport([name], "jxf");
+      }
+      // var input = document.getElementById("filterFileInput");
+      // input.onchange = function() { filesmanager.localImport(this.files); }
+      // input.click();
    }
    document.getElementById("exportFilter").onclick = function() {
-      filesmanager.export(JSON.stringify(currentFilter));
-      // filesmanager.export(document.getElementById("filterValue"));
+      // filesmanager.localExport(JSON.stringify(currentFilter));
+      var fileName = prompt(
+         "Warning" +
+         "\n\nFor this version of the Filter Factory, " +
+         "\nexported filters definitively replace any" +
+         "\nexisting ones on the Server." +
+         "\n\nPlease, make sure this is what you want," +
+         "\nor use a unique name." +
+         "\n\nExport as:",
+         filesmanager.currentFileName()
+      );
+      if (fileName) {
+         filesmanager.serverExport(
+            JSON.stringify(currentFilter), fileName, "jxf", "application/json"
+         );
+      }
    };
    document.getElementById('upldFile').onchange = function() {
       if (this.files && this.files[0]) {

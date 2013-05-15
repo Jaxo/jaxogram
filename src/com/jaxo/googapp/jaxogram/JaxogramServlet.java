@@ -114,6 +114,35 @@ public class JaxogramServlet extends HttpServlet
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
             }
+         }else if (op.equals("blob")) {
+            String action = req.getParameter("ACT");
+            if (action.equals("store")) {
+               ServletFileUpload upload = new ServletFileUpload();
+               FileItemIterator iterator = upload.getItemIterator(req);
+               String contents = null;
+               String fileName = null;
+               String mimeType = null;
+               while (iterator.hasNext()) {
+                  FileItemStream item = iterator.next();
+                  if (item.isFormField()) {
+                     String name = item.getFieldName();
+                     String values = Streams.asString(item.openStream());
+                     if (name.equals("CNT")) {
+                        contents = values;
+                     }else if (name.equals("FN")) {
+                        fileName = values;
+                     }else if (name.equals("MT")) {
+                        mimeType = values;
+                     }
+                  }
+               }
+               BlobFileSystem.write(contents, fileName, mimeType);
+            }else { // load
+               BlobFileSystem.read(
+                  req.getParameter("FN"),
+                  resp
+               );
+            }
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
                resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));

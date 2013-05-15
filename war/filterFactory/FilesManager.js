@@ -1,5 +1,5 @@
 function createFilesManager() {
-   // localStorage.removeItem("jaxo_filters");
+   localStorage.removeItem("jaxo_filters");
    if (!window.filesmanager) {
       Object.defineProperty(
          window,
@@ -16,7 +16,19 @@ function createFilesManager() {
                };
                this.configurable = false;
                this.enumerable = true;
-               //------------------------------------------
+               //--------------------------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
+                  "currentFileName",
+                  {
+                     value: function() {
+                        return (index==-1)? "" : files[index].name;
+                     },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+               //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
                   "openList",
@@ -36,7 +48,7 @@ function createFilesManager() {
                      enumerable: false
                   }
                );
-               //------------------------------------------
+               //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
                   "save",
@@ -58,7 +70,9 @@ function createFilesManager() {
                                     opList.appendChild(item);
                                     break;
                                  }else if (files[i].name === name) {
-                                    if (!confirm(name +" already exits.\nReplace?")) return;
+                                    if (!confirm(name +" already exits.\nReplace?")) {
+                                       return;
+                                    }
                                     index = i;
                                     break;
                                  }
@@ -73,22 +87,20 @@ function createFilesManager() {
                      enumerable: false
                   }
                );
-               //------------------------------------------
+               //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
-                  "import",
+                  "localImport",
                   {
                      value: function(newFiles) {
                         var self = this;
                         if (newFiles) {
                            var cnt = newFiles.length;
                            for (var i=0, max=cnt; i < max; ++i) {
-                              doImport(
+                              readFromClientStorage(
                                  newFiles[i],
                                  function() {
-                                    if (--cnt == 0) {
-                                       localSave.call(self);
-                                    }
+                                    if (--cnt == 0) localSave.call(self);
                                  }
                               );
                            }
@@ -98,22 +110,56 @@ function createFilesManager() {
                      enumerable: false
                   }
                );
-               //------------------------------------------
+               //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
-                  "export",
+                  "localExport",
                   {
-                     value: function(data, whenDone, whenFailed) {
-                        doExport(data, whenDone, whenFailed)
+                     value: function(data) { writeToClientStorage(data); },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+               //--------------------------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
+                  "serverImport",
+                  {
+                     value: function(filePaths, extension) {
+                        var self = this;
+                        if (filePaths) {
+                           var cnt = filePaths.length;
+                           for (var i=0, max=cnt; i < max; ++i) {
+                              readFromBlobStore(
+                                 filePaths[i],
+                                 extension,
+                                 function() {
+                                    if (--cnt == 0) localSave.call(self);
+                                 }
+                              );
+                           }
+                        }
                      },
                      configurable: false,
                      enumerable: false
                   }
                );
-               //------------------------------------------
+               //--------------------------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
+                  "serverExport",
+                  {
+                     value: function(data, filePath, extension, mimeType) {
+                        writeToBlobStore(data, filePath, extension, mimeType)
+                     },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+               //--------------------------------------------------------------
                function init() {
                   var item;
-/**/              var reqdFilterNames = ["nicole1.jxf", "nicole2.jxf"];
+/**/              var reqdFilterNames = ["Nichole1", "Nichole2"];
                   opList = document.createElement("UL");
                   var temp = localStorage.getItem("jaxo_filters");
                   if (temp) {
@@ -149,8 +195,12 @@ function createFilesManager() {
 /**/                 }
 /**/              );
                }
-               //------------------------------------------
-               function doImport(file, whenDone) {
+               //--------------------------------------------------------------
+               function localSave() {
+                  localStorage.setItem("jaxo_filters", JSON.stringify(files));
+               }
+               //--------------------------------------------------------------
+               function readFromClientStorage(file, whenDone) {
                   var name = file.name;
                   var reader = new FileReader();
                   reader.onload = function(evt) {
@@ -167,12 +217,8 @@ function createFilesManager() {
                   };
                   reader.readAsBinaryString(file);
                }
-               //------------------------------------------
-               function localSave() {
-                  localStorage.setItem("jaxo_filters", JSON.stringify(files));
-               }
-               //------------------------------------------
-               function doExport(data) {
+               //--------------------------------------------------------------
+               function writeToClientStorage(data) {
                   var form = document.createElement("FORM");
                   var input = document.createElement("INPUT");
                   input.setAttribute("type", "hidden");
@@ -189,25 +235,72 @@ function createFilesManager() {
                   form.submit();
                   document.body.removeChild(form);
                }
-               //------------------------------------------
+               //--------------------------------------------------------------
+               function readFromBlobStore(filePath, extension, whenDone) {
+                  var xhr = new XMLHttpRequest();
+                  var url = (
+                     "../jaxogram?OP=blob&ACT=load&FN=" +
+                     filePath + "." + extension
+                  );
+                  xhr.open("GET", url, true);
+                  xhr.onreadystatechange = function () {
+                     if (this.readyState === 4) {
+                        if ((this.status === 200) || (this.status === 0)) {
+                           var ix = files.length;
+                           files.push({
+                              name: filePath,
+                              data: this.responseText
+                           });
+                           item = document.createElement("LI");
+                           item.textContent = filePath;
+                           item.id = "fileOp" + ix;
+                           opList.appendChild(item);
+                           whenDone();
+                        }else {
+                           alert("Can't load \"" + filePath + "\" RC:" + this.status);
+                        }
+                     }
+                  };
+                  xhr.send();
+               }
+               //--------------------------------------------------------------
+               function writeToBlobStore(contents, filePath, extension, mimeType)
+               {
+                  var form = new FormData();
+                  form.append("FN", filePath + "." + extension);
+                  form.append("MT", mimeType);
+                  form.append("CNT", contents);
+                  var xhr = new XMLHttpRequest();
+                  xhr.open("POST", "../jaxogram?OP=blob&ACT=store", true);
+                  xhr.onreadystatechange = function () {
+                     if (this.readyState === 4) {
+                        if ((this.status !== 200) && (this.status !== 0)) {
+                           alert("Can't store \"" + filePath + "\" RC:" + this.status);
+                        }
+                     }
+                  };
+                  xhr.send(form);
+               }
+               //--------------------------------------------------------------
+               function readJsonFileFromServer(filePath, whenDone) {
+                  var xhr = new XMLHttpRequest();
+                  xhr.open("GET", filePath, true);
+                  xhr.overrideMimeType("application/json");
+                  xhr.onreadystatechange = function () {
+                     if (this.readyState === 4) {
+                        if ((this.status === 200) || (this.status === 0)) {
+                           whenDone(this.responseText);
+                        }else {
+                           alert("Can't read \"" + filePath + "\" RC:" + this.status);
+                        }
+                     }
+                  };
+                  xhr.send();
+               }
+               //--------------------------------------------------------------
             }
          )()
       );
    }
 }
 
-function readJsonFileFromServer(filePath, whenDone) {
-   var xhr = new XMLHttpRequest();
-   xhr.open("GET", filePath, true);
-   xhr.overrideMimeType("application/json");
-   xhr.onreadystatechange = function () {
-      if (this.readyState === 4) {
-         if ((this.status === 200) || (this.status === 0)) {
-            whenDone(this.responseText);
-         }else {
-            alert("Can't get \"" + filepath);
-         }
-      }
-   };
-   xhr.send();
-}
