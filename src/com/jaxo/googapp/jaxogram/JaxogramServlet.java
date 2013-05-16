@@ -137,11 +137,10 @@ public class JaxogramServlet extends HttpServlet
                   }
                }
                BlobFileSystem.write(contents, fileName, mimeType);
-            }else { // load
-               BlobFileSystem.read(
-                  req.getParameter("FN"),
-                  resp
-               );
+            }else if (action.equals("load")) {
+               BlobFileSystem.read(req.getParameter("FN"), resp);
+            }else {  // dir
+               writer.print(BlobFileSystem.dir(req.getParameter("MT")));
             }
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {

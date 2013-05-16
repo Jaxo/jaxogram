@@ -1,3 +1,4 @@
+var filtersMarkableTable;
 var imagesList = [
    {
       name: "Cirques",
@@ -48,6 +49,7 @@ window.onload = function() {
 
 function doOnLoad() {
    initFilters();
+   initFiltersImport();
    createFilesManager();
    document.getElementById("loadFilter").appendChild(
       filesmanager.openList(onFilterOpened)
@@ -59,10 +61,9 @@ function doOnLoad() {
       filesmanager.save(getFilterData, true);
    };
    document.getElementById("importFilter").onclick = function() {
-      var name = prompt("Filter to import:", "");  // TEMPORARY
-      if (name) {
-         filesmanager.serverImport([name], "jxf");
-      }
+      filesmanager.serverDir(
+         "application/json;jaxo_type=jxf", populateFiltersImport
+      );
       // var input = document.getElementById("filterFileInput");
       // input.onchange = function() { filesmanager.localImport(this.files); }
       // input.click();
@@ -81,7 +82,9 @@ function doOnLoad() {
       );
       if (fileName) {
          filesmanager.serverExport(
-            JSON.stringify(currentFilter), fileName, "jxf", "application/json"
+            JSON.stringify(currentFilter),
+            fileName,
+            "application/json;jaxo_type=jxf"
          );
       }
    };
@@ -146,6 +149,82 @@ function getFilterData(name) {
    document.getElementById("filterName").textContent = name;
    // return document.getElementById("filterValue").textContent;
    return JSON.stringify(currentFilter);
+}
+
+function initFiltersImport() {
+   var filtersTable = document.getElementById("filtersTable");
+   filtersMarkableTable = new MarkableTable(filtersTable);
+   filtersTable.onclick = function(event) {
+      var elt = event.target;      // the item that was clicked
+      while ((elt != null) && (elt.nodeName != "TR")) {
+         elt = elt.parentNode;
+      }
+      if (elt && (elt.className === "file")) {
+         event.preventDefault();
+         event.stopPropagation();
+         filtersMarkableTable.clicked(event, elt.rowIndex);
+      }
+   }
+}
+
+function populateFiltersImport(result) {
+   var row;
+   var cell0;
+   var cell1;
+   var cell2;
+   var cell3;
+   var date;
+   var tblBody = (
+      document.getElementById(
+         "filtersTable"
+      ).getElementsByTagName("TBODY")
+   )[0];
+   tblBody.innerHTML = "";
+   result.forEach(
+      function(entry) {
+         row = document.createElement("TR");
+         row.className = "file";
+         cell0 = document.createElement("TD");
+         cell1 = document.createElement("TD");
+         cell2 = document.createElement("TD");
+         cell3 = document.createElement("TD");
+         date = entry.creation.split(' ');
+         cell0.textContent = entry.name;
+         cell1.textContent = entry.size;
+         cell2.textContent = date[0]+" "+date[1]+" "+date[2]+", "+date[5];
+         cell3.textContent = date[3]+" "+date[4];
+         row.appendChild(cell0);
+         row.appendChild(cell1);
+         row.appendChild(cell2);
+         row.appendChild(cell3);
+         tblBody.appendChild(row);
+      }
+   );
+   var btn0 = document.createElement("BUTTON");
+   var btn1 = document.createElement("BUTTON");
+   btn0.textContent = "Cancel";
+   btn0.style = "margin-right:1rem";
+   btn0.onclick = resetFiltersImport;
+   btn1.textContent = "Import";
+   btn1.onclick = function() {
+      var fileNames = filtersMarkableTable.getSelected(0);
+      resetFiltersImport();
+      filesmanager.serverImport(fileNames);
+   }
+   cell0 = document.createElement("TD");
+   cell0.setAttribute("colspan", "4");
+   cell0.style = "text-align:right";
+   cell0.appendChild(btn0);
+   cell0.appendChild(btn1);
+   row = document.createElement("TR");
+   row.appendChild(cell0);
+   tblBody.appendChild(row);
+   document.getElementById("filtersTblCtnr").style.visibility = "visible";
+}
+
+function resetFiltersImport() {
+   document.getElementById("filtersTblCtnr").style.visibility = "hidden";
+   filtersMarkableTable.reset();
 }
 
 function fileToBlob(i, whenDone) {

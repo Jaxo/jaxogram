@@ -14,14 +14,24 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
 <LINK rel="stylesheet" type="text/css" href="main.css"/>
 <SCRIPT type="text/javascript" src="main.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="filters.js"></SCRIPT>
-<SCRIPT type="text/javascript" src="debug.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="Filter.js"></SCRIPT>
 <SCRIPT type="text/javascript" src="FilesManager.js"></SCRIPT>
+<SCRIPT type="text/javascript" src="MarkableTable.js"></SCRIPT>
 
 <TITLE>Filters' factory</TITLE>
 </HEAD>
 
 <BODY>
+<TABLE id="filtersTblCtnr"><TR><TD align="center">
+  <TABLE id="filtersTable">
+    <THEAD>
+      <TR><TH colspan="4">Select filters to be imported from the Server</TH></TR>
+      <TR><TH colspan="4"><HR/></TH></TR>
+      <TR><TH>Name</TH><TH>Size</TH><TH colspan="2">Last Modified</TH></TR>
+    </THEAD>
+    <TBODY></TBODY>
+  </TABLE>
+</TR></TD></TABLE>
   <DIV>
     <TABLE style="width: 85%;margin:auto">
       <TBODY>

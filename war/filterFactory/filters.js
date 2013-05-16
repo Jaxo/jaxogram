@@ -279,7 +279,6 @@ function makeColorMatrix() {
 
 function filterImage() {
    currentFilter.refresh();
-   // alert(dump(currentFilter));
    // alert(JSON.stringify(currentFilter));
    var filterValue = "";
    var colorsLevels = makeColorsLevels();

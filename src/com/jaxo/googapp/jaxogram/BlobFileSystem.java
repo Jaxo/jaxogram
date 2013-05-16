@@ -91,6 +91,37 @@ class BlobFileSystem
       }
    }
 
+   public static String dir(String contentType) throws IOException
+   {
+      Query query = new Query("__BlobInfo__");
+      Query.FilterPredicate filter = new Query.FilterPredicate(
+         "content_type", FilterOperator.EQUAL, contentType
+      );
+      query.setFilter(filter);
+      List<Entity> entList = DatastoreServiceFactory.getDatastoreService().
+      prepare(query).
+      asList(FetchOptions.Builder.withLimit(1000));
+      StringBuilder sb = new StringBuilder();
+      sb.append('[');
+      boolean isFirst = true;
+      for (Entity entity : entList) {
+         if (isFirst) {
+            isFirst = false;
+            sb.append("{\"name\":\"");
+         }else {
+            sb.append(",{\"name\":\"");
+         }
+         sb.append(entity.getProperty("filename")).
+         append("\",\"creation\":\"").
+         append(entity.getProperty("creation")).
+         append("\",\"size\":").
+         append(entity.getProperty("size")).
+         append('}');
+      }
+      sb.append(']');
+      return sb.toString();
+   }
+
    private static Key getBlobInfoEntityKey(String fileName) {
       Query query = new Query("__BlobInfo__");
       Query.FilterPredicate filter = new Query.FilterPredicate(

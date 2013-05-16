@@ -1,5 +1,5 @@
 function createFilesManager() {
-   localStorage.removeItem("jaxo_filters");
+   // localStorage.removeItem("jaxo_filters");
    if (!window.filesmanager) {
       Object.defineProperty(
          window,
@@ -125,14 +125,13 @@ function createFilesManager() {
                   filesmanager,
                   "serverImport",
                   {
-                     value: function(filePaths, extension) {
+                     value: function(filePaths) {
                         var self = this;
                         if (filePaths) {
                            var cnt = filePaths.length;
                            for (var i=0, max=cnt; i < max; ++i) {
                               readFromBlobStore(
                                  filePaths[i],
-                                 extension,
                                  function() {
                                     if (--cnt == 0) localSave.call(self);
                                  }
@@ -149,8 +148,20 @@ function createFilesManager() {
                   filesmanager,
                   "serverExport",
                   {
-                     value: function(data, filePath, extension, mimeType) {
-                        writeToBlobStore(data, filePath, extension, mimeType)
+                     value: function(data, filePath, mimeType) {
+                        writeToBlobStore(data, filePath, mimeType);
+                     },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+               //--------------------------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
+                  "serverDir",
+                  {
+                     value: function(mimeType, whenDone) {
+                        getBlobStoreDir(mimeType, whenDone);
                      },
                      configurable: false,
                      enumerable: false
@@ -236,12 +247,9 @@ function createFilesManager() {
                   document.body.removeChild(form);
                }
                //--------------------------------------------------------------
-               function readFromBlobStore(filePath, extension, whenDone) {
+               function readFromBlobStore(filePath, whenDone) {
                   var xhr = new XMLHttpRequest();
-                  var url = (
-                     "../jaxogram?OP=blob&ACT=load&FN=" +
-                     filePath + "." + extension
-                  );
+                  var url = "../jaxogram?OP=blob&ACT=load&FN=" + filePath;
                   xhr.open("GET", url, true);
                   xhr.onreadystatechange = function () {
                      if (this.readyState === 4) {
@@ -264,10 +272,10 @@ function createFilesManager() {
                   xhr.send();
                }
                //--------------------------------------------------------------
-               function writeToBlobStore(contents, filePath, extension, mimeType)
+               function writeToBlobStore(contents, filePath, mimeType)
                {
                   var form = new FormData();
-                  form.append("FN", filePath + "." + extension);
+                  form.append("FN", filePath);
                   form.append("MT", mimeType);
                   form.append("CNT", contents);
                   var xhr = new XMLHttpRequest();
@@ -280,6 +288,22 @@ function createFilesManager() {
                      }
                   };
                   xhr.send(form);
+               }
+               //--------------------------------------------------------------
+               function getBlobStoreDir(mimeType, whenDone) {
+                  var xhr = new XMLHttpRequest();
+                  var url = "../jaxogram?OP=blob&ACT=dir&MT=" + mimeType;
+                  xhr.open("GET", url, true);
+                  xhr.onreadystatechange = function () {
+                     if (this.readyState === 4) {
+                        if ((this.status === 200) || (this.status === 0)) {
+                           whenDone(JSON.parse(this.responseText));
+                        }else {
+                           alert("Can't dir \"" + filePath + "\" RC:" + this.status);
+                        }
+                     }
+                  };
+                  xhr.send();
                }
                //--------------------------------------------------------------
                function readJsonFileFromServer(filePath, whenDone) {
