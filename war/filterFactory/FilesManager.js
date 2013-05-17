@@ -81,7 +81,7 @@ function createFilesManager() {
                         }
                         files[index].data = getFileData(files[index].name);
                         localSave();
-                        alert(files[index].name + " saved.");
+                        alert(files[index].name + " saved in your workspace.");
                      },
                      configurable: false,
                      enumerable: false
@@ -133,7 +133,10 @@ function createFilesManager() {
                               readFromBlobStore(
                                  filePaths[i],
                                  function() {
-                                    if (--cnt == 0) localSave.call(self);
+                                    if (--cnt == 0) {
+                                       localSave.call(self);
+                                       alert("Files imported to your workspace");
+                                    }
                                  }
                               );
                            }

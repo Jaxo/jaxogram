@@ -1,3 +1,5 @@
+// FIXME Need a protection mechanism.
+// see: https://developers.google.com/appengine/docs/java/users/overview
 var filtersMarkableTable;
 var imagesList = [
    {
