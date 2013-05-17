@@ -163,8 +163,8 @@ function createFilesManager() {
                   filesmanager,
                   "serverDir",
                   {
-                     value: function(mimeType, whenDone) {
-                        getBlobStoreDir(mimeType, whenDone);
+                     value: function(mimeType, fileList) {
+                        getBlobStoreDir(mimeType, fileList);
                      },
                      configurable: false,
                      enumerable: false
@@ -293,14 +293,16 @@ function createFilesManager() {
                   xhr.send(form);
                }
                //--------------------------------------------------------------
-               function getBlobStoreDir(mimeType, whenDone) {
+               function getBlobStoreDir(mimeType, fileList) {
                   var xhr = new XMLHttpRequest();
                   var url = "../jaxogram?OP=blob&ACT=dir&MT=" + mimeType;
                   xhr.open("GET", url, true);
                   xhr.onreadystatechange = function () {
                      if (this.readyState === 4) {
                         if ((this.status === 200) || (this.status === 0)) {
-                           whenDone(JSON.parse(this.responseText));
+                           fileList.populate.call(
+                              fileList, JSON.parse(this.responseText)
+                           );
                         }else {
                            alert("Can't dir \"" + filePath + "\" RC:" + this.status);
                         }
