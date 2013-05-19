@@ -3,7 +3,9 @@ html, body {
   padding: 0;
   margin: 0;
   font-family: "Open Sans", sans-serif;
-  background-color: #808080
+  /* background-color: #3E4449 */
+  background-image: url("../style/images/pattern.png");
+  background-color: #35393b;
 }
 table {
    border-collapse: collapse;
@@ -22,7 +24,10 @@ table.sliders {
 .sliders tr {
    height: 4rem;
    background-color:#B0B0B0;
-   border-bottom: solid 0.5rem #808080;
+   border-bottom: solid 0.1rem #202020;
+}
+.sliders tr:last-child {
+   border-bottom: none; /* UU */
 }
 .sliders tr:nth-child(odd) {
    background-color:#B0B0B0;
@@ -32,13 +37,13 @@ table.sliders {
    padding: 0;
 }
 .sliders tr:first-child td:nth-child(even) {
-  border-left: solid 0.5rem #808080;
+  border-left: solid 0.1rem #202020;
   font-size: 1rem;
   font-weight: bold;
   padding: 0 1rem;
 }
 .sliders td:nth-child(odd) {
-  border-left: solid 0.5rem #808080;
+  border-left: solid 0.1rem #202020;
   font-size: 1rem;
   font-weight: bold;
   padding: 0 1rem;
@@ -97,13 +102,4 @@ table #vignetteParams td {
 table #vignetteParams td input {
    margin: 0 0 0 0.4rem;
    width: 12.5rem;
-}
-legend {
-   font-size:1.3rem;
-   color:#E0E0E0;
-   padding:0
-}
-legend > span {
-   font-weight: bold;
-   color: blue;
 }

@@ -36,22 +36,28 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
       </TD></TR>
 -->
       <TR><TD>
-         <FIELDSET>
-         <LEGEND>&nbsp;Sample Images&nbsp;</LEGEND>
+         <FIELDSET class="menu">
+         <LEGEND>&nbsp;Sample Images &gt; <SELECT id="imagesList"></SELECT> &nbsp; </LEGEND>
          <INPUT type="file" id="upldFile" multiple accept="image/" style="display:none"/>
-         <BUTTON id="upldBtn">More images&hellip;</BUTTON>
-         <SELECT id="imagesList"></SELECT>
-         <BUTTON id="upldPrev" disabled>&lt; Prev</BUTTON>
-         <BUTTON id="upldNext" disabled>Next &gt;</BUTTON>
+         <UL>
+         <LI id="upldBtn">Add&hellip;</LI>
+         <LI id="upldPrev" disabled>&lt; Prev</LI>
+         <LI id="upldNext" disabled>Next &gt;</LI>
+         </UL>
+         <!-- BUTTON id="upldBtn">More images&hellip;</BUTTON -->
+         <!-- SELECT id="imagesList"></SELECT -->
+         <!-- <BUTTON id="upldPrev" disabled>&lt; Prev</BUTTON> -->
+         <!-- <BUTTON id="upldNext" disabled>Next &gt;</BUTTON> -->
          </FIELDSET>
       </TD><TD>
-         <FIELDSET>
+         <FIELDSET class="menu">
          <LEGEND>&nbsp;Filters &gt; <SPAN id="filterName">[New Filter]</SPAN>&nbsp;</LEGEND>
          <INPUT type="file" id="filterFileInput" multiple accept="image/" style="display:none"/>
-         <UL class = "menu">
+         <UL>
          <LI id="loadFilter">Load</LI>
          <LI id="saveFilter">Save</LI>
          <LI id="saveFilterAs">Save As</LI>
+         <LI class="sepa"/>
          <LI id="importFilter">Import&hellip;</LI>
          <LI id="exportFilter">Export&hellip;</LI>
          </UL>
@@ -152,7 +158,7 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
          </DIV>
       </TD></TR>
     </TBODY>
-    <TFOOT><TR><TD colspan="2" style="text-align:right;font-size:0.9rem">
+    <TFOOT><TR><TD colspan="2" style="color:white;text-align:right;font-size:0.9rem">
        Build 2013.05.18.16.51 &nbsp; &nbsp; Copyright &copy; Jaxo Inc. 2013
     </TD></TR></TFOOT>
   </TABLE>

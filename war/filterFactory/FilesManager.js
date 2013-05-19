@@ -1,5 +1,5 @@
 function createFilesManager() {
-   localStorage.removeItem("jaxo_filters");
+   // localStorage.removeItem("jaxo_filters");
    if (!window.filesmanager) {
       Object.defineProperty(
          window,
@@ -283,7 +283,9 @@ function createFilesManager() {
                   xhr.open("POST", "../jaxogram?OP=blob&ACT=store", true);
                   xhr.onreadystatechange = function () {
                      if (this.readyState === 4) {
-                        if ((this.status !== 200) && (this.status !== 0)) {
+                        if ((this.status === 200) || (this.status === 0)) {
+                           alert(filePath + " exported to Server.");
+                        }else {
                            alert("Can't store \"" + filePath + "\" RC:" + this.status);
                         }
                      }
