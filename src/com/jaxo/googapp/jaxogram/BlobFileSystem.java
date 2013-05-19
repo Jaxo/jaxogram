@@ -13,7 +13,10 @@ package com.jaxo.googapp.jaxogram;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,6 +41,17 @@ import com.google.appengine.api.files.FileWriteChannel;
 // http://stackoverflow.com/questions/12065430/finding-a-blob-in-google-appengines-blobstore-with-blobkey
 class BlobFileSystem
 {
+   static final SimpleDateFormat sdfIn = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+   static final SimpleDateFormat sdfOut = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+   static { sdfOut.setTimeZone(TimeZone.getTimeZone("GMT")); }
+   static String formatDate(String date) {
+      try {
+         return sdfOut.format(sdfIn.parse(date));
+      }catch (Exception e) {
+         return sdfOut.format(new Date());
+      }
+   }
+
    public static void write(String data, String fileName, String mimeType)
    throws Exception
    {
@@ -52,14 +66,29 @@ class BlobFileSystem
    public static void read(String fileName, HttpServletResponse response)
    throws IOException
    {
-      BlobKey blobKey = getBlobKey(fileName);
-      if (blobKey != null) {
+      List<Entity> entList = getBlobInfoEntities(fileName);
+      if (entList.size() > 0) {
+         Entity entity = entList.get(0);
          //response.addHeader(
          //   "content-disposition", "attachment; filename=" + fileName
          //);
+         response.addHeader(
+            "Last-Modified",
+            formatDate(entity.getProperty("creation").toString())
+         );
+         BlobKey blobKey = new BlobKey(entity.getKey().getName());
          BlobstoreServiceFactory.getBlobstoreService().serve(blobKey, response);
       }
    }
+
+// public static void read(String fileName, HttpServletResponse response)
+// throws IOException
+// {
+//    BlobKey blobKey = getBlobKey(fileName);
+//    if (blobKey != null) {
+//       BlobstoreServiceFactory.getBlobstoreService().serve(blobKey, response);
+//    }
+// }
 
    public static void delete(String fileName) throws IOException
    {
@@ -79,15 +108,6 @@ class BlobFileSystem
          DatastoreServiceFactory.getDatastoreService().delete(
             getBlobFileIndexEntityKey(blobKeyName)
          );
-      }
-   }
-
-   public static BlobKey getBlobKey(String fileName) {
-      Key key = getBlobInfoEntityKey(fileName);
-      if (key != null) {
-         return new BlobKey(key.getName());
-      }else {
-         return null;
       }
    }
 
@@ -113,7 +133,7 @@ class BlobFileSystem
          }
          sb.append(entity.getProperty("filename")).
          append("\",\"creation\":\"").
-         append(entity.getProperty("creation")).
+         append(formatDate(entity.getProperty("creation").toString())).
          append("\",\"size\":").
          append(entity.getProperty("size")).
          append('}');
@@ -122,20 +142,34 @@ class BlobFileSystem
       return sb.toString();
    }
 
+
+
+   public static BlobKey getBlobKey(String fileName) {
+      Key key = getBlobInfoEntityKey(fileName);
+      if (key != null) {
+         return new BlobKey(key.getName());
+      }else {
+         return null;
+      }
+   }
+
    private static Key getBlobInfoEntityKey(String fileName) {
-      Query query = new Query("__BlobInfo__");
-      Query.FilterPredicate filter = new Query.FilterPredicate(
-         "filename", FilterOperator.EQUAL, fileName
-      );
-      query.setFilter(filter);
-      List<Entity> entList = DatastoreServiceFactory.getDatastoreService().
-      prepare(query).
-      asList(FetchOptions.Builder.withLimit(10));
+      List<Entity> entList = getBlobInfoEntities(fileName);
       if (entList.size() > 0) {
          return entList.get(0).getKey();
       }else {
          return null;
       }
+   }
+
+   private static List<Entity> getBlobInfoEntities(String fileName) {
+      Query query = new Query("__BlobInfo__");
+      query.setFilter(
+         new Query.FilterPredicate("filename", FilterOperator.EQUAL, fileName)
+      );
+      return DatastoreServiceFactory.getDatastoreService().
+      prepare(query).
+      asList(FetchOptions.Builder.withLimit(10));
    }
 
    // The ID/Name field in BlobInfo is the blob_key in BlobFileIndex

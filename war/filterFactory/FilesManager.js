@@ -1,5 +1,5 @@
 function createFilesManager() {
-   // localStorage.removeItem("jaxo_filters");
+   localStorage.removeItem("jaxo_filters");
    if (!window.filesmanager) {
       Object.defineProperty(
          window,
@@ -9,7 +9,6 @@ function createFilesManager() {
                var filesmanager = {};
                var files = [];
                var index = -1;
-               var opList;
                init();
                this.get = function() {
                   return filesmanager;
@@ -31,18 +30,11 @@ function createFilesManager() {
                //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
-                  "openList",
+                  "open",
                   {
-                     value: function(whenFileOpened) {
-                        opList.onclick = function(event) {
-                           var elt = event.target;
-                           if (elt.id && elt.id.startsWith("fileOp")) {
-                              index = elt.id.substr(6);
-                              var file = files[index];
-                              whenFileOpened(file.name, file.data);
-                           }
-                        }
-                        return opList;
+                     value: function(fileNo) {
+                        index = fileNo;
+                        return files[fileNo];
                      },
                      configurable: false,
                      enumerable: false
@@ -53,7 +45,7 @@ function createFilesManager() {
                   filesmanager,
                   "save",
                   {
-                     value: function(getFileData, asCopy) {
+                     value: function(data, asCopy) {
                         if ((index == -1) || asCopy) {
                            var name = prompt("Filter name:", "");
                            if (!name) {
@@ -64,10 +56,6 @@ function createFilesManager() {
                                     var item;
                                     index = i;
                                     files.push({ name: name });
-                                    item = document.createElement("LI");
-                                    item.textContent = name;
-                                    item.id = "fileOp" + i;
-                                    opList.appendChild(item);
                                     break;
                                  }else if (files[i].name === name) {
                                     if (!confirm(name +" already exits.\nReplace?")) {
@@ -79,9 +67,12 @@ function createFilesManager() {
                               }
                            }
                         }
-                        files[index].data = getFileData(files[index].name);
+                        files[index].data = data;
+                        files[index].creation =  new Date().toUTCString();
+                        files[index].size =  data.length;
                         localSave();
                         alert(files[index].name + " saved in your workspace.");
+                        return files[index];
                      },
                      configurable: false,
                      enumerable: false
@@ -90,7 +81,20 @@ function createFilesManager() {
                //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
-                  "localImport",
+                  "dir",
+                  {
+                     value: function(fileList) {
+                        fileList.populate.call(fileList, files);
+                     },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+
+               //--------------------------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
+                  "clientImport",
                   {
                      value: function(newFiles) {
                         var self = this;
@@ -113,7 +117,7 @@ function createFilesManager() {
                //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
-                  "localExport",
+                  "clientExport",
                   {
                      value: function(data) { writeToClientStorage(data); },
                      configurable: false,
@@ -174,40 +178,37 @@ function createFilesManager() {
                function init() {
                   var item;
 /**/              var reqdFilterNames = ["Nichole1", "Nichole2"];
-                  opList = document.createElement("UL");
+/**/              var count = reqdFilterNames.length;
                   var temp = localStorage.getItem("jaxo_filters");
                   if (temp) {
                      files = JSON.parse(temp);
-                     for (var i=0; i < files.length; ++i) {
-                        item = document.createElement("LI");
-                        item.textContent = files[i].name;
-/**/                    reqdFilterNames.forEach(
-/**/                       function(name, index) {
-/**/                          if (name === files[i].name) {
-/**/                             reqdFilterNames[index] = undefined;
-/**/                          }
+/**/                 for (var i=0, max=files.length; i < max; ++i) {
+/**/                    for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
+/**/                       var name = reqdFilterNames[j];
+/**/                       if (name === files[i].name) {
+/**/                          --count;
+/**/                          reqdFilterNames[index] = undefined;
 /**/                       }
-/**/                    );
-                        item.id = "fileOp" + i;
-                        opList.appendChild(item);
-                     }
+/**/                    }
+/**/                 }
                   }
-/**/              reqdFilterNames.forEach(
-/**/                 function(name) {
+/**/ var fules = files;
+/**/              if (count) {
+/**/                 for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
+/**/                    var name = reqdFilterNames[j];
 /**/                    if (name) {
+/**/ alert("Glou: " + name);
 /**/                       readJsonFileFromServer(
 /**/                          name,
-/**/                          function(data) {
-/**/                             files.push({ name: name, data: data});
-/**/                             item = document.createElement("LI");
-/**/                             item.textContent = name;
-/**/                             item.id = "fileOp" + (files.length-1);
-/**/                             opList.appendChild(item);
+/**/                          function(entry) {
+/**/                             files.push(entry);
+/**/                             if (--count == 0) localSave();
 /**/                          }
 /**/                       )
 /**/                    }
 /**/                 }
-/**/              );
+/**/              }else
+                  localSave();
                }
                //--------------------------------------------------------------
                function localSave() {
@@ -223,10 +224,6 @@ function createFilesManager() {
                         name: name,
                         data: evt.target.result
                      });
-                     item = document.createElement("LI");
-                     item.textContent = name;
-                     item.id = "fileOp" + ix;
-                     opList.appendChild(item);
                      whenDone();
                   };
                   reader.readAsBinaryString(file);
@@ -260,12 +257,10 @@ function createFilesManager() {
                            var ix = files.length;
                            files.push({
                               name: filePath,
+                              creation: this.getResponseHeader("Last-Modified"),
+                              size: this.getResponseHeader("Content-Length"),
                               data: this.responseText
                            });
-                           item = document.createElement("LI");
-                           item.textContent = filePath;
-                           item.id = "fileOp" + ix;
-                           opList.appendChild(item);
                            whenDone();
                         }else {
                            alert("Can't load \"" + filePath + "\" RC:" + this.status);
@@ -274,6 +269,9 @@ function createFilesManager() {
                   };
                   xhr.send();
                }
+               // Wed May 15 13:14:37 CEST 2013  <= Blob
+               // Mon, 03 Jul 2006 21:44:38 GMT  <= JS toUTCString
+               // Mon, 13 May 2013 11:18:49 GMT  <= HTTP GET (Last-Modified)
                //--------------------------------------------------------------
                function writeToBlobStore(contents, filePath, mimeType)
                {
@@ -318,7 +316,12 @@ function createFilesManager() {
                   xhr.onreadystatechange = function () {
                      if (this.readyState === 4) {
                         if ((this.status === 200) || (this.status === 0)) {
-                           whenDone(this.responseText);
+                           whenDone({
+                              name: filePath,
+                              creation: this.getResponseHeader("Last-Modified"),
+                              size: this.getResponseHeader("Content-Length"),
+                              data: this.responseText
+                           });
                         }else {
                            alert("Can't read \"" + filePath + "\" RC:" + this.status);
                         }

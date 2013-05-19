@@ -1,6 +1,7 @@
 // FIXME Need a protection mechanism.
 // see: https://developers.google.com/appengine/docs/java/users/overview
-var importFilesList;
+var localFilesList;
+var serverFilesList;
 var imagesList = [
    {
       name: "Cirques",
@@ -49,26 +50,47 @@ window.onload = function() {
    }
 }
 
-
 function doOnLoad() {
    initFilters();
    createFilesManager();
-   importFilesList = new FilesList("importFilesList");
-   importFilesList.addButton("Import", filesmanager.serverImport);
+   localFilesList = new FilesList("localFilesList");
+   localFilesList.addButton("Open").onclick = function() {
+      var filterIndeces = localFilesList.getSelectedRows();
+      if (filterIndeces.length > 0) {
+         localFilesList.clear();
+         var file = filesmanager.open(filterIndeces[0]);
+         document.getElementById("filterName").textContent = file.name;
+         currentFilter.restore(file.data);
+         filterImage();
+      }
+   };
+   serverFilesList = new FilesList("serverFilesList");
+   serverFilesList.addButton("Import").onclick = function() {
+      var fileNames = [];
+      serverFilesList.getSelectedRows().forEach(
+         function(rowNo) {
+            fileNames.push(serverFilesList.getCellValue(rowNo, 0));
+         }
+      );
+      serverFilesList.clear();
+      filesmanager.serverImport(fileNames);
+   };
 
-   document.getElementById("loadFilter").appendChild(
-      filesmanager.openList(onFilterOpened)
-   );
+   document.getElementById("loadFilter").onclick = function() {
+      filesmanager.dir(localFilesList);   // populate
+   }
    document.getElementById("saveFilter").onclick = function() {
-      filesmanager.save(getFilterData);
+      filesmanager.save(JSON.stringify(currentFilter));
    };
    document.getElementById("saveFilterAs").onclick = function() {
-      filesmanager.save(getFilterData, true);
+      document.getElementById("filterName").textContent = filesmanager.save(
+         JSON.stringify(currentFilter), true
+      ).name;
    };
    document.getElementById("importFilter").onclick = function() {
-      filesmanager.serverDir(
+      filesmanager.serverDir(                  // populate
          "application/json;jaxo_type=jxf",
-         importFilesList
+         serverFilesList
       );
       // var input = document.getElementById("filterFileInput");
       // input.onchange = function() { filesmanager.localImport(this.files); }
@@ -146,16 +168,6 @@ function doOnLoad() {
    buildImagesList();
 }
 
-function onFilterOpened(name, data) {
-   document.getElementById("filterName").textContent = name;
-   currentFilter.restore(data);
-   filterImage();
-}
-function getFilterData(name) {
-   document.getElementById("filterName").textContent = name;
-   // return document.getElementById("filterValue").textContent;
-   return JSON.stringify(currentFilter);
-}
 
 function fileToBlob(i, whenDone) {
    // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
