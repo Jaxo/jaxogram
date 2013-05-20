@@ -15,23 +15,6 @@ var imagesList = [
    }
 ];
 
-function buildImagesList(selectedIndex) {
-   var selElt = document.getElementById('imagesList');
-   var options = selElt.options;
-   var workIndex = selectedIndex? selectedIndex : selElt.selectedIndex;
-   options.length = 0;
-   if (workIndex == -1) workIndex = 0;
-   imagesList.forEach(
-      function(image, index) {
-         ++options.length;
-         options[index].text = image.name;
-      }
-   );
-   while (workIndex >= options.length) --workIndex;
-   selElt.selectedIndex = workIndex;
-   selElt.onchange();
-}
-
 window.onload = function() {
    /*
    avoid this:
@@ -44,7 +27,7 @@ window.onload = function() {
    var count = 0;
    for (var i=0; i < imagesList.length; ++i) {
       fileToBlob(
-         i,
+         imagesList[i],
          function() { if (++count == imagesList.length) doOnLoad();}
       );
    }
@@ -54,15 +37,22 @@ function doOnLoad() {
    initFilters();
    createFilesManager();
    localFilesList = new FilesList("localFilesList");
-   localFilesList.addButton("Open").onclick = function() {
-      var filterIndeces = localFilesList.getSelectedRows();
-      if (filterIndeces.length > 0) {
-         localFilesList.clear();
-         var file = filesmanager.open(filterIndeces[0]);
-         document.getElementById("filterName").textContent = file.name;
-         currentFilter.restore(file.data);
-         filterImage();
-      }
+   document.getElementById('filtersList').onchange = function() {
+      var file = filesmanager.open(this.selectedIndex - 1);
+      currentFilter.restore(file? file.data : null);
+      filterImage();
+   };
+   localFilesList.addButton("Remove").onclick = function() {
+      alert("Sorry: to be implemented");
+//    var filterIndeces = localFilesList.getSelectedRows();              // OUH
+//    localFilesList.clear();                                            // OUH
+//    if (filterIndeces.length > 0) {                                    // OUH
+//       var file = filesmanager.open(filterIndeces[0]);                 // OUH
+//       filterImage();                                                  // OUH
+//    }                                                                  // OUH
+   };
+   localFilesList.addButton("Rename").onclick = function() {
+      alert("Sorry: to be implemented");
    };
    serverFilesList = new FilesList("serverFilesList");
    serverFilesList.addButton("Import").onclick = function() {
@@ -76,16 +66,18 @@ function doOnLoad() {
       filesmanager.serverImport(fileNames);
    };
 
-   document.getElementById("loadFilter").onclick = function() {
+   document.getElementById("manageFilters").onclick = function() {
       filesmanager.dir(localFilesList);   // populate
    }
    document.getElementById("saveFilter").onclick = function() {
       filesmanager.save(JSON.stringify(currentFilter));
+      buildFiltersList();
    };
    document.getElementById("saveFilterAs").onclick = function() {
-      document.getElementById("filterName").textContent = filesmanager.save(
+      filesmanager.save(
          JSON.stringify(currentFilter), true
       ).name;
+      buildFiltersList();
    };
    document.getElementById("importFilter").onclick = function() {
       filesmanager.serverDir(                  // populate
@@ -166,12 +158,47 @@ function doOnLoad() {
       selElt.onchange();
    }
    buildImagesList();
+   buildFiltersList();
 }
 
+function buildImagesList(selectedIndex) {
+   var selElt = document.getElementById('imagesList');
+   var options = selElt.options;
+   var workIndex = selectedIndex? selectedIndex : selElt.selectedIndex;
+   options.length = 0;
+   if (workIndex == -1) workIndex = 0;
+   imagesList.forEach(
+      function(image, index) {
+         ++options.length;
+         options[index].text = image.name;
+      }
+   );
+   while (workIndex >= options.length) --workIndex;
+   selElt.selectedIndex = workIndex;
+   selElt.onchange();
+}
 
-function fileToBlob(i, whenDone) {
+function buildFiltersList() {
+   var selElt = document.getElementById('filtersList');
+   var options = selElt.options;
+   // var workIndex = selectedIndex? selectedIndex : selElt.selectedIndex;
+   options.length = 1;
+   options[0].text = "[New Filter]";
+   // options[0].setAttribute("disabled", "true");
+   // if (workIndex == -1) workIndex = 0;
+   filesmanager.dir({
+      populate: function(files) {
+         files.forEach(
+            function(file) { options[options.length++].text = file.name; }
+         );
+      }
+   });
+   options[1+filesmanager.currentSelection()].setAttribute("selected", "true");
+// selElt.onchange();   OUH
+}
+
+function fileToBlob(image, whenDone) {
    // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
-   var image = imagesList[i];
    var img = new Image();
    img.onload = function() {
       var canvas = document.createElement("CANVAS");

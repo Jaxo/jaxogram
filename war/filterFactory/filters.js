@@ -314,48 +314,53 @@ function filterImage() {
       if (filterValue !== "") filterValue += "\r\n";
       filterValue += sharpen;
    }
-   if (currentFilter.isVignetted) {
-      if (filterValue !== "") filterValue += "\r\n";
-      filterValue += "<feVignette radius='" + currentFilter.vigRadius + "' bright='" + currentFilter.vigBright + "'/>";
-   }
-   // document.getElementById("filterValue").innerHTML = filterValue;
 
    var originalImage = document.getElementById("originalImage");
    var filteredImage = document.getElementById("filteredImage");
-   if (filterValue === "") {
+
+   if ((filterValue === "") && !currentFilter.isVignetted) {
       filteredImage.src = originalImage.src;
    }else {
       var w = originalImage.width;    // 450
       var h = originalImage.height;   // 281
       var baseFilter = (
-        "<g>" +
-           "<image xlink:href='" + originalImage.src +
-           "' width='" + w +
-           "' height='" + h +
-           "' filter='url(data:image/svg+xml," +
-           escape(
-              "<svg xmlns='http://www.w3.org/2000/svg'><filter id='f1'>" +
-              colorsLevels +
-              colorMatrix +
-              contrast +
-              gaussianBlur +
-              filterNoir +
-              filterMoat +
-              sharpen +
-              "</filter></svg>"
-           ) +
-           "#f1)'></image>" +
-        "</g>"
+         "<g><image xlink:href='" + originalImage.src +
+         "' width='" + w + "' height='" + h
       );
+      if (filterValue !== "") {
+         baseFilter += (
+            "' filter='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'><filter id='f1'>" +
+               colorsLevels +
+               colorMatrix +
+               contrast +
+               gaussianBlur +
+               filterNoir +
+               filterMoat +
+               sharpen +
+               "</filter></svg>"
+            ) +
+            "#f1)"
+         );
+      }
+      baseFilter += "'></image></g>";
       var svg;
       if (!currentFilter.isVignetted) {
          svg = (
-            "<svg width='" + w + "' height='" + h + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+            "<svg width='" + w + "' height='" + h +
+            "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
             baseFilter +
             "</svg>"
          );
       }else {
-         svg = vignetize(baseFilter, originalImage, currentFilter.vigRadius/100, currentFilter.vigBright/100);
+         if (filterValue !== "") filterValue += "\r\n";
+         filterValue += "<feVignette radius='" + currentFilter.vigRadius + "' bright='" + currentFilter.vigBright + "'/>";
+//       document.getElementById("filterValue").innerHTML = filterValue;
+         svg = vignetize(
+            baseFilter, originalImage,
+            currentFilter.vigRadius/100, currentFilter.vigBright/100
+         );
       }
       filteredImage.src = URL.createObjectURL(
          new Blob([svg], {type:"image/svg+xml"})
@@ -387,7 +392,8 @@ function vignetize(baseFilter, originalImage, r, b)
    }
    var border = (m * 0.0214) | 0;
    return (
-     "<svg width='" + m + "' height='" + m + "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+     "<svg width='" + m + "' height='" + m +
+     "' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
        "<g transform='translate(" + t + "," + u + ")'>" +
          baseFilter +
          "<g>" +

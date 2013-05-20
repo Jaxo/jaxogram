@@ -30,6 +30,16 @@ function createFilesManager() {
                //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,
+                  "currentSelection",
+                  {
+                     value: function() { return index; },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
+               //--------------------------------------------------------------
+               Object.defineProperty(
+                  filesmanager,
                   "open",
                   {
                      value: function(fileNo) {
@@ -192,7 +202,6 @@ function createFilesManager() {
 /**/                    }
 /**/                 }
                   }
-/**/ var fules = files;
 /**/              if (count) {
 /**/                 for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
 /**/                    var name = reqdFilterNames[j];

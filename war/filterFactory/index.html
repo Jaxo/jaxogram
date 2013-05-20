@@ -23,7 +23,7 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
 </HEAD>
 
 <BODY>
-  <DIV id="localFilesList" style="display:none">Select a filter from your workspace</DIV>
+  <DIV id="localFilesList" style="display:none">Select filters from your workspace</DIV>
   <DIV id="serverFilesList" style="display:none">Select filters to be imported from the Server</DIV>
   <TABLE id="main">
     <TBODY>
@@ -37,7 +37,9 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
 -->
       <TR><TD>
          <FIELDSET class="menu">
-         <LEGEND>&nbsp;Sample Images &gt; <SELECT id="imagesList"></SELECT> &nbsp; </LEGEND>
+         <LEGEND>&nbsp;Sample Images &gt;
+            <SELECT id="imagesList"></SELECT> &nbsp;
+         </LEGEND>
          <INPUT type="file" id="upldFile" multiple accept="image/" style="display:none"/>
          <UL>
          <LI id="upldBtn">Add&hellip;</LI>
@@ -51,12 +53,14 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
          </FIELDSET>
       </TD><TD>
          <FIELDSET class="menu">
-         <LEGEND>&nbsp;Filters &gt; <SPAN id="filterName">[New Filter]</SPAN>&nbsp;</LEGEND>
+         <LEGEND>&nbsp;Filters &gt;
+            <SELECT id="filtersList"></SELECT> &nbsp;
+         </LEGEND>
          <INPUT type="file" id="filterFileInput" multiple accept="image/" style="display:none"/>
          <UL>
-         <LI id="loadFilter">Load</LI>
          <LI id="saveFilter">Save</LI>
          <LI id="saveFilterAs">Save As</LI>
+         <LI id="manageFilters">Manage</LI>
          <LI class="sepa"/>
          <LI id="importFilter">Import&hellip;</LI>
          <LI id="exportFilter">Export&hellip;</LI>

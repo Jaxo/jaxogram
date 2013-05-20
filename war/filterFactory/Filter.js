@@ -1,14 +1,38 @@
 function Filter() {
-   this.refresh();
-   this.colorsLevels = [
-      Filter.colorsLevelsBase.slice(0),
-      Filter.colorsLevelsBase.slice(0),
-      Filter.colorsLevelsBase.slice(0)
-   ];
+   this.restore();
+// this.colorsLevels = [
+//    Filter.colorsLevelsBase.slice(0),
+//    Filter.colorsLevelsBase.slice(0),
+//    Filter.colorsLevelsBase.slice(0)
+// ];
 }
 Filter.colorsLevelsBase = [
    0, 0.125, 0.250, 0.375, 0.500, 0.625, 0.750, 0.875, 1.0000
 ];
+Filter.defaultSrc = JSON.stringify(
+   {
+      blur: 0,
+      brightness: 100,
+      contrast: 100,
+      dusk: false,
+      extra3: 100,
+      hueRot: 0,
+      isSharpened: false,
+      isVignetted: false,
+      moat: false,
+      noir: false,
+      saturation: 100,
+      sepia: false,
+      sharpen: 100,
+      vigBright: 60,
+      vigRadius: 65,
+      colorsLevels: [
+         Filter.colorsLevelsBase.slice(0),
+         Filter.colorsLevelsBase.slice(0),
+         Filter.colorsLevelsBase.slice(0)
+      ]
+   }
+);
 Filter.prototype = {
    refresh: function() {
       this.blur = parseInt(document.getElementById("blur").value);
@@ -30,7 +54,7 @@ Filter.prototype = {
       this.setDisplayedValues();
    },
    restore: function(value) {
-      var src = JSON.parse(value);
+      var src = JSON.parse(value || Filter.defaultSrc);
       this.blur = document.getElementById("blur").value = src.blur;
       this.brightness = document.getElementById("brightness").value = src.brightness;
       this.contrast = document.getElementById("contrast").value = src.contrast;
