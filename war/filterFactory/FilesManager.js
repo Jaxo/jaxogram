@@ -88,6 +88,29 @@ function createFilesManager() {
                      enumerable: false
                   }
                );
+               Object.defineProperty(
+                  filesmanager,
+                  "delete",
+                  {
+                     value: function(nos) {
+                        var max = nos.length;
+                        if ((max > 0) && confirm("Remove from local store?")) {
+                           var newFiles = [];
+                           var i, j, k;
+                           for (i=0, j=0, k=0, max=nos.length; i < max; ++i, ++j) {
+                              var n = nos[i];
+                              while (j < n) newFiles[k++] = files[j++];
+                              // delete j
+                           }
+                           while (j < files.length) newFiles[k++] = files[j++];
+                           files = newFiles;
+                           localSave();
+                        }
+                     },
+                     configurable: false,
+                     enumerable: false
+                  }
+               );
                //--------------------------------------------------------------
                Object.defineProperty(
                   filesmanager,

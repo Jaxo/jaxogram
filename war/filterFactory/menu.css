@@ -28,8 +28,12 @@ span.dropdown span {
 }
 span.dropdown select {
    position:absolute;
-   left:0;
+   left:-3px;
+   top:-4px;
    opacity: 0.01;
+}
+span.dropdown select:hover {
+   opacity:1;
 }
 /* span.dropdown select > option {  */
 /*    background-color: yellow;     */

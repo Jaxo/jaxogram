@@ -46,16 +46,16 @@ function doOnLoad() {
       filterImage();
    };
    localFilesList.addButton("Remove").onclick = function() {
-      alert("Sorry: to be implemented");
-//    var filterIndeces = localFilesList.getSelectedRows();              // OUH
-//    localFilesList.clear();                                            // OUH
-//    if (filterIndeces.length > 0) {                                    // OUH
-//       var file = filesmanager.open(filterIndeces[0]);                 // OUH
-//       filterImage();                                                  // OUH
-//    }                                                                  // OUH
+      filesmanager.delete(localFilesList.getSelectedRows());
+      localFilesList.clear();
+      buildFiltersList();
    };
    localFilesList.addButton("Rename").onclick = function() {
-      alert("Sorry: to be implemented");
+      var filterIndeces = localFilesList.getSelectedRows();
+      localFilesList.clear();
+      for (var i=0, max=filterIndeces.length; i < max; ++i) {
+//       filesmanager.rename(filterIndeces[i]);
+      }
    };
    serverFilesList = new FilesList("serverFilesList");
    serverFilesList.addButton("Import").onclick = function() {
@@ -173,13 +173,16 @@ function doOnLoad() {
       var index = selElt.selectedIndex;
       if (index == -1) index = 0;
       childrens[0].textContent = selElt.options[index].textContent;
-      selElt.onmouseover = function() {
+      selElt.onmouseenter = function(evt) {
+         cnt = 1;
+         console.log("enter " + evt.target);
          this.style.opacity = 1;
          this.size=this.options.length;
       }
-      selElt.onmouseout = function() {
-         this.style.opacity = 0.01;
+      selElt.onmouseleave = function(evt) {
+         console.log("leave " + evt.target);
          this.size = 1;
+         this.style.opacity = 0.01;
       }
    }
 }
@@ -248,3 +251,4 @@ function toggleSelBox() {
        this.style.height='auto';
     }
 }
+
