@@ -35,132 +35,136 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
          ></TEXTAREA>
       </TD></TR>
 -->
-      <TR><TD>
-         <FIELDSET class="menu">
-         <LEGEND>&nbsp;Sample Images &gt;
-            <SELECT id="imagesList"></SELECT> &nbsp;
-         </LEGEND>
-         <INPUT type="file" id="upldFile" multiple accept="image/" style="display:none"/>
-         <UL>
-         <LI id="upldBtn">Add&hellip;</LI>
-         <LI id="upldPrev" disabled>&lt; Prev</LI>
-         <LI id="upldNext" disabled>Next &gt;</LI>
-         </UL>
-         <!-- BUTTON id="upldBtn">More images&hellip;</BUTTON -->
-         <!-- SELECT id="imagesList"></SELECT -->
-         <!-- <BUTTON id="upldPrev" disabled>&lt; Prev</BUTTON> -->
-         <!-- <BUTTON id="upldNext" disabled>Next &gt;</BUTTON> -->
-         </FIELDSET>
-      </TD><TD>
-         <FIELDSET class="menu">
-         <LEGEND>&nbsp;Filters &gt;
+      <TR>
+        <TD>
+          <FIELDSET class="menu">
+          <LEGEND>&nbsp;Sample Images &gt;
+            <SPAN style="position:relative;">
+              <SPAN>Couillon</SPAN>
+              <SELECT id="imagesList"></SELECT> &nbsp;
+            </SPAN>
+          </LEGEND>
+          <INPUT type="file" id="upldFile" multiple accept="image/" style="display:none"/>
+          <UL>
+            <LI id="upldBtn">Add&hellip;</LI>
+            <LI id="upldPrev" disabled>&lt; Prev</LI>
+            <LI id="upldNext" disabled>Next &gt;</LI>
+          </UL>
+          </FIELDSET>
+        </TD><TD>
+          <FIELDSET class="menu">
+          <LEGEND>&nbsp;Filters &gt;
+            <SPAN style="position:relative;">
+            <SPAN>Grosse Tache</SPAN>
             <SELECT id="filtersList"></SELECT> &nbsp;
-         </LEGEND>
-         <INPUT type="file" id="filterFileInput" multiple accept="image/" style="display:none"/>
-         <UL>
-         <LI id="saveFilter">Save</LI>
-         <LI id="saveFilterAs">Save As</LI>
-         <LI id="manageFilters">Manage</LI>
-         <LI class="sepa"/>
-         <LI id="importFilter">Import&hellip;</LI>
-         <LI id="exportFilter">Export&hellip;</LI>
-         </UL>
-         </FIELDSET>
-      </TD></TR><TR style="height:0.5rem"><TD colspan="2">
-      </TD></TR><TR><TD>
-         <IMG id="originalImage" alt="Original Image"/>
-      </TD><TD align="right">
-         <IMG id="filteredImage" alt="Filtered Image"/>
-      </TD></TR><TR style="height:0.5rem"><TD colspan="2">
-      </TD></TR><TR><TD colspan="2">
-         <DIV style="position:relative">
-         <SPAN id="vertVal"></SPAN>
-         <TABLE class="sliders">
+            </SPAN>
+          </LEGEND>
+          <INPUT type="file" id="filterFileInput" multiple accept="image/" style="display:none"/>
+          <UL>
+            <LI id="saveFilter">Save</LI>
+            <LI id="saveFilterAs">Save As</LI>
+            <LI id="manageFilters">Manage</LI>
+            <LI class="sepa"/>
+            <LI id="importFilter">Import&hellip;</LI>
+            <LI id="exportFilter">Export&hellip;</LI>
+          </UL>
+          </FIELDSET>
+        </TD>
+      </TR><TR style="height:0.5rem"><TD colspan="2"></TD>
+      </TR><TR>
+        <TD align="center"><IMG id="originalImage" alt="Original Image"/></TD>
+        <TD align="center"><IMG id="filteredImage" alt="Filtered Image"/></TD>
+      </TR><TR style="height:0.5rem"><TD colspan="2"></TD>
+      </TR><TR>
+        <TD colspan="2">
+          <DIV style="position:relative">
+            <SPAN id="vertVal"></SPAN>
+            <TABLE class="sliders">
             <TBODY>
               <TR>
-              <TD rowspan="5" colspan="2" class="vsliders">
-                 <DIV style="padding:0">
-                 <DIV style="border-bottom-color:red">
-                    <SPAN><INPUT id="red0" type="range" orient="vertical"   value="0" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red1" type="range" orient="vertical"  value="32" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red2" type="range" orient="vertical"  value="64" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red3" type="range" orient="vertical"  value="96" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red4" type="range" orient="vertical" value="128" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red5" type="range" orient="vertical" value="160" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red6" type="range" orient="vertical" value="192" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red7" type="range" orient="vertical" value="224" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="red8" type="range" orient="vertical" value="255" min="0" max="255" step="1"/></SPAN>
-                 </DIV>
-                 <DIV style="border-bottom-color:green">
-                    <SPAN><INPUT id="green0" type="range" orient="vertical"   value="0" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green1" type="range" orient="vertical"  value="32" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green2" type="range" orient="vertical"  value="64" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green3" type="range" orient="vertical"  value="96" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green4" type="range" orient="vertical" value="128" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green5" type="range" orient="vertical" value="160" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green6" type="range" orient="vertical" value="192" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green7" type="range" orient="vertical" value="224" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="green8" type="range" orient="vertical" value="255" min="0" max="255" step="1"/></SPAN>
-                 </DIV>
-                 <DIV style="border-bottom-color:blue">
-                    <SPAN><INPUT id="blue0" type="range" orient="vertical"   value="0" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue1" type="range" orient="vertical"  value="32" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue2" type="range" orient="vertical"  value="64" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue3" type="range" orient="vertical"  value="96" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue4" type="range" orient="vertical" value="128" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue5" type="range" orient="vertical" value="160" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue6" type="range" orient="vertical" value="192" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue7" type="range" orient="vertical" value="224" min="0" max="255" step="1"/></SPAN>
-                    <SPAN><INPUT id="blue8" type="range" orient="vertical" value="255" min="0" max="255" step="1"/></SPAN>
-                 </DIV>
-                 </DIV>
-              </TD>
-              </TD><TD>Saturation</TD><TD><INPUT id="saturation" value="100" type="range"  min="-100" max="100"/><SPAN id="saturationVal"></SPAN>
-              </TD><TD>Sharpen<BR/><INPUT id="sharpenChk" type="checkbox"/>
-              </TD><TD><INPUT id="sharpen" type="range" value="100" min="0" max="100"/><SPAN id=sharpenVal></SPAN>
-              </TD>
-
+                <TD rowspan="5" colspan="2" class="vsliders">
+                  <DIV style="padding:0">
+                   <DIV style="border-bottom-color:red">
+                     <SPAN><INPUT id="red0" type="range" orient="vertical"   value="0" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red1" type="range" orient="vertical"  value="32" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red2" type="range" orient="vertical"  value="64" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red3" type="range" orient="vertical"  value="96" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red4" type="range" orient="vertical" value="128" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red5" type="range" orient="vertical" value="160" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red6" type="range" orient="vertical" value="192" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red7" type="range" orient="vertical" value="224" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="red8" type="range" orient="vertical" value="255" min="0" max="255" step="1"/></SPAN>
+                   </DIV>
+                   <DIV style="border-bottom-color:green">
+                     <SPAN><INPUT id="green0" type="range" orient="vertical"   value="0" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green1" type="range" orient="vertical"  value="32" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green2" type="range" orient="vertical"  value="64" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green3" type="range" orient="vertical"  value="96" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green4" type="range" orient="vertical" value="128" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green5" type="range" orient="vertical" value="160" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green6" type="range" orient="vertical" value="192" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green7" type="range" orient="vertical" value="224" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="green8" type="range" orient="vertical" value="255" min="0" max="255" step="1"/></SPAN>
+                   </DIV>
+                   <DIV style="border-bottom-color:blue">
+                     <SPAN><INPUT id="blue0" type="range" orient="vertical"   value="0" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue1" type="range" orient="vertical"  value="32" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue2" type="range" orient="vertical"  value="64" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue3" type="range" orient="vertical"  value="96" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue4" type="range" orient="vertical" value="128" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue5" type="range" orient="vertical" value="160" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue6" type="range" orient="vertical" value="192" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue7" type="range" orient="vertical" value="224" min="0" max="255" step="1"/></SPAN>
+                     <SPAN><INPUT id="blue8" type="range" orient="vertical" value="255" min="0" max="255" step="1"/></SPAN>
+                   </DIV>
+                  </DIV>
+                </TD>
+                <TD>Saturation</TD>
+                <TD><INPUT id="saturation" value="100" type="range"  min="-100" max="100"/><SPAN id="saturationVal"></SPAN></TD>
+                <TD>Sharpen<BR/><INPUT id="sharpenChk" type="checkbox"/></TD>
+                <TD><INPUT id="sharpen" type="range" value="100" min="0" max="100"/><SPAN id=sharpenVal></SPAN></TD>
               </TR><TR>
-              </TD><TD>Hue Rotation</TD><TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><SPAN id="rotateHueVal">
-              </TD><TD>Brightness</TD><TD><INPUT id="brightness" value="100" type="range"  min="0" max="200"/><SPAN id="brightnessVal"></SPAN>
-              </TD>
-
+                <TD>Hue Rotation</TD>
+                <TD><INPUT id="rotateHue" type="range" value="0" min="0" max="360"/><SPAN id="rotateHueVal"></TD>
+                <TD>Brightness</TD>
+                <TD><INPUT id="brightness" value="100" type="range"  min="0" max="200"/><SPAN id="brightnessVal"></SPAN></TD>
               </TR><TR>
-              </TD><TD>Contrast</TD><TD><INPUT id="contrast" value="100" type="range" min="-200" max="299"/><SPAN id="contrastVal"></SPAN>
-              </TD><TD>Vignette<BR/><INPUT id="vignetteChk" type="checkbox"/>
-              </TD><TD>
-              <TABLE id="vignetteParams">
-                 <TR>
-                 <TD>Radius:</TD><TD>&nbsp;<SPAN id="vigRadiusVal"></SPAN></TD>
-                 <TD><INPUT id="vigRadius" type="range" value="65" min="0" max="100"/></TD>
-                 </TR><TR>
-                 <TD>Bright:</TD><TD>&nbsp;<SPAN id="vigBrightVal"></SPAN></TD>
-                 <TD><INPUT id="vigBright" type="range" value="60" min="0" max="100"/></TD>
-                 </TR>
-              </TABLE>
-              </TD>
-
+                <TD>Contrast</TD>
+                <TD><INPUT id="contrast" value="100" type="range" min="-200" max="299"/><SPAN id="contrastVal"></SPAN></TD>
+                <TD>Vignette<BR/><INPUT id="vignetteChk" type="checkbox"/></TD>
+                <TD><TABLE id="vignetteParams">
+                  <TR>
+                    <TD>Radius:</TD>
+                    <TD>&nbsp;<SPAN id="vigRadiusVal"></SPAN></TD>
+                    <TD><INPUT id="vigRadius" type="range" value="65" min="0" max="100"/></TD>
+                  </TR><TR>
+                    <TD>Bright:</TD>
+                    <TD>&nbsp;<SPAN id="vigBrightVal"></SPAN></TD>
+                    <TD><INPUT id="vigBright" type="range" value="60" min="0" max="100"/></TD>
+                  </TR>
+                </TABLE></TD>
               </TR><TR>
-              </TD><TD>Blur</TD><TD><INPUT id="blur" value="0" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
-              </TD><TD colspan="2">
-                 <LABEL><INPUT id="sepia" type="checkbox"/>Sepia</LABEL>
-                 &nbsp; &nbsp;
-                 <LABEL><INPUT id="dusk" type="checkbox"/>Dusk</LABEL>
-                 &nbsp; &nbsp;
-                 <LABEL><INPUT id="noir" type="checkbox"/>Noir</LABEL>
-                 &nbsp; &nbsp;
-                 <LABEL><INPUT id="moat" type="checkbox"/>Moat</LABEL>
-              </TD>
-
+                <TD>Blur</TD>
+                <TD><INPUT id="blur" value="0" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN></TD>
+                <TD colspan="2">
+                  <LABEL><INPUT id="sepia" type="checkbox"/>Sepia</LABEL>
+                  &nbsp; &nbsp;
+                  <LABEL><INPUT id="dusk" type="checkbox"/>Dusk</LABEL>
+                  &nbsp; &nbsp;
+                  <LABEL><INPUT id="noir" type="checkbox"/>Noir</LABEL>
+                  &nbsp; &nbsp;
+                  <LABEL><INPUT id="moat" type="checkbox"/>Moat</LABEL>
+                </TD>
               </TR><TR>
-              </TD><TD disabled="disabled">Extra2</TD><TD disabled="disabled"><INPUT id="extra2" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN>
-              </TD><TD>Extra3</TD><TD><INPUT id="extra3" value="100" type="range" min="0" max="500"/><SPAN id="extra3Val"></SPAN>
-              </TD>
+                <TD disabled="disabled">Extra2</TD>
+                <TD disabled="disabled"><INPUT id="extra2" type="range" min="0" max="100"/><SPAN id=blurVal></SPAN></TD>
+                <TD>Extra3</TD><TD><INPUT id="extra3" value="100" type="range" min="0" max="500"/><SPAN id="extra3Val"></SPAN></TD>
               </TR>
             </TBODY>
-         </TABLE>
-         </DIV>
-      </TD></TR>
+            </TABLE>
+          </DIV>
+        </TD>
+      </TR>
     </TBODY>
     <TFOOT><TR><TD colspan="2" style="color:white;text-align:right;font-size:0.9rem">
        Build 2013.05.19.10.26 &nbsp; &nbsp; Copyright &copy; Jaxo Inc. 2013

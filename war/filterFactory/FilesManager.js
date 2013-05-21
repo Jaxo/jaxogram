@@ -206,7 +206,6 @@ function createFilesManager() {
 /**/                 for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
 /**/                    var name = reqdFilterNames[j];
 /**/                    if (name) {
-/**/ alert("Glou: " + name);
 /**/                       readJsonFileFromServer(
 /**/                          name,
 /**/                          function(entry) {

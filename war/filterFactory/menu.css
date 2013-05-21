@@ -1,6 +1,8 @@
 fieldset.menu {
    background-color:#3E4449;
    border-radius:0.8rem;
+   margin:0.8rem 0 0 0;
+   padding-top:0.5rem;
    padding:0;
 }
 .menu legend {
@@ -12,16 +14,31 @@ fieldset.menu {
    font-weight: bold;
    color: white;
 }
+.menu legend span > span {
+   background-color:#3e4449;
+   padding:0.2rem 1.7rem 0.2rem 0.7rem;
+   background-image: url(dwn.png);
+   background-position: right 3px top 5px;
+   background-repeat: no-repeat;
+   border:1px solid #606060;
+   border-radius:0.8rem;
+}
+.menu legend select {
+   position:absolute;
+   left:0;
+   opacity: 0;
+}
 .menu ul {
    font-size: 14px;
    margin: 0;
    padding: 0;
    /* list-style: none; */
 }
-.menu select {
-   background: none;
+
+.menu ol {
+   background: #3E4449;
    font-weight: bold;
-   color: white; /* #9DA3A9; */
+   color: black; /* #9DA3A9; */
    margin: -2px;
    padding: 0;
    border: none;
