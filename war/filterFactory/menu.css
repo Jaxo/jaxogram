@@ -1,48 +1,49 @@
 fieldset.menu {
-   background-color:#3E4449;
-   border-radius:0.8rem;
-   margin:0.8rem 0 0 0;
+   /* background-color:#3E4449; */
+   /* border-radius:0.8rem; */
+   border: none;
+   margin: 0;
    padding-top:0.5rem;
    padding:0;
 }
 .menu legend {
    font-size:1.3rem;
+   font-style: oblique;
    color:#E0E0E0;
    padding:0;
 }
-.menu legend > span {
-   font-weight: bold;
+span.dropdown {
+   position:relative;
    color: white;
 }
-.menu legend span > span {
-   background-color:#3e4449;
+span.dropdown span {
+   /* background-color:#3e4449; */
    padding:0.2rem 1.7rem 0.2rem 0.7rem;
    background-image: url(dwn.png);
    background-position: right 3px top 5px;
    background-repeat: no-repeat;
-   border:1px solid #606060;
-   border-radius:0.8rem;
+   margin-right: -10px;
+   /* border:1px solid #606060; */
+   /* border-radius:0.8rem;     */
 }
-.menu legend select {
+span.dropdown select {
    position:absolute;
    left:0;
-   opacity: 0;
+   opacity: 0.01;
+}
+/* span.dropdown select > option {  */
+/*    background-color: yellow;     */
+/* }                                */
+span.dropdown select > option:hover {
+   background-color: lightgray;
+   border:none;
 }
 .menu ul {
-   font-size: 14px;
+   font-size: 13px;
    margin: 0;
    padding: 0;
+   display: inline-block;
    /* list-style: none; */
-}
-
-.menu ol {
-   background: #3E4449;
-   font-weight: bold;
-   color: black; /* #9DA3A9; */
-   margin: -2px;
-   padding: 0;
-   border: none;
-   outline: 0;
 }
 .menu ul li {
    display: block;
@@ -50,17 +51,12 @@ fieldset.menu {
    position: relative;
    float: left;
    text-decoration: none;
-   width: 6rem;
+   min-width: 6rem;
    color: #9DA3A9;
-   padding: 3px 5px;
-   /* background:-moz-linear-gradient(top,#F8F8F8 0%,#B0B0B0 100%); */
-   /* margin-left: 8px; */
-   /* margin: 0px; */
-   margin: 0 0 0.5rem 0;
+   padding: 6px 4px;
+   margin: 0;
    white-space: nowrap;
    border-right: 1px solid #606060;
-   /* border: 1px solid #B0B0B0; */
-   /* border-radius: 4px;        */
 }
 .menu ul li:hover {
    color: #D9E1E8;
@@ -69,8 +65,6 @@ fieldset.menu {
    /* border-color: #fb9267; */
 }
 .menu ul li:active {
-   padding-left:6px;
-   padding-right:4px;
    background:-moz-linear-gradient(top,#B0B0B0 0%,#F8F8F8 100%);
    border-color: #fb9267;
 }

@@ -27,6 +27,7 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
   <DIV id="serverFilesList" style="display:none">Select filters to be imported from the Server</DIV>
   <TABLE id="main">
     <TBODY>
+      <TR class="sepa"><TD colspan="2"></TD></TR>
 <!--
       <TR><TD colspan=2>
          <TEXTAREA readonly
@@ -38,14 +39,14 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
       <TR>
         <TD>
           <FIELDSET class="menu">
-          <LEGEND>&nbsp;Sample Images &gt;
-            <SPAN style="position:relative;">
-              <SPAN>Couillon</SPAN>
-              <SELECT id="imagesList"></SELECT> &nbsp;
-            </SPAN>
-          </LEGEND>
+          <LEGEND>&nbsp;Original Sample Image</LEGEND>
           <INPUT type="file" id="upldFile" multiple accept="image/" style="display:none"/>
           <UL>
+            <LI>
+              <SPAN class="dropdown">
+                <SPAN></SPAN><SELECT id="imagesList"></SELECT> &nbsp;
+              </SPAN>
+            </LI>
             <LI id="upldBtn">Add&hellip;</LI>
             <LI id="upldPrev" disabled>&lt; Prev</LI>
             <LI id="upldNext" disabled>Next &gt;</LI>
@@ -53,28 +54,26 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
           </FIELDSET>
         </TD><TD>
           <FIELDSET class="menu">
-          <LEGEND>&nbsp;Filters &gt;
-            <SPAN style="position:relative;">
-            <SPAN>Grosse Tache</SPAN>
-            <SELECT id="filtersList"></SELECT> &nbsp;
-            </SPAN>
-          </LEGEND>
+          <LEGEND>&nbsp;Filtered by</LEGEND>
           <INPUT type="file" id="filterFileInput" multiple accept="image/" style="display:none"/>
           <UL>
+            <LI>
+              <SPAN class="dropdown">
+                <SPAN></SPAN><SELECT id="filtersList"></SELECT> &nbsp;
+              </SPAN>
+            </LI>
             <LI id="saveFilter">Save</LI>
             <LI id="saveFilterAs">Save As</LI>
             <LI id="manageFilters">Manage</LI>
-            <LI class="sepa"/>
+            <!-- LI class="sepa"/ -->
             <LI id="importFilter">Import&hellip;</LI>
             <LI id="exportFilter">Export&hellip;</LI>
           </UL>
           </FIELDSET>
         </TD>
-      </TR><TR style="height:0.5rem"><TD colspan="2"></TD>
       </TR><TR>
-        <TD align="center"><IMG id="originalImage" alt="Original Image"/></TD>
+        <TD style="padding:1rem 0;text-align:center;"><IMG id="originalImage" alt="Original Image"/></TD>
         <TD align="center"><IMG id="filteredImage" alt="Filtered Image"/></TD>
-      </TR><TR style="height:0.5rem"><TD colspan="2"></TD>
       </TR><TR>
         <TD colspan="2">
           <DIV style="position:relative">
@@ -166,8 +165,11 @@ https://github.com/blueimp/JavaScript-Canvas-to-Blob/blob/master/canvas-to-blob.
         </TD>
       </TR>
     </TBODY>
-    <TFOOT><TR><TD colspan="2" style="color:white;text-align:right;font-size:0.9rem">
-       Build 2013.05.19.10.26 &nbsp; &nbsp; Copyright &copy; Jaxo Inc. 2013
+    <TFOOT><TR><TD colspan="2">
+       <DIV style="float:right;width:10rem;">
+       <IMG src="../images/jaxologo.svg" type="image/svg+xml"/>
+       </DIV>
+    Build 2013.05.21.11.12 &nbsp; &nbsp; Copyright &copy; Jaxo Inc. 2013
     </TD></TR></TFOOT>
   </TABLE>
 </BODY></HTML>

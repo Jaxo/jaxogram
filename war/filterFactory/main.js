@@ -38,6 +38,9 @@ function doOnLoad() {
    createFilesManager();
    localFilesList = new FilesList("localFilesList");
    document.getElementById('filtersList').onchange = function() {
+      this.parentNode.children[0].textContent = (
+         this.options[this.selectedIndex].textContent
+      );
       var file = filesmanager.open(this.selectedIndex - 1);
       currentFilter.restore(file? file.data : null);
       filterImage();
@@ -143,6 +146,9 @@ function doOnLoad() {
       }else {
          this.setAttribute("disabled", "true");
       }
+      this.parentNode.children[0].textContent = (
+         this.options[this.selectedIndex].textContent
+      );
    }
    document.getElementById("upldBtn").onclick = function() {
       document.getElementById("upldFile").click();
@@ -159,6 +165,23 @@ function doOnLoad() {
    }
    buildImagesList();
    buildFiltersList();
+
+   var dropDowns = document.querySelectorAll("span.dropdown");
+   for (var i=0, max=dropDowns.length; i < max; ++i) {
+      var childrens = dropDowns[i].children;
+      var selElt = childrens[1];
+      var index = selElt.selectedIndex;
+      if (index == -1) index = 0;
+      childrens[0].textContent = selElt.options[index].textContent;
+      selElt.onmouseover = function() {
+         this.style.opacity = 1;
+         this.size=this.options.length;
+      }
+      selElt.onmouseout = function() {
+         this.style.opacity = 0.01;
+         this.size = 1;
+      }
+   }
 }
 
 function buildImagesList(selectedIndex) {
@@ -213,4 +236,15 @@ function fileToBlob(image, whenDone) {
       );
    }
    img.src = image.src;
+}
+
+function toggleSelBox() {
+    if (this.size>1){  //HIDE:
+       this.size = 1;
+       this.style.position='static';
+    }else{              //SHOW:
+       this.size = this.options.length;
+       this.style.position='relative';
+       this.style.height='auto';
+    }
 }
