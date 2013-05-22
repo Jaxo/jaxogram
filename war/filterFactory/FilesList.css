@@ -1,0 +1,46 @@
+table.fl_TableContainer {
+   z-index:200;
+   visibility:hidden;
+   position:fixed;
+   width:100%;
+   height:100%;
+   background-color:rgba(255, 255, 255, 0.1);
+}
+table.fl_TableInner {
+   font-size: 1.4rem;
+   background-color: #f4f4f4; /* #FFFAD6; */
+   border-radius: 0.6rem 0.6rem 0.6rem 0.6rem;
+   box-shadow: 2px 2px 4px #303030;
+}
+.fl_TableInner td, .fl_TableInner th {
+   padding-left: 1em;
+   text-align: left;
+}
+.fl_TableInner thead tr:first-child th {
+   padding-top: 1rem;
+}
+.fl_TableInner tfoot tr:first-child td {
+   padding-top: 1.5rem;
+   padding-bottom: 1rem;
+   text-align: right;
+}
+.fl_TableInner td:first-child, .fl_TableInner th:first-child {
+   padding-left: 1rem;
+}
+.fl_TableInner td:last-child, .fl_TableInner th:last-child {
+   padding-right: 1rem;
+}
+.fl_TableInner tr.file td:first-child {
+  background-image: url("fileicon.png");
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  text-indent: 18px;
+}
+.fl_TableInner {
+  -moz-user-select: none;
+}
+/*.fl_TableInner *::-moz-selection {   */
+/*   color: inherit;         */
+/*   background:inherit;     */
+/*   border:inherit;         */
+/* }                         */

@@ -70,10 +70,10 @@ var localeValues = {
       'es-ES':"Instalar",
       'pl-PL':"Zainstalować"
    }, betterInstall: {
-      'en-US':"Jaxogram works nicer when installed,\nand it will remember your sign-in settings.\n\nWant to install now?",
-      'fr-FR':"Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion.\n\nVoulez-vous l'installer maintenant?",
-      'pt-BR':"Jaxogram funciona melhor quando instalado\ne ele se lembra de suas configurações de conexão.\n\nDeseja instalar agora?",
-      'es-ES':"Jaxogram funciona mejor cuando se instalan\ny se recuerda la configuración de conexión.\n\n¿Desea instalarlo ahora?",
+      'en-US':"Jaxogram works nicer when installed,\nand it will remember your sign-in settings.\n\nInstall it now?",
+      'fr-FR':"Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion.\n\nInstaller maintenant?",
+      'pt-BR':"Jaxogram funciona melhor quando instalado\ne ele se lembra de suas configurações de conexão.\n\nInstalá-lo agora?",
+      'es-ES':"Jaxogram funciona mejor cuando se instalan\ny se recuerda la configuración de conexión.\n\n¿Instalar ahora?",
       'pl-PL':"Jaxogram działa ładniejszy po zainstalowaniu\ni będzie pamiętać swój znak-w ustawieniach.\n\nZainstaluj go teraz?"
    }, installFailure: {
       'en-US':"Install has failed",
@@ -391,7 +391,6 @@ function translateBody(newLocale) {
 }
 function i18nDate(time) {
    var date = new Date(+time);
-// date = new Date(1366018659077);
    return i18n(
       "date",
       date.getFullYear(),

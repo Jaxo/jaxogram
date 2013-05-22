@@ -37,10 +37,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-// FIXME (comment out debug stanzas)
-/**/ import java.util.logging.Level;
-/**/ import java.util.logging.Logger;
 import com.google.appengine.api.datastore.Transaction;
+
+// FIXME (comment out debug stanzas)
+/**/ import java.util.logging.Logger;
+/**/ import java.util.logging.Level;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -134,7 +135,7 @@ public class JaxogramServlet extends HttpServlet
 /**/        logger.info("JWT: " + jwt);
             writer.print(jwt);
 
-         }else if (op.equals("payment")) {                                                                                                                                                                                                                                                                                                                                        //    \"agpzfmpheG9ncmFtcgkLEgNQYXkYAQw\"
+         }else if (op.equals("payment")) {
             String notice = Jwt.getPaymentNotice(req.getParameter("notice"));
             DatastoreService store = DatastoreServiceFactory.getDatastoreService();
             // Test...
@@ -233,6 +234,36 @@ public class JaxogramServlet extends HttpServlet
             );
 /**/        logger.info("Payment: " + payment);
             writer.print(payment);
+
+         }else if (op.equals("blob")) {
+            String action = req.getParameter("ACT");
+            if (action.equals("store")) {
+               ServletFileUpload upload = new ServletFileUpload();
+               FileItemIterator iterator = upload.getItemIterator(req);
+               String contents = null;
+               String fileName = null;
+               String mimeType = null;
+               while (iterator.hasNext()) {
+                  FileItemStream item = iterator.next();
+                  if (item.isFormField()) {
+                     String name = item.getFieldName();
+                     String values = Streams.asString(item.openStream());
+                     if (name.equals("CNT")) {
+                        contents = values;
+                     }else if (name.equals("FN")) {
+                        fileName = values;
+                     }else if (name.equals("MT")) {
+                        mimeType = values;
+                     }
+                  }
+               }
+               BlobFileSystem.write(contents, fileName, mimeType);
+            }else if (action.equals("load")) {
+               BlobFileSystem.read(req.getParameter("FN"), resp);
+            }else {  // dir
+               writer.print(BlobFileSystem.dir(req.getParameter("MT")));
+            }
+
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
                resp.setHeader("Access-Control-Allow-Origin", req.getHeader("origin"));
@@ -309,6 +340,14 @@ public class JaxogramServlet extends HttpServlet
                );
                writer.print(data);
 
+            }else if (op.equals("publish")) {
+//             resp.setContentType("application/octet-stream");
+               resp.setHeader(
+                  "Content-Disposition",
+                  "attachment; filename=\"filter.jxf\""
+               );
+               writer.print(req.getParameter("data"));
+
             }else {
                Network network = makeNetwork(
                   (restVersion == 0)? "orkut" : req.getParameter("NET"),
@@ -355,7 +394,7 @@ public class JaxogramServlet extends HttpServlet
                      IOUtils.closeQuietly(in);
                   }else { // (op.equals("postImageFile")) {
                      ServletFileUpload upload = new ServletFileUpload();
-                     upload.setSizeMax(500000);
+                     upload.setSizeMax(1000000);
                      // upload.setSizeMax(120000);
                      FileItemIterator iterator = upload.getItemIterator(req);
                      while (iterator.hasNext()) {
@@ -383,12 +422,14 @@ public class JaxogramServlet extends HttpServlet
                   writer.println(
                      network.uploadPhoto(albumId, imgTitle, image, imgType)
                   );
+//*/              writer.println("Successfully uploaded to album #" + albumId);
                }
             }
          }
       }catch (Exception e) {
          resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-/**/     logger.log(Level.INFO, e.toString(), e);
+/**/     logger.log(Level.SEVERE, "in \"" + op + "\"\n" + e.toString());
+//*/     e.printStackTrace();
          writer.print(e.getMessage());
       }
    }

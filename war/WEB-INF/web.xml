@@ -9,6 +9,7 @@
    </servlet-mapping>
    <welcome-file-list>
       <welcome-file>index.html</welcome-file>
+      <welcome-file>filterFactory/index.html</welcome-file>
    </welcome-file-list>
  <servlet>
   <servlet-name>SystemServiceServlet</servlet-name>
