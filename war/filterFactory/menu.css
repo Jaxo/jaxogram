@@ -76,8 +76,8 @@ fieldset.menu {
    background-color: inherit;
 }
 .menu ul li:hover {
-   color: #D9E1E8;
-   background-color: #27292B;
+   color: #F8F8F8;
+   background-color: #4F5257;
    /* background: -moz-linear-gradient(to bottom, #B0B0B0, transparent, #27292B, #27292B, #27292B, transparent, #A0A0A0); */
    /* border-color: #fb9267; */
 }
