@@ -1,10 +1,39 @@
-var pendingPhotos = [];  // array of blobs or files
-var upldPhotosCount = 0;
-var users;
 var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
+
+var pendingPhotos = [];  // array of blobs or files
+var upldPhotosCount = 0;
+var filterChoice = 0;
+var filters = [
+   {
+      name: "raw",
+      img: new Image(),
+      src: ""
+   },{
+      name: "f1",
+      value: "feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"",
+      src: ""
+   },{
+      name: "f2",
+      value: "feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      src: ""
+   },{
+      name: "f3",
+      value: "feColorMatrix type=\"matrix\" values=\"0.0000 0.0786 0.4759 0.0000 0.0000 0.2832 0.0000 -0.1354 0.0000 0.0000 -0.8039 0.0000 -0.0792 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      src: ""
+   },{
+      name: "f4",
+      value: "feColorMatrix type=\"matrix\" values=\"0.4214 -0.0285 0.0652 0 0 0.0158 0.4596 -0.0172 0 0 -0.0575 0.0833 0.5279 0 0 0 0 0 1 0\"",
+      src: ""
+   },{
+      name: "f5",
+      value: "feColorMatrix type=\"matrix\" values=\"0.5108 0.2115 0.0213 0.0000 0.0000 0.1325 0.6749 0.0448 0.0000 0.0000 0.2390 2.3897 0.6088 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      src: ""
+   }
+];
+var users;
 var oauthNetwork = {
    name: "oauth",
    url: null,
@@ -29,10 +58,10 @@ var networks = [
       name: "twitter",
       url: "http://www.twitter.com",
       win: null
-   },{
-      name: "twitpic",
-      url: "http://mobile.twitpic.com",
-      win: null
+// },{
+//    name: "twitpic",
+//    url: "http://mobile.twitpic.com",
+//    win: null
    },{
       name: "facebook",
       url: "http://www.facebook.com",
@@ -92,18 +121,27 @@ window.onload = function() {
 
    // Listeners
    document.getElementById("btnMain").onclick = toggleSidebarView;
+   var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
+   for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
+      radioGroupNodes[i].addEventListener("click", radioClicked);
+//    radioGroupNodes[i].onclick = radioClicked;
+   }
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn_albums").onclick = listAlbums;
-   document.getElementById("changeLanguage").onclick = changeLanguage;
+   document.getElementById("changeLanguage").addEventListener("click", changeLanguage);
    // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
-   document.getElementById("uploadPhoto").onclick = uploadPhoto;
+   document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
    document.getElementById("cancelPhoto").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
    };
    document.getElementById("logins").onclick = function(event) {
       changeLogin(this, event);
+   };
+   document.getElementById("p2_clear").onclick = function() {
+      document.getElementById("p2_picture").style.visibility = "hidden";
+      this.style.visibility = "hidden";
    };
    // document.getElementById("mn_albums").style.display = "none";
    document.getElementById("footerRow2").style.display = "none";
@@ -112,6 +150,7 @@ window.onload = function() {
    formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
+   document.getElementById("imgFilters").addEventListener("click", changeFilter);
 
    var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
@@ -385,7 +424,7 @@ function fitImages() {
    var images = document.querySelectorAll(".imgbox img");
    for (var i=0; i < images.length; ++i) {
       var img = images[i];
-      img.onload = function() { fitImage(this); }
+      img.addEventListener("load", function() { fitImage(this); });
       fitImage(img);
    }
 }
@@ -658,25 +697,35 @@ function uploadPhotos() {
          }
          if (event && (event.keyCode === 13)) this.blur();
       };
-      var imgData = pendingPhotos[0];
-      var imgElt = document.createElement("IMG");
-      var clrElt = document.getElementById("p2_clear");
-      imgElt.src = URL.createObjectURL(imgData);
-      // FIXME: imgElt.onload = function() { URL.revokeObjectURL(this.src); };
-      imgElt.id = "p2_picture";
-      var oldImgElt = document.getElementById("p2_picture");
-      oldImgElt.parentNode.replaceChild(imgElt, oldImgElt);
-      fitImage(imgElt);
-      clrElt.style.visibility = "visible";
-      clrElt.onclick = function() {
-         imgElt.style.visibility = "hidden";
-         this.style.visibility = "hidden";
-      };
+      foo1();
+      document.getElementById("p2_clear").style.visibility = "visible";
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
       isUploadable();
    }
+}
+
+function changeFilter(event) {
+   if (event) filterChoice = getRealTarget(event).cellIndex;
+   var imgElt = document.getElementById("p2_picture");
+   imgElt.style.visibility = "";
+   imgElt.src = filters[filterChoice].src;
+}
+
+function foo1() {
+   var imgRawElt = filters[0].img;
+   imgRawElt.onload = function() {
+      if (filters[0].src) URL.revokeObjectURL(filters[0].src);
+      filters[0].src = imgRawElt.src;
+      changeFilter();  // e.g: set it to raw
+      for (var i=1, max=filters.length; i < max; ++i) {
+         var filter = filters[i];
+         if (filter.src) URL.revokeObjectURL(filter.src);
+         filter.src = URL.createObjectURL(doFilter(imgRawElt, filter));
+      }
+   };
+   imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
 }
 
 function isUploadable() {
@@ -708,41 +757,90 @@ function isUploadable() {
    }
 }
 
-function uploadPhoto() {
+function tryUploadPhoto() {
    if (isUploadable()) {
-      var imgData = pendingPhotos.shift();
-      var formData = new FormData();
-      formData.append("MAX_FILE_SIZE", "1000000");
-   // formData.append("IMG", file.name.substr(-3));
-      if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
-      formData.append("TIT", document.getElementById("p2_msgText").value);
-      formData.append("upldFile", imgData);
-      issueRequest(
-         "POST",
-         "postImageFile&NET=" + users.getNet(),
-         formData,
-         function(val) {        // whenDone
-            try {
-               var media = JSON.parse(val).entities.media[0];
-               var idStr = media.id_str;
-               var expandedUrl = media.expanded_url;
-            }catch (error) {
-            }
-            /*
-            Response:
-               var res = JSON.parse(xhr.responseText);
-               var id_str = res.entities.media[0].id_str;
-               var ex_url = res.entities.media[0].expanded_url;
-            */
-            ++upldPhotosCount;
-            uploadPhotos();
-         },
-         function(rc, val) {    // whenFailed
-            finishUpload();
-            // FIXME: if (issuer) issuer.postError(message);
-         }
-      );
+      filterAndUploadPhoto(pendingPhotos.shift());
    }
+}
+
+function doFilter(img, filter) {
+   var w = img.width;
+   var h = img.height;
+   var imgUrl = img.src;
+   var fId = filter.name;
+   var data = (
+     "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
+     " width=\"" + w + "\" height=\"" + h + "\" >" +
+     "<image filter=\"url(data:image/svg+xml," +
+     escape(
+        "<svg xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"" + fId + "\"><" +
+        filter.value +
+        "/></filter></svg>"
+     ) +
+     "#" + fId + ")\"" +
+     " preserveAspectRatio=\"xMinYMin meet\"" +
+     " width=\"" + w + "\" height=\"" + h + "\" xlink:href=\"" +
+     imgUrl +
+     "\"></image></svg>"
+   );
+   return new Blob([data], {type:"image/svg+xml"});
+}
+
+function filterAndUploadPhoto(imgRawBlob)
+{
+   if (filterChoice === 0) {
+      uploadPhoto(imgRawBlob);
+   }else {
+      var sentImg = new Image();
+      document.getElementById("progresspane").style.visibility="visible";
+      sentImg.onload = function() {
+         var canvas = document.createElement("CANVAS");
+         canvas.width = sentImg.width;
+         canvas.height = sentImg.height;
+         var ctx = canvas.getContext('2d');
+         ctx.drawImage(sentImg, 0, 0);
+         // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
+         canvas.toBlob(
+            function(imgFilteredBlob) { uploadPhoto(imgFilteredBlob); },
+            "image/jpeg", 0.95
+         );
+      };
+      sentImg.src = document.getElementById("p2_picture").src;
+   }
+}
+
+function uploadPhoto(imgBlob) {
+   var formData = new FormData();
+   formData.append("MAX_FILE_SIZE", "1000000");
+// formData.append("IMG", file.name.substr(-3));
+   if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
+   formData.append("TIT", document.getElementById("p2_msgText").value);
+   formData.append("upldFile", imgBlob);
+   issueRequest(
+      "POST",
+      "postImageFile&NET=" + users.getNet(),
+      formData,
+      function(val) {        // whenDone
+         try {
+            var media = JSON.parse(val).entities.media[0];
+            var idStr = media.id_str;
+            var expandedUrl = media.expanded_url;
+         }catch (error) {
+         }
+         /*
+         Response:
+            var res = JSON.parse(xhr.responseText);
+            var id_str = res.entities.media[0].id_str;
+            var ex_url = res.entities.media[0].expanded_url;
+         */
+         ++upldPhotosCount;
+         uploadPhotos();
+      },
+      function(rc, val) {    // whenFailed
+         finishUpload();
+         // FIXME: if (issuer) issuer.postError(message);
+      }
+   );
 }
 
 function issueRequestStd(what, whenDone) {

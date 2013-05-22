@@ -151,35 +151,40 @@ function menuListClicked(event) {
             ulChildElt.style.display = "block";
          }
       }
-   }else {
-      var role = getAttribute(liElt.parentNode, "role");
+   }else if (getAttribute(liElt.parentNode, "role") !=="radiogroup") {
       if (liElt.getAttribute("aria-selected") == "true") {
-         if (role != "radiogroup") {
-            // selecting a selected item in a radiogroup does nothing..
-            // however for lambda lists, it deselects the item
-            liElt.removeAttribute("aria-selected");
-         }
+         // however for lambda lists, it deselects the item
+         liElt.removeAttribute("aria-selected");
       }else {
-         if (role == "radiogroup") {
-            // selecting a new item in a radiogroup deselects its siblings
-            var siblings = liElt.parentNode.childNodes;
-            for (var i=0; i < siblings.length; ++i) {
-               var sib = siblings[i];
-               if (getAttribute(sib, "aria-selected") == "true") {
-                  ownedId = getAttribute(sib, "aria-owns");
-                  if (ownedId != null) {
-                     document.getElementById(ownedId).setAttribute("aria-expanded", "false");
-                  }
-                  sib.attributes.removeNamedItem("aria-selected");
-               }
-            }
-         }
          liElt.setAttribute("aria-selected", "true");
          ownedId = getAttribute(liElt, "aria-owns");
          if (ownedId != null) {
             document.getElementById(ownedId).setAttribute("aria-expanded", "true");
          }
       }
+   }
+}
+
+function radioClicked(event) {
+   var liElt = getRealTarget(event);
+   // selecting a selected item in a radiogroup does nothing..
+   if ((liElt == null) || (liElt.getAttribute("aria-selected") == "true")) return;
+   // selecting a new item in a radiogroup deselects its siblings
+   var siblings = liElt.parentNode.childNodes;
+   for (var i=0; i < siblings.length; ++i) {
+      var sib = siblings[i];
+      if (getAttribute(sib, "aria-selected") == "true") {
+         ownedId = getAttribute(sib, "aria-owns");
+         if (ownedId != null) {
+            document.getElementById(ownedId).setAttribute("aria-expanded", "false");
+         }
+         sib.attributes.removeNamedItem("aria-selected");
+      }
+   }
+   liElt.setAttribute("aria-selected", "true");
+   ownedId = getAttribute(liElt, "aria-owns");
+   if (ownedId != null) {
+      document.getElementById(ownedId).setAttribute("aria-expanded", "true");
    }
 }
 

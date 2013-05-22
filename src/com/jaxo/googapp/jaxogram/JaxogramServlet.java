@@ -36,7 +36,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-//*/ import java.util.logging.Logger;
+/**/ import java.util.logging.Logger;
+/**/ import java.util.logging.Level;
 
 @SuppressWarnings("serial")
 /*-- class JaxogramServlet --+
@@ -63,9 +64,9 @@ public class JaxogramServlet extends HttpServlet
    public void doPost(HttpServletRequest req, HttpServletResponse resp)
    throws IOException
    {
-//*/  Logger logger = Logger.getLogger(
-//*/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
-//*/  );
+/**/  Logger logger = Logger.getLogger(
+/**/     "com.jaxo.googapp.jaxogram.JaxogramServlet"
+/**/  );
       String op = req.getParameter("OP");
       int restVersion = (req.getParameter("V") == null)? 0 : Integer.parseInt(req.getParameter("V"));
 //*/  logger.info("OP:" + op);
@@ -112,6 +113,34 @@ public class JaxogramServlet extends HttpServlet
                   "{\"VRF\":\"" + verifier + "\", \"NET\":\"" + net + "\"}"
                );
                resp.setStatus(HttpServletResponse.SC_CREATED);
+            }
+         }else if (op.equals("blob")) {
+            String action = req.getParameter("ACT");
+            if (action.equals("store")) {
+               ServletFileUpload upload = new ServletFileUpload();
+               FileItemIterator iterator = upload.getItemIterator(req);
+               String contents = null;
+               String fileName = null;
+               String mimeType = null;
+               while (iterator.hasNext()) {
+                  FileItemStream item = iterator.next();
+                  if (item.isFormField()) {
+                     String name = item.getFieldName();
+                     String values = Streams.asString(item.openStream());
+                     if (name.equals("CNT")) {
+                        contents = values;
+                     }else if (name.equals("FN")) {
+                        fileName = values;
+                     }else if (name.equals("MT")) {
+                        mimeType = values;
+                     }
+                  }
+               }
+               BlobFileSystem.write(contents, fileName, mimeType);
+            }else if (action.equals("load")) {
+               BlobFileSystem.read(req.getParameter("FN"), resp);
+            }else {  // dir
+               writer.print(BlobFileSystem.dir(req.getParameter("MT")));
             }
          }else {  // Cross Origin Resource Sharing
             if (req.getHeader("origin") != null) {
@@ -189,6 +218,13 @@ public class JaxogramServlet extends HttpServlet
                );
                writer.printf(data);
 
+            }else if (op.equals("publish")) {
+//             resp.setContentType("application/octet-stream");
+               resp.setHeader(
+                  "Content-Disposition",
+                  "attachment; filename=\"filter.jxf\""
+               );
+               writer.print(req.getParameter("data"));
             }else {
                Network network = makeNetwork(
                   (restVersion == 0)? "orkut" : req.getParameter("NET"),
@@ -235,7 +271,7 @@ public class JaxogramServlet extends HttpServlet
                      IOUtils.closeQuietly(in);
                   }else { // (op.equals("postImageFile")) {
                      ServletFileUpload upload = new ServletFileUpload();
-                     upload.setSizeMax(500000);
+                     upload.setSizeMax(1000000);
                      // upload.setSizeMax(120000);
                      FileItemIterator iterator = upload.getItemIterator(req);
                      while (iterator.hasNext()) {
@@ -269,6 +305,7 @@ public class JaxogramServlet extends HttpServlet
          }
       }catch (Exception e) {
          resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+/**/     logger.log(Level.SEVERE, "in \"" + op + "\"\n" + e.toString());
 //*/     e.printStackTrace();
          writer.print(e.getMessage());
       }
