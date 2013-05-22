@@ -12,11 +12,17 @@ fieldset.menu {
    color:#E0E0E0;
    padding:0;
 }
-span.dropdown {
+.menu ul li.dropdown:active {
+   background:none;
+}
+.menu ul li.dropdown {
    position:relative;
    color: white;
 }
-span.dropdown span {
+.menu li.dropdown:hover {
+   background-color: inherit;
+}
+.menu li.dropdown span {
    /* background-color:#3e4449; */
    padding:0.2rem 1.7rem 0.2rem 0.7rem;
    background-image: url(dwn.png);
@@ -26,19 +32,21 @@ span.dropdown span {
    /* border:1px solid #606060; */
    /* border-radius:0.8rem;     */
 }
-span.dropdown select {
+.menu li.dropdown select {
+   font-family: inherit;
+   font-size: inherit;
    position:absolute;
-   left:-3px;
-   top:-4px;
+   top: 4px;
+   left: 6px;
    opacity: 0.01;
 }
-span.dropdown select:hover {
+.menu li.dropdown select:hover {
    opacity:1;
 }
 /* span.dropdown select > option {  */
 /*    background-color: yellow;     */
 /* }                                */
-span.dropdown select > option:hover {
+.menu li.dropdown select > option:hover {
    background-color: lightgray;
    border:none;
 }
@@ -56,11 +64,16 @@ span.dropdown select > option:hover {
    float: left;
    text-decoration: none;
    min-width: 6rem;
-   color: #9DA3A9;
+   color: #D9E1E8;
    padding: 6px 4px;
    margin: 0;
    white-space: nowrap;
    border-right: 1px solid #606060;
+}
+.menu ul li[disabled],
+.menu ul li[disabled]:hover {
+   color: #9DA3A9;
+   background-color: inherit;
 }
 .menu ul li:hover {
    color: #D9E1E8;
@@ -70,7 +83,8 @@ span.dropdown select > option:hover {
 }
 .menu ul li:active {
    background:-moz-linear-gradient(top,#B0B0B0 0%,#F8F8F8 100%);
-   border-color: #fb9267;
+   /* border-color: #fb9267; */
+   color: #202020;
 }
 .menu ul li.sepa + li {
    border-left: 1px solid #606060;

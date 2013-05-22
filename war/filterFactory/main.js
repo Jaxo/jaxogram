@@ -50,13 +50,14 @@ function doOnLoad() {
       localFilesList.clear();
       buildFiltersList();
    };
-   localFilesList.addButton("Rename").onclick = function() {
-      var filterIndeces = localFilesList.getSelectedRows();
-      localFilesList.clear();
-      for (var i=0, max=filterIndeces.length; i < max; ++i) {
+   localFilesList.addButton("Rename").setAttribute("disabled", "true");
+// localFilesList.addButton("Rename").onclick = function() {
+//    var filterIndeces = localFilesList.getSelectedRows();
+//    localFilesList.clear();
+//    for (var i=0, max=filterIndeces.length; i < max; ++i) {
 //       filesmanager.rename(filterIndeces[i]);
-      }
-   };
+//    }
+// };
    serverFilesList = new FilesList("serverFilesList");
    serverFilesList.addButton("Import").onclick = function() {
       var fileNames = [];
@@ -154,19 +155,23 @@ function doOnLoad() {
       document.getElementById("upldFile").click();
    }
    document.getElementById("upldPrev").onclick = function() {
-      var selElt = document.getElementById('imagesList');
-      --selElt.selectedIndex;
-      selElt.onchange();
+      if (!this.getAttribute("disabled")) {
+         var selElt = document.getElementById('imagesList');
+         --selElt.selectedIndex;
+         selElt.onchange();
+      }
    }
    document.getElementById("upldNext").onclick = function() {
-      var selElt = document.getElementById('imagesList');
-      ++selElt.selectedIndex;
-      selElt.onchange();
+      if (!this.getAttribute("disabled")) {
+         var selElt = document.getElementById('imagesList');
+         ++selElt.selectedIndex;
+         selElt.onchange();
+      }
    }
    buildImagesList();
    buildFiltersList();
 
-   var dropDowns = document.querySelectorAll("span.dropdown");
+   var dropDowns = document.querySelectorAll("li.dropdown");
    for (var i=0, max=dropDowns.length; i < max; ++i) {
       var childrens = dropDowns[i].children;
       var selElt = childrens[1];
@@ -240,15 +245,3 @@ function fileToBlob(image, whenDone) {
    }
    img.src = image.src;
 }
-
-function toggleSelBox() {
-    if (this.size>1){  //HIDE:
-       this.size = 1;
-       this.style.position='static';
-    }else{              //SHOW:
-       this.size = this.options.length;
-       this.style.position='relative';
-       this.style.height='auto';
-    }
-}
-
