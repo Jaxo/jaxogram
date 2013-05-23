@@ -296,7 +296,8 @@ function resetAlbumsList() {
       ulElt = document.createElement("UL");
       ulElt.id = "albumList";
       ulElt.setAttribute("role", "radiogroup");
-      ulElt.onclick = function(event) { changeAlbum(this, event); };
+      ulElt.addEventListener("click", radioClicked);
+      ulElt.addEventListener("click", function(event) { changeAlbum(this, event); });
 
       albums.appendChild(smallElt);
       albums.appendChild(document.createElement("BR"));
