@@ -148,15 +148,16 @@ header td:active {
    opacity: 1;
    transition: 0.4s;
    overflow-y: auto;
+   background: url("images/shadow.png") right top repeat-y;
 }
-.sidebar:after {
+.ssdebar:after {
   content: "";
-  width: 1rem;
-  background: url("images/shadow.png") right top repeat-y;
+/*width: 1rem; */
+/*background-attachment : fixed;  */
   height: 100%;
-  position: absolute;
-  top: 0;
-  right: 0;
+/*  position: absolute;             */
+/*  top: 0;                         */
+/*  right: 0;                       */
   z-index: 5;
 }
 
@@ -410,16 +411,11 @@ button {
 
 .menuList {
   position: relative;
-  list-style: none;
+/* list-style: none; */
   margin: 0;
   padding: 0;
   font-size: 2rem;
   cursor: pointer;
-  /* color: #555; */
-  /* background: rgba(0, 5, 18, 0.40);  */ /* Desktop only */
-  /* background-color: #32373b;         */ /* Mobile only */
-  background-image: url("images/pattern.png");
-  background-color: #555d65;            /* Mobile only */
 }
 .menuList small {
   font-size: 66%;
@@ -431,77 +427,116 @@ button {
   font-size: 75%;
   display: none;
   color: #aaa;
+  line-height: 3.1rem;
   background-image: url("images/pattern.png");
   background-color: #61666c;               /* Mobile only */
 }
 .menuList li {
+  vertical-align: bottom;
   border-bottom: solid 1px #596068;
-  padding:0.5em;
-  padding-right: 2em;
+  border-right: solid 3px transparent;
+  padding: 0 2em 0 0.5em;
+  /* padding:0.5em; padding-right: 2em; */
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .menuList li:before {
-  font-family: "GeneralEnclosedFoundicons";
-  font-weight: normal;
-  font-style: normal;
-  position: absolute;
-  right: 0.4em;
-  font-size: 130%;
+  right: 0.7rem;
+  /* top: 0.5rem; */
+  padding-bottom: 0;
+  width: 3rem;
+  height: 3rem;
   line-height:1em;
+  position: absolute;
+  content: "";
+  background: url("images/action_icons.png") no-repeat;
+/*background-size: 3rem 192rem;                          */
+/*background-position:  0px -1170px; {* new */
+/*background-position:  0px -330px; {* calendar */
 }
+/*.menuList li:before {                             */
+/*  font-family: "GeneralEnclosedFoundicons";       */
+/*  font-weight: normal;                            */
+/*  font-style: normal;                             */
+/*  position: absolute;                             */
+/*  right: 0.4em;                                   */
+/*  font-size: 130%;                                */
+/*  line-height:1em;                                */
+/*}                                                 */
 .menuList li[role=listbox]:before {
-  content: "\f003";
+  background-position:  0px -1170px;
 }
 .menuList li[role=listbox][aria-expanded=true]:before {
-  content: "\f004";
+  background-position:  0px -30px;
+  /*content: "\f004";*/
 }
-.menuList li[aria-selected=true]:before {
-  content: "\f005";
-}
-.menuList li:before {
-  content: "\f006";
-}
-[role=radiogroup] li[aria-selected=true]:before {
-  content: "\f015";
+/*.menuList li[aria-selected="true"]:before {  */
+/*  background-position:  0px -60px;           */
+/*  (*content: "\f005";*)                      */
+/*}                                            */
+/*.menuList li:before {                        */
+/*  background-position:  0px -90px;           */
+/*  (*content: "\f006";*)                      */
+/*}                                            */
+[role=radiogroup] li[aria-selected="true"]:before {
+  background-position:  0px -120px;
+  /*content: "\f015";*/
 }
 [role=radiogroup] li:before {
-  content: " ";
+  background-position: 30px;
+  /*content: "\f015";*/
 }
 #newLogin, #newAlbum {
+   padding-left: 3.5rem;
    color: #D0D0D0;
 }
 #newLogin:before, #newAlbum:before {
-   font-family:GeneralEnclosedFoundicons;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 130%;
-   position:relative;
-   top:0.4rem;
-   left:-0.7rem;
-   padding:0.6rem;
-   line-height:0;
-   content: "\f003";
+   background: url("images/action_icons.png") no-repeat 0px -1170px transparent;
+   position: absolute;
+   left: 0rem;
+   width: 3rem;
+/* font-family:GeneralEnclosedFoundicons; */
+/* font-weight: normal;                   */
+/* font-style: normal;                    */
+/* font-size: 130%;                       */
+/* position:relative;                     */
+/* top:0.4rem;                            */
+/* left:-0.7rem;                          */
+/* padding:0.6rem;                        */
+/* line-height:0;                         */
+/* content: "\f003";                      */
 }
-span[role=trasher]:before {
-   font-family:GeneralEnclosedFoundicons;
-   font-weight: normal;
-   font-style: normal;
-   font-size: 130%;
-   color: #888A8F;
-   position:relative;
-   top:0.4rem;
-   left:-0.7rem;
-   padding:0.6rem;
-   line-height:0;
-   content: "\f018";
-}
-span[role=trasher]:active:before {
-   background-color: #FC2200;
-   color:white;
-}
+span[role=trasher] {                   /* */
+   background: url("images/action_icons.png") no-repeat 0px -570px transparent;
+   position: absolute;
+   left: 0rem;
+   width: 3rem;
+   height: 3rem;
+   content: "";
+}                                             /* */
+span[role=trasher]:active {                   /* */
+   background-color: #FC2200;                 /* */
+   color:white;                               /* */
+}                                             /* */
+/* span[role=trasher]:before {                   */
+/*    font-family:GeneralEnclosedFoundicons;     */
+/*    font-weight: normal;                       */
+/*    font-style: normal;                        */
+/*    font-size: 130%;                           */
+/*    color: #888A8F;                            */
+/*    position:relative;                         */
+/*    top:0.4rem;                                */
+/*    left:-0.7rem;                              */
+/*    padding:0.6rem;                            */
+/*    line-height:0;                             */
+/*    content: "\f018";                          */
+/* }                                             */
+/* span[role=trasher]:active:before {            */
+/*    background-color: #FC2200;                 */
+/*    color:white;                               */
+/* }                                             */
 li[aria-selected=true], li[role=listbox] {
    /* color: #eee; */
   color: #fff;
@@ -517,23 +552,31 @@ li[aria-selected=true], li[role=listbox] {
   color:#222;
 }
 
-#albumList li:before {  /* set ".menulist li:before" to same value? */
-   right: 0.2em;
-   /* bottom: 1.2rem; */
-}
-#albumList li:first-child {
-  padding: 1.8rem 2rem 0.2rem 1rem;               /* T, R, B, L */
-}
+/*#albumList li:before { */ /* set ".menulist li:before" to same value? */
+/*   right: 0.2em;       */
+/*   (* bottom: 1.2rem;*)*/
+/*}                      */
+/*#albumList li:first-child {         */
+/*  padding: 1.8rem 2rem 0.2rem 1rem; */              /* T, R, B, L */
+/*}                                   */
 #albumList li {
   /* border-bottom: solid 1px #445; */
+  height: 3.7rem;
   margin: 0;
-  padding: 1rem 2rem 1rem 0.5rem;                     /* T, R, B, L */
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  height: 3.2rem;
   vertical-align: middle;
+  white-space: nowrap;
+  line-height:
+/*  margin: 0;                        */
+/*  padding: 1rem 2rem 1rem 0.5rem;   */                  /* T, R, B, L */
+/*  overflow: hidden;                 */
+/*  text-align: left;                 */
+/*  text-overflow: ellipsis;          */
+/*  white-space: nowrap;              */
+/*  height: 3.2rem;                   */
+/*  vertical-align: middle;            */
 }
 #albumList li div {
    display:inline-block;
@@ -546,6 +589,7 @@ li[aria-selected=true], li[role=listbox] {
    overflow-x: hidden;
    white-space: nowrap;
    text-overflow: ellipsis;
+   min-height: 2rem;
 }
 #albumList li img {
    border: 1px solid #333;
@@ -569,13 +613,22 @@ li[aria-selected=true], li[role=listbox] {
 /* }                                          */
 
 #mn_user img {
+   position: relative;           /**/
+   top: 0.3rem;                  /**/
    margin-right: 0.7rem;
-   height: 1.6rem;
+   height: 2rem;
 }
 
 #mn_user ul img {
-   position: relative;
-   height: 1.2rem;
+/*  position: relative;           */
+/*  top: 0;                       */
+/*  margin: 0 0.5rem 0 2.7rem;    */
+/*  height: 1.2rem;               */
+  position: relative;           /**/
+  top: 0.3rem;                  /**/
+  /* width: 2.3rem; */
+  margin: 0 0.5rem 0 2.7rem;    /**/
+  height: 1.8rem;               /**/
 }
 
 /* ------ Page 0 ------*/
