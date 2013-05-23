@@ -17,14 +17,14 @@
    <TITLE>Jaxogram</title>
 </HEAD>
 <BODY>
-   <HEADER>
-     <DIV id="btnMain"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
-     <TABLE><TR>
-        <TD id="btnInstall" class="i18n"></TD>
-     </TR></TABLE>
-     <H1>Jaxogram <SMALL>web</SMALL></H1>
-   </HEADER>
-   <DIV id="corepane" class="drawee">
+   <SECTION id="corepane" class="drawer">
+     <HEADER>
+       <DIV id="btnMain"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
+       <TABLE><TR>
+          <TD id="btnInstall" class="i18n"></TD>
+       </TR></TABLE>
+       <H1>Jaxogram <SMALL>web</SMALL></H1>
+     </HEADER>
      <DIV id="p0" class="body" aria-expanded="true">
         <IMG id="p0_netImage"/>
         <DIV class="i18n" id="p0_top"></DIV>
@@ -57,9 +57,12 @@
            <TD>F5</TD>
         </TR></TABLE></DIV>
      </DIV>
-   </DIV>
+   </SECTION>
 
-   <DIV id="menupane" class="drawer">
+   <SECTION id="menupane" class="sidebar">
+     <HEADER>
+       <H1>Preferences</H1>   <!-- FIXME I18n -->
+     </HEADER>
       <UL class="menuList">
         <LI role="listbox" id="mn_user">
            <SMALL class="i18n" id="loginAs"></SMALL><BR/>
@@ -79,8 +82,9 @@
            </UL>
         </LI>
       </UL>
-   </DIV>
-   <DIV id="messagepane"><DIV><DIV>
+   </SECTION>
+   <SECTION id="messagepane">
+      <DIV><DIV>
       <TABLE>
          <TR>
             <TD><IMG src="style/images/close.png"></TD>
@@ -92,8 +96,9 @@
             <TD colspan="5" style="text-align:center">&nbsp;</TD>
          </TR>
       </TABLE>
-   </DIV></DIV></DIV>
-   <DIV id="progresspane"><DIV id=progress></DIV></DIV>
+      </DIV></DIV>
+   </SECTION>
+   <SECTION id="progresspane"><DIV id=progress></DIV></SECTION>
 
    <!-- Fallback if "no "Pick" MozActivity -->
    <INPUT type='file' id='upldFile' multiple accept="image/"/>

@@ -4,9 +4,8 @@ html, body {
   /* height: 100%;  bouh */
   padding: 0;
   margin: 0;
-  font-family: "Open Sans", sans-serif;
+  font-family: "MozTT", sans-serif;
   background-image: url("images/pattern.png");
-  background-color: #35393b;
   overflow: hidden;
 }
 
@@ -18,12 +17,28 @@ header {
   /* background:-o-linear-gradient(top,#ff9500 0%,#e66000 100%);                                               */
   /* background:-ms-linear-gradient(top,#ff9500 0%,#e66000 100%);                                              */
   /* background:linear-gradient(top,#ff9500 0%,#e66000 100%);                                                  */
-  background-image: url("images/header.png");
   background-repeat: repeat-x;
   color: #FFFFFF;
   height: 4.9rem;
   position: relative;
   z-index: 1;
+}
+
+.drawer header {
+  background-image: url("images/header.png");
+}
+.sidebar header {
+  background-image: url("images/header2.png");
+}
+.sidebar > header:after {
+  content: "";
+  height: 0.3rem;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: url(images/shadow_header.png) repeat-x left top;
+  background-size: auto 100%;
 }
 
 header h1 small {
@@ -60,19 +75,24 @@ header #btnMain img {
 }
 
 header h1 {
-  background: url("images/mainsepa.png") no-repeat scroll left top;
   display: block;
+  margin: 0 0 0 0rem;
+  font-size: 2.3rem;
   font-weight: normal;
-  font-size: 2.8rem;
   line-height: 4.9rem;
   height: 100%;
-  margin: 0 0 0 2rem;
   padding: 0 0 0 1rem;
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-shadow:0 -1px 1px rgba(0,0,0,0.5);
+}
+
+.drawer header h1 {
+  background: url("images/mainsepa.png") no-repeat scroll left top;
+  /* text-shadow:0 -1px 1px rgba(0,0,0,0.5); */
+  margin: 0 0 0 2rem;
+  font-size: 2.5rem;
 }
 
 header table {
@@ -102,33 +122,45 @@ header td:active {
   background-color: #0095dd; /* was e66000 */
 }
 
-.drawee {
+.drawer {
   position: fixed;
   left: 0%;
   right: 0%;
-  top: 5rem;
+  top: 0rem;
   bottom: 5rem;
   transition: 0.4s;
 }
 
-.drawee[aria-shrunk=true] {
+.drawer[aria-shrunk=true] {
   left: 80%;
   right: -80%;
 }
 
-.drawer {
+.sidebar {
    position: absolute;
    left: -80%;
    right: 100%;
-   top: 5.7rem;
-   bottom: 6rem;
+   /* top: 5.7rem; */
+   top: 0;
+   bottom: 5.1rem;
    margin-right: 0rem;
-   margin-left: 0.5rem;
+   margin-left: 0rem;
    opacity: 1;
    transition: 0.4s;
    overflow-y: auto;
 }
-.drawer[aria-expanded=true] {
+.sidebar:after {
+  content: "";
+  width: 1rem;
+  background: url("images/shadow.png") right top repeat-y;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.sidebar[aria-expanded=true] {
    left: 0;
    right: 20%;
 }
@@ -137,7 +169,7 @@ header td:active {
   position: absolute;
   left: 0;
   right: 0;
-  top: 0.6rem;
+  top: 5.6rem;
   bottom: 0.6rem;
   margin-left: 0.6rem;
   margin-right: 0.6rem;
@@ -352,7 +384,7 @@ footer td:active {
   text-decoration: none;
   vertical-align: top;
   color: ButtonText;
-  font-family: "Open Sans", sans-serif;
+  font-family: "MozTT", sans-serif;
   font-size: 1.6rem;
   font-weight: 600;
   text-overflow: ellipsis;
@@ -363,7 +395,7 @@ button {
   height: 3.8rem;
   width: 12rem;
   padding: 0 1.5rem;
-  font-family: "Open Sans", sans-serif;
+  font-family: "MozTT", sans-serif;
   font-size: 1.6rem;
   font-weight: 600;
   overflow: hidden;
@@ -403,7 +435,7 @@ button {
   background-color: #61666c;               /* Mobile only */
 }
 .menuList li {
-  border-bottom: solid 1px #222;
+  border-bottom: solid 1px #596068;
   padding:0.5em;
   padding-right: 2em;
   overflow: hidden;
@@ -476,9 +508,6 @@ li[aria-selected=true], li[role=listbox] {
 }
 .menuList li ul li, .menuList li ul li:first-child {
   border: none;
-}
-.menuList li:first-child {
-  border-top: solid 1px #888;
 }
 /* .menuList li:hover {               */  /* Desktop only! */
 /*   background: rgba(0, 0, 0, 0.50); */
@@ -634,7 +663,7 @@ li[aria-selected=true], li[role=listbox] {
 .p2_msg {
   padding: 0 0.5rem;
   position: relative;
-  height: 8rem;
+  height: 8rem;   /* FIXME (ex-fyosstub: 3rem) */
 }
 
 #p2_msgCount{
@@ -654,7 +683,7 @@ li[aria-selected=true], li[role=listbox] {
   width: 100%;
   height: 100%;
   padding: 0.5rem 1rem;
-  font-family: "Open Sans", sans-serif;
+  font-family: "MozTT", sans-serif;
   font-size: 1.4rem;
   color:#F0F0F0;
   background-color: rgba(255, 255, 255, 0.04);

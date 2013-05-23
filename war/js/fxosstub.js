@@ -105,17 +105,17 @@ function toggleSidebarView() {
 
 function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
    var btnMainStyle = document.getElementById('btnMainImage').style;
-   var drawee = document.getElementById('corepane');
-   var drawer = document.getElementById('menupane');
-   var expanded = (drawer.getAttribute("aria-expanded") === "true");
+   var drawer = document.getElementById('corepane');
+   var sidebar = document.getElementById('menupane');
+   var expanded = (sidebar.getAttribute("aria-expanded") === "true");
    if (!expanded && (v >= 0)) {
       btnMainStyle.backgroundImage = "url(style/images/back.png)";
-      drawee.setAttribute("aria-shrunk", "true");
-      drawer.setAttribute("aria-expanded", "true");
+      drawer.setAttribute("aria-shrunk", "true");
+      sidebar.setAttribute("aria-expanded", "true");
    }else if (v <= 0) {
       btnMainStyle.backgroundImage = "url(style/images/menu.png)";
-      drawee.setAttribute("aria-shrunk", "false");
-      drawer.setAttribute("aria-expanded", "false");
+      drawer.setAttribute("aria-shrunk", "false");
+      sidebar.setAttribute("aria-expanded", "false");
    }
 }
 
