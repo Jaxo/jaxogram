@@ -281,7 +281,7 @@ header td:active {
   left: 50%;
   top: 50%;
   z-index: 5;
-  /* visibility: hidden; */
+  visibility: hidden;
 }
 
 progress {
@@ -290,8 +290,9 @@ progress {
   width: 5.8rem;
   height: 5.8rem;
   border: none;
-  display: inline-block;
-  vertical-align: middle;
+  position: relative;
+  top: -2.9rem;
+  left: -2.9rem;
 }
 
 progress::-moz-progress-bar {
