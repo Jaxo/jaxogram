@@ -281,53 +281,29 @@ header td:active {
   left: 50%;
   top: 50%;
   z-index: 5;
-  visibility: hidden;
+  /* visibility: hidden; */
 }
 
-#progress {
-  background: url("images/progress.png") no-repeat scroll left top transparent;
-  height: 66px;
-  width: 66px;
-  /* animation: 1s steps(12, end) 0s normal none infinite moveSpinner; */
-  animation-name: moveSpinner;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-timing-function: steps(12, end);
-  animation-delay: 0s;
-  -webkit-animation-name: moveSpinner;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: steps(23, end);
-  -webkit-animation-delay: 0s;
-  position: relative;
-  left: -33px;
-  top: -33px;
-  border: medium none;
+progress {
+  background: url(images/progress.png) no-repeat center center / 100% auto;
+  animation: 0.9s rotate infinite steps(30);
+  width: 5.8rem;
+  height: 5.8rem;
+  border: none;
+  display: inline-block;
+  vertical-align: middle;
 }
 
-@keyframes moveSpinner {
-  from { background-position: 0 top; }
-  to { background-position: -792px top; }
+progress::-moz-progress-bar {
+  background: none;
 }
-@-webkit-keyframes moveSpinner { /* Safari and Chrome */
-  from { background-position: 0 top; }
-  to { background-position: -792px top; }
+
+@keyframes rotate {
+  from { transform: rotate(1deg); }
+  to   { transform: rotate(360deg); }
 }
-/* #progresspane progress::-moz-progress-bar {      */  /* firefox */
-/*   background: none;                              */
-/* }                                                */
-/* #progresspane progress::-webkit-progress-value { */  /* chrome and safari */
-/*    background: none;                             */
-/* }                                                */
 
 footer {
-  /* background:#6a7b86;                                           */
-  /* background:-moz-linear-gradient(top,#6a7b86 0%,#424f5a 100%); */
-  /* background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#6a7b86),color-stop(100%,#424f5a)); */
-  /* background:-webkit-linear-gradient(top,#6a7b86 0%,#424f5a 100%);                                          */
-  /* background:-o-linear-gradient(top,#6a7b86 0%,#424f5a 100%);                                               */
-  /* background:-ms-linear-gradient(top,#6a7b86 0%,#424f5a 100%);                                              */
-  /* background:linear-gradient(top,#6a7b86 0%,#424f5a 100%);                                                  */
   color: #FFFFFF;
   position: absolute;
   width:100%;
@@ -420,11 +396,13 @@ button {
   margin: 0;
   padding: 0;
   font-size: 75%;
-  display: none;
+  height: 0;
+  /* display: none; */
   color: #aaa;
   line-height: 3.1rem;
   background-image: url("images/pattern.png");
   background-color: #61666c;               /* Mobile only */
+  transition: height 0.3s ease 0s;
 }
 .menuList li {
   vertical-align: bottom;
@@ -449,10 +427,10 @@ button {
   background: url("images/action_icons.png") no-repeat;
 }
 .menuList li[role=listbox]:before {
-  background-position:  0px -210px;
+  background-position:  0px -1950px;
 }
 .menuList li[role=listbox][aria-expanded=true]:before {
-  background-position:  0px -180px;
+  background-position:  0px -1920px;
 }
 [role=radiogroup] li[aria-selected="true"]:before {
   background-position:  30px /* NONE */

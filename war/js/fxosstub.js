@@ -143,13 +143,29 @@ function menuListClicked(event) {
    if (liElt.getAttribute("role") == "listbox") {
       var ulChildElt = liElt.getElementsByTagName("UL")[0];
       if (ulChildElt != null) {     // defense!
+         var afterTransed;
          if (liElt.getAttribute("aria-expanded") == "true") {
-            liElt.removeAttribute("aria-expanded");
-            ulChildElt.style.display = "none";
+            afterTransed = function() {
+               liElt.removeAttribute("aria-expanded");
+            }
+            ulChildElt.style.height = "0rem";
          }else {
-            liElt.setAttribute("aria-expanded", "true");
-            ulChildElt.style.display = "block";
+            afterTransed = function() {
+               liElt.setAttribute("aria-expanded", "true");
+            }
+            ulChildElt.style.height = (
+               ulChildElt.firstElementChild.offsetHeight *
+               ulChildElt.childElementCount
+            ) + "px";
          }
+         ulChildElt.addEventListener(
+            "transitionend",
+            function() {
+               afterTransed();
+               this.removeEventListener("transitionend", arguments.callee, true);
+            },
+            true
+         );
       }
    }else if (getAttribute(liElt.parentNode, "role") !=="radiogroup") {
       if (liElt.getAttribute("aria-selected") == "true") {

@@ -610,8 +610,10 @@ function listAlbums(event) {
          'listAlbums',
          function(albums) {
             formatAlbumsList(albums, ulChildElt);
+            menuListClicked(event);
          }
       );
+      event.stopPropagation();
    }
 }
 
