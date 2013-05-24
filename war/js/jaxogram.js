@@ -443,22 +443,30 @@ function fitImage(img) {
 }
 
 function authorize() {
-   var eltContainer = document.createElement("DIV");
+   var eltContainer = document.getElementById("p1_choices");
+   var btnElt;
+   eltContainer.innerHTML = "";
    networks.forEach(
       function(network) {
          var name = network.name;
-         var elt = document.createElement("IMG");
-         elt.className = "buttonLike";
-         elt.src= "images/" + name + "Logo.png";
+         var imgElt = document.createElement("IMG");
+         imgElt.src= "images/" + name + "Logo.png";
+         btnElt = document.createElement("BUTTON");
          if (name === "picasa") {
-            elt.onclick = authorizePicasa;
+            btnElt.onclick = authorizePicasa;
          }else {
-            elt.onclick = function() { authorizeThruOAuth(name); }
+            btnElt.onclick = function() { authorizeThruOAuth(name); }
          }
-         eltContainer.appendChild(elt);
+         btnElt.appendChild(imgElt);
+         eltContainer.appendChild(btnElt);
       }
    );
-   showMsg("chooseNetwork", [eltContainer]);
+   btnElt = document.createElement("BUTTON");
+   btnElt.textContent = i18n("cancel");
+   btnElt.onclick = function() { expandPage("p0"); }
+   eltContainer.appendChild(btnElt);
+   expandSidebarView(-1);
+   expandPage("p1");
 }
 
 function authorizePicasa() {
