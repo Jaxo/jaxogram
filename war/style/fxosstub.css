@@ -404,11 +404,6 @@ button {
   white-space: nowrap;
 }
 
-@font-face {
-  font-family: "GeneralEnclosedFoundicons";
-  src: url(font/general_enclosed_foundicons.ttf) format("truetype");
-}
-
 .menuList {
   position: relative;
 /* list-style: none; */
@@ -452,41 +447,18 @@ button {
   position: absolute;
   content: "";
   background: url("images/action_icons.png") no-repeat;
-/*background-size: 3rem 192rem;                          */
-/*background-position:  0px -1170px; {* new */
-/*background-position:  0px -330px; {* calendar */
 }
-/*.menuList li:before {                             */
-/*  font-family: "GeneralEnclosedFoundicons";       */
-/*  font-weight: normal;                            */
-/*  font-style: normal;                             */
-/*  position: absolute;                             */
-/*  right: 0.4em;                                   */
-/*  font-size: 130%;                                */
-/*  line-height:1em;                                */
-/*}                                                 */
 .menuList li[role=listbox]:before {
-  background-position:  0px -1170px;
+  background-position:  0px -210px;
 }
 .menuList li[role=listbox][aria-expanded=true]:before {
-  background-position:  0px -30px;
-  /*content: "\f004";*/
+  background-position:  0px -180px;
 }
-/*.menuList li[aria-selected="true"]:before {  */
-/*  background-position:  0px -60px;           */
-/*  (*content: "\f005";*)                      */
-/*}                                            */
-/*.menuList li:before {                        */
-/*  background-position:  0px -90px;           */
-/*  (*content: "\f006";*)                      */
-/*}                                            */
 [role=radiogroup] li[aria-selected="true"]:before {
   background-position:  0px -120px;
-  /*content: "\f015";*/
 }
 [role=radiogroup] li:before {
   background-position: 30px;
-  /*content: "\f015";*/
 }
 #newLogin, #newAlbum {
    padding-left: 3.5rem;
@@ -497,16 +469,6 @@ button {
    position: absolute;
    left: 0rem;
    width: 3rem;
-/* font-family:GeneralEnclosedFoundicons; */
-/* font-weight: normal;                   */
-/* font-style: normal;                    */
-/* font-size: 130%;                       */
-/* position:relative;                     */
-/* top:0.4rem;                            */
-/* left:-0.7rem;                          */
-/* padding:0.6rem;                        */
-/* line-height:0;                         */
-/* content: "\f003";                      */
 }
 span[role=trasher] {                   /* */
    background: url("images/action_icons.png") no-repeat 0px -570px transparent;
@@ -515,28 +477,11 @@ span[role=trasher] {                   /* */
    width: 3rem;
    height: 3rem;
    content: "";
-}                                             /* */
-span[role=trasher]:active {                   /* */
-   background-color: #FC2200;                 /* */
-   color:white;                               /* */
-}                                             /* */
-/* span[role=trasher]:before {                   */
-/*    font-family:GeneralEnclosedFoundicons;     */
-/*    font-weight: normal;                       */
-/*    font-style: normal;                        */
-/*    font-size: 130%;                           */
-/*    color: #888A8F;                            */
-/*    position:relative;                         */
-/*    top:0.4rem;                                */
-/*    left:-0.7rem;                              */
-/*    padding:0.6rem;                            */
-/*    line-height:0;                             */
-/*    content: "\f018";                          */
-/* }                                             */
-/* span[role=trasher]:active:before {            */
-/*    background-color: #FC2200;                 */
-/*    color:white;                               */
-/* }                                             */
+}
+span[role=trasher]:active {
+   background-color: #FC2200;
+   color:white;
+}
 li[aria-selected=true], li[role=listbox] {
    /* color: #eee; */
   color: #fff;
