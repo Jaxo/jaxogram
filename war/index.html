@@ -4,7 +4,9 @@
    <META charset="utf-8">
    <META name="viewport" content="width=device-width">
    <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
+   <LINK rel="stylesheet" type="text/css" href="style/toolbars.css"/>
    <LINK rel="stylesheet" type="text/css" href="style/action_menu.css"/>
+   <LINK rel="stylesheet" type="text/css" href="style/action_icons.css"/>
    <LINK rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
    <SCRIPT type="text/javascript" src="js/fxosstub.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/localStorage.js"></SCRIPT>
@@ -20,7 +22,7 @@
 <BODY>
    <SECTION id="corepane" class="drawer">
      <HEADER>
-       <DIV id="btnMain"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
+       <DIV id="btnMain"><IMG class="action-icon" role="menu" id="btnMainImage"/></DIV>
        <TABLE><TR>
           <TD id="btnInstall" class="i18n"></TD>
        </TR></TABLE>
@@ -94,11 +96,11 @@
       <DIV><DIV>
       <TABLE>
          <TR>
-            <TD><IMG src="style/images/close.png"></TD>
+            <TD class="action-icon" role="cancel"></TD>
             <TD><IMG src="style/images/separator.png"></TD>
             <TD>&nbsp;</TD>
             <TD><IMG src="style/images/separator.png"/></TD>
-            <TD><IMG src="style/images/ok.png"/></TD>
+            <TD class="action-icon" role="ok"></TD>
          </TR><TR>
             <TD colspan="5" style="text-align:center">&nbsp;</TD>
          </TR>
@@ -110,19 +112,15 @@
    <!-- Fallback if "no "Pick" MozActivity -->
    <INPUT type='file' id='upldFile' multiple accept="image/"/>
 
-   <FOOTER>
-      <TABLE id="footerTable">
-        <TR id="footerRow1">
-          <TD id="pickPhoto"><IMG src="style/images/camera.png"/></TD>
-          <!-- id="pickPhoto" class="i18n"" -->
-          <TD id="connectTo"><IMG src="style/images/earth.png"/></TD>
-        </TR><TR id="footerRow2">
-          <TD id="uploadPhoto"><IMG src="style/images/send.png"/></TD>
-          <!-- id="uploadPhoto" class="i18n" -->
-          <TD id="cancelPhoto"><IMG src="style/images/close.png"/></TD>
-          <!-- id="cancel class="i18n"-->
-        </TR>
-      </TABLE>
+   <FOOTER role="toolbar">
+     <UL id="footerRow1">
+        <LI><BUTTON id="pickPhoto" class="action-icon" role="camera"/></LI>
+        <LI><BUTTON id="connectTo" class="action-icon" role="earth"/></LI>
+     </UL>
+     <UL id="footerRow2">
+        <LI><BUTTON id="uploadPhoto" class="action-icon" role="send"/></LI>
+        <LI><BUTTON id="cancelPhoto" class="action-icon" role="cancel"/></LI>
+     </UL>
    </FOOTER>
 </BODY>
 </HTML>

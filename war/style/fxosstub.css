@@ -63,14 +63,16 @@ header #btnMain:active img {
 
 header #btnMain img {
   position: absolute;
-  left: 0;
+  left: -0.5rem;
   top: 0;
   background: rgba(0, 0, 0, 0.25);
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-position: center center;
-  width: 2rem;
-  height: 100%;
+  width: 1.5rem;
+  height: 4rem;
+  padding-top: 1rem;
+  padding-right: 1rem;
   z-index: -1;
 }
 
@@ -127,7 +129,7 @@ header td:active {
   left: 0%;
   right: 0%;
   top: 0rem;
-  bottom: 5rem;
+  bottom: 4rem;
   transition: 0.4s;
 }
 
@@ -142,23 +144,13 @@ header td:active {
    right: 100%;
    /* top: 5.7rem; */
    top: 0;
-   bottom: 5.1rem;
+   bottom: 4.1rem;
    margin-right: 0rem;
    margin-left: 0rem;
    opacity: 1;
    transition: 0.4s;
    overflow-y: auto;
    background: url("images/shadow.png") right top repeat-y;
-}
-.ssdebar:after {
-  content: "";
-/*width: 1rem; */
-/*background-attachment : fixed;  */
-  height: 100%;
-/*  position: absolute;             */
-/*  top: 0;                         */
-/*  right: 0;                       */
-  z-index: 5;
 }
 
 .sidebar[aria-expanded=true] {
@@ -238,7 +230,7 @@ header td:active {
 }
 #messagepane > div:first-child > div:first-child > table tr:first-child > td:first-child {
    position: absolute;
-   padding: 0rem 2rem 0rem 0rem
+   padding: 1rem 2rem 0rem 0rem
 }
 #messagepane > div:first-child > div:first-child > table tr:first-child > td:first-child img {
    margin: 0;
@@ -263,7 +255,7 @@ header td:active {
 }
 #messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) {
    position:absolute;
-   margin:0rem -0.2rem 0rem -3.2rem
+   margin:1rem -0.2rem 0rem -3.2rem
 }
 #messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) img {
    margin:0;
@@ -477,13 +469,6 @@ li[aria-selected=true], li[role=listbox] {
   color:#222;
 }
 
-/*#albumList li:before { */ /* set ".menulist li:before" to same value? */
-/*   right: 0.2em;       */
-/*   (* bottom: 1.2rem;*)*/
-/*}                      */
-/*#albumList li:first-child {         */
-/*  padding: 1.8rem 2rem 0.2rem 1rem; */              /* T, R, B, L */
-/*}                                   */
 #albumList li {
   /* border-bottom: solid 1px #445; */
   height: 3.7rem;
@@ -494,14 +479,6 @@ li[aria-selected=true], li[role=listbox] {
   vertical-align: middle;
   white-space: nowrap;
   line-height:
-/*  margin: 0;                        */
-/*  padding: 1rem 2rem 1rem 0.5rem;   */                  /* T, R, B, L */
-/*  overflow: hidden;                 */
-/*  text-align: left;                 */
-/*  text-overflow: ellipsis;          */
-/*  white-space: nowrap;              */
-/*  height: 3.2rem;                   */
-/*  vertical-align: middle;            */
 }
 #albumList li div {
    display:inline-block;
@@ -520,7 +497,7 @@ li[aria-selected=true], li[role=listbox] {
    border: 1px solid #333;
    width: 3rem;
    position: absolute;
-   clip: rect(0, 3.2rem, 3rem, 0);                  /* T, R, B, L */
+   clip: rect(0, 3.2rem, 3rem, 0);
 }
 
 /*-- Styles specific to jaxogram --*/
@@ -538,22 +515,17 @@ li[aria-selected=true], li[role=listbox] {
 /* }                                          */
 
 #mn_user img {
-   position: relative;           /**/
-   top: 0.3rem;                  /**/
+   position: relative;
+   top: 0.3rem;
    margin-right: 0.7rem;
    height: 2rem;
 }
 
 #mn_user ul img {
-/*  position: relative;           */
-/*  top: 0;                       */
-/*  margin: 0 0.5rem 0 2.7rem;    */
-/*  height: 1.2rem;               */
-  position: relative;           /**/
-  top: 0.3rem;                  /**/
-  /* width: 2.3rem; */
-  margin: 0 0.5rem 0 2.7rem;    /**/
-  height: 1.8rem;               /**/
+  position: relative;
+  top: 0.3rem;
+  margin: 0 0.5rem 0 2.7rem;
+  height: 1.8rem;
 }
 
 /* ------ Page 0 ------*/
