@@ -139,10 +139,6 @@ window.onload = function() {
    document.getElementById("logins").onclick = function(event) {
       changeLogin(this, event);
    };
-   document.getElementById("p2_clear").onclick = function() {
-      document.getElementById("p2_picture").style.visibility = "hidden";
-      this.style.visibility = "hidden";
-   };
    // document.getElementById("mn_albums").style.display = "none";
    document.getElementById("footerRow2").style.display = "none";
    var dfltLocale = navigator.language || navigator.userLanguage;

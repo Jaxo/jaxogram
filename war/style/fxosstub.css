@@ -577,15 +577,6 @@ li[aria-selected=true], li[role=listbox] {
   text-align: center;
   /* width: 100%; */
 }
-.imgclr {
-   position:absolute;
-   right:1.5rem;
-   top:14rem;
-   z-index:2
-}
-.imgclr:active {
-  background-color: #0095dd;
-}
 
 .p2_user{
   overflow: hidden;
