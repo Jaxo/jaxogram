@@ -123,6 +123,12 @@ var localeValues = {
       'pt-BR':"Confirmar",
       'es-ES':"Confirmar",
       'pl-PL':"Potwierdzać"
+   }, preferences: {
+      'en-US':"Preferences",
+      'fr-FR':"Préférences",
+      'pt-BR':"Preferências",
+      'es-ES':"Preferencias",
+      'pl-PL':"Preferencje"
    }, testMode: {
       'en-US':"Test version.\nServer at\n%1",
       'fr-FR':"Version de test.\nServeur\n%1",
