@@ -83,6 +83,8 @@
 .action-icon[role="send_mail"]:before { background-position:  0px -2100px; }
 .action-icon[role="hide"]:before { background-position:  0px -2130px; }
 .action-icon[role="camera"]:before { background-position:  0px -2160px; }
+.action-icon[role="edit_picture"]:before { background-position:  0px -2190px; }
+.action-icon[role="done"]:before { background-position:  0px -2220px; }
 /* ------- aliases (at jaxo...) ---------  */
 /* add is an alias of new                  */
 /* back stays the same                     */
@@ -109,7 +111,7 @@
 .action-icon[role="close"]:before { background-position:  0px -390px; }
 .action-icon[role="edit"]:before { background-position:  0px -450px; }
 .action-icon[role="mark"]:before { background-position:  0px -750px; }
-.action-icon[role="ok"]:before { background-position:  0px -1980px; }
+.action-icon[role="ok"]:before { background-position:  0px -2220px; }
 .action-icon[role="send"]:before { background-position:  0px -2100px; }
 .action-icon[role="share"]:before { background-position:  0px -990px; }
 .action-icon[role="update"]:before { background-position:  0px -1020px; }

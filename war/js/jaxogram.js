@@ -430,9 +430,11 @@ function fitImages() {
 function fitImage(img) {
    var elt = img.parentNode;
    if ((elt.offsetHeight * img.offsetWidth)<(img.offsetHeight * elt.offsetWidth)) {
+      img.style.top = "0";
       img.style.width = "";
       img.style.height = "100%";
    }else {
+      img.style.top = ((elt.offsetHeight - img.offsetHeight) / 2) + "px";
       img.style.width = "100%";
       img.style.height = "";
    }
@@ -706,7 +708,6 @@ function uploadPhotos() {
          if (event && (event.keyCode === 13)) this.blur();
       };
       foo1();
-      document.getElementById("p2_clear").style.visibility = "visible";
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
