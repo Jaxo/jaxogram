@@ -701,7 +701,7 @@ function uploadPhotos() {
          }
          countElt.textContent = remain;
          if (remain > 20) {
-            countElt.style.color = "#9b9b9b";
+            countElt.style.color = "";
          }else {
             countElt.style.color = "#C80000";
          }
