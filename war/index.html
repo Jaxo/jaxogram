@@ -20,60 +20,54 @@
 </HEAD>
 <BODY>
    <SECTION id="corepane" class="drawer">
-     <HEADER>
-       <DIV id="btnMain"><IMG class="action-icon" role="menu" id="btnMainImage"/></DIV>
-       <H1>Jaxogram <SMALL>web</SMALL></H1>
-       <TABLE><TR>
-          <TD id="btnInstall" class="i18n"></TD>
-       </TR></TABLE>
-     </HEADER>
-     <DIV id="p0" class="body" aria-expanded="true">
-        <IMG id="p0_netImage"/>
-        <DIV class="i18n" id="p0_top"></DIV>
-        <DIV id="p0_bot">
-           <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
-           <SPAN id="p0_copy">&copy; Jaxo, Inc. 2013</SPAN>
-        </DIV>
-     </DIV>
-     <DIV id="p1" class="body">
-        <FORM role="dialog" data-type="action" onsubmit="return false;">
-          <HEADER role="goo"><H2 class="i18n" id="chooseNetwork"></H2></HEADER>
-          <MENU id="p1_choices"></MENU>
-        </FORM>
-     </DIV>
-     <DIV id="p2" class="body">
-        <DIV class="p2_top">
-           <DIV class="p2_user">
-              <IMG id="p2_userImage"/>
-              <IMG id="p2_netImage"/>
-              <DIV id="p2_userName"></DIV>
-              <DIV id="p2_userScreenName"></DIV>
-           </DIV>
-           <DIV class="p2_msg">
-              <TEXTAREA class="i18n" id="p2_msgText"></TEXTAREA>
-              <SPAN id="p2_msgCount"></SPAN>
-           </DIV>
-        </DIV>
-        <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
-     </DIV>
-     <DIV id="p3" class="body">
-        <FORM onsubmit="return false;" data-type="action" role="dialog">
-          <HEADER role="goo">
-             <DIV id="cancelEdit"><IMG role="cancel" class="action-icon"/></DIV>
-             <H2>Edit</H2>
-             <TABLE><TR>
-                <TD><IMG role="cancel" class="action-icon"/></TD>
-             </TR></TABLE>
-          </HEADER>
-          <DIV class="imgbox"><IMG alt="Photo" id="p3_picture"/></DIV>
-        </FORM>
-     </DIV>
+      <HEADER role="main">
+         <DIV id="btnMain"><IMG class="action-icon" role="menu" id="btnMainImage"/></DIV>
+         <H1>Jaxogram <SMALL>web</SMALL></H1>
+         <TABLE><TR>
+            <TD id="btnInstall" class="i18n"></TD>
+         </TR></TABLE>
+      </HEADER>
+      <DIV id="p0" class="body" aria-expanded="true">
+         <IMG id="p0_netImage"/>
+         <DIV class="i18n" id="p0_top"></DIV>
+         <DIV id="p0_bot">
+            <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
+            <SPAN id="p0_copy">&copy; Jaxo, Inc. 2013</SPAN>
+         </DIV>
+      </DIV>
+      <DIV id="p1" class="body">
+         <HEADER><H2 class="i18n" id="chooseNetwork"></H2></HEADER>
+         <MENU role="action" id="p1_choices"></MENU>
+      </DIV>
+      <DIV id="p2" class="body">
+         <DIV class="p2_top">
+            <DIV class="p2_user">
+               <IMG id="p2_userImage"/>
+               <IMG id="p2_netImage"/>
+               <DIV id="p2_userName"></DIV>
+               <DIV id="p2_userScreenName"></DIV>
+            </DIV>
+            <DIV class="p2_msg">
+               <TEXTAREA class="i18n" id="p2_msgText"></TEXTAREA>
+               <SPAN id="p2_msgCount"></SPAN>
+            </DIV>
+         </DIV>
+         <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
+      </DIV>
+      <DIV id="p3" class="body">
+         <HEADER>
+            <DIV id="cancelEdit"><IMG role="cancel" class="action-icon"/></DIV>
+            <H2>Edit</H2>
+            <TABLE><TR>
+               <TD><IMG role="done" class="action-icon"/></TD>
+            </TR></TABLE>
+         </HEADER>
+         <DIV class="imgbox"><IMG alt="Photo" id="p3_picture"/></DIV>
+      </DIV>
    </SECTION>
 
    <SECTION id="menupane" class="sidebar">
-     <HEADER>
-       <H2 class="i18n" id="preferences"></H2>
-     </HEADER>
+      <HEADER><H2 class="i18n" id="preferences"></H2></HEADER>
       <UL class="menuList">
         <LI role="listbox" id="mn_user">
            <SMALL class="i18n" id="loginAs"></SMALL><BR/>

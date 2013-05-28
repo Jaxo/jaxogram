@@ -16,8 +16,22 @@ header {
   z-index: 1;
 }
 
-.drawer header {
+header[role="main"] {
   background-image: url("images/header.png");
+}
+
+.body header {
+   width: 100%;
+   display: inline-block;
+   border-bottom: 0.1rem solid #616262;
+   -moz-box-sizing: border-box;
+   position:fixed;
+   top:0;
+   height:5rem;
+   left:0;
+   right:0;
+   background: url('images/am_pattern.png') repeat scroll left top,
+   url('images/am_gradient.png') no-repeat scroll left top / 100% 100% transparent;
 }
 
 .sidebar header {
@@ -32,14 +46,6 @@ header:after {
   height: 0.1rem;
   left: 0;
   top: 5rem;
-}
-
-header[role="goo"] {
-  width: 100%;
-  display: inline-block;
-  border-bottom: 0.1rem solid #616262;
-  background: url(images/am_alpha.png) repeat 0 0;
-  -moz-box-sizing: border-box;
 }
 
 header h1 small {
@@ -105,7 +111,7 @@ header table {
 
 header td {
   background: url("images/separator.png") no-repeat scroll left top;
-  min-width: 6rem;
+  min-width: 3rem;
   padding: 0rem 0.5rem 0rem 0.5rem;
   text-align: center;
   width: auto;

@@ -2,42 +2,7 @@
  * Action menu
  * ---------------------------------- */
 
-/* Main dialog setup */
-form[role="dialog"][data-type="action"],
-form[role="dialog"][data-type="object"] {
-  background:
-    url(images/am_pattern.png) repeat left top,
-    url(images/am_gradient.png) no-repeat left top / 100% 100%;
-  overflow: hidden;
-  position: fixed;
-  z-index: 100;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 0 0 7rem;
-  font-family: "MozTT", Sans-serif;
-  /**
-   * Using "font-size: 0" to avoid the unwanted visual space (about 3px) created
-   * by white spaces and line breaks in the code between inline-block elements.
-   */
-  font-size: 0;
-  color: #fff;
-}
-
-form[role="dialog"][data-type="action"]:before,
-form[role="dialog"][data-type="object"]:before {
-  content: '';
-  display: inline-block;
-  vertical-align: top;
-  width: 0.1rem;
-  height: 100%;
-  margin-left: -0.1rem;
-}
-
-/* Specific component code */
-form[role="dialog"][data-type="action"] > menu,
-form[role="dialog"][data-type="object"] > menu {
+menu[role="action"] {
   margin: 0;
   padding: 0;
   width: auto;
@@ -49,8 +14,7 @@ form[role="dialog"][data-type="object"] > menu {
   bottom: 0;
 }
 
-form[role="dialog"][data-type="action"] > menu > button,
-form[role="dialog"][data-type="object"] > menu > button {
+menu[role="action"] > button {
   width: calc(100% - 3rem);
   height: 4rem;
   -moz-box-sizing: border-box;
@@ -73,8 +37,7 @@ form[role="dialog"][data-type="object"] > menu > button {
   border: none;
 }
 
-form[role="dialog"][data-type="action"] > menu > button:last-child,
-form[role="dialog"][data-type="object"] > menu > button:last-child {
+menu[role="action"] > button:last-child {
   text-shadow: 0.1rem 0.1rem 0 rgba(255,255,255,0.3);
   color: #333;
   font-weight: 500;
@@ -85,8 +48,7 @@ form[role="dialog"][data-type="object"] > menu > button:last-child {
   font-size: 1.6rem;
 }
 
-form[role="dialog"][data-type="action"] > menu > button:last-child:before,
-form[role="dialog"][data-type="object"] > menu > button:last-child:before {
+menu[role="action"] > button:last-child:before {
   content: '';
   position: absolute;
   width: 100%;
@@ -99,23 +61,20 @@ form[role="dialog"][data-type="object"] > menu > button:last-child:before {
 }
 
 /* Press state */
-form[role="dialog"][data-type="action"] > menu > button:active,
-form[role="dialog"][data-type="object"] > menu > button:active {
+menu[role="action"] > button:active {
   background-color: #006f86;
   color: #333;
   text-shadow: 0 0.1rem 0 rgba(255, 255, 255, 0.25);
 }
 
-form[role="dialog"][data-type="action"] > menu > button:last-child:active,
-form[role="dialog"][data-type="object"] > menu > button:last-child:active {
+menu[role="action"] > button:last-child:active {
   border: solid 0.1rem #008aaa;
   background: #008aaa;
   color: #333;
 }
 
 /* Disabled */
-form[role="dialog"][data-type="action"] > menu > button[disabled],
-form[role="dialog"][data-type="object"] > menu > button[disabled] {
+menu[role="action"] > button[disabled] {
   background: #4d4d4d;
   color: #333;
   text-shadow: none;
