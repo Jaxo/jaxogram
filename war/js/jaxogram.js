@@ -142,7 +142,7 @@ window.onload = function() {
       changeLogin(this, event);
    };
    // document.getElementById("mn_albums").style.display = "none";
-   showToolbar(1);
+   showToolbar(0);
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
    formatUsersList(true);
@@ -465,7 +465,7 @@ function authorize() {
    btnElt.textContent = i18n("cancel");
    btnElt.onclick = function() {
       expandPage("p0");
-      showToolbar(true);
+      showToolbar(0);
    }
    eltContainer.appendChild(btnElt);
    expandSidebarView(-1);
