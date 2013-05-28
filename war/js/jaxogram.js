@@ -5,6 +5,7 @@ var server_url = "http://jaxogram.appspot.com/jaxogram";
 
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
+var tempFilterChoice = 0;
 var filterChoice = 0;
 var filters = [
    {
@@ -132,12 +133,13 @@ window.onload = function() {
    // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
    document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
-   document.getElementById("editPhoto").onclick = gougou;
+   document.getElementById("editPhoto").onclick = editPhoto;
    document.getElementById("cancelPhoto").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
    };
-   document.getElementById("cancelEdit").onclick = antigougou;
+   document.getElementById("cancelEdit").onclick = cancelEditPhoto;
+   document.getElementById("validateEdit").onclick = validateEditPhoto;
    document.getElementById("logins").onclick = function(event) {
       changeLogin(this, event);
    };
@@ -711,37 +713,12 @@ function uploadPhotos() {
          }
          if (event && (event.keyCode === 13)) this.blur();
       };
-      foo1();
+      showNewPhoto();
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
       isUploadable();
    }
-}
-
-function changeFilter(event) {
-   if (event) filterChoice = getRealTarget(event).cellIndex;
-   var img2Elt = document.getElementById("p2_picture");
-   var img3Elt = document.getElementById("p3_picture");
-   img2Elt.style.visibility = "";
-   img3Elt.style.visibility = "";
-   img2Elt.src = filters[filterChoice].src;
-   img3Elt.src = filters[filterChoice].src;
-}
-
-function foo1() {
-   var imgRawElt = filters[0].img;
-   imgRawElt.onload = function() {
-      if (filters[0].src) URL.revokeObjectURL(filters[0].src);
-      filters[0].src = imgRawElt.src;
-      changeFilter();  // e.g: set it to raw
-      for (var i=1, max=filters.length; i < max; ++i) {
-         var filter = filters[i];
-         if (filter.src) URL.revokeObjectURL(filter.src);
-         filter.src = URL.createObjectURL(doFilter(imgRawElt, filter));
-      }
-   };
-   imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
 }
 
 function isUploadable() {
@@ -921,12 +898,42 @@ function showToolbar(barNo) {
    }
 }
 
-function gougou() {
+function showNewPhoto() {
+   var imgRawElt = filters[0].img;
+   imgRawElt.onload = function() {
+      if (filters[0].src) URL.revokeObjectURL(filters[0].src);
+      filters[0].src = imgRawElt.src;
+      for (var i=1, max=filters.length; i < max; ++i) {
+         var filter = filters[i];
+         if (filter.src) URL.revokeObjectURL(filter.src);
+         filter.src = URL.createObjectURL(doFilter(imgRawElt, filter));
+      }
+      document.getElementById("p2_picture").src = filters[filterChoice].src;
+   };
+   imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
+}
+
+function editPhoto() {
    showToolbar(2);
+   tempFilterChoice = filterChoice;
    expandSidebarView(-1);
+   document.getElementById("p3_picture").src = filters[filterChoice].src;
    expandPage("p3");
 }
-function antigougou() {
+
+function validateEditPhoto() {
+   filterChoice = tempFilterChoice;
+   document.getElementById("p2_picture").src = filters[filterChoice].src;
+   cancelEditPhoto();
+}
+
+function cancelEditPhoto() {
    showToolbar(1);
    expandPage("p2");
 }
+
+function changeFilter(event) {
+   if (event) tempFilterChoice = getRealTarget(event).cellIndex;
+   document.getElementById("p3_picture").src = filters[tempFilterChoice].src;
+}
+
