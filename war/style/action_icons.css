@@ -4,7 +4,7 @@
 .action-icon:before {
    background-image: url("images/action_icons.png");
    background-position:  30px 0px;  /* in the middle of nowhere */
-   display: block;
+   display: inline-block;
    content: "";
    width: 30px;
    height: 30px;

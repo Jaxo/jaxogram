@@ -132,15 +132,17 @@ window.onload = function() {
    // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
    document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
+   document.getElementById("editPhoto").onclick = gougou;
    document.getElementById("cancelPhoto").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
    };
+   document.getElementById("cancelEdit").onclick = antigougou;
    document.getElementById("logins").onclick = function(event) {
       changeLogin(this, event);
    };
    // document.getElementById("mn_albums").style.display = "none";
-   document.getElementById("footerRow2").style.display = "none";
+   showToolbar(1);
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
    formatUsersList(true);
@@ -461,10 +463,14 @@ function authorize() {
    );
    btnElt = document.createElement("BUTTON");
    btnElt.textContent = i18n("cancel");
-   btnElt.onclick = function() { expandPage("p0"); }
+   btnElt.onclick = function() {
+      expandPage("p0");
+      showToolbar(true);
+   }
    eltContainer.appendChild(btnElt);
    expandSidebarView(-1);
    expandPage("p1");
+   showToolbar(-1);
 }
 
 function authorizePicasa() {
@@ -673,8 +679,7 @@ function pickPhoto(event) {
 
 function finishUpload() {
    expandPage("p0"); // stop p2!
-   document.getElementById("footerRow2").style.display = "none";
-   document.getElementById("footerRow1").style.display = "";
+   showToolbar(0);
    if (upldPhotosCount > 0) {
       simpleMsg("info", i18n('photosUploaded', upldPhotosCount));
       upldPhotosCount = 0;
@@ -686,8 +691,7 @@ function uploadPhotos() {
    if (pendingPhotos.length == 0) {
       finishUpload();
    }else {
-      document.getElementById("footerRow1").style.display = "none";
-      document.getElementById("footerRow2").style.display = "";
+      showToolbar(1);
 
       // document.querySelector(".p2_user").classList.add("active");
       var countElt = document.getElementById("p2_msgCount");
@@ -717,9 +721,12 @@ function uploadPhotos() {
 
 function changeFilter(event) {
    if (event) filterChoice = getRealTarget(event).cellIndex;
-   var imgElt = document.getElementById("p2_picture");
-   imgElt.style.visibility = "";
-   imgElt.src = filters[filterChoice].src;
+   var img2Elt = document.getElementById("p2_picture");
+   var img3Elt = document.getElementById("p3_picture");
+   img2Elt.style.visibility = "";
+   img3Elt.style.visibility = "";
+   img2Elt.src = filters[filterChoice].src;
+   img3Elt.src = filters[filterChoice].src;
 }
 
 function foo1() {
@@ -897,3 +904,29 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    }
 }
 
+function showToolbar(barNo) {
+   var elt = document.getElementById("footerTable");
+   if (barNo == -1) {
+      elt.parentNode.style.display = "none";
+   }else {
+      for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
+         var row = rows[i];
+         if (i == barNo) {
+            row.style.display = "";
+         }else {
+            row.style.display = "none";
+         }
+      }
+      elt.parentNode.style.display = "";
+   }
+}
+
+function gougou() {
+   showToolbar(2);
+   expandSidebarView(-1);
+   expandPage("p3");
+}
+function antigougou() {
+   showToolbar(1);
+   expandPage("p2");
+}

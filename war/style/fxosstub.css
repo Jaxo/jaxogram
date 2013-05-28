@@ -10,35 +10,36 @@ html, body {
 }
 
 header {
-  /* background: #e66000;   0095dd */
-  /* background:-moz-linear-gradient(top,#ff9500 0%,#e66000 100%);                                             */
-  /* background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#ff9500),color-stop(100%,#e66000)); */
-  /* background:-webkit-linear-gradient(top,#ff9500 0%,#e66000 100%);                                          */
-  /* background:-o-linear-gradient(top,#ff9500 0%,#e66000 100%);                                               */
-  /* background:-ms-linear-gradient(top,#ff9500 0%,#e66000 100%);                                              */
-  /* background:linear-gradient(top,#ff9500 0%,#e66000 100%);                                                  */
   background-repeat: repeat-x;
   color: #FFFFFF;
-  height: 4.9rem;
-  position: relative;
+  height: 5rem;
   z-index: 1;
 }
 
 .drawer header {
   background-image: url("images/header.png");
 }
+
 .sidebar header {
   background-image: url("images/header2.png");
 }
-.sidebar > header:after {
+
+header:after {
   content: "";
-  height: 0.3rem;
   position: absolute;
-  top: 100%;
+  width: 100%;
+  background: #222323;
+  height: 0.1rem;
   left: 0;
-  right: 0;
-  background: url(images/shadow_header.png) repeat-x left top;
-  background-size: auto 100%;
+  top: 5rem;
+}
+
+header[role="goo"] {
+  width: 100%;
+  display: inline-block;
+  border-bottom: 0.1rem solid #616262;
+  background: url(images/am_alpha.png) repeat 0 0;
+  -moz-box-sizing: border-box;
 }
 
 header h1 small {
@@ -46,43 +47,32 @@ header h1 small {
   text-shadow:none
 }
 
-header #btnMain {
+header > div {
+  outline: none;
   background: transparent;
-  position: absolute;
-  left: 0;
-  text-align: center;
-  width: 4rem;
+  width: 5rem;
   border: none;
-  height: 100%;
   margin: 0;
+  display:inline-block;
 }
 
-header #btnMain:active img {
+header > div:active img {
   background-color: #0095dd; /* was e66000 */
 }
 
-header #btnMain img {
-  position: absolute;
-  left: -0.5rem;
-  top: 0;
-  background: rgba(0, 0, 0, 0.25);
-  background-repeat: no-repeat;
-  background-attachment: scroll;
-  background-position: center center;
-  width: 1.5rem;
-  height: 4rem;
-  padding-top: 1rem;
-  padding-right: 1rem;
+header > div img {
+  background: url("images/mainsepa.png") no-repeat scroll right top rgba(0, 0, 0, 0.25);
+  display:block;
+  margin: 0rem 2.6rem 0rem -0.6rem;
+  padding: 1rem 0rem 0.8rem 0.2rem;
   z-index: -1;
 }
 
-header h1 {
-  display: block;
-  margin: 0 0 0 0rem;
-  font-size: 2.3rem;
+header h1, header h2 {
+  display: inline;
+  margin: 0;
   font-weight: normal;
-  line-height: 4.9rem;
-  height: 100%;
+  height: 5rem;
   padding: 0 0 0 1rem;
   overflow: hidden;
   text-align: left;
@@ -90,11 +80,18 @@ header h1 {
   white-space: nowrap;
 }
 
-.drawer header h1 {
-  background: url("images/mainsepa.png") no-repeat scroll left top;
-  /* text-shadow:0 -1px 1px rgba(0,0,0,0.5); */
-  margin: 0 0 0 2rem;
-  font-size: 2.5rem;
+header div + h1, header div + h2 {
+  margin-left: -2rem;
+  position: relative;
+  top: -0.8rem;
+}
+
+header h1 {
+   font-size: 2.3rem;
+}
+header h2 {
+   font-size: 1.9rem;
+   line-height: 4.9rem;
 }
 
 header table {
@@ -315,6 +312,7 @@ footer table {
   width: 100%;
   height:100%;
   border: none;
+  color: white;
   /* border-collapse: collapse; */
 }
 
@@ -338,10 +336,6 @@ footer td:last-child {
 footer td:active {
   background-color: #008aaa;
   color: #555;
-}
-
-footer td.action-icon:before {
-   margin-left: calc(50% - 15px);
 }
 
 .buttonLike {
@@ -554,7 +548,7 @@ li[aria-selected=true], li[role=listbox] {
     width: 12rem;
     height: 8rem;
     right: 1rem;
-    bottom: 0rem;
+    bottom: 4.5rem; /* reduced: 0rem; */
 }
 #p0_copy {
     position: absolute;
@@ -645,34 +639,4 @@ li[aria-selected=true], li[role=listbox] {
 
 #upldFile {
    display: none;
-}
-
-.filters {
-   position:absolute;
-   width:100%;
-   height:5rem;
-   bottom:1rem;
-}
-.filters table {
-   table-layout: fixed;
-   margin: 0px;
-   padding: 0px;
-   width: 100%;
-   height:100%;
-   border: none;
-   border-spacing:1rem 0;
-   text-align:center;
-}
-.filters table td {
-   margin-left: 0.5rem;
-   background:-moz-linear-gradient(top,#E0E0E0 0%,#808080 100%);
-   border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
-}
-.filters table td:active {
-   background:-moz-linear-gradient(top,#00559d 0%,#0095dd 100%);
-   /* background-color: #0095dd; */ /* was e66000 */
-}
-.filters table td[aria-selected=true] {
-   background:-moz-linear-gradient(top,#202529 0%,#505560 100%);
-   /* background-color: #0095dd; */ /* was e66000 */
 }
