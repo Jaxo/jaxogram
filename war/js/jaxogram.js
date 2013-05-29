@@ -804,7 +804,7 @@ function filterAndUploadPhoto(imgRawBlob)
 
 function uploadPhoto(imgBlob) {
    var formData = new FormData();
-   formData.append("MAX_FILE_SIZE", "1000000");
+   formData.append("MAX_FILE_SIZE", "2000000");
 // formData.append("IMG", file.name.substr(-3));
    if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
    formData.append("TIT", document.getElementById("p2_msgText").value);
