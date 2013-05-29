@@ -1,4 +1,4 @@
-var server_url = "http://jaxogram.appspot.com/jaxogram";
+var server_url = "http://13.jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
@@ -914,6 +914,11 @@ function showNewPhoto() {
 }
 
 function editPhoto() {
+   var cells = document.getElementById("imgFilters").cells;
+   for (var i=0, max=filters.length; i < max; ++i) {
+      var thumb = cells[i];
+      thumb.style.backgroundImage = "url('" + filters[i].src + "')";
+   }
    showToolbar(2);
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
