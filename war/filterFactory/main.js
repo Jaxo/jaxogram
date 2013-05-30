@@ -67,14 +67,17 @@ function doOnLoad() {
          }
       );
       serverFilesList.clear();
-      filesmanager.serverImport(fileNames);
+      filesmanager.serverImport(
+         fileNames,
+         buildFiltersList
+      );
    };
 
    document.getElementById("manageFilters").onclick = function() {
       filesmanager.dir(localFilesList);   // populate
    }
    document.getElementById("saveFilter").onclick = function() {
-      filesmanager.save(JSON.stringify(currentFilter));
+      filesmanager.save(JSON.stringify(currentFilter), false);
       buildFiltersList();
    };
    document.getElementById("saveFilterAs").onclick = function() {

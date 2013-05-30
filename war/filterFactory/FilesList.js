@@ -114,7 +114,7 @@ FilesList.prototype = {
             cell2 = document.createElement("TD");
             cell3 = document.createElement("TD");
             date = entry.creation;
-            split = date.lastIndexOf(' ', date.lastIndexOf(' ')-1)
+            split = date.lastIndexOf(' ', date.lastIndexOf(' ')-1);
             cell0.textContent = entry.name;
             cell1.textContent = entry.size;
             // Date is deemed to be as in: "Wed, 01 May 2013 20:14:37 GMT"
@@ -226,6 +226,7 @@ FilesList.prototype = {
    getSelectedRows: function() {
       // 3 is the # of rows in the THEAD.  Yes, it's a bit hacky.
       var result = [];
+      var i;
       if (this.firstRow >= 0) {
          if (this.minusRows.indexOf(this.firstRow) == -1) {
             result.push(this.firstRow - 3);
@@ -249,7 +250,7 @@ FilesList.prototype = {
          }
       }
       for (i=0; i < this.plusRows.length; ++i) {
-         result.push(this.plusRows[i-3]);
+         result.push(this.plusRows[i]-3);
       }
       return result;
    },
