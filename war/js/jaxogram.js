@@ -11,27 +11,33 @@ var filters = [
    {
       name: "raw",
       img: new Image(),
-      src: ""
+      src: "",
+      thumbImg: ""
    },{
       name: "f1",
       value: "feColorMatrix type=\"matrix\" values=\"0.0000 0.0786 0.4759 0.0000 0.0000 0.2832 0.0000 -0.1354 0.0000 0.0000 -0.8039 0.0000 -0.0792 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
-      src: ""
+      src: "",
+      thumbImg: ""
    },{
       name: "f2",
       value: "feColorMatrix type=\"matrix\" values=\"0.4214 -0.0285 0.0652 0 0 0.0158 0.4596 -0.0172 0 0 -0.0575 0.0833 0.5279 0 0 0 0 0 1 0\"",
-      src: ""
+      src: "",
+      thumbImg: ""
    },{
       name: "f3",
       value: "feColorMatrix type=\"matrix\" values=\"0.5108 0.2115 0.0213 0.0000 0.0000 0.1325 0.6749 0.0448 0.0000 0.0000 0.2390 2.3897 0.6088 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
-      src: ""
+      src: "",
+      thumbImg: ""
    },{
       name: "f4",
       value: "feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"",
-      src: ""
+      src: "",
+      thumbImg: ""
    },{
       name: "f5",
       value: "feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
-      src: ""
+      src: "",
+      thumbImg: ""
    }
 ];
 var users;
@@ -150,8 +156,20 @@ window.onload = function() {
    formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
-   document.getElementById("imgFilters").addEventListener("click", changeFilter);
-
+   var elt = document.getElementById("imgFilters");
+   for (var i=0, max=filters.length; i < max; ++i) {
+      var tdElt = document.createElement("TD");
+      var imgElt = document.createElement("IMG");
+      imgElt.onload = function() {
+        // no longer need to read the blob so it's revoked
+        if (this.src) URL.revokeObjectURL(this.src);
+      };
+      filters[i].thumbImg = imgElt;
+      tdElt.setAttribute("align", "center");
+      tdElt.appendChild(imgElt);
+      elt.appendChild(tdElt);
+   }
+   elt.addEventListener("click", changeFilter);
    var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
    eltMain.addEventListener(
@@ -939,9 +957,9 @@ function showNewPhoto() {
       canvas.toBlob(
          function(thumbBlob) {
             var rawThumb = URL.createObjectURL(thumbBlob);
-            document.getElementById("f0").src = rawThumb;
+            filters[0].thumbImg.src = rawThumb;
             for (var i=1, max=filters.length; i < max; ++i) {
-               document.getElementById("f" + i).src = URL.createObjectURL(
+               filters[i].thumbImg.src = URL.createObjectURL(
                   doFilter(w, h, rawThumb, filters[i])
                );
             }
@@ -954,11 +972,6 @@ function showNewPhoto() {
 }
 
 function editPhoto() {
-   // FIXME: should go above, then revoke the URL on load.
-   var cells = document.getElementById("imgFilters").cells;
-   for (var i=0, max=filters.length; i < max; ++i) {
-      cells[i].style.backgroundImage = "url('" + filters[i].thumb + "')";
-   }
    showToolbar(2);
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
