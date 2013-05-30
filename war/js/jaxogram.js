@@ -14,23 +14,23 @@ var filters = [
       src: ""
    },{
       name: "f1",
-      value: "feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"",
-      src: ""
-   },{
-      name: "f2",
-      value: "feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
-      src: ""
-   },{
-      name: "f3",
       value: "feColorMatrix type=\"matrix\" values=\"0.0000 0.0786 0.4759 0.0000 0.0000 0.2832 0.0000 -0.1354 0.0000 0.0000 -0.8039 0.0000 -0.0792 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
       src: ""
    },{
-      name: "f4",
+      name: "f2",
       value: "feColorMatrix type=\"matrix\" values=\"0.4214 -0.0285 0.0652 0 0 0.0158 0.4596 -0.0172 0 0 -0.0575 0.0833 0.5279 0 0 0 0 0 1 0\"",
       src: ""
    },{
-      name: "f5",
+      name: "f3",
       value: "feColorMatrix type=\"matrix\" values=\"0.5108 0.2115 0.0213 0.0000 0.0000 0.1325 0.6749 0.0448 0.0000 0.0000 0.2390 2.3897 0.6088 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      src: ""
+   },{
+      name: "f4",
+      value: "feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"",
+      src: ""
+   },{
+      name: "f5",
+      value: "feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
       src: ""
    }
 ];
@@ -756,10 +756,7 @@ function tryUploadPhoto() {
    }
 }
 
-function doFilter(img, filter) {
-   var w = img.width;
-   var h = img.height;
-   var imgUrl = img.src;
+function doFilter(w, h, imgUrl, filter) {
    var fId = filter.name;
    var data = (
      "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
@@ -899,25 +896,68 @@ function showToolbar(barNo) {
 }
 
 function showNewPhoto() {
+   // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
    var imgRawElt = filters[0].img;
    imgRawElt.onload = function() {
       if (filters[0].src) URL.revokeObjectURL(filters[0].src);
       filters[0].src = imgRawElt.src;
+      // 0) Set the filters
       for (var i=1, max=filters.length; i < max; ++i) {
          var filter = filters[i];
          if (filter.src) URL.revokeObjectURL(filter.src);
-         filter.src = URL.createObjectURL(doFilter(imgRawElt, filter));
+         filter.src = URL.createObjectURL(
+            doFilter(imgRawElt.width, imgRawElt.height, imgRawElt.src, filter)
+         );
       }
+      // 1) Compute the thumbnails size
+      showToolbar(2);  // FIXME
+      var cells = document.getElementById("imgFilters").cells;
+      var w = cells[0].offsetWidth;
+      var h = cells[0].offsetHeight;
+      var r1 = w / filters[0].img.width;
+      var r2 = h / filters[0].img.height;
+      var top;
+      var left;
+      if (r2 < r1) {
+         var t = w;
+         w = Math.round(filters[0].img.width * r2);
+         left = Math.round((t-w) / 2);
+         top = 0;
+      }else {
+         var t = h;
+         h = Math.round(filters[0].img.height * r1);
+         left = 0;
+         top = Math.round(((t-h) / 2));
+      }
+      showToolbar(1);  // FIXME (I should disable EDIT)
+      // 2) draw the raw thumbnail
+      var canvas = document.createElement("CANVAS");
+      canvas.setAttribute("width", w);
+      canvas.setAttribute("height", h);
+      canvas.getContext('2d').drawImage(imgRawElt, 0, 0, w, h);
+      // 3) derive the filtered thumbnails
+      canvas.toBlob(
+         function(thumbBlob) {
+            var rawThumb = URL.createObjectURL(thumbBlob);
+            document.getElementById("f0").src = rawThumb;
+            for (var i=1, max=filters.length; i < max; ++i) {
+               document.getElementById("f" + i).src = URL.createObjectURL(
+                  doFilter(w, h, rawThumb, filters[i])
+               );
+            }
+         },
+         "image/jpeg", 0.95
+      );
       document.getElementById("p2_picture").src = filters[filterChoice].src;
    };
    imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
 }
 
 function editPhoto() {
+   // FIXME: should go above, then revoke the URL on load.
    var cells = document.getElementById("imgFilters").cells;
    for (var i=0, max=filters.length; i < max; ++i) {
-      var thumb = cells[i];
-      thumb.style.backgroundImage = "url('" + filters[i].src + "')";
+      cells[i].style.backgroundImage = "url('" + filters[i].thumb + "')";
    }
    showToolbar(2);
    tempFilterChoice = filterChoice;

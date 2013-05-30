@@ -646,9 +646,3 @@ li[aria-selected=true], li[role=listbox] {
 #upldFile {
    display: none;
 }
-
-.thumbnail {
-   background-repeat: no-repeat;
-   background-size: contain;
-   background-position: center;
-}
