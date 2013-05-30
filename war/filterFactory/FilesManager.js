@@ -162,7 +162,7 @@ function createFilesManager() {
                   filesmanager,
                   "serverImport",
                   {
-                     value: function(filePaths) {
+                     value: function(filePaths, whenDone) {
                         var self = this;
                         if (filePaths) {
                            var cnt = filePaths.length;
@@ -172,6 +172,7 @@ function createFilesManager() {
                                  function() {
                                     if (--cnt == 0) {
                                        localSave.call(self);
+                                       whenDone();
                                        alert("Files imported to your workspace");
                                     }
                                  }
