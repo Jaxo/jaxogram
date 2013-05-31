@@ -17,26 +17,31 @@ var filters = [
    }, {
       name: "Nichole1",
       value:"<feComponentTransfer><feFuncR type='table' tableValues='0.0471, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.4902, 0.6274, 0.7804, 0.9294, 1'/><feFuncB type='table' tableValues='0.0863, 0.1922, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feColorMatrix type='matrix' values=' 0.7875 0.1930 0.0194 0.0000 0.0000 0.0575 0.9230 0.0194 0.0000 0.0000 0.0575 0.1930 0.7494 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000'/><feComponentTransfer><feFuncR type='linear' slope='1.0309' intercept='-0.0155'/><feFuncG type='linear' slope='1.0309' intercept='-0.0155'/><feFuncB type='linear' slope='1.0309' intercept='-0.0155'/></feComponentTransfer>",
+      vignette: {},
       src: "",
       thumbImg: ""
    }, {
       name: "Nichole2",
       value:"<feComponentTransfer><feFuncR type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncB type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feComponentTransfer><feFuncR type='linear' slope='1.0695' intercept='-0.0348'/><feFuncG type='linear' slope='1.0695' intercept='-0.0348'/><feFuncB type='linear' slope='1.0695' intercept='-0.0348'/></feComponentTransfer>",
+      vignette: {},
       src: "",
       thumbImg: ""
    }, {
       name: "Vignette",
+      value:"",
       vignette: { radius: 65, bright: 60},
       src: "",
       thumbImg: ""
    },{
       name: "f4",
       value: "<feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"/>",
+      vignette: {},
       src: "",
       thumbImg: ""
    },{
       name: "f5",
       value: "<feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"/>",
+      vignette: {},
       src: "",
       thumbImg: ""
    }
@@ -781,7 +786,7 @@ function doFilter(w, h, imgUrl, filter) {
      "<g><image preserveAspectRatio='xMinYMin meet'" +
      " width='" + w + "' height='" + h + "' xlink:href='" + imgUrl
    );
-   if (filter.value != undefined) {
+   if (filter.value) {
       data += (
         "' filter='url(data:image/svg+xml," +
         escape(
@@ -795,12 +800,10 @@ function doFilter(w, h, imgUrl, filter) {
    data += (
      "'></image></g>"
    );
-   if (filter.vignette == undefined) {
-      data = (
-         svgHeader + " width='" + w + "' height='" + h + "' >" + data + "</svg>"
-      );
-   }else {
+   if (filter.vignette.radius) { // if (Object.keys(filter.vignette) !== 0)
       data = vignetize(data, w, h, imgUrl, filter);
+   }else {
+      data = svgHeader + " width='" + w + "' height='" + h + "' >" + data + "</svg>";
    }
    return new Blob([data], {type:"image/svg+xml"});
 }

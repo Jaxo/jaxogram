@@ -34,6 +34,7 @@ window.onload = function() {
 }
 
 function doOnLoad() {
+   doDebug();
    initFilters();
    createFilesManager();
    localFilesList = new FilesList("localFilesList");
