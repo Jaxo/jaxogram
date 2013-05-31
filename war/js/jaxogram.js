@@ -3,6 +3,7 @@ var server_url = "http://13.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
 
+var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
 var tempFilterChoice = 0;
@@ -16,6 +17,7 @@ var filters = [
    },{
       name: "f1",
       value: "feColorMatrix type=\"matrix\" values=\"0.0000 0.0786 0.4759 0.0000 0.0000 0.2832 0.0000 -0.1354 0.0000 0.0000 -0.8039 0.0000 -0.0792 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
+      vignette: { radius: 65, bright: 60 },
       src: "",
       thumbImg: ""
    },{
@@ -777,21 +779,96 @@ function tryUploadPhoto() {
 function doFilter(w, h, imgUrl, filter) {
    var fId = filter.name;
    var data = (
-     "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
-     " width=\"" + w + "\" height=\"" + h + "\" >" +
-     "<image filter=\"url(data:image/svg+xml," +
-     escape(
-        "<svg xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"" + fId + "\"><" +
-        filter.value +
-        "/></filter></svg>"
-     ) +
-     "#" + fId + ")\"" +
-     " preserveAspectRatio=\"xMinYMin meet\"" +
-     " width=\"" + w + "\" height=\"" + h + "\" xlink:href=\"" +
-     imgUrl +
-     "\"></image></svg>"
+     "<g><image preserveAspectRatio='xMinYMin meet'" +
+     " width='" + w + "' height='" + h + "' xlink:href='" + imgUrl
    );
+   if (filter.value != undefined) {
+      data += (
+        "' filter='url(data:image/svg+xml," +
+        escape(
+           "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + fId + "'><" +
+           filter.value +
+           "/></filter></svg>"
+        ) +
+        "#" + fId + ")"
+      );
+   }
+   data += (
+     "'></image></g>"
+   );
+   if (filter.vignette == undefined) {
+      data = (
+         svgHeader + " width='" + w + "' height='" + h + "' >" + data + "</svg>"
+      );
+   }else {
+      data = vignetize(data, w, h, imgUrl, filter);
+   }
    return new Blob([data], {type:"image/svg+xml"});
+}
+
+function vignetize(data, w, h, imgUrl, filter) {
+   var f2 = filter.name + "_2";
+   var f3 = filter.name + "_3";
+   var f4 = filter.name + "_4";
+   var r = filter.vignette.radius / 100;
+   var b = filter.vignette.bright / 100;
+   var m, t, u, p, q, cx, cy;
+   if (h < w) {
+      m = h;
+      t = (h-w)/2;
+      u = 0;
+      p = 1.0;
+      q = w/h;
+   }else {
+      m = w;
+      t = 0;
+      u = (w-h)/2;
+      p = h/w;
+      q = 1.0;
+   }
+   var border = (m * 0.0214) | 0;
+   return (
+     svgHeader + " width='" + m + "' height='" + m +
+       "'><g transform='translate(" + t + "," + u + ")'>" +
+         data +
+         "<g>" +
+            "<image xlink:href='" + imgUrl +
+            "' width='" + w + "' height='" + h +
+            "' filter='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f2 + "'>" +
+               "<feGaussianBlur stdDeviation='2'/>" +
+               "<feColorMatrix type='matrix' values='" + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 1 0'/>" +
+               "</filter></svg>"
+            ) +
+            "#" + f2 +
+            ")' mask ='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'>" +
+               "<mask id='" + f3 +
+               "' maskUnits='objectBoundingBox' maskContentUnits='objectBoundingBox'>" +
+               "<rect x='0' y='0' width='1' height='1' stroke-width='0'" +
+               " fill='url(data:image/svg+xml," +
+               escape(
+                  "<svg xmlns='http://www.w3.org/2000/svg'><radialGradient id='" + f3 + "'" +
+                     " gradientUnits='objectBoundingBox' cx='" + (1/(2*p)) + "' cy='" + (1/(2*q)) + "' r='" + r + "'" +
+                     " gradientTransform='scale(" + p + "," + q + ")'" +
+                  ">" +
+                     "<stop offset='0.4' stop-color='#ffffff' stop-opacity='0'/>" +
+                     "<stop offset='0.6' stop-color='#ffffff' stop-opacity='1'/>" +
+                  "</radialGradient></svg>"
+               ) +
+               "#" + f3 + ")'/>" +
+               "</mask></svg>"
+            ) +
+            "#" + f3 + ")'></image>" +
+         "</g>" +
+         "<g fill='none' stroke='white' stroke-width='" + border + "' >" +
+           "<rect x='" + ((border/2)-t) + "' y='" + ((border/2)-u) + "' width='" + (m-border) + "' height='" + (m-border) + "'/>" +
+         "</g>" +
+       "</g>" +
+     "</svg>"
+   );
 }
 
 function filterAndUploadPhoto(imgRawBlob)
