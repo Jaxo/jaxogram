@@ -30,7 +30,14 @@ Filter.defaultSrc = JSON.stringify(
          Filter.colorsLevelsBase.slice(0),
          Filter.colorsLevelsBase.slice(0),
          Filter.colorsLevelsBase.slice(0)
-      ]
+      ],
+      data: {
+         name: "",
+         value: "",
+         vignette: {},
+         src: "",
+         thumbImg: ""
+      }
    }
 );
 Filter.prototype = {
