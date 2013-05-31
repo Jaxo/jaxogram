@@ -104,27 +104,27 @@ function toggleSidebarView() {
 }
 
 function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
-   var btnMainStyle = document.getElementById('btnMainImage').style;
-   var drawee = document.getElementById('corepane');
-   var drawer = document.getElementById('menupane');
-   var expanded = (drawer.getAttribute("aria-expanded") === "true");
+   var btnMainImg = document.getElementById('btnMainImage');
+   var drawer = document.getElementById('corepane');
+   var sidebar = document.getElementById('menupane');
+   var expanded = (sidebar.getAttribute("aria-expanded") === "true");
    if (!expanded && (v >= 0)) {
-      btnMainStyle.backgroundImage = "url(style/images/back.png)";
-      drawee.setAttribute("aria-shrunk", "true");
-      drawer.setAttribute("aria-expanded", "true");
+      btnMainImg.setAttribute("role", "back");
+      drawer.setAttribute("aria-shrunk", "true");
+      sidebar.setAttribute("aria-expanded", "true");
    }else if (v <= 0) {
-      btnMainStyle.backgroundImage = "url(style/images/menu.png)";
-      drawee.setAttribute("aria-shrunk", "false");
-      drawer.setAttribute("aria-expanded", "false");
+      btnMainImg.setAttribute("role", "menu");
+      drawer.setAttribute("aria-shrunk", "false");
+      sidebar.setAttribute("aria-expanded", "false");
    }
 }
 
 function resetSidebarButton() {
-   var btnMainStyle = document.getElementById('btnMainImage').style;
+   var btnMainImg = document.getElementById('btnMainImage');
    if (document.getElementById('menupane').getAttribute("aria-expanded") === "true") {
-      btnMainStyle.backgroundImage = "url(style/images/back.png)";
+      btnMainImg.setAttribute("role", "back");
    }else {
-      btnMainStyle.backgroundImage = "url(style/images/menu.png)";
+      btnMainImg.setAttribute("role", "menu");
    }
 }
 
@@ -143,13 +143,29 @@ function menuListClicked(event) {
    if (liElt.getAttribute("role") == "listbox") {
       var ulChildElt = liElt.getElementsByTagName("UL")[0];
       if (ulChildElt != null) {     // defense!
+         var afterTransed;
          if (liElt.getAttribute("aria-expanded") == "true") {
-            liElt.removeAttribute("aria-expanded");
-            ulChildElt.style.display = "none";
+            afterTransed = function() {
+               liElt.removeAttribute("aria-expanded");
+            }
+            ulChildElt.style.height = "0rem";
          }else {
-            liElt.setAttribute("aria-expanded", "true");
-            ulChildElt.style.display = "block";
+            afterTransed = function() {
+               liElt.setAttribute("aria-expanded", "true");
+            }
+            ulChildElt.style.height = (
+               ulChildElt.firstElementChild.offsetHeight *
+               ulChildElt.childElementCount
+            ) + "px";
          }
+         ulChildElt.addEventListener(
+            "transitionend",
+            function() {
+               afterTransed();
+               this.removeEventListener("transitionend", arguments.callee, true);
+            },
+            true
+         );
       }
    }else if (getAttribute(liElt.parentNode, "role") !=="radiogroup") {
       if (liElt.getAttribute("aria-selected") == "true") {

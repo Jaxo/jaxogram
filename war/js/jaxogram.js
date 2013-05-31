@@ -1,36 +1,49 @@
-var server_url = "http://jaxogram.appspot.com/jaxogram";
+var server_url = "http://13.jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
 
+var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
+var tempFilterChoice = 0;
 var filterChoice = 0;
 var filters = [
    {
       name: "raw",
       img: new Image(),
-      src: ""
-   },{
-      name: "f1",
-      value: "feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"",
-      src: ""
-   },{
-      name: "f2",
-      value: "feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
-      src: ""
-   },{
-      name: "f3",
-      value: "feColorMatrix type=\"matrix\" values=\"0.0000 0.0786 0.4759 0.0000 0.0000 0.2832 0.0000 -0.1354 0.0000 0.0000 -0.8039 0.0000 -0.0792 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
-      src: ""
+      src: "",
+      thumbImg: ""
+   }, {
+      name: "Nichole1",
+      value:"<feComponentTransfer><feFuncR type='table' tableValues='0.0471, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.4902, 0.6274, 0.7804, 0.9294, 1'/><feFuncB type='table' tableValues='0.0863, 0.1922, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feColorMatrix type='matrix' values=' 0.7875 0.1930 0.0194 0.0000 0.0000 0.0575 0.9230 0.0194 0.0000 0.0000 0.0575 0.1930 0.7494 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000'/><feComponentTransfer><feFuncR type='linear' slope='1.0309' intercept='-0.0155'/><feFuncG type='linear' slope='1.0309' intercept='-0.0155'/><feFuncB type='linear' slope='1.0309' intercept='-0.0155'/></feComponentTransfer>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
+   }, {
+      name: "Nichole2",
+      value:"<feComponentTransfer><feFuncR type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncB type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feComponentTransfer><feFuncR type='linear' slope='1.0695' intercept='-0.0348'/><feFuncG type='linear' slope='1.0695' intercept='-0.0348'/><feFuncB type='linear' slope='1.0695' intercept='-0.0348'/></feComponentTransfer>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
+   }, {
+      name: "Vignette",
+      value:"",
+      vignette: { radius: 65, bright: 60},
+      src: "",
+      thumbImg: ""
    },{
       name: "f4",
-      value: "feColorMatrix type=\"matrix\" values=\"0.4214 -0.0285 0.0652 0 0 0.0158 0.4596 -0.0172 0 0 -0.0575 0.0833 0.5279 0 0 0 0 0 1 0\"",
-      src: ""
+      value: "<feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"/>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
    },{
       name: "f5",
-      value: "feColorMatrix type=\"matrix\" values=\"0.5108 0.2115 0.0213 0.0000 0.0000 0.1325 0.6749 0.0448 0.0000 0.0000 0.2390 2.3897 0.6088 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"",
-      src: ""
+      value: "<feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"/>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
    }
 ];
 var users;
@@ -132,26 +145,37 @@ window.onload = function() {
    // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
    document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
+   document.getElementById("editPhoto").onclick = editPhoto;
    document.getElementById("cancelPhoto").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
    };
+   document.getElementById("cancelEdit").onclick = cancelEditPhoto;
+   document.getElementById("validateEdit").onclick = validateEditPhoto;
    document.getElementById("logins").onclick = function(event) {
       changeLogin(this, event);
    };
-   document.getElementById("p2_clear").onclick = function() {
-      document.getElementById("p2_picture").style.visibility = "hidden";
-      this.style.visibility = "hidden";
-   };
    // document.getElementById("mn_albums").style.display = "none";
-   document.getElementById("footerRow2").style.display = "none";
+   showToolbar(0);
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
    formatUsersList(true);
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
-   document.getElementById("imgFilters").addEventListener("click", changeFilter);
-
+   var elt = document.getElementById("imgFilters");
+   for (var i=0, max=filters.length; i < max; ++i) {
+      var tdElt = document.createElement("TD");
+      var imgElt = document.createElement("IMG");
+      imgElt.onload = function() {
+        // no longer need to read the blob so it's revoked
+        if (this.src) URL.revokeObjectURL(this.src);
+      };
+      filters[i].thumbImg = imgElt;
+      tdElt.setAttribute("align", "center");
+      tdElt.appendChild(imgElt);
+      elt.appendChild(tdElt);
+   }
+   elt.addEventListener("click", changeFilter);
    var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
    eltMain.addEventListener(
@@ -296,7 +320,8 @@ function resetAlbumsList() {
       ulElt = document.createElement("UL");
       ulElt.id = "albumList";
       ulElt.setAttribute("role", "radiogroup");
-      ulElt.onclick = function(event) { changeAlbum(this, event); };
+      ulElt.addEventListener("click", radioClicked);
+      ulElt.addEventListener("click", function(event) { changeAlbum(this, event); });
 
       albums.appendChild(smallElt);
       albums.appendChild(document.createElement("BR"));
@@ -383,6 +408,7 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
+   document.getElementById("p2_userScreenName").textContent = users.getScreenName();
    uploadPhotos();
 }
 
@@ -432,31 +458,45 @@ function fitImages() {
 function fitImage(img) {
    var elt = img.parentNode;
    if ((elt.offsetHeight * img.offsetWidth)<(img.offsetHeight * elt.offsetWidth)) {
+      img.style.top = "0";
       img.style.width = "";
       img.style.height = "100%";
    }else {
+      img.style.top = ((elt.offsetHeight - img.offsetHeight) / 2) + "px";
       img.style.width = "100%";
       img.style.height = "";
    }
 }
 
 function authorize() {
-   var eltContainer = document.createElement("DIV");
+   var eltContainer = document.getElementById("p1_choices");
+   var btnElt;
+   eltContainer.innerHTML = "";
    networks.forEach(
       function(network) {
          var name = network.name;
-         var elt = document.createElement("IMG");
-         elt.className = "buttonLike";
-         elt.src= "images/" + name + "Logo.png";
+         var imgElt = document.createElement("IMG");
+         imgElt.src= "images/" + name + "Logo.png";
+         btnElt = document.createElement("BUTTON");
          if (name === "picasa") {
-            elt.onclick = authorizePicasa;
+            btnElt.onclick = authorizePicasa;
          }else {
-            elt.onclick = function() { authorizeThruOAuth(name); }
+            btnElt.onclick = function() { authorizeThruOAuth(name); }
          }
-         eltContainer.appendChild(elt);
+         btnElt.appendChild(imgElt);
+         eltContainer.appendChild(btnElt);
       }
    );
-   showMsg("chooseNetwork", [eltContainer]);
+   btnElt = document.createElement("BUTTON");
+   btnElt.textContent = i18n("cancel");
+   btnElt.onclick = function() {
+      expandPage("p0");
+      showToolbar(0);
+   }
+   eltContainer.appendChild(btnElt);
+   expandSidebarView(-1);
+   expandPage("p1");
+   showToolbar(-1);
 }
 
 function authorizePicasa() {
@@ -600,8 +640,10 @@ function listAlbums(event) {
          'listAlbums',
          function(albums) {
             formatAlbumsList(albums, ulChildElt);
+            menuListClicked(event);
          }
       );
+      event.stopPropagation();
    }
 }
 
@@ -663,8 +705,7 @@ function pickPhoto(event) {
 
 function finishUpload() {
    expandPage("p0"); // stop p2!
-   document.getElementById("footerRow2").style.display = "none";
-   document.getElementById("footerRow1").style.display = "";
+   showToolbar(0);
    if (upldPhotosCount > 0) {
       simpleMsg("info", i18n('photosUploaded', upldPhotosCount));
       upldPhotosCount = 0;
@@ -676,8 +717,7 @@ function uploadPhotos() {
    if (pendingPhotos.length == 0) {
       finishUpload();
    }else {
-      document.getElementById("footerRow1").style.display = "none";
-      document.getElementById("footerRow2").style.display = "";
+      showToolbar(1);
 
       // document.querySelector(".p2_user").classList.add("active");
       var countElt = document.getElementById("p2_msgCount");
@@ -691,41 +731,18 @@ function uploadPhotos() {
          }
          countElt.textContent = remain;
          if (remain > 20) {
-            countElt.style.color = "#9b9b9b";
+            countElt.style.color = "";
          }else {
             countElt.style.color = "#C80000";
          }
          if (event && (event.keyCode === 13)) this.blur();
       };
-      foo1();
-      document.getElementById("p2_clear").style.visibility = "visible";
+      showNewPhoto();
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
       isUploadable();
    }
-}
-
-function changeFilter(event) {
-   if (event) filterChoice = getRealTarget(event).cellIndex;
-   var imgElt = document.getElementById("p2_picture");
-   imgElt.style.visibility = "";
-   imgElt.src = filters[filterChoice].src;
-}
-
-function foo1() {
-   var imgRawElt = filters[0].img;
-   imgRawElt.onload = function() {
-      if (filters[0].src) URL.revokeObjectURL(filters[0].src);
-      filters[0].src = imgRawElt.src;
-      changeFilter();  // e.g: set it to raw
-      for (var i=1, max=filters.length; i < max; ++i) {
-         var filter = filters[i];
-         if (filter.src) URL.revokeObjectURL(filter.src);
-         filter.src = URL.createObjectURL(doFilter(imgRawElt, filter));
-      }
-   };
-   imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
 }
 
 function isUploadable() {
@@ -763,27 +780,98 @@ function tryUploadPhoto() {
    }
 }
 
-function doFilter(img, filter) {
-   var w = img.width;
-   var h = img.height;
-   var imgUrl = img.src;
+function doFilter(w, h, imgUrl, filter) {
    var fId = filter.name;
    var data = (
-     "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" +
-     " width=\"" + w + "\" height=\"" + h + "\" >" +
-     "<image filter=\"url(data:image/svg+xml," +
-     escape(
-        "<svg xmlns=\"http://www.w3.org/2000/svg\"><filter id=\"" + fId + "\"><" +
-        filter.value +
-        "/></filter></svg>"
-     ) +
-     "#" + fId + ")\"" +
-     " preserveAspectRatio=\"xMinYMin meet\"" +
-     " width=\"" + w + "\" height=\"" + h + "\" xlink:href=\"" +
-     imgUrl +
-     "\"></image></svg>"
+     "<g><image preserveAspectRatio='xMinYMin meet'" +
+     " width='" + w + "' height='" + h + "' xlink:href='" + imgUrl
    );
+   if (filter.value) {
+      data += (
+        "' filter='url(data:image/svg+xml," +
+        escape(
+           "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + fId + "'>" +
+           filter.value +
+           "</filter></svg>"
+        ) +
+        "#" + fId + ")"
+      );
+   }
+   data += (
+     "'></image></g>"
+   );
+   if (filter.vignette.radius) { // if (Object.keys(filter.vignette) !== 0)
+      data = vignetize(data, w, h, imgUrl, filter);
+   }else {
+      data = svgHeader + " width='" + w + "' height='" + h + "' >" + data + "</svg>";
+   }
    return new Blob([data], {type:"image/svg+xml"});
+}
+
+function vignetize(data, w, h, imgUrl, filter) {
+   var f2 = filter.name + "_2";
+   var f3 = filter.name + "_3";
+   var f4 = filter.name + "_4";
+   var r = filter.vignette.radius / 100;
+   var b = filter.vignette.bright / 100;
+   var m, t, u, p, q, cx, cy;
+   if (h < w) {
+      m = h;
+      t = (h-w)/2;
+      u = 0;
+      p = 1.0;
+      q = w/h;
+   }else {
+      m = w;
+      t = 0;
+      u = (w-h)/2;
+      p = h/w;
+      q = 1.0;
+   }
+   var border = (m * 0.0214) | 0;
+   if (border < 2) border = 2;
+   return (
+     svgHeader + " width='" + m + "' height='" + m +
+       "'><g transform='translate(" + t + "," + u + ")'>" +
+         data +
+         "<g>" +
+            "<image xlink:href='" + imgUrl +
+            "' width='" + w + "' height='" + h +
+            "' filter='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f2 + "'>" +
+               "<feGaussianBlur stdDeviation='2'/>" +
+               "<feColorMatrix type='matrix' values='" + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 1 0'/>" +
+               "</filter></svg>"
+            ) +
+            "#" + f2 +
+            ")' mask ='url(data:image/svg+xml," +
+            escape(
+               "<svg xmlns='http://www.w3.org/2000/svg'>" +
+               "<mask id='" + f3 +
+               "' maskUnits='objectBoundingBox' maskContentUnits='objectBoundingBox'>" +
+               "<rect x='0' y='0' width='1' height='1' stroke-width='0'" +
+               " fill='url(data:image/svg+xml," +
+               escape(
+                  "<svg xmlns='http://www.w3.org/2000/svg'><radialGradient id='" + f3 + "'" +
+                     " gradientUnits='objectBoundingBox' cx='" + (1/(2*p)) + "' cy='" + (1/(2*q)) + "' r='" + r + "'" +
+                     " gradientTransform='scale(" + p + "," + q + ")'" +
+                  ">" +
+                     "<stop offset='0.4' stop-color='#ffffff' stop-opacity='0'/>" +
+                     "<stop offset='0.6' stop-color='#ffffff' stop-opacity='1'/>" +
+                  "</radialGradient></svg>"
+               ) +
+               "#" + f3 + ")'/>" +
+               "</mask></svg>"
+            ) +
+            "#" + f3 + ")'></image>" +
+         "</g>" +
+         "<g fill='none' stroke='white' stroke-width='" + border + "' >" +
+           "<rect x='" + ((border/2)-t) + "' y='" + ((border/2)-u) + "' width='" + (m-border) + "' height='" + (m-border) + "'/>" +
+         "</g>" +
+       "</g>" +
+     "</svg>"
+   );
 }
 
 function filterAndUploadPhoto(imgRawBlob)
@@ -811,7 +899,7 @@ function filterAndUploadPhoto(imgRawBlob)
 
 function uploadPhoto(imgBlob) {
    var formData = new FormData();
-   formData.append("MAX_FILE_SIZE", "1000000");
+   formData.append("MAX_FILE_SIZE", "2000000");
 // formData.append("IMG", file.name.substr(-3));
    if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
    formData.append("TIT", document.getElementById("p2_msgText").value);
@@ -886,5 +974,104 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    }else {
       xhr.send(values);
    }
+}
+
+function showToolbar(barNo) {
+   var elt = document.getElementById("footerTable");
+   if (barNo == -1) {
+      elt.parentNode.style.display = "none";
+   }else {
+      for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
+         var row = rows[i];
+         if (i == barNo) {
+            row.style.display = "";
+         }else {
+            row.style.display = "none";
+         }
+      }
+      elt.parentNode.style.display = "";
+   }
+}
+
+function showNewPhoto() {
+   // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
+   var imgRawElt = filters[0].img;
+   imgRawElt.onload = function() {
+      if (filters[0].src) URL.revokeObjectURL(filters[0].src);
+      filters[0].src = imgRawElt.src;
+      // 0) Set the filters
+      for (var i=1, max=filters.length; i < max; ++i) {
+         var filter = filters[i];
+         if (filter.src) URL.revokeObjectURL(filter.src);
+         filter.src = URL.createObjectURL(
+            doFilter(imgRawElt.width, imgRawElt.height, imgRawElt.src, filter)
+         );
+      }
+      // 1) Compute the thumbnails size
+      showToolbar(2);  // FIXME
+      var cells = document.getElementById("imgFilters").cells;
+      var w = cells[0].offsetWidth;
+      var h = cells[0].offsetHeight;
+      var r1 = w / filters[0].img.width;
+      var r2 = h / filters[0].img.height;
+      var top;
+      var left;
+      if (r2 < r1) {
+         var t = w;
+         w = Math.round(filters[0].img.width * r2);
+         left = Math.round((t-w) / 2);
+         top = 0;
+      }else {
+         var t = h;
+         h = Math.round(filters[0].img.height * r1);
+         left = 0;
+         top = Math.round(((t-h) / 2));
+      }
+      showToolbar(1);  // FIXME (I should disable EDIT)
+      // 2) draw the raw thumbnail
+      var canvas = document.createElement("CANVAS");
+      canvas.setAttribute("width", w);
+      canvas.setAttribute("height", h);
+      canvas.getContext('2d').drawImage(imgRawElt, 0, 0, w, h);
+      // 3) derive the filtered thumbnails
+      canvas.toBlob(
+         function(thumbBlob) {
+            var rawThumb = URL.createObjectURL(thumbBlob);
+            filters[0].thumbImg.src = rawThumb;
+            for (var i=1, max=filters.length; i < max; ++i) {
+               filters[i].thumbImg.src = URL.createObjectURL(
+                  doFilter(w, h, rawThumb, filters[i])
+               );
+            }
+         },
+         "image/jpeg", 0.95
+      );
+      document.getElementById("p2_picture").src = filters[filterChoice].src;
+   };
+   imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
+}
+
+function editPhoto() {
+   showToolbar(2);
+   tempFilterChoice = filterChoice;
+   expandSidebarView(-1);
+   document.getElementById("p3_picture").src = filters[filterChoice].src;
+   expandPage("p3");
+}
+
+function validateEditPhoto() {
+   filterChoice = tempFilterChoice;
+   document.getElementById("p2_picture").src = filters[filterChoice].src;
+   cancelEditPhoto();
+}
+
+function cancelEditPhoto() {
+   showToolbar(1);
+   expandPage("p2");
+}
+
+function changeFilter(event) {
+   if (event) tempFilterChoice = getRealTarget(event).cellIndex;
+   document.getElementById("p3_picture").src = filters[tempFilterChoice].src;
 }
 

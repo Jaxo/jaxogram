@@ -4,6 +4,8 @@
    <META charset="utf-8">
    <META name="viewport" content="width=device-width">
    <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
+   <LINK rel="stylesheet" type="text/css" href="style/action_menu.css"/>
+   <LINK rel="stylesheet" type="text/css" href="style/action_icons.css"/>
    <LINK rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
    <SCRIPT type="text/javascript" src="js/fxosstub.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/localStorage.js"></SCRIPT>
@@ -17,49 +19,55 @@
    <TITLE>Jaxogram</title>
 </HEAD>
 <BODY>
-   <HEADER>
-     <DIV id="btnMain"><IMG id="btnMainImage" style="background-image:url(style/images/menu.png)"/></DIV>
-     <TABLE><TR>
-        <TD id="btnInstall" class="i18n"></TD>
-     </TR></TABLE>
-     <H1>Jaxogram <SMALL>web</SMALL></H1>
-   </HEADER>
-   <DIV id="corepane" class="drawee">
-     <DIV id="p0" class="body" aria-expanded="true">
-        <IMG id="p0_netImage"/>
-        <DIV class="i18n" id="p0_top"></DIV>
-        <DIV id="p0_bot">
-           <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
-           <SPAN id="p0_copy">&copy; Jaxo, Inc. 2013</SPAN>
-        </DIV>
-     </DIV>
-     <DIV id="p2" class="body">
-        <DIV class="p2_user">
-           <IMG id="p2_userImage"/>
-           <IMG id="p2_netImage"/>
-           <DIV id="p2_userName"></DIV>
-           <DIV id="p2_userScreenName"></DIV>
-        </DIV>
-        <DIV class="p2_msg">
-           <TEXTAREA class="i18n" id="p2_msgText"></TEXTAREA>
-           <SPAN id="p2_msgCount"></SPAN>
-        </DIV>
-        <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
-        <DIV class="imgclr">
-           <IMG alt="Clear" id="p2_clear" src="style/images/clear.png"/>
-        </DIV>
-        <DIV class="filters"><TABLE><TR role="radiogroup" id="imgFilters">
-           <TD aria-selected="true">Raw</TD>
-           <TD>F1</TD>
-           <TD>F2</TD>
-           <TD>F3</TD>
-           <TD>F4</TD>
-           <TD>F5</TD>
-        </TR></TABLE></DIV>
-     </DIV>
-   </DIV>
+   <SECTION id="corepane" class="drawer">
+      <HEADER role="main">
+         <DIV id="btnMain"><IMG class="action-icon" role="menu" id="btnMainImage"/></DIV>
+         <H1>Jaxogram <SMALL>web</SMALL></H1>
+         <TABLE><TR>
+            <TD id="btnInstall" class="i18n"></TD>
+         </TR></TABLE>
+      </HEADER>
+      <DIV id="p0" class="body" aria-expanded="true">
+         <IMG id="p0_netImage"/>
+         <DIV class="i18n" id="p0_top"></DIV>
+         <DIV id="p0_bot">
+            <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
+            <SPAN id="p0_copy">&copy; Jaxo, Inc. 2013</SPAN>
+         </DIV>
+      </DIV>
+      <DIV id="p1" class="body">
+         <HEADER><H2 class="i18n" id="chooseNetwork"></H2></HEADER>
+         <MENU role="action" id="p1_choices"></MENU>
+      </DIV>
+      <DIV id="p2" class="body">
+         <DIV class="p2_top">
+            <DIV class="p2_user">
+               <IMG id="p2_userImage"/>
+               <IMG id="p2_netImage"/>
+               <DIV id="p2_userName"></DIV>
+               <DIV id="p2_userScreenName"></DIV>
+            </DIV>
+            <DIV class="p2_msg">
+               <TEXTAREA class="i18n" id="p2_msgText"></TEXTAREA>
+               <SPAN id="p2_msgCount"></SPAN>
+            </DIV>
+         </DIV>
+         <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
+      </DIV>
+      <DIV id="p3" class="body">
+         <HEADER>
+            <DIV id="cancelEdit"><IMG role="cancel" class="action-icon"/></DIV>
+            <H2 class="i18n" id="edit"></H2>
+            <TABLE><TR>
+               <TD><IMG id="validateEdit" role="done" class="action-icon"/></TD>
+            </TR></TABLE>
+         </HEADER>
+         <DIV class="imgbox"><IMG alt="Photo" id="p3_picture"/></DIV>
+      </DIV>
+   </SECTION>
 
-   <DIV id="menupane" class="drawer">
+   <SECTION id="menupane" class="sidebar">
+      <HEADER><H2 class="i18n" id="preferences"></H2></HEADER>
       <UL class="menuList">
         <LI role="listbox" id="mn_user">
            <SMALL class="i18n" id="loginAs"></SMALL><BR/>
@@ -79,38 +87,39 @@
            </UL>
         </LI>
       </UL>
-   </DIV>
-   <DIV id="messagepane"><DIV><DIV>
+   </SECTION>
+   <SECTION id="messagepane">
+      <DIV><DIV>
       <TABLE>
          <TR>
-            <TD><IMG src="style/images/close.png"></TD>
+            <TD class="action-icon" role="cancel"></TD>
             <TD><IMG src="style/images/separator.png"></TD>
             <TD>&nbsp;</TD>
             <TD><IMG src="style/images/separator.png"/></TD>
-            <TD><IMG src="style/images/ok.png"/></TD>
+            <TD class="action-icon" role="ok"></TD>
          </TR><TR>
             <TD colspan="5" style="text-align:center">&nbsp;</TD>
          </TR>
       </TABLE>
-   </DIV></DIV></DIV>
-   <DIV id="progresspane"><DIV id=progress></DIV></DIV>
+      </DIV></DIV>
+   </SECTION>
+   <SECTION id="progresspane"><PROGRESS></PROGRESS></SECTION>
 
    <!-- Fallback if "no "Pick" MozActivity -->
    <INPUT type='file' id='upldFile' multiple accept="image/"/>
 
    <FOOTER>
-      <TABLE id="footerTable">
-        <TR id="footerRow1">
-          <TD id="pickPhoto"><IMG src="style/images/camera.png"/></TD>
-          <!-- id="pickPhoto" class="i18n"" -->
-          <TD id="connectTo"><IMG src="style/images/earth.png"/></TD>
-        </TR><TR id="footerRow2">
-          <TD id="uploadPhoto"><IMG src="style/images/send.png"/></TD>
-          <!-- id="uploadPhoto" class="i18n" -->
-          <TD id="cancelPhoto"><IMG src="style/images/close.png"/></TD>
-          <!-- id="cancel class="i18n"-->
+     <TABLE id="footerTable">
+        <TR>
+          <TD id="pickPhoto" class="action-icon" role="camera"></TD>
+          <TD id="connectTo" class="action-icon" role="earth"></TD>
+        </TR><TR>
+          <TD id="uploadPhoto" class="action-icon" role="send"></TD>
+          <TD id="editPhoto" class="action-icon" role="edit_picture"></TD>
+          <TD id="cancelPhoto" class="action-icon" role="delete"></TD>
+        </TR><TR role="radiogroup" id="imgFilters">
         </TR>
-      </TABLE>
+     </TABLE>
    </FOOTER>
 </BODY>
 </HTML>
