@@ -394,7 +394,7 @@ public class JaxogramServlet extends HttpServlet
                      IOUtils.closeQuietly(in);
                   }else { // (op.equals("postImageFile")) {
                      ServletFileUpload upload = new ServletFileUpload();
-                     upload.setSizeMax(1000000);
+                     upload.setSizeMax(2000000);
                      // upload.setSizeMax(120000);
                      FileItemIterator iterator = upload.getItemIterator(req);
                      while (iterator.hasNext()) {

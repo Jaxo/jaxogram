@@ -1,5 +1,5 @@
 function createFilesManager() {
-   // localStorage.removeItem("jaxo_filters");
+//*/localStorage.removeItem("jaxo_filters");
    if (!window.filesmanager) {
       Object.defineProperty(
          window,
@@ -162,7 +162,7 @@ function createFilesManager() {
                   filesmanager,
                   "serverImport",
                   {
-                     value: function(filePaths) {
+                     value: function(filePaths, whenDone) {
                         var self = this;
                         if (filePaths) {
                            var cnt = filePaths.length;
@@ -172,6 +172,7 @@ function createFilesManager() {
                                  function() {
                                     if (--cnt == 0) {
                                        localSave.call(self);
+                                       whenDone();
                                        alert("Files imported to your workspace");
                                     }
                                  }
@@ -210,35 +211,35 @@ function createFilesManager() {
                //--------------------------------------------------------------
                function init() {
                   var item;
-/**/              var reqdFilterNames = ["Nichole1", "Nichole2"];
-/**/              var count = reqdFilterNames.length;
+//*/              var reqdFilterNames = ["Nichole1", "Nichole2"];
+//*/              var count = reqdFilterNames.length;
                   var temp = localStorage.getItem("jaxo_filters");
                   if (temp) {
                      files = JSON.parse(temp);
-/**/                 for (var i=0, max=files.length; i < max; ++i) {
-/**/                    for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
-/**/                       var name = reqdFilterNames[j];
-/**/                       if (name === files[i].name) {
-/**/                          --count;
-/**/                          reqdFilterNames[index] = undefined;
-/**/                       }
-/**/                    }
-/**/                 }
+//*/                 for (var i=0, max=files.length; i < max; ++i) {
+//*/                    for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
+//*/                       var name = reqdFilterNames[j];
+//*/                       if (name === files[i].name) {
+//*/                          --count;
+//*/                          reqdFilterNames[index] = undefined;
+//*/                       }
+//*/                    }
+//*/                 }
                   }
-/**/              if (count) {
-/**/                 for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
-/**/                    var name = reqdFilterNames[j];
-/**/                    if (name) {
-/**/                       readJsonFileFromServer(
-/**/                          name,
-/**/                          function(entry) {
-/**/                             files.push(entry);
-/**/                             if (--count == 0) localSave();
-/**/                          }
-/**/                       )
-/**/                    }
-/**/                 }
-/**/              }else
+//*/              if (count) {
+//*/                 for (var j=0, max=reqdFilterNames.length; j < max; ++j) {
+//*/                    var name = reqdFilterNames[j];
+//*/                    if (name) {
+//*/                       readJsonFileFromServer(
+//*/                          name,
+//*/                          function(entry) {
+//*/                             files.push(entry);
+//*/                             if (--count == 0) localSave();
+//*/                          }
+//*/                       )
+//*/                    }
+//*/                 }
+//*/              }else
                   localSave();
                }
                //--------------------------------------------------------------

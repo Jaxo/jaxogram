@@ -280,43 +280,21 @@ function makeColorMatrix() {
 function filterImage() {
    currentFilter.refresh();
    // alert(JSON.stringify(currentFilter));
-   var filterValue = "";
-   var colorsLevels = makeColorsLevels();
-   var colorMatrix = makeColorMatrix();
-   var contrast = makeContrast();
-   var gaussianBlur = makeGaussianBlur();
-   var filterNoir = makeFilterNoir();
-   var filterMoat = makeFilterMoat();
-   var sharpen = makeSharpen();
-
-   filterValue = colorsLevels;
-   if (colorMatrix !== "") {
-      if (filterValue !== "") filterValue += "\r\n";
-      filterValue += colorMatrix;
-   }
-   if (contrast != "") {
-      if (filterValue !== "") filterValue += "\r\n";
-      filterValue += contrast;
-   }
-   if (gaussianBlur != "") {
-      if (filterValue !== "") filterValue += "\r\n";
-      filterValue += gaussianBlur;
-   }
-   if (filterNoir != "") {
-      if (filterValue !== "") filterValue += "\r\n";
-      filterValue += filterNoir;
-   }
-   if (filterMoat != "") {
-      if (filterValue !== "") filterValue += "\r\n";
-      filterValue += filterMoat;
-   }
-   if (sharpen != "") {
-      if (filterValue !== "") filterValue += "\r\n";
-      filterValue += sharpen;
-   }
-
+   var filterValue = (
+      makeColorsLevels() +
+      makeColorMatrix() +
+      makeContrast() +
+      makeGaussianBlur() +
+      makeFilterNoir() +
+      makeFilterMoat() +
+      makeSharpen()
+   );
    var originalImage = document.getElementById("originalImage");
    var filteredImage = document.getElementById("filteredImage");
+   currentFilter.data = {};
+   currentFilter.data.name = filesmanager.currentFileName();
+   currentFilter.data.value = filterValue;
+   currentFilter.data.vignette = {};
 
    if ((filterValue === "") && !currentFilter.isVignetted) {
       filteredImage.src = originalImage.src;
@@ -332,13 +310,7 @@ function filterImage() {
             "' filter='url(data:image/svg+xml," +
             escape(
                "<svg xmlns='http://www.w3.org/2000/svg'><filter id='f1'>" +
-               colorsLevels +
-               colorMatrix +
-               contrast +
-               gaussianBlur +
-               filterNoir +
-               filterMoat +
-               sharpen +
+               filterValue +
                "</filter></svg>"
             ) +
             "#f1)"
@@ -354,9 +326,9 @@ function filterImage() {
             "</svg>"
          );
       }else {
-         if (filterValue !== "") filterValue += "\r\n";
-         filterValue += "<feVignette radius='" + currentFilter.vigRadius + "' bright='" + currentFilter.vigBright + "'/>";
 //       document.getElementById("filterValue").innerHTML = filterValue;
+         currentFilter.data.vignette.radius = currentFilter.vigRadius;
+         currentFilter.data.vignette.bright = currentFilter.vigBright;
          svg = vignetize(
             baseFilter, originalImage,
             currentFilter.vigRadius/100, currentFilter.vigBright/100
@@ -436,3 +408,9 @@ function vignetize(baseFilter, originalImage, r, b)
    );
 }
 
+function doDebug() {
+   var db = document.getElementById("debugData");
+   db.onclick = function() {
+      alert(JSON.stringify(currentFilter.data));
+   }
+}

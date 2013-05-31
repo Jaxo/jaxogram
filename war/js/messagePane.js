@@ -157,7 +157,7 @@ function makeTextField(text) {
    var eltDiv = document.createElement("DIV");
    eltDiv.style.padding = "2rem";
    eltDiv.style.textAlign = "left";
-   eltDiv.textContent = text;
+   eltDiv.innerHTML = text;
    return eltDiv;
 }
 
