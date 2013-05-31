@@ -216,7 +216,7 @@ public class JaxogramServlet extends HttpServlet
                   "accesspass",
                   JsonIterator.get(data, "accessPass")
                );
-               writer.printf(data);
+               writer.print(data);
 
             }else if (op.equals("publish")) {
 //             resp.setContentType("application/octet-stream");
