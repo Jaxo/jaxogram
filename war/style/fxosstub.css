@@ -533,12 +533,30 @@ li[aria-selected=true], li[role=listbox] {
 #p0 {
    text-shadow:#aaa 0px 1px 0, #000 0 -1px 0;
 }
-#p0_netImage {
-   position: absolute;
-   left:1.5rem;top:1.5rem;
+
+.user{
+  overflow: hidden;
+  margin: 0rem;
+  padding: 0.5rem 0.5rem 0rem 0.5rem;
+  height: 4rem;
+  color: #c0c0c0;
+  border-bottom: 1px solid transparent;
+  font-size: 1.4rem;
+  /* -moz-transition: height 500ms; */
 }
 
-#p0_top {
+#p0_userImage {
+  float: left;
+  margin-right: 1rem;
+  height: 3.5rem;
+}
+
+#p0_netImage {
+  margin-right: 0.5rem;
+  float: right;
+}
+
+#banner {
    position: absolute;
    width: 100%;
    right:0;top:8rem;
@@ -584,37 +602,9 @@ li[aria-selected=true], li[role=listbox] {
 }
 
 .p2_top {
+  position: relative;
   font-size: 1.4rem;
   background-color: rgba(60, 70, 72, 0.6);
-}
-.p2_user{
-  overflow: hidden;
-  margin: 0rem;
-  padding: 0.5rem 0.5rem 0rem 0.5rem;
-  height: 4rem;
-  color: #c0c0c0;
-  border-bottom: 1px solid transparent;
-  /* -moz-transition: height 500ms; */
-}
-
-/* .p2_user.active{  */
-/*   height: 5rem;   */
-/* }                 */
-
-#p2_userImage {
-  float: left;
-  margin-right: 1rem;
-  height: 3.5rem;
-}
-
-#p2_netImage {
-  margin-right: 0.5rem;
-  float: right;
-}
-
-.p2_msg {
-  padding: 0;
-  position: relative;
   height: 7rem;
 }
 

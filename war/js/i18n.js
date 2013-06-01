@@ -183,7 +183,7 @@ var localeValues = {
       'pt-BR':"Quem sou eu?",
       'es-ES':"¿Quién soy yo?",
       'pl-PL':"Kim jestem?"
-   }, p0_top: {
+   }, banner: {
       'en-US':"Share camera and gallery photos on well known social networks",
       'fr-FR':"Partagez caméra et galerie photos sur la plupart des réseaux sociaux",
       'pt-BR':"Compartilhar câmera e galeria de fotos na maioria das redes sociais",
