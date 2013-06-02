@@ -608,31 +608,44 @@ li[aria-selected=true], li[role=listbox] {
   height: 7rem;
 }
 
-#p2_msgCount{
-  position: absolute;
+#p2_msgCount {
+  position: relative;
+  float: right;
   right: 0.5rem;
-  bottom: 0.2rem;
-  font-size: 1.5rem;
-  background-color: rgba(60, 60, 60, 0.4);
+  bottom: 2.2rem;
   color: #F0F0F0;
+  background-color: rgba(60, 60, 60, 0.4);
+  font-size: 1.3rem;
 }
 
 #p2_msgText {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  margin: 0;
-  resize: none;
-  border: none;
-  width: 100%;
-  height: 100%;
-  padding: 0.5rem 1rem;
-  background: inherit;
-  font: inherit;
-  /*font-family: "MozTT", sans-serif; */
-  /*font-size: 1.4rem;                */
-  color:#F0F0F0;
+   overflow:hidden;
+   height: 1.7rem;
+   resize: none;
+   /* background: inherit; */
+   background-color: rgba(60, 70, 72, 0.8);
 }
 
 #upldFile {
    display: none;
+}
+
+.textbox{
+   white-space: pre-wrap;
+   border: none;
+   margin: auto;
+   width: calc(100% - 8rem);
+   padding: 0.5rem 4rem 0.5rem 4rem;
+   word-wrap: break-word;
+   text-align: center;
+   font-family: "MozTT", sans-serif;
+   font-size: 1.4rem;
+   /* font-weight: bold; */
+   color:#F0F0F0;
+}
+#msgDraft {
+   position:absolute;
+   width: calc(100% - 8.2rem);   /* bug??? */
+   /* left: 0; bottom: 5rem; visibility: visible; */
+   visibility: hidden;
 }

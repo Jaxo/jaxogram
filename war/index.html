@@ -45,10 +45,8 @@
          <MENU role="action" id="p1_choices"></MENU>
       </DIV>
       <DIV id="p2" class="body">
-         <DIV class="p2_top">
-            <TEXTAREA class="i18n" id="p2_msgText"></TEXTAREA>
-            <SPAN id="p2_msgCount"></SPAN>
-         </DIV>
+         <TEXTAREA class="i18n textbox" id="p2_msgText"></TEXTAREA>
+         <SPAN id="p2_msgCount"></SPAN>
          <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
       </DIV>
       <DIV id="p3" class="body">
@@ -104,6 +102,7 @@
 
    <!-- Fallback if "no "Pick" MozActivity -->
    <INPUT type='file' id='upldFile' multiple accept="image/"/>
+   <DIV id="msgDraft" class="textbox"></DIV>
 
    <FOOTER>
      <TABLE id="footerTable">

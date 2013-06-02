@@ -155,6 +155,17 @@ window.onload = function() {
    document.getElementById("logins").onclick = function(event) {
       changeLogin(this, event);
    };
+   document.getElementById("p2_msgText").addEventListener(
+      "input",
+      function() {
+         if (this.value) {
+            var elt = document.getElementById("msgDraft");
+            elt.textContent = this.value;
+            this.style.height = (elt.clientHeight-10) + "px"; // 10: padding
+         }
+      },
+      false
+   );
    // document.getElementById("mn_albums").style.display = "none";
    showToolbar(0);
    var dfltLocale = navigator.language || navigator.userLanguage;
@@ -223,25 +234,17 @@ function onNetworkChange()
       connectTo.style.display = "";
       document.getElementById("mn_userName").textContent = users.getUserName();
       document.getElementById("p0_userName").textContent = users.getUserName();
-//    document.getElementById("p2_userName").textContent = users.getUserName();
       document.getElementById("p0_userImage").src = users.getImageUrl();
-//    document.getElementById("p2_userImage").src = users.getImageUrl();
       document.getElementById("mn_netImage").src = netImage;
       document.getElementById("p0_netImage").src = netImage;
-//    document.getElementById("p2_netImage").src = netImage;
       document.getElementById("p0_userScreenName").textContent = users.getScreenName();
-//    document.getElementById("p2_userScreenName").textContent = users.getScreenName();
    }else {
       document.getElementById("mn_user").style.display = "none";
       document.getElementById("p0_userName").textContent = i18n("noNetwork");
-//    document.getElementById("p2_userName").textContent = i18n("noNetwork");
-      document.getElementById("p0_userImage").src = "";
-//    document.getElementById("p2_userImage").src = "";
-      document.getElementById("mn_netImage").src = "";
-      document.getElementById("p0_netImage").src = "";
-//    document.getElementById("p2_netImage").src = "";
+      document.getElementById("p0_userImage").src = "../images/none.png";
+      document.getElementById("mn_netImage").src = "../images/none.png";
+      document.getElementById("p0_netImage").src = "../images/none.png";
       document.getElementById("p0_userScreenName").textContent = "";
-//    document.getElementById("p2_userScreenName").textContent = "";
       document.getElementById("connectTo").style.display = "none";
    }
 }
