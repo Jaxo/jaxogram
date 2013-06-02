@@ -240,7 +240,7 @@ function onNetworkChange()
       document.getElementById("p0_userScreenName").textContent = users.getScreenName();
    }else {
       document.getElementById("mn_user").style.display = "none";
-      document.getElementById("p0_userName").textContent = i18n("noNetwork");
+      document.getElementById("p0_userName").innerHTML = i18n("noNetwork");
       document.getElementById("p0_userImage").src = "../images/none.png";
       document.getElementById("mn_netImage").src = "../images/none.png";
       document.getElementById("p0_netImage").src = "../images/none.png";
@@ -988,19 +988,19 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
 
 function showToolbar(barNo) {
    var elt = document.getElementById("footerTable");
-   if (barNo == -1) {
-      elt.parentNode.style.display = "none";
-   }else {
-      for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
-         var row = rows[i];
-         if (i == barNo) {
-            row.style.display = "";
-         }else {
-            row.style.display = "none";
-         }
+   var prevBarNo = -1;
+   elt.parentNode.style.display = "none";
+   for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
+      var row = rows[i];
+      if (!row.style.display) prevBarNo = barNo;
+      if (i == barNo) {
+         elt.parentNode.style.display = "";
+         row.style.display = "";
+      }else {
+         row.style.display = "none";
       }
-      elt.parentNode.style.display = "";
    }
+   return prevBarNo;
 }
 
 function showNewPhoto() {
@@ -1018,7 +1018,7 @@ function showNewPhoto() {
          );
       }
       // 1) Compute the thumbnails size
-      showToolbar(2);  // FIXME
+      var prevBarNo = showToolbar(2);  // FIXME
       var cells = document.getElementById("imgFilters").cells;
       var w = cells[0].offsetWidth;
       var h = cells[0].offsetHeight;
@@ -1037,7 +1037,7 @@ function showNewPhoto() {
          left = 0;
          top = Math.round(((t-h) / 2));
       }
-      showToolbar(1);  // FIXME (I should disable EDIT)
+      showToolbar(prevBarNo);  // FIXME (I should disable EDIT)
       // 2) draw the raw thumbnail
       var canvas = document.createElement("CANVAS");
       canvas.setAttribute("width", w);

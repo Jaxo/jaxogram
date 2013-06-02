@@ -376,12 +376,16 @@ button {
 }
 
 .menuList {
-  position: relative;
-/* list-style: none; */
-  margin: 0;
-  padding: 0;
-  font-size: 2rem;
-  cursor: pointer;
+   position: absolute;
+   /* list-style: none; */
+   margin: 0;
+   padding: 0;
+   font-size: 2rem;
+   cursor: pointer;
+   top: 5.2rem;
+   height: calc(100% - 5.2rem);
+   width: 100%;
+   overflow: auto;
 }
 .menuList small {
   font-size: 66%;
@@ -399,6 +403,7 @@ button {
   background-color: #61666c;               /* Mobile only */
   transition: height 0.3s ease 0s;
 }
+
 .menuList li {
   vertical-align: bottom;
   border-bottom: solid 1px #596068;
@@ -613,7 +618,7 @@ li[aria-selected=true], li[role=listbox] {
   float: right;
   right: 0.5rem;
   bottom: 2.2rem;
-  color: #F0F0F0;
+  color: #909090;
   background-color: rgba(60, 60, 60, 0.4);
   font-size: 1.3rem;
 }
