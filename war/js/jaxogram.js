@@ -276,6 +276,10 @@ function formatUsersList(isUserRequired) {
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
             imgElt.src = "../images/" + net + "SmallLogo.png";
             spanElt.setAttribute("role", "trasher");
+//          spanElt.onclick = function(event) {
+//             event.stopPropagation();
+//             changeLogin(this, event);
+//          }
             itmElt.appendChild(spanElt);
             itmElt.appendChild(imgElt);
             itmElt.appendChild(document.createTextNode(name));
@@ -483,7 +487,6 @@ function fitImage(img) {
 function formatNetworkChoices() {
    var eltContainer = document.getElementById("p1_choices");
    var btnElt;
-   eltContainer.innerHTML = "";
    networks.forEach(
       function(network) {
          var name = network.name;
@@ -999,7 +1002,7 @@ function showToolbar(barNo) {
    elt.parentNode.style.display = "none";
    for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
       var row = rows[i];
-      if (!row.style.display) prevBarNo = barNo;
+      if (!row.style.display) prevBarNo = i;
       if (i == barNo) {
          elt.parentNode.style.display = "";
          row.style.display = "";
