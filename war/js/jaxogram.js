@@ -171,6 +171,7 @@ window.onload = function() {
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
    formatUsersList(true);
+   formatNetworkChoices();
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
    var elt = document.getElementById("imgFilters");
@@ -479,7 +480,7 @@ function fitImage(img) {
    }
 }
 
-function authorize() {
+function formatNetworkChoices() {
    var eltContainer = document.getElementById("p1_choices");
    var btnElt;
    eltContainer.innerHTML = "";
@@ -504,7 +505,13 @@ function authorize() {
       expandPage("p0");
       showToolbar(0);
    }
-   eltContainer.appendChild(btnElt);
+   var divElt = document.createElement("DIV");
+   divElt.appendChild(btnElt);
+   eltContainer.parentNode.appendChild(divElt);
+// eltContainer.appendChild(btnElt);
+}
+
+function authorize() {
    expandSidebarView(-1);
    expandPage("p1");
    showToolbar(-1);
