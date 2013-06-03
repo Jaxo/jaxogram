@@ -373,6 +373,21 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #333333;
+  border-radius: 0.2rem 0.2rem 0.2rem 0.2rem;
+}
+
+button.recommend {
+   background-image: url("images/recommend.png");
+   border: 0.1rem solid #006E8B;
+   margin: 0 5rem;
+   width: calc(100% - 10rem);
+   z-index: 100;
+}
+button.recommend:active {
+    background: none repeat scroll 0 0 / auto 100% #008AAA;
+    border-color: #008AAA;
+    color: #333333;
 }
 
 .menuList {
@@ -562,13 +577,13 @@ li[aria-selected=true], li[role=listbox] {
 }
 
 #banner {
-   position: absolute;
+   /* position: absolute; */
    width: 100%;
-   right:0;top:8rem;
    text-align: center;
    font-size: 2rem;
    color: white;
    padding: 0rem 2rem;
+   margin: 5rem 0;
    -moz-box-sizing: border-box;
    -webkit-box-sizing: border-box;
 }
@@ -635,6 +650,10 @@ li[aria-selected=true], li[role=listbox] {
    display: none;
 }
 
+#initLogin {
+  visibility: hidden;
+}
+
 .textbox{
    white-space: pre-wrap;
    border: none;
@@ -654,3 +673,11 @@ li[aria-selected=true], li[role=listbox] {
    /* left: 0; bottom: 5rem; visibility: visible; */
    visibility: hidden;
 }
+span.type1 {
+   color: white;
+   background-color: #944d00;
+   font-size: 1.8rem;
+   font-weight: bold;
+   text-shadow: none;
+}
+

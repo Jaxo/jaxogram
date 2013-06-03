@@ -244,17 +244,23 @@ var localeValues = {
       'es-ES':"Album \"%1\" creada.",
       'pl-PL':"Album \"%1\" stworzony."
    }, chooseNetwork: {
-      'en-US':"Social network",
-      'fr-FR':"Réseau social",
-      'pt-BR':"Rede social",
-      'es-ES':"Red social",
-      'pl-PL':"Sieć społeczna"
+      'en-US':"Choose your social network",
+      'fr-FR':"Choisissez votre réseau social",
+      'pt-BR':"Escolha sua rede social",
+      'es-ES':"Elija su red social",
+      'pl-PL':"Wybierz swoją sieć społeczną"
    }, noNetwork: {
-      'en-US':"No social network currently defined. Press <big>≡</big>",
+      'en-US':"No social network currently defined.",
       'fr-FR':"Il n'y a aucun réseau social défini.",
       'pt-BR':"Nenhuma rede social atualmente definido.",
       'es-ES':"No hay red social que actualmente definido.",
       'pl-PL':"No społecznościowy aktualnie zdefiniowane."
+   }, initLogin: {
+      'en-US':"Connect to my network",
+      'fr-FR':"Me connecter à mon réseau",
+      'pt-BR':"Conectar a minha rede",
+      'es-ES':"Conectar a mi red",
+      'pl-PL':"Podłącz do mojej sieci"
    }, picasaLogin: {
       'en-US':"Login to Picasa …",
       'fr-FR':"Connexion à Picasa …",

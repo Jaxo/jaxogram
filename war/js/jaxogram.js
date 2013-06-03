@@ -170,7 +170,7 @@ window.onload = function() {
    showToolbar(0);
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
-   formatUsersList(true);
+   formatUsersList(false);
    formatNetworkChoices();
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
@@ -233,13 +233,17 @@ function onNetworkChange()
          }
       }
       connectTo.style.display = "";
+      document.getElementById("initLogin").style.visibility = "";
       document.getElementById("mn_userName").textContent = users.getUserName();
-      document.getElementById("p0_userName").textContent = users.getUserName();
+      document.getElementById("p0_userName").innerHTML = users.getUserName();
       document.getElementById("p0_userImage").src = users.getImageUrl();
       document.getElementById("mn_netImage").src = netImage;
       document.getElementById("p0_netImage").src = netImage;
       document.getElementById("p0_userScreenName").textContent = users.getScreenName();
    }else {
+      var elt = document.getElementById("initLogin");
+      elt.style.visibility = "visible";
+      elt.onclick = authorize;
       document.getElementById("mn_user").style.display = "none";
       document.getElementById("p0_userName").innerHTML = i18n("noNetwork");
       document.getElementById("p0_userImage").src = "../images/none.png";
@@ -761,7 +765,7 @@ function uploadPhotos() {
       textElt.addEventListener("keyup", setCounter, false);
       setCounter();
       expandPage("p2");
-      isUploadable();
+      // ?? isUploadable();
    }
 }
 
