@@ -8,6 +8,8 @@ var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
 var tempFilterChoice = 0;
 var filterChoice = 0;
+var thumbMaxWidth = 0;
+var thumbMaxHeight = 0;
 var filters = [
    {
       name: "raw",
@@ -167,7 +169,6 @@ window.onload = function() {
       false
    );
    // document.getElementById("mn_albums").style.display = "none";
-   showToolbar(0);
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
    formatUsersList(false);
@@ -187,6 +188,11 @@ window.onload = function() {
       tdElt.appendChild(imgElt);
       elt.appendChild(tdElt);
    }
+   showToolbar(2);
+   thumbMaxWidth = (elt.cells)[0].offsetWidth;
+   thumbMaxHeight = (elt.cells)[0].offsetHeight;
+   showToolbar(0);
+
    elt.addEventListener("click", changeFilter);
    var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
@@ -1032,26 +1038,15 @@ function showNewPhoto() {
          );
       }
       // 1) Compute the thumbnails size
-      var prevBarNo = showToolbar(2);  // FIXME
-      var cells = document.getElementById("imgFilters").cells;
-      var w = cells[0].offsetWidth;
-      var h = cells[0].offsetHeight;
-      var r1 = w / filters[0].img.width;
-      var r2 = h / filters[0].img.height;
-      var top;
-      var left;
-      if (r2 < r1) {
-         var t = w;
-         w = Math.round(filters[0].img.width * r2);
-         left = Math.round((t-w) / 2);
-         top = 0;
+      var w = thumbMaxHeight / filters[0].img.height;
+      var h = thumbMaxWidth / filters[0].img.width;
+      if (w < h) {
+         w = Math.round(filters[0].img.width * w);
+         h = thumbMaxHeight;
       }else {
-         var t = h;
+         w = thumbMaxWidth;
          h = Math.round(filters[0].img.height * r1);
-         left = 0;
-         top = Math.round(((t-h) / 2));
       }
-      showToolbar(prevBarNo);  // FIXME (I should disable EDIT)
       // 2) draw the raw thumbnail
       var canvas = document.createElement("CANVAS");
       canvas.setAttribute("width", w);
