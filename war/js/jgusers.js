@@ -17,7 +17,7 @@ function JgUsers() {
       return users[selectedIndex].t;
    }
    this.getImageUrl = function() {
-      return users[selectedIndex].i;
+      return users[selectedIndex].i || "../images/none.png";
    }
    this.getScreenName = function() {
       var val = users[selectedIndex].s;

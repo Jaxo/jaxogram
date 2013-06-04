@@ -8,6 +8,8 @@ var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
 var tempFilterChoice = 0;
 var filterChoice = 0;
+var thumbMaxWidth = 0;
+var thumbMaxHeight = 0;
 var filters = [
    {
       name: "raw",
@@ -137,7 +139,6 @@ window.onload = function() {
    var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
    for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
       radioGroupNodes[i].addEventListener("click", radioClicked);
-//    radioGroupNodes[i].onclick = radioClicked;
    }
    setBuyButton();
    document.querySelector(".menuList").onclick = menuListClicked;
@@ -153,14 +154,18 @@ window.onload = function() {
    };
    document.getElementById("cancelEdit").onclick = cancelEditPhoto;
    document.getElementById("validateEdit").onclick = validateEditPhoto;
-   document.getElementById("logins").onclick = function(event) {
-      changeLogin(this, event);
-   };
+   document.getElementById("logins").onclick = changeLogin;
+   document.getElementById("p2_msgText").addEventListener(
+      "input", onTextEntered, false
+   );
+   document.getElementById("p2_msgText").addEventListener(
+      "keydown", onTextEntered, false
+   );
    // document.getElementById("mn_albums").style.display = "none";
-   showToolbar(0);
    var dfltLocale = navigator.language || navigator.userLanguage;
    translateBody(dfltLocale);
-   formatUsersList(true);
+   formatUsersList(false);
+   formatNetworkChoices();
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
    var elt = document.getElementById("imgFilters");
@@ -176,6 +181,11 @@ window.onload = function() {
       tdElt.appendChild(imgElt);
       elt.appendChild(tdElt);
    }
+   showToolbar(2);
+   thumbMaxWidth = (elt.cells)[0].offsetWidth;
+   thumbMaxHeight = (elt.cells)[0].offsetHeight;
+   showToolbar(0);
+
    elt.addEventListener("click", changeFilter);
    var eltMain = document.getElementById("corepane");
    new GestureDetector(eltMain).startDetecting();
@@ -205,6 +215,34 @@ window.onload = function() {
    }
 };
 
+function onTextEntered(event) {
+   if (event && (event.keyCode === 13)) {
+      event.stopPropagation();
+      this.blur();
+   }else {
+      var countElt = document.getElementById("p2_msgCount");
+      if (this.value.length == 0) {
+         countElt.textContent = "";
+      }else {
+         var remain = 116 - this.value.length;
+         if (remain > 20) {
+            countElt.style.color = "";
+         }else {
+            countElt.style.color = "#C80000";
+            if (remain < 0) {
+               this.value = this.value.substring(0, 116);
+               remain = 0;
+            }
+         }
+         countElt.textContent = remain;
+         this.style.height = "1.7rem";
+         if (this.scrollHeight > this.clientHeight) {
+            this.style.height = this.scrollHeight + "px";
+         }
+      }
+   }
+}
+
 function onNetworkChange()
 {
    if (users.hasSome()) {
@@ -222,19 +260,23 @@ function onNetworkChange()
          }
       }
       connectTo.style.display = "";
+      document.getElementById("initLogin").style.visibility = "";
       document.getElementById("mn_userName").textContent = users.getUserName();
-      document.getElementById("p2_userName").textContent = users.getUserName();
-      document.getElementById("p2_userImage").src = users.getImageUrl();
+      document.getElementById("p0_userName").innerHTML = users.getUserName();
+      document.getElementById("p0_userImage").src = users.getImageUrl();
       document.getElementById("mn_netImage").src = netImage;
       document.getElementById("p0_netImage").src = netImage;
-      document.getElementById("p2_netImage").src = netImage;
-      document.getElementById("p2_userScreenName").textContent = users.getScreenName();
+      document.getElementById("p0_userScreenName").textContent = users.getScreenName();
    }else {
+      var elt = document.getElementById("initLogin");
+      elt.style.visibility = "visible";
+      elt.onclick = authorize;
       document.getElementById("mn_user").style.display = "none";
-      document.getElementById("p2_userName").textContent = i18n("noNetwork");
-      document.getElementById("p2_userImage").src = "";
-      document.getElementById("p0_netImage").src = "";
-      document.getElementById("p2_netImage").src = "";
+      document.getElementById("p0_userName").innerHTML = i18n("noNetwork");
+      document.getElementById("p0_userImage").src = "../images/none.png";
+      document.getElementById("mn_netImage").src = "../images/none.png";
+      document.getElementById("p0_netImage").src = "../images/none.png";
+      document.getElementById("p0_userScreenName").textContent = "";
       document.getElementById("connectTo").style.display = "none";
    }
 }
@@ -413,7 +455,7 @@ function changeAlbum(elt, event) {
    uploadPhotos();
 }
 
-function changeLogin(elt, event) {
+function changeLogin(event) {
    var liElt = getRealTarget(event);
    if (liElt) {
       var index = -1;
@@ -469,10 +511,9 @@ function fitImage(img) {
    }
 }
 
-function authorize() {
-   var eltContainer = document.getElementById("p1_choices");
+function formatNetworkChoices() {
+   var eltContainer = document.getElementById("choices");
    var btnElt;
-   eltContainer.innerHTML = "";
    networks.forEach(
       function(network) {
          var name = network.name;
@@ -490,18 +531,20 @@ function authorize() {
    );
    btnElt = document.createElement("BUTTON");
    btnElt.textContent = i18n("cancel");
-   btnElt.onclick = function() {
-      expandPage("p0");
-      showToolbar(0);
-   }
-   eltContainer.appendChild(btnElt);
+   btnElt.onclick = hideActionMenu;
+   var divElt = document.createElement("DIV");
+   divElt.appendChild(btnElt);
+   eltContainer.parentNode.appendChild(divElt);
+// eltContainer.appendChild(btnElt);
+}
+
+function authorize() {
    expandSidebarView(-1);
-   expandPage("p1");
-   showToolbar(-1);
+   showActionMenu();
 }
 
 function authorizePicasa() {
-   hideMsg();
+   hideActionMenu();
    var eltInp1 = makeInputField("login");
    var eltInp2 = makeInputField("passwd", "password");
    showMsg(
@@ -516,7 +559,7 @@ function authorizePicasa() {
             issueRequest(
                "POST", "checkAccPss", passwd,
                function(userName) { // whenDone
-                  hideMsg();
+                  // hideMsg(); why?
                   users.addUser(userName, passwd, "picasa");
                   formatUsersList(false);
                },
@@ -530,7 +573,7 @@ function authorizePicasa() {
 }
 
 function authorizeThruOAuth(net) {
-   hideMsg();
+   hideActionMenu();
    // make a pseudo-random key )between 100000 and 200000
    oauthNetwork.key = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
@@ -677,6 +720,8 @@ function createAlbum(isDirect) {
 }
 
 function pickPhoto(event) {
+   document.getElementById("p2_msgText").value = "";
+   document.getElementById("p2_msgCount").textContent = "";
    if (typeof MozActivity !== "undefined") {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
       a.onsuccess = function(e) {
@@ -719,30 +764,9 @@ function uploadPhotos() {
       finishUpload();
    }else {
       showToolbar(1);
-
-      // document.querySelector(".p2_user").classList.add("active");
-      var countElt = document.getElementById("p2_msgCount");
-      var textElt = document.getElementById("p2_msgText");
-      textElt.value = "";
-      var setCounter = function(event) {
-         var remain = 116 - textElt.value.length;
-         if (remain < 0) {
-            textElt.value = textElt.value.substring(0, 116);
-            remain = 116 - textElt.value.length;
-         }
-         countElt.textContent = remain;
-         if (remain > 20) {
-            countElt.style.color = "";
-         }else {
-            countElt.style.color = "#C80000";
-         }
-         if (event && (event.keyCode === 13)) this.blur();
-      };
       showNewPhoto();
-      textElt.addEventListener("keyup", setCounter, false);
-      setCounter();
       expandPage("p2");
-      isUploadable();
+      // ?? isUploadable();
    }
 }
 
@@ -979,19 +1003,19 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
 
 function showToolbar(barNo) {
    var elt = document.getElementById("footerTable");
-   if (barNo == -1) {
-      elt.parentNode.style.display = "none";
-   }else {
-      for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
-         var row = rows[i];
-         if (i == barNo) {
-            row.style.display = "";
-         }else {
-            row.style.display = "none";
-         }
+   var prevBarNo = -1;
+   elt.parentNode.style.display = "none";
+   for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
+      var row = rows[i];
+      if (!row.style.display) prevBarNo = i;
+      if (i == barNo) {
+         elt.parentNode.style.display = "";
+         row.style.display = "";
+      }else {
+         row.style.display = "none";
       }
-      elt.parentNode.style.display = "";
    }
+   return prevBarNo;
 }
 
 function showNewPhoto() {
@@ -1009,26 +1033,15 @@ function showNewPhoto() {
          );
       }
       // 1) Compute the thumbnails size
-      showToolbar(2);  // FIXME
-      var cells = document.getElementById("imgFilters").cells;
-      var w = cells[0].offsetWidth;
-      var h = cells[0].offsetHeight;
-      var r1 = w / filters[0].img.width;
-      var r2 = h / filters[0].img.height;
-      var top;
-      var left;
-      if (r2 < r1) {
-         var t = w;
-         w = Math.round(filters[0].img.width * r2);
-         left = Math.round((t-w) / 2);
-         top = 0;
+      var w = thumbMaxHeight / filters[0].img.height;
+      var h = thumbMaxWidth / filters[0].img.width;
+      if (w < h) {
+         w = Math.round(filters[0].img.width * w);
+         h = thumbMaxHeight;
       }else {
-         var t = h;
-         h = Math.round(filters[0].img.height * r1);
-         left = 0;
-         top = Math.round(((t-h) / 2));
+         w = thumbMaxWidth;
+         h = Math.round(filters[0].img.height * h);
       }
-      showToolbar(1);  // FIXME (I should disable EDIT)
       // 2) draw the raw thumbnail
       var canvas = document.createElement("CANVAS");
       canvas.setAttribute("width", w);
@@ -1074,6 +1087,14 @@ function cancelEditPhoto() {
 function changeFilter(event) {
    if (event) tempFilterChoice = getRealTarget(event).cellIndex;
    document.getElementById("p3_picture").src = filters[tempFilterChoice].src;
+}
+
+function showActionMenu() {
+   document.querySelector(".menuaction").style.display="block";
+}
+
+function hideActionMenu() {
+   document.querySelector(".menuaction").style.display="none";
 }
 
 /*========== PURCHASE (beta) ============*/
