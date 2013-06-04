@@ -451,7 +451,7 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
-   document.getElementById("p2_userScreenName").textContent = users.getScreenName();
+   document.getElementById("p0_userScreenName").textContent = users.getScreenName();
    uploadPhotos();
 }
 
