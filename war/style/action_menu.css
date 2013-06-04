@@ -2,7 +2,14 @@
  * Action menu
  * ---------------------------------- */
 
-menu[role="action"] {
+.menuaction {
+   z-index:2;
+   opacity: 1;
+   display: none;
+   background-image: url('images/pattern.png');
+}
+
+.menuaction menu {
   margin: 0;
   padding: 0;
   width: auto;
@@ -16,7 +23,7 @@ menu[role="action"] {
   overflow: auto;
 }
 
-menu[role="action"] > button {
+.menuaction menu > button {
   width: calc(100% - 3rem);
   height: 4rem;
   -moz-box-sizing: border-box;
@@ -39,7 +46,7 @@ menu[role="action"] > button {
   border: none;
 }
 
-menu[role="action"] + div {
+.menuaction menu + div {
    position: fixed;
    height: 7rem;
    bottom: 0;
@@ -50,7 +57,7 @@ menu[role="action"] + div {
    border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
 }
 
-menu[role="action"] + div > button {
+.menuaction menu + div > button {
    text-shadow: 0.1rem 0.1rem 0 rgba(255,255,255,0.3);
    color: #333;
    font-weight: 500;
@@ -63,20 +70,20 @@ menu[role="action"] + div > button {
 }
 
 /* Press state */
-menu[role="action"] > button:active {
+.menuaction menu > button:active {
   background-color: #006f86;
   color: #333;
   text-shadow: 0 0.1rem 0 rgba(255, 255, 255, 0.25);
 }
 
-menu[role="action"] + div > button:active {
+.menuaction menu + div > button:active {
   border: solid 0.1rem #008aaa;
   background: #008aaa;
   color: #333;
 }
 
 /* Disabled */
-menu[role="action"] > button[disabled] {
+.menuaction menu > button[disabled] {
   background: #4d4d4d;
   color: #333;
   text-shadow: none;

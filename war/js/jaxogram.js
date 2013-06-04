@@ -495,7 +495,7 @@ function fitImage(img) {
 }
 
 function formatNetworkChoices() {
-   var eltContainer = document.getElementById("p1_choices");
+   var eltContainer = document.getElementById("choices");
    var btnElt;
    networks.forEach(
       function(network) {
@@ -515,8 +515,7 @@ function formatNetworkChoices() {
    btnElt = document.createElement("BUTTON");
    btnElt.textContent = i18n("cancel");
    btnElt.onclick = function() {
-      expandPage("p0");
-      showToolbar(0);
+      document.querySelector(".menuaction").style.display="none";
    }
    var divElt = document.createElement("DIV");
    divElt.appendChild(btnElt);
@@ -526,8 +525,7 @@ function formatNetworkChoices() {
 
 function authorize() {
    expandSidebarView(-1);
-   expandPage("p1");
-   showToolbar(-1);
+   document.querySelector(".menuaction").style.display="block";
 }
 
 function authorizePicasa() {
