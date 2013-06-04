@@ -530,9 +530,7 @@ function formatNetworkChoices() {
    );
    btnElt = document.createElement("BUTTON");
    btnElt.textContent = i18n("cancel");
-   btnElt.onclick = function() {
-      document.querySelector(".menuaction").style.display="none";
-   }
+   btnElt.onclick = hideActionMenu;
    var divElt = document.createElement("DIV");
    divElt.appendChild(btnElt);
    eltContainer.parentNode.appendChild(divElt);
@@ -541,11 +539,11 @@ function formatNetworkChoices() {
 
 function authorize() {
    expandSidebarView(-1);
-   document.querySelector(".menuaction").style.display="block";
+   showActionMenu();
 }
 
 function authorizePicasa() {
-   hideMsg();
+   hideActionMenu();
    var eltInp1 = makeInputField("login");
    var eltInp2 = makeInputField("passwd", "password");
    showMsg(
@@ -560,7 +558,7 @@ function authorizePicasa() {
             issueRequest(
                "POST", "checkAccPss", passwd,
                function(userName) { // whenDone
-                  hideMsg();
+                  // hideMsg(); why?
                   users.addUser(userName, passwd, "picasa");
                   formatUsersList(false);
                },
@@ -574,7 +572,7 @@ function authorizePicasa() {
 }
 
 function authorizeThruOAuth(net) {
-   hideMsg();
+   hideActionMenu();
    // make a pseudo-random key )between 100000 and 200000
    oauthNetwork.key = (Math.floor(Math.random() * 100000) + 100000).toString();
    // obtain the URL at which the user will grant us access
@@ -721,6 +719,8 @@ function createAlbum(isDirect) {
 }
 
 function pickPhoto(event) {
+   document.getElementById("p2_msgText").value = "";
+   document.getElementById("p2_msgCount").textContent = "";
    if (typeof MozActivity !== "undefined") {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
       a.onsuccess = function(e) {
@@ -764,8 +764,6 @@ function uploadPhotos() {
    }else {
       showToolbar(1);
       showNewPhoto();
-      document.getElementById("p2_msgText").value = "";
-      document.getElementById("p2_msgCount").textContent = "";
       expandPage("p2");
       // ?? isUploadable();
    }
@@ -1090,3 +1088,10 @@ function changeFilter(event) {
    document.getElementById("p3_picture").src = filters[tempFilterChoice].src;
 }
 
+function showActionMenu() {
+   document.querySelector(".menuaction").style.display="block";
+}
+
+function hideActionMenu() {
+   document.querySelector(".menuaction").style.display="none";
+}
