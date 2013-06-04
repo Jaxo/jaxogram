@@ -374,14 +374,16 @@ button {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #333333;
-  border-radius: 0.2rem 0.2rem 0.2rem 0.2rem;
+  border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;
+  display: table;
+  margin: auto;
 }
 
 button.recommend {
    background-image: url("images/recommend.png");
    border: 0.1rem solid #006E8B;
-   margin: 0 5rem;
-   width: calc(100% - 10rem);
+   max-width: 35rem;
+   width: calc(100% - 5rem);
 }
 button.recommend:active {
     background: none repeat scroll 0 0 / auto 100% #008AAA;
@@ -582,7 +584,7 @@ li[aria-selected=true], li[role=listbox] {
    font-size: 2rem;
    color: white;
    padding: 0rem 2rem;
-   margin: 5rem 0;
+   margin: 1.5rem 0 5rem 0;
    -moz-box-sizing: border-box;
    -webkit-box-sizing: border-box;
 }
