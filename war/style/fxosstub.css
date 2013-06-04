@@ -590,7 +590,7 @@ li[aria-selected=true], li[role=listbox] {
 }
 #p0_bot {
     position: absolute;
-    width: 12rem;
+    width: 10rem;
     height: 8rem;
     right: 1rem;
     bottom: 4.5rem; /* reduced: 0rem; */
@@ -660,20 +660,17 @@ li[aria-selected=true], li[role=listbox] {
    border: none;
    margin: auto;
    width: calc(100% - 8rem);
+   height: 2.1rem;
    padding: 0.5rem 4rem 0.5rem 4rem;
    word-wrap: break-word;
    text-align: center;
    font-family: "MozTT", sans-serif;
    font-size: 1.4rem;
    /* font-weight: bold; */
+   overflow: hidden;
    color:#F0F0F0;
 }
-#msgDraft {
-   position:absolute;
-   width: calc(100% - 8.2rem);   /* bug??? */
-   /* left: 0; bottom: 5rem; visibility: visible; */
-   visibility: hidden;
-}
+
 span.type1 {
    color: white;
    background-color: #944d00;

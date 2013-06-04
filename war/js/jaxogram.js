@@ -139,7 +139,6 @@ window.onload = function() {
    var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
    for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
       radioGroupNodes[i].addEventListener("click", radioClicked);
-//    radioGroupNodes[i].onclick = radioClicked;
    }
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn_albums").onclick = listAlbums;
@@ -154,19 +153,12 @@ window.onload = function() {
    };
    document.getElementById("cancelEdit").onclick = cancelEditPhoto;
    document.getElementById("validateEdit").onclick = validateEditPhoto;
-   document.getElementById("logins").onclick = function(event) {
-      changeLogin(this, event);
-   };
+   document.getElementById("logins").onclick = changeLogin;
    document.getElementById("p2_msgText").addEventListener(
-      "input",
-      function() {
-         if (this.value) {
-            var elt = document.getElementById("msgDraft");
-            elt.textContent = this.value;
-            this.style.height = (elt.clientHeight-10) + "px"; // 10: padding
-         }
-      },
-      false
+      "input", onTextEntered, false
+   );
+   document.getElementById("p2_msgText").addEventListener(
+      "keydown", onTextEntered, false
    );
    // document.getElementById("mn_albums").style.display = "none";
    var dfltLocale = navigator.language || navigator.userLanguage;
@@ -221,6 +213,34 @@ window.onload = function() {
       );
    }
 };
+
+function onTextEntered(event) {
+   if (event && (event.keyCode === 13)) {
+      event.stopPropagation();
+      this.blur();
+   }else {
+      var countElt = document.getElementById("p2_msgCount");
+      if (this.value.length == 0) {
+         countElt.textContent = "";
+      }else {
+         var remain = 116 - this.value.length;
+         if (remain > 20) {
+            countElt.style.color = "";
+         }else {
+            countElt.style.color = "#C80000";
+            if (remain < 0) {
+               this.value = this.value.substring(0, 116);
+               remain = 0;
+            }
+         }
+         countElt.textContent = remain;
+         this.style.height = "1.7rem";
+         if (this.scrollHeight > this.clientHeight) {
+            this.style.height = this.scrollHeight + "px";
+         }
+      }
+   }
+}
 
 function onNetworkChange()
 {
@@ -286,10 +306,6 @@ function formatUsersList(isUserRequired) {
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
             imgElt.src = "../images/" + net + "SmallLogo.png";
             spanElt.setAttribute("role", "trasher");
-//          spanElt.onclick = function(event) {
-//             event.stopPropagation();
-//             changeLogin(this, event);
-//          }
             itmElt.appendChild(spanElt);
             itmElt.appendChild(imgElt);
             itmElt.appendChild(document.createTextNode(name));
@@ -438,7 +454,7 @@ function changeAlbum(elt, event) {
    uploadPhotos();
 }
 
-function changeLogin(elt, event) {
+function changeLogin(event) {
    var liElt = getRealTarget(event);
    if (liElt) {
       var index = -1;
@@ -747,27 +763,9 @@ function uploadPhotos() {
       finishUpload();
    }else {
       showToolbar(1);
-
-      var countElt = document.getElementById("p2_msgCount");
-      var textElt = document.getElementById("p2_msgText");
-      textElt.value = "";
-      var setCounter = function(event) {
-         var remain = 116 - textElt.value.length;
-         if (remain < 0) {
-            textElt.value = textElt.value.substring(0, 116);
-            remain = 116 - textElt.value.length;
-         }
-         countElt.textContent = remain;
-         if (remain > 20) {
-            countElt.style.color = "";
-         }else {
-            countElt.style.color = "#C80000";
-         }
-         if (event && (event.keyCode === 13)) this.blur();
-      };
       showNewPhoto();
-      textElt.addEventListener("keyup", setCounter, false);
-      setCounter();
+      document.getElementById("p2_msgText").value = "";
+      document.getElementById("p2_msgCount").textContent = "";
       expandPage("p2");
       // ?? isUploadable();
    }
@@ -1043,7 +1041,7 @@ function showNewPhoto() {
          h = thumbMaxHeight;
       }else {
          w = thumbMaxWidth;
-         h = Math.round(filters[0].img.height * r1);
+         h = Math.round(filters[0].img.height * h);
       }
       // 2) draw the raw thumbnail
       var canvas = document.createElement("CANVAS");
