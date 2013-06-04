@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 
 import javax.servlet.http.HttpServlet;
@@ -295,6 +297,11 @@ public class JaxogramServlet extends HttpServlet
                   }
                   if (image == null) {
                      throw new Exception("Image data not found");
+                  }
+                  if (imgTitle.isEmpty()) {  // reqd (at least, Picasa)
+                     imgTitle = new SimpleDateFormat(
+                        "'Jaxogram' yyyy/MM/dd-HH:mm:ss"
+                     ).format(new Date());
                   }
                   writer.println(
                      network.uploadPhoto(albumId, imgTitle, image, imgType)
