@@ -2,19 +2,28 @@
  * Action menu
  * ---------------------------------- */
 
-menu[role="action"] {
+.menuaction {
+   z-index:2;
+   opacity: 1;
+   display: none;
+   background-image: url('images/pattern.png');
+}
+
+.menuaction menu {
   margin: 0;
   padding: 0;
   width: auto;
-  border: none;
-  background: none;
+  /* border: none;     */
+  /* background: none; */
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 8rem;
+  max-height: calc(100% - 8rem);
+  overflow: auto;
 }
 
-menu[role="action"] > button {
+.menuaction menu > button {
   width: calc(100% - 3rem);
   height: 4rem;
   -moz-box-sizing: border-box;
@@ -37,44 +46,44 @@ menu[role="action"] > button {
   border: none;
 }
 
-menu[role="action"] > button:last-child {
-  text-shadow: 0.1rem 0.1rem 0 rgba(255,255,255,0.3);
-  color: #333;
-  font-weight: 500;
-  background: #fafafa url(images/default.png) repeat-x left bottom / auto 100%;
-  border: solid 0.1rem #a6a6a6;
-  margin: 2.5rem 1.5rem 1.5rem 1.5rem;
-  text-align: center;
-  font-size: 1.6rem;
+.menuaction menu + div {
+   position: fixed;
+   height: 7rem;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   padding: 0 1.5rem;
+   background: url(images/am_pattern.png) repeat scroll left top #2D2D2D;
+   border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
 }
 
-menu[role="action"] > button:last-child:before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  background: url(images/am_pattern.png) repeat scroll left top #2D2D2D;
-  height: 7rem;
-  left: 0;
-  bottom: 0;
-  z-index: -1;
-  border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
+.menuaction menu + div > button {
+   text-shadow: 0.1rem 0.1rem 0 rgba(255,255,255,0.3);
+   color: #333;
+   font-weight: 500;
+   background: #fafafa url(images/default.png) repeat-x left bottom / auto 100%;
+   border: solid 0.1rem #a6a6a6;
+   margin-top: 1.5rem;
+   text-align: center;
+   font-size: 1.6rem;
+   width: 100%;
 }
 
 /* Press state */
-menu[role="action"] > button:active {
+.menuaction menu > button:active {
   background-color: #006f86;
   color: #333;
   text-shadow: 0 0.1rem 0 rgba(255, 255, 255, 0.25);
 }
 
-menu[role="action"] > button:last-child:active {
+.menuaction menu + div > button:active {
   border: solid 0.1rem #008aaa;
   background: #008aaa;
   color: #333;
 }
 
 /* Disabled */
-menu[role="action"] > button[disabled] {
+.menuaction menu > button[disabled] {
   background: #4d4d4d;
   color: #333;
   text-shadow: none;

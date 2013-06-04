@@ -28,30 +28,22 @@
          </TR></TABLE>
       </HEADER>
       <DIV id="p0" class="body" aria-expanded="true">
-         <IMG id="p0_netImage"/>
-         <DIV class="i18n" id="p0_top"></DIV>
+         <DIV class="user">
+            <IMG id="p0_userImage"/>
+            <IMG id="p0_netImage"/>
+            <DIV id="p0_userName"></DIV>
+            <DIV id="p0_userScreenName"></DIV>
+         </DIV>
+         <BUTTON id="initLogin" class="i18n recommend"></BUTTON>
+         <DIV class="i18n" id="banner"></DIV>
          <DIV id="p0_bot">
             <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
             <SPAN id="p0_copy">&copy; Jaxo, Inc. 2013</SPAN>
          </DIV>
       </DIV>
-      <DIV id="p1" class="body">
-         <HEADER><H2 class="i18n" id="chooseNetwork"></H2></HEADER>
-         <MENU role="action" id="p1_choices"></MENU>
-      </DIV>
       <DIV id="p2" class="body">
-         <DIV class="p2_top">
-            <DIV class="p2_user">
-               <IMG id="p2_userImage"/>
-               <IMG id="p2_netImage"/>
-               <DIV id="p2_userName"></DIV>
-               <DIV id="p2_userScreenName"></DIV>
-            </DIV>
-            <DIV class="p2_msg">
-               <TEXTAREA class="i18n" id="p2_msgText"></TEXTAREA>
-               <SPAN id="p2_msgCount"></SPAN>
-            </DIV>
-         </DIV>
+         <TEXTAREA class="i18n textbox" id="p2_msgText"></TEXTAREA>
+         <SPAN id="p2_msgCount"></SPAN>
          <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
       </DIV>
       <DIV id="p3" class="body">
@@ -66,6 +58,10 @@
       </DIV>
    </SECTION>
 
+   <SECTION class="menuaction body">
+      <HEADER><H2 class="i18n" id="chooseNetwork"></H2></HEADER>
+      <MENU id="choices"></MENU>
+   </SECTION>
    <SECTION id="menupane" class="sidebar">
       <HEADER><H2 class="i18n" id="preferences"></H2></HEADER>
       <UL class="menuList">
