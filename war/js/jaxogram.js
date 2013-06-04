@@ -1,4 +1,4 @@
-var server_url = "http://13.jaxogram.appspot.com/jaxogram";
+var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
@@ -450,7 +450,7 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
-   document.getElementById("p2_userScreenName").textContent = users.getScreenName();
+   document.getElementById("p0_userScreenName").textContent = users.getScreenName();
    uploadPhotos();
 }
 
