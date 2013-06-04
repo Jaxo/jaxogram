@@ -250,11 +250,11 @@ var localeValues = {
       'es-ES':"Elija su red social",
       'pl-PL':"Wybierz swoją sieć społeczną"
    }, noNetwork: {
-      'en-US':"No social network actually defined.",
+      'en-US':"No social network sefined.",
       'fr-FR':"Il n'y a aucun réseau social défini.",
-      'pt-BR':"Nenhuma rede social atualmente definido.",
-      'es-ES':"No hay red social que actualmente definido.",
-      'pl-PL':"No społecznościowy aktualnie zdefiniowane."
+      'pt-BR':"Nenhuma rede social definido.",
+      'es-ES':"No hay red social que definido.",
+      'pl-PL':"No społecznościowy zdefiniowane."
    }, initLogin: {
       'en-US':"Connect to my network",
       'fr-FR':"Me connecter à mon réseau",
