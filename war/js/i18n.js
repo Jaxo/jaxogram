@@ -250,7 +250,7 @@ var localeValues = {
       'es-ES':"Elija su red social",
       'pl-PL':"Wybierz swoją sieć społeczną"
    }, noNetwork: {
-      'en-US':"No social network sefined.",
+      'en-US':"No social network defined.",
       'fr-FR':"Il n'y a aucun réseau social défini.",
       'pt-BR':"Nenhuma rede social definido.",
       'es-ES':"No hay red social que definido.",
