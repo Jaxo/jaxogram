@@ -76,7 +76,7 @@ var localeValues = {
       'es-ES':"Jaxogram funciona mejor cuando se instalan\ny se recuerda la configuración de conexión.\n\n¿Instalar ahora?",
       'pl-PL':"Jaxogram działa ładniejszy po zainstalowaniu\ni będzie pamiętać swój znak-w ustawieniach.\n\nZainstaluj go teraz?"
    }, installFailure: {
-      'en-US':"Install has failed",
+      'en-US':"Install failed",
       'fr-FR':"Echec de l'installation",
       'pt-BR':"Instalação falhou",
       'es-ES':"Instalar ha fallado",
@@ -160,7 +160,7 @@ var localeValues = {
       'es-ES':"No existe el fichero seleccionado",
       'pl-PL':"Nie wybrany plik"
    }, pickImageError: {
-      'en-US':"The selection of the photo has failed",
+      'en-US':"The selection of the photo failed",
       'fr-FR':"Erreur lors de la sélection de la photo",
       'pt-BR':"Falha seleccionando uma foto",
       'es-ES':"La falta seleccionar una foto",
@@ -184,7 +184,7 @@ var localeValues = {
       'es-ES':"¿Quién soy yo?",
       'pl-PL':"Kim jestem?"
    }, banner: {
-      'en-US':"Share camera and gallery photos on well known social networks",
+      'en-US':"Share camera & gallery photos on well-known social networks",
       'fr-FR':"Partagez caméra et galerie photos sur la plupart des réseaux sociaux",
       'pt-BR':"Compartilhar câmera e galeria de fotos na maioria das redes sociais",
       'es-ES':"Compartir de la cámara y galería de fotos en la mayoría de las redes sociales",
@@ -226,11 +226,11 @@ var localeValues = {
       'es-ES':"¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?",
       'pl-PL':"Czy na pewno chcesz usunąć\nlogowanie dla \"%1\" na %2?"
    }, p2_msgText: {
-      'en-US':"Type a comment here (title or tweet)",
+      'en-US':"Type here (caption or tweet)",
       'fr-FR':"Entrez ici un commentaire (titre ou tweet)",
       'pt-BR':"Digite um comentário aqui (título ou twittar)",
       'es-ES':"Escriba un comentario aquí (título o Twitter)",
-      'pl-PL':"Wpisz komentarz tutaj (tytuł lub tweet)"
+      'pl-PL':"Wpisz komentarz tutaj (podpis lub tweet)"
    }, photosUploaded: {
       'en-US':"%1 photo(s) successfully uploaded",
       'fr-FR':"%1 photo(s) insérée(s)",
@@ -371,9 +371,9 @@ var localeValues = {
       'pl-PL':"Płatność z procesu.\nProszę, później ponownie nacisnąć przycisk kupna"
    }, cancelPay: {
       'en-US':"Since %1 your payment has not been confirmed. Should we cancel?",
-      'fr-FR':"Depuis %1, votre paiement n'a pas été confirmé. Faut-il l'annuler?",
+      'fr-FR':"Depuis %1 votre paiement n'a pas été confirmé. Faut-il l'annuler?",
       'pt-BR':"Desde %1 o seu pagamento não foi confirmado. Devemos cancelar?",
-      'es-ES':"Desde %1, el pago no ha sido confirmado. ¿Hay que cancelar?",
+      'es-ES':"Desde %1 el pago no ha sido confirmado. ¿Hay que cancelar?",
       'pl-PL':"Od %1 płatność nie została potwierdzona. Czy mamy zrezygnować?"
    }
 }
