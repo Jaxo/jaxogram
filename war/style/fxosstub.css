@@ -550,8 +550,8 @@ li[aria-selected=true], li[role=listbox] {
   height: 1.8rem;
 }
 
-/* ------ Page 0 ------*/
-#p0 {
+/* ------ Page 1 ------*/
+#p1 {
    text-shadow:#aaa 0px 1px 0, #000 0 -1px 0;
 }
 
@@ -566,13 +566,13 @@ li[aria-selected=true], li[role=listbox] {
   /* -moz-transition: height 500ms; */
 }
 
-#p0_userImage {
+#p1_userImage {
   float: left;
   margin-right: 1rem;
   height: 3.5rem;
 }
 
-#p0_netImage {
+#p1_netImage {
   margin-right: 0.5rem;
   float: right;
 }
@@ -588,14 +588,14 @@ li[aria-selected=true], li[role=listbox] {
    -moz-box-sizing: border-box;
    -webkit-box-sizing: border-box;
 }
-#p0_bot {
+#p1_bot {
     position: absolute;
     width: 10rem;
     height: 8rem;
     right: 1rem;
     bottom: 4.5rem; /* reduced: 0rem; */
 }
-#p0_copy {
+#p1_copy {
     position: absolute;
     right: 0;
     bottom: 0;

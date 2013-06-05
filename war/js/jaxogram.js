@@ -261,21 +261,21 @@ function onNetworkChange()
       connectTo.style.display = "";
       document.getElementById("initLogin").style.visibility = "";
       document.getElementById("mn_userName").textContent = users.getUserName();
-      document.getElementById("p0_userName").innerHTML = users.getUserName();
-      document.getElementById("p0_userImage").src = users.getImageUrl();
+      document.getElementById("p1_userName").innerHTML = users.getUserName();
+      document.getElementById("p1_userImage").src = users.getImageUrl();
       document.getElementById("mn_netImage").src = netImage;
-      document.getElementById("p0_netImage").src = netImage;
-      document.getElementById("p0_userScreenName").textContent = users.getScreenName();
+      document.getElementById("p1_netImage").src = netImage;
+      document.getElementById("p1_userScreenName").textContent = users.getScreenName();
    }else {
       var elt = document.getElementById("initLogin");
       elt.style.visibility = "visible";
       elt.onclick = authorize;
       document.getElementById("mn_user").style.display = "none";
-      document.getElementById("p0_userName").innerHTML = i18n("noNetwork");
-      document.getElementById("p0_userImage").src = "../images/none.png";
+      document.getElementById("p1_userName").innerHTML = i18n("noNetwork");
+      document.getElementById("p1_userImage").src = "../images/none.png";
       document.getElementById("mn_netImage").src = "../images/none.png";
-      document.getElementById("p0_netImage").src = "../images/none.png";
-      document.getElementById("p0_userScreenName").textContent = "";
+      document.getElementById("p1_netImage").src = "../images/none.png";
+      document.getElementById("p1_userScreenName").textContent = "";
       document.getElementById("connectTo").style.display = "none";
    }
 }
@@ -462,7 +462,7 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
-   document.getElementById("p0_userScreenName").textContent = users.getScreenName();
+   document.getElementById("p1_userScreenName").textContent = users.getScreenName();
    uploadPhotos();
 }
 
@@ -761,7 +761,7 @@ function pickPhoto(event) {
 }
 
 function finishUpload() {
-   expandPage("p0"); // stop p2!
+   expandPage("p1"); // stop p2!
    showToolbar(0);
    if (upldPhotosCount > 0) {
       simpleMsg("info", i18n('photosUploaded', upldPhotosCount));
