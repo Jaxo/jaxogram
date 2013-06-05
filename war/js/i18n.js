@@ -1,3 +1,15 @@
+/*
+| This script is a simple and efficient way to do I18n
+| This is the unique source to modify for adding languages.
+|
+| - you *must* use UTF-8!
+| - %1 %2 ... are variables to be substituted by their values at run time
+|
+| localeValues['language'] (i.e. the first sublist) enumerates the languages
+| this app understood.  Adding, for instance,  'tli-KP': ""  to
+| this sublist would enable Klingon, as spoken on Krios Prime.  If some entries
+| have not been translated, the default translation (en-US)  will be used.
+*/
 var locale = "en-US";
 var localeValues = {
    language: {
@@ -417,4 +429,8 @@ function i18nDate(time) {
       date.getHours(),
       date.getMinutes()
    );
+}
+
+function i18nLangList() {
+   return Object.keys(localeValues['language']);
 }

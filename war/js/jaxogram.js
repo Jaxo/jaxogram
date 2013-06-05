@@ -142,7 +142,6 @@ window.onload = function() {
    }
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn_albums").onclick = listAlbums;
-   document.getElementById("changeLanguage").addEventListener("click", changeLanguage);
    // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
    document.getElementById("pickPhoto").onclick = pickPhoto;
    document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
@@ -162,6 +161,7 @@ window.onload = function() {
    );
    // document.getElementById("mn_albums").style.display = "none";
    var dfltLocale = navigator.language || navigator.userLanguage;
+   formatLanguageList();
    translateBody(dfltLocale);
    formatUsersList(false);
    formatNetworkChoices();
@@ -278,6 +278,18 @@ function onNetworkChange()
       document.getElementById("p0_userScreenName").textContent = "";
       document.getElementById("connectTo").style.display = "none";
    }
+}
+
+function formatLanguageList() {
+   var listElt = document.getElementById("changeLanguage");
+   var languages = i18nLangList();
+   for (var i=0, max=languages.length; i < max; ++i) {
+      var itmElt = document.createElement("LI");
+      itmElt.className = "i18n";
+      itmElt.id = languages[i];
+      listElt.appendChild(itmElt);
+   }
+   listElt.addEventListener("click", changeLanguage);
 }
 
 function formatUsersList(isUserRequired) {
