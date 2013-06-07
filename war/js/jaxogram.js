@@ -97,7 +97,6 @@ window.onload = function() {
    if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
       simpleMsg("warning", i18n("testMode", server_url));
    }
-   createDispatcher();
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
@@ -406,17 +405,14 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
    elt.appendChild(liElt);
    for (var i=0, max=albums.length; i < max; ++i) {
       var album = albums[i];
-      var title = album.title;
-      var description = album.description;
+      var title = album['title'];
+      var description = album['description'];
+      var thumbUrl = album['thumbnailUrl'];
       if (!title || (title.length === 0)) title = "no title";
       if (!description || (description.length === 0)) description = "";
-
+      if (!thumbUrl || (thumbUrl.length === 0)) thumbUrl = "../images/unknSmall.png";
       var imgElt = document.createElement("IMG");
-      if (album.thumbnailUrl && (album.thumbnailUrl.length !== 0)) {
-         imgElt.src = album.thumbnailUrl;
-      }else {
-         imgElt.src = "../images/unknSmall.png";
-      }
+      imgElt.src = thumbUrl;
       var spanElt = document.createElement("SPAN");
       spanElt.appendChild(document.createTextNode(title));
       var smallElt = document.createElement("SMALL");
@@ -427,8 +423,8 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       divElt.appendChild(smallElt);
 
       liElt = document.createElement("LI");
-      liElt.id = album.id;
-      if (selAlbumId === album.id) {
+      liElt.id = album['id'];
+      if (selAlbumId === liElt.id) {
          liElt.setAttribute("aria-selected", "true");
          isSelAlbumOK = true;
       }
@@ -634,7 +630,7 @@ function getVerifier() {
             }else {
                win.close();
                var obj = JSON.parse(val);
-               registerUser(obj.VRF, obj.NET);
+               registerUser(obj['VRF'], obj['NET']);
                formatUsersList(false);
             }
          }
@@ -656,11 +652,11 @@ function registerUser(verifier, net) {
          var obj = JSON.parse(val);
          // alert(dump(obj));
          users.addUser(
-            obj.userName,
-            obj.accessPass,
+            obj['userName'],
+            obj['accessPass'],
             net,
-            obj.imageUrl,
-            obj.screenName
+            obj['imageUrl'],
+            obj['screenName']
          );
          formatUsersList(false);
       },
@@ -719,7 +715,7 @@ function createAlbum(isDirect) {
             what,
             function(albums) {
                var newAlbum = albums[0];
-               users.setAlbum(newAlbum.id, newAlbum.title);
+               users.setAlbum(newAlbum['id'], newAlbum['title']);
                formatAlbumsList(
                   albums,
                   document.getElementById("mn_albums").getElementsByTagName("UL")[0]
@@ -945,17 +941,18 @@ function uploadPhoto(imgBlob) {
       "postImageFile&NET=" + users.getNet(),
       formData,
       function(val) {        // whenDone
-         try {
-            var media = JSON.parse(val).entities.media[0];
-            var idStr = media.id_str;
-            var expandedUrl = media.expanded_url;
-         }catch (error) {
-         }
          /*
          Response:
             var res = JSON.parse(xhr.responseText);
             var id_str = res.entities.media[0].id_str;
             var ex_url = res.entities.media[0].expanded_url;
+         *//*
+         try {
+            var media = JSON.parse(val)['entities']['media'][0];
+            var idStr = media.id_str;
+            var expandedUrl = media['expanded_url'];
+         }catch (error) {
+         }
          */
          ++upldPhotosCount;
          uploadPhotos();
@@ -987,7 +984,7 @@ function issueRequestStd(what, whenDone) {
 function issueRequest(method, op, values, whenDone, whenFailed) {
    var query = "?OP=" + op + "&V=1";    // REST version #1
    if (method === "GET") query += values;
-   var xhr = new XMLHttpRequest({mozSystem: true});
+   var xhr = new XMLHttpRequest({'mozSystem': true});
    if (xhr.withCredentials === undefined) {
       simpleMsg("error", "Sorry: can't do cross-site requests");
       return;
@@ -1106,4 +1103,17 @@ function showActionMenu() {
 
 function hideActionMenu() {
    document.querySelector(".menuaction").style.display="none";
+}
+
+function getQueryParams() {
+   var query = window.location.search.substr(1).split('&');
+   if (query === "") return {};
+   var params = {};
+   for (var i=0; i < query.length; ++i) {
+       var param = query[i].split('=');
+       if (param.length === 2) {
+          params[param[0]] = decodeURIComponent(param[1].replace(/\+/g, " "));
+       }
+   }
+   return params;
 }

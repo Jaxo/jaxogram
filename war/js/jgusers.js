@@ -1,49 +1,47 @@
 function JgUsers() {
-   createLocalStorageIfNeeded();
    var selectedIndex = 0;
    var that = this;
    var users = [];
    readUsers();
 
    this.getAccessPass = function() {
-      return users[selectedIndex].p;
+      return users[selectedIndex]["p"];
    }
    this.getUserName = function() {
-      return users[selectedIndex].n;
+      return users[selectedIndex]["n"];
    }
    this.getNet = function() {
-      return users[selectedIndex].t;
+      return users[selectedIndex]["t"];
    }
    this.getImageUrl = function() {
-      return users[selectedIndex].i || "../images/none.png";
+      return users[selectedIndex]["i"] || "../images/none.png";
    }
    this.getScreenName = function() {
-      var val = users[selectedIndex].s;
+      var val = users[selectedIndex]["s"];
       if (val) {
          return "@" + val;
       }else {
-         val = users[selectedIndex].tt;
+         val = users[selectedIndex]["tt"];
          if (val) {
             return val;
          }else {
             return "";
          }
       }
-      return users[selectedIndex].s;
    }
    this.getAlbumTitle = function() {
       if (users.length != 0) {
-         return users[selectedIndex].tt;
+         return users[selectedIndex]["tt"];
       }else {
          return null;
       }
    }
    this.getAlbumId = function() {
-      return users[selectedIndex].ai;
+      return users[selectedIndex]["ai"];
    }
    this.setAlbum = function(albumId, albumTitle) {
-      users[selectedIndex].ai = albumId;
-      users[selectedIndex].tt = albumTitle;
+      users[selectedIndex]["ai"] = albumId;
+      users[selectedIndex]["tt"] = albumTitle;
       rewriteUsers();
    }
    this.hasSome = function() {
@@ -62,9 +60,9 @@ function JgUsers() {
       removeIf(
          function(user, at, users) {
             return (
-               ((userName == null)||(userName === "")||(userName === user.n)) &&
-               ((userPass == null)||(userPass === "")||(userPass === user.p)) &&
-               ((userNet == null)||(userNet === "")||(userNet === user.t))
+               ((userName == null)||(userName === "")||(userName === user["n"])) &&
+               ((userPass == null)||(userPass === "")||(userPass === user["p"])) &&
+               ((userNet == null)||(userNet === "")||(userNet === user["t"]))
             );
          }
       );
@@ -80,14 +78,14 @@ function JgUsers() {
    ) {
       users.forEach(
          function(user, at, users) {
-            doFunction(user.n, user.p, user.tt, at == selectedIndex, user.t);
+            doFunction(user["n"], user["p"], user["tt"], at == selectedIndex, user["t"]);
          }
       );
    }
    this.cleanUp = function() {
       removeIf(
          function(user, at, users) {
-            return ((user.n == null) || (user.p == null));
+            return ((user["n"] == null) || (user["p"] == null));
          }
       );
    }
@@ -132,11 +130,11 @@ function JgUsers() {
 }
 
 function JgUserItem(userName, userPass, userNet, userImg, userScreen) {
-   this.n = userName;
-   this.p = userPass;
-   this.t = userNet;
-   this.i = userImg; // image url
-   this.s = userScreen; // screen name
-   this.ai = null;   // album id
-   this.tt = null;   // album title
+   this["n"] = userName;
+   this["p"] = userPass;
+   this["t"] = userNet;
+   this["i"] = userImg; // image url
+   this["s"] = userScreen; // screen name
+   this["ai"] = null;   // album id
+   this["tt"] = null;   // album title
 }
