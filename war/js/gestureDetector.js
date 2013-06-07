@@ -93,9 +93,12 @@ var GestureDetector = (function() {
       // causes touchend events to list all touches as changed, so
       // warn if we see that bug
       if (e.type === 'touchend' && e.changedTouches.length > 1) {
-        console.warn('gesture_detector.js: spurious extra changed touch on ' +
-                     'touchend. See ' +
-                     'https://bugzilla.mozilla.org/show_bug.cgi?id=785554');
+        console.warn('GD bug 7');
+           /*
+           | gesture_detector.js: spurious extra changed touch on ' +
+           | 'touchend. See ' +
+           | 'https://bugzilla.mozilla.org/show_bug.cgi?id=785554');
+           */
       }
 
       for (var i = 0; i < e.changedTouches.length; i++) {
