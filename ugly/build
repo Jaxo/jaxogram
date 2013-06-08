@@ -1,0 +1,105 @@
+#!/bin/csh
+
+if (-d temp) then
+   rm -r temp
+endif
+mkdir temp
+mkdir temp/js
+mkdir temp/dist
+mkdir temp/dist/js
+mkdir temp/dist/style
+mkdir temp/dist/style/images
+mkdir temp/dist/applogos
+mkdir temp/dist/images
+
+echo Obfuscating.  Wait: it may take several tenths of seconds.
+
+#--- list here all the names to be hidden
+# Note: I removed p2_msgtext since it is also use as an ID for the style
+set to_mangle = ( \
+   language en-US \
+   fr-FR pt-BR es-ES pl-PL months date btnInstall betterInstall \
+   installFailure safariInstall OK cancel info warning error confirm \
+   preferences edit testMode noFileApi noFileApiProp noFileSelected \
+   pickImageError uploadPhoto pickPhoto whoAmI banner newLogin badLogin \
+   loginAs newAlbum authDenied revokeAccess photosUploaded \
+   albumCreated chooseNetwork noNetwork initLogin picasaLogin login \
+   passwd selectOrCreateAlbum createAlbumProlog1 createAlbumProlog2 \
+   title description albumDescr photoAlbum albumTitle email phone gender \
+   birthday grantedPay deniedPay pendingPay cancelPay \
+   install_changed installed uninstalled failed unsupported install_forIOS\
+)
+
+set ti_mangle = ( pickImageError )
+
+#--- here the externals for google closure compiler
+cat >temp/externs.js <<END_EXTERNALS
+Navigator.prototype.mozApps;
+
+function Apps() {}
+Apps.prototype.getSelf = function() {};
+Apps.prototype.install = function(url, opt_args) {};
+Apps.prototype.getInstalled = function() {};
+
+HTMLCanvasElement.prototype.toBlob = function(callback, opt_type, opt_args) {};
+Event.prototype.isTrusted;
+END_EXTERNALS
+
+# build a sed script to mangle most of our strings
+set vals = (a b c d e f g h i j k l m n o p q r s t u v w x y z)
+set ix = 1;
+set jx = 0;
+set p = "";
+echo "# sed script" > temp/sedscript
+foreach name ($to_mangle)
+   if ($ix > ${#vals}) then
+      @ jx++
+      set p = $vals[$jx]
+      set ix = 1
+   endif
+   echo s\`\(\'\|\"\)$name\(\'\|\"\)\`\\1${p}${vals[$ix]}\\2\` >> temp/sedscript
+   @ ix++
+end
+
+# modify index.html to point at the new css and js
+sed -e '/-- REPLACED --/, /-- REPLACEMENT/d' -e '/REPLACE END --/d' ../war/index.html >temp/index.html
+
+# mangle our strings in index.html
+sed -r -f temp/sedscript temp/index.html > temp/dist/index.html
+
+# mangle our strings in all js files
+foreach file(../war/js/*.js)
+   sed -r -f temp/sedscript $file > temp/js/`basename $file`
+end
+
+# compress the style sheets
+foreach file(../war/style/*.css)
+   java -classpath ../.. -jar yui.jar $file >> temp/dist/style/jaxogram.min.css
+end
+
+# cook the proper java command to obfuscate all js files (closure compiler)
+set jarcmd = "java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --externs temp/externs.js --js_output_file=temp/dist/js/jaxogram.min.js"
+foreach file(temp/js/*.js)
+   set jarcmd = "${jarcmd} --js=${file}"
+end
+
+# do the obfuscation
+$jarcmd >& temp/warn
+
+# copy other required files to dist
+cp -p ../war/manifest.webapp temp/dist
+cp -p ../war/favicon.ico temp/dist
+cp -p ../war/images/* temp/dist/images
+cp -p ../war/style/images/* temp/dist/style/images
+cp -p ../war/applogos/* temp/dist/applogos
+
+echo All done.  Result in dist.
+
+# zip jaxogram -x */.DS_Store -r
+# manifest.webapp
+# index.html
+# favicon.ico
+# js
+# style
+# applogos
+# images

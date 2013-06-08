@@ -48,7 +48,7 @@ var localeValues = {
       'pt-BR':"Polonês",
       'es-ES':"Polaco",
       'pl-PL':"Polski"
-   }, months: {
+   }, 'months': {
       'en-US': [
           "January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"
