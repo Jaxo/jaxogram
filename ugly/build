@@ -12,7 +12,7 @@ mkdir temp/dist/style/images
 mkdir temp/dist/applogos
 mkdir temp/dist/images
 
-echo Obfuscating.  Wait: it may take several tenths of seconds.
+echo Obfuscating.  Wait, it will take about ten seconds....
 
 #--- list here all the names to be hidden
 # Note: I removed p2_msgtext since it is also use as an ID for the style
@@ -93,7 +93,13 @@ cp -p ../war/images/* temp/dist/images
 cp -p ../war/style/images/* temp/dist/style/images
 cp -p ../war/applogos/* temp/dist/applogos
 
-echo All done.  Result in dist.
+# zip it
+if (-e jaxogram.zip) then
+   rm jaxogram.zip
+endif
+cd temp/dist
+zip -r ../../jaxogram.zip * >& ../zipped
+echo All done.  Result in jaxogram.zip
 
 # zip jaxogram -x */.DS_Store -r
 # manifest.webapp
