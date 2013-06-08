@@ -93,7 +93,7 @@ var GestureDetector = (function() {
       // causes touchend events to list all touches as changed, so
       // warn if we see that bug
       if (e.type === 'touchend' && e.changedTouches.length > 1) {
-        console.warn('GD bug 7');
+        console.warn('GD bg7');
            /*
            | gesture_detector.js: spurious extra changed touch on ' +
            | 'touchend. See ' +
@@ -143,7 +143,7 @@ var GestureDetector = (function() {
 
   GD.prototype.emitEvent = function(type, detail) {
     if (!this.target) {
-      console.error('Attempt to emit event with no target');
+      console.error('GD er8'); // 'Attempt to emit event with no target');
       return;
     }
 

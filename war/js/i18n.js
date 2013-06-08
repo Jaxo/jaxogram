@@ -237,7 +237,7 @@ var localeValues = {
       'pt-BR':"Tem certeza de que deseja excluir\no %2 login para \"%1\"?",
       'es-ES':"¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?",
       'pl-PL':"Czy na pewno chcesz usunąć\nlogowanie dla \"%1\" na %2?"
-   }, 'p2_msgText': {
+   }, 'enterTweet': {
       'en-US':"Type here (caption or tweet)",
       'fr-FR':"Entrez ici un commentaire (titre ou tweet)",
       'pt-BR':"Digite um comentário aqui (título ou twittar)",

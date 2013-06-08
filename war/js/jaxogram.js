@@ -152,10 +152,10 @@ window.onload = function() {
    document.getElementById("cancelEdit").onclick = cancelEditPhoto;
    document.getElementById("validateEdit").onclick = validateEditPhoto;
    document.getElementById("logins").onclick = changeLogin;
-   document.getElementById("p2_msgText").addEventListener(
+   document.getElementById("enterTweet").addEventListener(
       "input", onTextEntered, false
    );
-   document.getElementById("p2_msgText").addEventListener(
+   document.getElementById("enterTweet").addEventListener(
       "keydown", onTextEntered, false
    );
    // document.getElementById("mn_albums").style.display = "none";
@@ -301,7 +301,7 @@ function formatUsersList(isUserRequired) {
          ulElt.removeChild(ulElt.lastChild);
       }
       itmElt = document.createElement("LI");
-      itmElt.className = "i18n";
+      itmElt.className = "i18n addItem";
       itmElt.id = "newLogin";
       itmElt.onclick = function(event) {
          authorize();
@@ -395,7 +395,7 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       elt.removeChild(elt.lastChild);
    }
    liElt = document.createElement("LI");
-   liElt.className = "i18n";
+   liElt.className = "i18n addItem";
    liElt.id = "newAlbum";
    liElt.onclick = function(event) {
       createAlbum(true);
@@ -727,7 +727,7 @@ function createAlbum(isDirect) {
 }
 
 function pickPhoto(event) {
-   document.getElementById("p2_msgText").value = "";
+   document.getElementById("enterTweet").value = "";
    document.getElementById("p2_msgCount").textContent = "";
    if (typeof MozActivity !== "undefined") {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
@@ -934,7 +934,7 @@ function uploadPhoto(imgBlob) {
    formData.append("MAX_FILE_SIZE", "2000000");
 // formData.append("IMG", file.name.substr(-3));
    if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
-   formData.append("TIT", document.getElementById("p2_msgText").value);
+   formData.append("TIT", document.getElementById("enterTweet").value);
    formData.append("upldFile", imgBlob);
    issueRequest(
       "POST",

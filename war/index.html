@@ -25,7 +25,7 @@
 <BODY>
    <SECTION id="corepane" class="drawer">
       <HEADER role="main">
-         <DIV id="btnMain"><IMG class="action-icon" role="menu" id="btnMainImage"/></DIV>
+         <DIV id="btnMain"><IMG class="action-icon menu" id="btnMainImage"/></DIV>
          <H1>Jaxogram <SMALL>web</SMALL></H1>
          <TABLE><TR>
             <TD id="btnInstall" class="i18n"></TD>
@@ -38,24 +38,24 @@
             <DIV id="p1_userName"></DIV>
             <DIV id="p1_userScreenName"></DIV>
          </DIV>
-         <BUTTON id="initLogin" class="i18n recommend"></BUTTON>
-         <DIV class="i18n" id="banner"></DIV>
+         <BUTTON id="initLogin" class="i18n recommend invisible"></BUTTON>
+         <DIV class="i18n banner" id="banner"></DIV>
          <DIV id="p1_bot">
             <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
             <SPAN id="p1_copy">&copy; Jaxo, Inc. 2013</SPAN>
          </DIV>
       </DIV>
       <DIV id="p2" class="body">
-         <TEXTAREA class="i18n textbox" id="p2_msgText"></TEXTAREA>
+         <TEXTAREA class="i18n textbox" id="enterTweet"></TEXTAREA>
          <SPAN id="p2_msgCount"></SPAN>
          <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
       </DIV>
       <DIV id="p3" class="body">
          <HEADER>
-            <DIV id="cancelEdit"><IMG role="cancel" class="action-icon"/></DIV>
+            <DIV id="cancelEdit"><IMG class="action-icon cancel"/></DIV>
             <H2 class="i18n" id="edit"></H2>
             <TABLE><TR>
-               <TD><IMG id="validateEdit" role="done" class="action-icon"/></TD>
+               <TD><IMG id="validateEdit" class="action-icon done"/></TD>
             </TR></TABLE>
          </HEADER>
          <DIV class="imgbox"><IMG alt="Photo" id="p3_picture"/></DIV>
@@ -86,18 +86,18 @@
       <DIV><DIV>
       <TABLE>
          <TR>
-            <TD class="action-icon" role="cancel"></TD>
+            <TD class="action-icon cancel"></TD>
             <TD><IMG src="style/images/separator.png"></TD>
             <TD>&nbsp;</TD>
             <TD><IMG src="style/images/separator.png"/></TD>
-            <TD class="action-icon" role="ok"></TD>
+            <TD class="action-icon ok"></TD>
          </TR><TR>
             <TD colspan="5" style="text-align:center">&nbsp;</TD>
          </TR>
       </TABLE>
       </DIV></DIV>
    </SECTION>
-   <SECTION id="progresspane"><PROGRESS></PROGRESS></SECTION>
+   <SECTION class="invisible" id="progresspane"><PROGRESS></PROGRESS></SECTION>
 
    <!-- Fallback if "no "Pick" MozActivity -->
    <INPUT type='file' id='upldFile' multiple accept="image/"/>
@@ -105,12 +105,12 @@
    <FOOTER>
      <TABLE id="footerTable">
         <TR>
-          <TD id="pickPhoto" class="action-icon" role="camera"></TD>
-          <TD id="connectTo" class="action-icon" role="earth"></TD>
+          <TD id="pickPhoto" class="action-icon camera"></TD>
+          <TD id="connectTo" class="action-icon earth"></TD>
         </TR><TR>
-          <TD id="uploadPhoto" class="action-icon" role="send"></TD>
-          <TD id="editPhoto" class="action-icon" role="edit_picture"></TD>
-          <TD id="cancelPhoto" class="action-icon" role="delete"></TD>
+          <TD id="uploadPhoto" class="action-icon send"></TD>
+          <TD id="editPhoto" class="action-icon edit_picture"></TD>
+          <TD id="cancelPhoto" class="action-icon delete"></TD>
         </TR><TR role="radiogroup" id="imgFilters">
         </TR>
      </TABLE>

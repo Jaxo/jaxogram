@@ -14,15 +14,13 @@ mkdir temp/dist/images
 
 echo Obfuscating.  Wait, it will take about ten seconds....
 
-#--- list here all the names to be hidden
-# Note: I removed p2_msgtext since it is also use as an ID for the style
+#--- list here all the names to be mangled
 set to_mangle = ( \
-   language en-US \
-   fr-FR pt-BR es-ES pl-PL months date btnInstall betterInstall \
+   language months date btnInstall betterInstall \
    installFailure safariInstall OK cancel info warning error confirm \
    preferences edit testMode noFileApi noFileApiProp noFileSelected \
    pickImageError uploadPhoto pickPhoto whoAmI banner newLogin badLogin \
-   loginAs newAlbum authDenied revokeAccess photosUploaded \
+   loginAs newAlbum authDenied revokeAccess enterTweet photosUploaded \
    albumCreated chooseNetwork noNetwork initLogin picasaLogin login \
    passwd selectOrCreateAlbum createAlbumProlog1 createAlbumProlog2 \
    title description albumDescr photoAlbum albumTitle email phone gender \
@@ -30,9 +28,7 @@ set to_mangle = ( \
    install_changed installed uninstalled failed unsupported install_forIOS\
 )
 
-set ti_mangle = ( pickImageError )
-
-#--- here the externals for google closure compiler
+#--- the externals for google closure compiler
 cat >temp/externs.js <<END_EXTERNALS
 Navigator.prototype.mozApps;
 
