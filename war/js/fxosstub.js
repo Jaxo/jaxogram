@@ -5,7 +5,7 @@ function Install() {
       request.onsuccess = function () {
          if (this.result) {
             dispatcher.post(
-               "install_changed", "installed", this.result.manifest.version
+               "z_install_changed", "z_installed", this.result.manifest.version
             );
          }else {
             that.installUrl = (
@@ -18,57 +18,57 @@ function Install() {
                   var req2 = navigator.mozApps.install(that.installUrl);
                   req2.onsuccess = function(data) {
                      dispatcher.post(
-                        "install_changed",
-                        "installed",
+                        "z_install_changed",
+                        "z_installed",
                         req2.result.manifest.version
                      );
                      //*/ alert("Bingo!");
                   };
                   req2.onerror = function() {
-                     dispatcher.post("install_changed", "failed", this.error);
+                     dispatcher.post("z_install_changed", "z_failed", this.error);
                   };
                }catch (error) {
-                  dispatcher.post("install_changed", "failed", error);
+                  dispatcher.post("z_install_changed", "z_failed", error);
                }
             };
-            dispatcher.post("install_changed", "uninstalled");
+            dispatcher.post("z_install_changed", "z_uninstalled");
          }
       };
       request.onerror = function(error) {
-         dispatcher.post("install_changed", "failed", error);
+         dispatcher.post("z_install_changed", "z_failed", error);
       };
    }else if ((typeof chrome !== "undefined") && chrome.webstore && chrome.app) {
       if (chrome.app.isInstalled) {
-         dispatcher.post("install_changed", "installed");
+         dispatcher.post("z_install_changed", "z_installed");
       }else {
          this.doIt = function() {
             chrome.webstore.install(
                null,
                function() {
-                  dispatcher.post("install_changed", "installed");
+                  dispatcher.post("z_install_changed", "z_installed");
                },
                function(error) {
-                  dispatcher.post("install_changed", "failed", error);
+                  dispatcher.post("z_install_changed", "z_failed", error);
                }
             );
          };
-         dispatcher.post("install_changed", "uninstalled");
+         dispatcher.post("z_install_changed", "z_uninstalled");
       }
    }else if (typeof window.navigator.standalone !== "undefined") {
       if (window.navigator.standalone) {
-         dispatcher.post("install_changed", "installed");
+         dispatcher.post("z_install_changed", "z_installed");
       }else {
          /*
          | Right now, just asks that something show a UI element mentioning
          | how to install using Safari's "Add to Home Screen" button.
          */
          this.doIt = function() {
-            dispatcher.post("install_forIOS", navigator.platform.toLowerCase());
+            dispatcher.post("z_install_forIOS", navigator.platform.toLowerCase());
          };
-         dispatcher.post("install_changed", "uninstalled");
+         dispatcher.post("z_install_changed", "z_uninstalled");
       }
    }else {
-      dispatcher.post("install_changed", "unsupported");
+      dispatcher.post("z_install_changed", "z_unsupported");
    }
    return this;
 }
@@ -76,21 +76,21 @@ function Install() {
 function setInstallButton(buttonId) {
    var buttonElt = document.getElementById(buttonId);
    dispatcher.on(
-      "install_changed",
+      "z_install_changed",
       function action(state) {
          buttonElt.style.display = (
-            (state == "uninstalled")? "table-cell" : "none"
+            (state == "z_uninstalled")? "table-cell" : "none"
          );
-         if (state == "failed") {
-            alert(i18n("installFailure"));
+         if (state == "z_failed") {
+            alert(i18n("z_installFailure"));
          }
       }
    );
    dispatcher.on(
-      "install_forIOS",
+      "z_install_forIOS",
       function action(state) {
          buttonElt.style.display = "none";
-         alert(i18n("safariInstall"));
+         alert(i18n("z_safariInstall"));
       }
    );
    var install = new Install();

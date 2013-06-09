@@ -37,7 +37,7 @@ function alertMsg(idTitle, eltContents, whenDone) {
 }
 
 function confirmMsg(text, whenDone) {
-   showMsg("confirm", [makeTextField(text)], function() { hideMsg(); whenDone(); });
+   showMsg("z_confirm", [makeTextField(text)], function() { hideMsg(); whenDone(); });
 }
 
 function simpleMsg(idTitle, text) {

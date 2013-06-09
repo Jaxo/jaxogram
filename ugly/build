@@ -16,30 +16,16 @@ echo Obfuscating.  Wait, it will take about ten seconds....
 
 #--- list here all the names to be mangled
 set to_mangle = ( \
-   language months date btnInstall betterInstall \
-   installFailure safariInstall OK cancel info warning error confirm \
-   preferences edit testMode noFileApi noFileApiProp noFileSelected \
-   pickImageError whoAmI banner newLogin badLogin \
-   loginAs newAlbum authDenied revokeAccess enterTweet photosUploaded \
-   albumCreated chooseNetwork noNetwork initLogin picasaLogin login \
-   passwd selectOrCreateAlbum createAlbumProlog1 createAlbumProlog2 \
-   albumDescr photoAlbum albumTitle email phone gender \
-   birthday grantedPay deniedPay pendingPay cancelPay \
-   install_changed installed uninstalled failed unsupported install_forIOS\
-)
-
-set to_mangle_original = ( \
-   language months date btnInstall betterInstall \
-   installFailure safariInstall OK cancel info warning error confirm \
-   preferences edit testMode noFileApi noFileApiProp noFileSelected \
-   pickImageError whoAmI banner newLogin badLogin \
-   loginAs newAlbum authDenied revokeAccess enterTweet photosUploaded \
-   albumCreated chooseNetwork noNetwork initLogin picasaLogin login \
-   passwd selectOrCreateAlbum createAlbumProlog1 createAlbumProlog2 \
-   title description \
-   albumDescr photoAlbum albumTitle email phone gender \
-   birthday grantedPay deniedPay pendingPay cancelPay \
-   install_changed installed uninstalled failed unsupported install_forIOS\
+   z_language z_months z_date z_btnInstall z_betterInstall z_installFailure \
+   z_safariInstall z_OK z_cancel z_info z_warning z_error z_confirm z_preferences \
+   z_edit z_testMode z_noFileApi z_noFileApiProp z_noFileSelected z_pickImageError \
+   z_whoAmI z_banner z_newLogin z_badLogin z_loginAs z_newAlbum z_authDenied \
+   z_revokeAccess z_enterTweet z_photosUploaded z_albumCreated z_chooseNetwork \
+   z_noNetwork z_initLogin z_picasaLogin z_login z_passwd z_selectOrCreateAlbum \
+   z_createAlbumProlog1 z_createAlbumProlog2 z_title z_description z_albumDescr \
+   z_photoAlbum z_albumTitle z_email z_phone z_gender z_birthday z_grantedPay \
+   z_deniedPay z_pendingPay z_cancelPay z_install_changed z_installed \
+   z_uninstalled z_failed z_unsupported z_install_forIOS \
 )
 
 #--- the externals for google closure compiler

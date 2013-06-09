@@ -95,7 +95,7 @@ window.onload = function() {
       }
    }
    if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
-      simpleMsg("warning", i18n("testMode", server_url));
+      simpleMsg("z_warning", i18n("z_testMode", server_url));
    }
    users = new JgUsers();
    // users.cleanUp();
@@ -112,24 +112,24 @@ window.onload = function() {
    }
 
    dispatcher.on(
-      "install_changed",
+      "z_install_changed",
       function action(state, version) {
          if (
-            (state === "uninstalled") && !users.hasSome() &&
+            (state === "z_uninstalled") && !users.hasSome() &&
             (params.OP !== "backCall") &&
             (params.OP !== "share")
          ) {
             confirmMsg(
-               i18n('betterInstall'),
-               function() { document.getElementById("btnInstall").click(); }
+               i18n('z_betterInstall'),
+               function() { document.getElementById("z_btnInstall").click(); }
             );
-         }else if ((state === "installed") && version) {
+         }else if ((state === "z_installed") && version) {
             document.querySelector("header h1 small").textContent = version;
          }
       }
    );
 
-   setInstallButton("btnInstall");
+   setInstallButton("z_btnInstall");
    window.addEventListener("resize", fitImages, false);
    fitImages();
 
@@ -151,10 +151,10 @@ window.onload = function() {
    document.getElementById("p31").onclick = cancelEditPhoto;
    document.getElementById("p32").onclick = validateEditPhoto;
    document.getElementById("mn4").onclick = changeLogin;
-   document.getElementById("enterTweet").addEventListener(
+   document.getElementById("z_enterTweet").addEventListener(
       "input", onTextEntered, false
    );
-   document.getElementById("enterTweet").addEventListener(
+   document.getElementById("z_enterTweet").addEventListener(
       "keydown", onTextEntered, false
    );
    // document.getElementById("mn5").style.display = "none";
@@ -257,7 +257,7 @@ function onNetworkChange()
          }
       }
       connectTo.style.display = "";
-      document.getElementById("initLogin").style.visibility = "";
+      document.getElementById("z_initLogin").style.visibility = "";
       document.getElementById("mn3").textContent = users.getUserName();
       document.getElementById("p13").innerHTML = users.getUserName();
       document.getElementById("p11").src = users.getImageUrl();
@@ -265,11 +265,11 @@ function onNetworkChange()
       document.getElementById("p12").src = netImage;
       document.getElementById("p14").textContent = users.getScreenName();
    }else {
-      var elt = document.getElementById("initLogin");
+      var elt = document.getElementById("z_initLogin");
       elt.style.visibility = "visible";
       elt.onclick = authorize;
       document.getElementById("mn1").style.display = "none";
-      document.getElementById("p13").innerHTML = i18n("noNetwork");
+      document.getElementById("p13").innerHTML = i18n("z_noNetwork");
       document.getElementById("p11").src = "images/none.png";
       document.getElementById("mn2").src = "images/none.png";
       document.getElementById("p12").src = "images/none.png";
@@ -301,12 +301,12 @@ function formatUsersList(isUserRequired) {
       }
       itmElt = document.createElement("LI");
       itmElt.className = "i18n addItem";
-      itmElt.id = "newLogin";
+      itmElt.id = "z_newLogin";
       itmElt.onclick = function(event) {
          authorize();
          event.stopPropagation();
       };
-      itmElt.appendChild(document.createTextNode(i18n("newLogin")));
+      itmElt.appendChild(document.createTextNode(i18n("z_newLogin")));
       ulElt.appendChild(itmElt);
       users.forEach(
          function(name, pass, albumTitle, isSelected, net) {
@@ -359,15 +359,15 @@ function resetAlbumsList() {
 
       smallElt = document.createElement("SMALL");
       smallElt.className = "i18n";
-      smallElt.id = "photoAlbum";
-      smallElt.appendChild(document.createTextNode(i18n("photoAlbum")));
+      smallElt.id = "z_photoAlbum";
+      smallElt.appendChild(document.createTextNode(i18n("z_photoAlbum")));
       italicElt = document.createElement("I");
-      italicElt.id = "albumTitle";
+      italicElt.id = "z_albumTitle";
       if (users.getAlbumTitle()) {
          italicElt.textContent = users.getAlbumTitle();
       }else {
          italicElt.className = "i18n";
-         italicElt.appendChild(document.createTextNode(i18n("albumTitle")));
+         italicElt.appendChild(document.createTextNode(i18n("z_albumTitle")));
       }
       ulElt = document.createElement("UL");
       ulElt.id = "albumList";
@@ -395,12 +395,12 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
    }
    liElt = document.createElement("LI");
    liElt.className = "i18n addItem";
-   liElt.id = "newAlbum";
+   liElt.id = "z_newAlbum";
    liElt.onclick = function(event) {
       createAlbum(true);
       event.stopPropagation();
    };
-   liElt.appendChild(document.createTextNode(i18n('newAlbum')));
+   liElt.appendChild(document.createTextNode(i18n('z_newAlbum')));
    elt.appendChild(liElt);
    for (var i=0, max=albums.length; i < max; ++i) {
       var album = albums[i];
@@ -431,7 +431,7 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       liElt.appendChild(divElt);
       elt.appendChild(liElt);
    }
-   var albumTitleElt = document.getElementById('albumTitle');
+   var albumTitleElt = document.getElementById('z_albumTitle');
    if (isSelAlbumOK) {
       albumTitleElt.textContent = selAlbumTitle;
       albumTitleElt.removeAttribute("class");  // no more i18n'ed
@@ -445,13 +445,13 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       users.setAlbum(null, null);
       // 2) Reflect this fact in the Photo Album title
       albumTitleElt.className = "i18n";
-      albumTitleElt.textContent = i18n("albumTitle");
+      albumTitleElt.textContent = i18n("z_albumTitle");
    }
    // uploadPhotos();
 }
 
 function changeAlbum(elt, event) {
-   var albumTitleElt = document.getElementById('albumTitle');
+   var albumTitleElt = document.getElementById('z_albumTitle');
    var liElt = getRealTarget(event);
    var albumTitle = liElt.getElementsByTagName("SPAN")[0].textContent;
    users.setAlbum(liElt.id, albumTitle);
@@ -470,7 +470,7 @@ function changeLogin(event) {
          var img = event.target.nextSibling.src;
          confirmMsg(
             i18n(
-               "revokeAccess",
+               "z_revokeAccess",
                event.target.nextSibling.nextSibling.textContent,
                img.substring(1+img.lastIndexOf("/"), img.lastIndexOf("SmallLogo"))
             ),
@@ -536,7 +536,7 @@ function formatNetworkChoices() {
       }
    );
    btnElt = document.createElement("BUTTON");
-   btnElt.textContent = i18n("cancel");
+   btnElt.textContent = i18n("z_cancel");
    btnElt.onclick = hideActionMenu;
    var divElt = document.createElement("DIV");
    divElt.appendChild(btnElt);
@@ -551,10 +551,10 @@ function authorize() {
 
 function authorizePicasa() {
    hideActionMenu();
-   var eltInp1 = makeInputField("login");
-   var eltInp2 = makeInputField("passwd", "password");
+   var eltInp1 = makeInputField("z_login");
+   var eltInp2 = makeInputField("z_passwd", "password");
    showMsg(
-      "picasaLogin",
+      "z_picasaLogin",
       [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
       function() {     // whenDone
          if ((eltInp1.value.length === 0) || (eltInp2.value.length === 0)) {
@@ -570,7 +570,7 @@ function authorizePicasa() {
                   formatUsersList(false);
                },
                function(rc, val) {  // whenFailed
-                  simpleMsg("error", i18n("badLogin"));
+                  simpleMsg("z_error", i18n("z_badLogin"));
                }
             );
          }
@@ -601,7 +601,7 @@ function authorizeThruOAuth(net) {
          getVerifier();           // wait 'til it returns with the verifier
       },
       function(rc, val) {         // whenFailed
-         simpleMsg("error", "authorize RC:" + rc + "\n" + val);
+         simpleMsg("z_error", "authorize RC:" + rc + "\n" + val);
       }
    );
 }
@@ -637,7 +637,7 @@ function getVerifier() {
       function(rc, val) { // whenFailed
          var win = oauthNetwork.win;
          if (win && !win.closed) win.close();
-         simpleMsg("error", "getVerifier RC:" + rc);
+         simpleMsg("z_error", "getVerifier RC:" + rc);
       }
    );
    document.querySelector(".progress").style.visibility='hidden';
@@ -660,7 +660,7 @@ function registerUser(verifier, net) {
          formatUsersList(false);
       },
       function(rc, val) { // whenFailed
-         simpleMsg("error", i18n("authDenied", val));
+         simpleMsg("z_error", i18n("z_authDenied", val));
       }
    );
 }
@@ -671,7 +671,7 @@ function tellAccessPass()
       "POST", "postAccPss", users.getAccessPass(),
       function(val) {},   // whenDone
       function(rc, val) { // whenFailed
-         simpleMsg("error", "tellAccess RC: " + rc + "\n" + val);
+         simpleMsg("z_error", "tellAccess RC: " + rc + "\n" + val);
       }
    );
 }
@@ -698,10 +698,10 @@ function listAlbums(event) {
 }
 
 function createAlbum(isDirect) {
-   var eltInp1 = makeInputField("title");
-   var eltInp2 = makeInputField("description");
+   var eltInp1 = makeInputField("z_title");
+   var eltInp2 = makeInputField("z_description");
    showMsg(
-      isDirect? "createAlbumProlog1" : "createAlbumProlog2",
+      isDirect? "z_createAlbumProlog1" : "z_createAlbumProlog2",
       [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
       function() {
          hideMsg();
@@ -726,7 +726,7 @@ function createAlbum(isDirect) {
 }
 
 function pickPhoto(event) {
-   document.getElementById("enterTweet").value = "";
+   document.getElementById("z_enterTweet").value = "";
    document.getElementById("p21").textContent = "";
    if (typeof MozActivity !== "undefined") {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
@@ -735,7 +735,7 @@ function pickPhoto(event) {
          uploadPhotos();
       };
       a.onerror = function() {
-         simpleMsg("error", i18n('pickImageError'));
+         simpleMsg("z_error", i18n('z_pickImageError'));
       };
    }else {
       var elt = document.createElement("INPUT");
@@ -744,9 +744,9 @@ function pickPhoto(event) {
       elt.setAttribute("accept", "image/");
       elt.onchange = function() {
          if (!this.files) {
-            simpleMsg("error", i18n("noFileApiProp"));
+            simpleMsg("z_error", i18n("z_noFileApiProp"));
          }else if (!this.files[0]) {
-            simpleMsg("error", i18n("noFileSelected"));
+            simpleMsg("z_error", i18n("z_noFileSelected"));
          }else {
             for (var i=0; i < this.files.length; ++i) {
                pendingPhotos.push(this.files[i]);
@@ -762,7 +762,7 @@ function finishUpload() {
    expandPage("p1"); // stop p2!
    showToolbar(0);
    if (upldPhotosCount > 0) {
-      simpleMsg("info", i18n('photosUploaded', upldPhotosCount));
+      simpleMsg("z_info", i18n('z_photosUploaded', upldPhotosCount));
       upldPhotosCount = 0;
    }
    // FIXME: if (issuer) issuer.postResult({result: "ok"});
@@ -796,7 +796,7 @@ function isUploadable() {
             if (albums[i].nodeType != 3) ++albumsCount;
          }
          if (albumsCount > 0) {
-            simpleMsg("warning", i18n("selectOrCreateAlbum"));
+            simpleMsg("z_warning", i18n("z_selectOrCreateAlbum"));
          }else {
             createAlbum(false);
          }
@@ -936,7 +936,7 @@ function uploadPhoto(imgBlob) {
    formData.append("MAX_FILE_SIZE", "2000000");
 // formData.append("IMG", file.name.substr(-3));
    if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
-   formData.append("TIT", document.getElementById("enterTweet").value);
+   formData.append("TIT", document.getElementById("z_enterTweet").value);
    formData.append("upldFile", imgBlob);
    issueRequest(
       "POST",
@@ -977,7 +977,7 @@ function issueRequestStd(what, whenDone) {
          },
          function(rc, val) { // whenFailed
             dispatcher.clean();
-            simpleMsg("error", what + " RC: " + rc + "\n" + val);
+            simpleMsg("z_error", what + " RC: " + rc + "\n" + val);
          }
       );
    }
@@ -988,7 +988,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    if (method === "GET") query += values;
    var xhr = new XMLHttpRequest({'mozSystem': true});
    if (xhr.withCredentials === undefined) {
-      simpleMsg("error", "Sorry: can't do cross-site requests");
+      simpleMsg("z_error", "Sorry: can't do cross-site requests");
       return;
    }
    xhr.withCredentials = true;
