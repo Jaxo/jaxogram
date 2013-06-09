@@ -104,27 +104,27 @@ function toggleSidebarView() {
 }
 
 function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
-   var btnMainImg = document.getElementById('btnMainImage');
-   var drawer = document.getElementById('corepane');
-   var sidebar = document.getElementById('menupane');
+   var btn = document.getElementById('p01');
+   var drawer = document.querySelector(".drawer");
+   var sidebar = document.querySelector(".sidebar");
    var expanded = (sidebar.getAttribute("aria-expanded") === "true");
    if (!expanded && (v >= 0)) {
-      btnMainImg.setAttribute("role", "back");
+      btn.setAttribute("role", "back");
       drawer.setAttribute("aria-shrunk", "true");
       sidebar.setAttribute("aria-expanded", "true");
    }else if (v <= 0) {
-      btnMainImg.setAttribute("role", "menu");
+      btn.setAttribute("role", "menu");
       drawer.setAttribute("aria-shrunk", "false");
       sidebar.setAttribute("aria-expanded", "false");
    }
 }
 
 function resetSidebarButton() {
-   var btnMainImg = document.getElementById('btnMainImage');
-   if (document.getElementById('menupane').getAttribute("aria-expanded") === "true") {
-      btnMainImg.setAttribute("role", "back");
+   var btn = document.getElementById('p01');
+   if (document.querySelector(".sidebar").getAttribute("aria-expanded") === "true") {
+      btn.setAttribute("role", "back");
    }else {
-      btnMainImg.setAttribute("role", "menu");
+      btn.setAttribute("role", "menu");
    }
 }
 

@@ -177,24 +177,6 @@ var localeValues = {
       'pt-BR':"Falha seleccionando uma foto",
       'es-ES':"La falta seleccionar una foto",
       'pl-PL':"Wybór zdjęcie nie udało"
-   }, 'uploadPhoto': {
-      'en-US':"Share Photo",
-      'fr-FR':"Partager la photo",
-      'pt-BR':"Foto Compartilhar",
-      'es-ES':"Compartir foto",
-      'pl-PL':"Photo akcji"
-   }, 'pickPhoto': {
-      'en-US':"Select Photo",
-      'fr-FR':"Chosir la photo",
-      'pt-BR':"Selecione a foto",
-      'es-ES':"Selecciona la foto",
-      'pl-PL':"Wybierz zdjęcie"
-   }, 'whoAmI': {
-      'en-US':"Who am I?",
-      'fr-FR':"Qui suis-je ?",
-      'pt-BR':"Quem sou eu?",
-      'es-ES':"¿Quién soy yo?",
-      'pl-PL':"Kim jestem?"
    }, 'banner': {
       'en-US':"Share camera & gallery photos on well-known social networks",
       'fr-FR':"Partagez caméra et galerie photos sur la plupart des réseaux sociaux",

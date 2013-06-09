@@ -134,31 +134,30 @@ window.onload = function() {
    fitImages();
 
    // Listeners
-   document.getElementById("btnMain").onclick = toggleSidebarView;
+   document.getElementById("p01").parentNode.onclick = toggleSidebarView;
    var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
    for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
       radioGroupNodes[i].addEventListener("click", radioClicked);
    }
    document.querySelector(".menuList").onclick = menuListClicked;
-   document.getElementById("mn_albums").onclick = listAlbums;
-   // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
-   document.getElementById("pickPhoto").onclick = pickPhoto;
-   document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
-   document.getElementById("editPhoto").onclick = editPhoto;
-   document.getElementById("cancelPhoto").onclick = function() {
+   document.getElementById("mn5").onclick = listAlbums;
+   document.getElementById("ft1").onclick = pickPhoto;
+   document.getElementById("ft3").onclick = tryUploadPhoto;
+   document.getElementById("ft4").onclick = editPhoto;
+   document.getElementById("ft5").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
    };
-   document.getElementById("cancelEdit").onclick = cancelEditPhoto;
-   document.getElementById("validateEdit").onclick = validateEditPhoto;
-   document.getElementById("logins").onclick = changeLogin;
+   document.getElementById("p31").onclick = cancelEditPhoto;
+   document.getElementById("p32").onclick = validateEditPhoto;
+   document.getElementById("mn4").onclick = changeLogin;
    document.getElementById("enterTweet").addEventListener(
       "input", onTextEntered, false
    );
    document.getElementById("enterTweet").addEventListener(
       "keydown", onTextEntered, false
    );
-   // document.getElementById("mn_albums").style.display = "none";
+   // document.getElementById("mn5").style.display = "none";
    var dfltLocale = navigator.language || navigator.userLanguage;
    formatLanguageList();
    translateBody(dfltLocale);
@@ -166,7 +165,7 @@ window.onload = function() {
    formatNetworkChoices();
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
-   var elt = document.getElementById("imgFilters");
+   var elt = document.getElementById("ft6");
    for (var i=0, max=filters.length; i < max; ++i) {
       var tdElt = document.createElement("TD");
       var imgElt = document.createElement("IMG");
@@ -185,9 +184,9 @@ window.onload = function() {
    showToolbar(0);
 
    elt.addEventListener("click", changeFilter);
-   var eltMain = document.getElementById("corepane");
-   new GestureDetector(eltMain).startDetecting();
-   eltMain.addEventListener(
+   var drawer = document.querySelector(".drawer");
+   new GestureDetector(drawer).startDetecting();
+   drawer.addEventListener(
       "swipe",
       function(e) {
          // alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
@@ -218,7 +217,7 @@ function onTextEntered(event) {
       event.stopPropagation();
       this.blur();
    }else {
-      var countElt = document.getElementById("p2_msgCount");
+      var countElt = document.getElementById("p21");
       if (this.value.length == 0) {
          countElt.textContent = "";
       }else {
@@ -245,8 +244,8 @@ function onNetworkChange()
 {
    if (users.hasSome()) {
       var networkName = users.getNet();
-      var netImage = "../images/" + networkName + "Logo.png";
-      var connectTo = document.getElementById("connectTo");
+      var netImage = "images/" + networkName + "Logo.png";
+      var connectTo = document.getElementById("ft2");
       for (var i=0, max = networks.length; i < max; ++i) {
          var network = networks[i];
          if (network.name === networkName) {
@@ -259,28 +258,28 @@ function onNetworkChange()
       }
       connectTo.style.display = "";
       document.getElementById("initLogin").style.visibility = "";
-      document.getElementById("mn_userName").textContent = users.getUserName();
-      document.getElementById("p1_userName").innerHTML = users.getUserName();
-      document.getElementById("p1_userImage").src = users.getImageUrl();
-      document.getElementById("mn_netImage").src = netImage;
-      document.getElementById("p1_netImage").src = netImage;
-      document.getElementById("p1_userScreenName").textContent = users.getScreenName();
+      document.getElementById("mn3").textContent = users.getUserName();
+      document.getElementById("p13").innerHTML = users.getUserName();
+      document.getElementById("p11").src = users.getImageUrl();
+      document.getElementById("mn2").src = netImage;
+      document.getElementById("p12").src = netImage;
+      document.getElementById("p14").textContent = users.getScreenName();
    }else {
       var elt = document.getElementById("initLogin");
       elt.style.visibility = "visible";
       elt.onclick = authorize;
-      document.getElementById("mn_user").style.display = "none";
-      document.getElementById("p1_userName").innerHTML = i18n("noNetwork");
-      document.getElementById("p1_userImage").src = "../images/none.png";
-      document.getElementById("mn_netImage").src = "../images/none.png";
-      document.getElementById("p1_netImage").src = "../images/none.png";
-      document.getElementById("p1_userScreenName").textContent = "";
-      document.getElementById("connectTo").style.display = "none";
+      document.getElementById("mn1").style.display = "none";
+      document.getElementById("p13").innerHTML = i18n("noNetwork");
+      document.getElementById("p11").src = "images/none.png";
+      document.getElementById("mn2").src = "images/none.png";
+      document.getElementById("p12").src = "images/none.png";
+      document.getElementById("p14").textContent = "";
+      document.getElementById("ft2").style.display = "none";
    }
 }
 
 function formatLanguageList() {
-   var listElt = document.getElementById("changeLanguage");
+   var listElt = document.getElementById("mn6");
    var languages = i18nLangList();
    for (var i=0, max=languages.length; i < max; ++i) {
       var itmElt = document.createElement("LI");
@@ -296,7 +295,7 @@ function formatUsersList(isUserRequired) {
    if (users.hasSome()) {
       var elt;
       var itmElt;
-      var ulElt = document.getElementById("logins");
+      var ulElt = document.getElementById("mn4");
       while (ulElt.hasChildNodes()) {
          ulElt.removeChild(ulElt.lastChild);
       }
@@ -315,7 +314,7 @@ function formatUsersList(isUserRequired) {
             itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
-            imgElt.src = "../images/" + net + "SmallLogo.png";
+            imgElt.src = "images/" + net + "SmallLogo.png";
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
             itmElt.appendChild(imgElt);
@@ -323,13 +322,13 @@ function formatUsersList(isUserRequired) {
             ulElt.appendChild(itmElt);
          }
       );
-      elt = document.getElementById("mn_user");
+      elt = document.getElementById("mn1");
       elt.setAttribute("aria-expanded", "false");
       elt.appendChild(ulElt);
       elt.style.display = "";
       tellAccessPass();
    }else {
-      document.getElementById("mn_user").style.display = "none";
+      document.getElementById("mn1").style.display = "none";
       if (isUserRequired) {
          authorize();
       }
@@ -347,7 +346,7 @@ function isAlbumIdRequired() {
 }
 
 function resetAlbumsList() {
-   var albums = document.getElementById("mn_albums");
+   var albums = document.getElementById("mn5");
    while (albums.hasChildNodes()) albums.removeChild(albums.lastChild);
    if (!isAlbumIdRequired()) {
       albums.style.display = "none";
@@ -410,7 +409,7 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       var thumbUrl = album['thumbnailUrl'];
       if (!title || (title.length === 0)) title = "no title";
       if (!description || (description.length === 0)) description = "";
-      if (!thumbUrl || (thumbUrl.length === 0)) thumbUrl = "../images/unknSmall.png";
+      if (!thumbUrl || (thumbUrl.length === 0)) thumbUrl = "images/unknSmall.png";
       var imgElt = document.createElement("IMG");
       imgElt.src = thumbUrl;
       var spanElt = document.createElement("SPAN");
@@ -458,7 +457,7 @@ function changeAlbum(elt, event) {
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
-   document.getElementById("p1_userScreenName").textContent = users.getScreenName();
+   document.getElementById("p14").textContent = users.getScreenName();
    uploadPhotos();
 }
 
@@ -519,7 +518,7 @@ function fitImage(img) {
 }
 
 function formatNetworkChoices() {
-   var eltContainer = document.getElementById("choices");
+   var eltContainer = document.getElementById("ma1");
    var btnElt;
    networks.forEach(
       function(network) {
@@ -641,7 +640,7 @@ function getVerifier() {
          simpleMsg("error", "getVerifier RC:" + rc);
       }
    );
-   document.getElementById("progresspane").style.visibility='hidden';
+   document.querySelector(".progress").style.visibility='hidden';
 }
 
 function registerUser(verifier, net) {
@@ -718,7 +717,7 @@ function createAlbum(isDirect) {
                users.setAlbum(newAlbum['id'], newAlbum['title']);
                formatAlbumsList(
                   albums,
-                  document.getElementById("mn_albums").getElementsByTagName("UL")[0]
+                  document.getElementById("mn5").getElementsByTagName("UL")[0]
                );
             }
          );
@@ -728,7 +727,7 @@ function createAlbum(isDirect) {
 
 function pickPhoto(event) {
    document.getElementById("enterTweet").value = "";
-   document.getElementById("p2_msgCount").textContent = "";
+   document.getElementById("p21").textContent = "";
    if (typeof MozActivity !== "undefined") {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
       a.onsuccess = function(e) {
@@ -739,7 +738,10 @@ function pickPhoto(event) {
          simpleMsg("error", i18n('pickImageError'));
       };
    }else {
-      var elt = document.getElementById('upldFile');
+      var elt = document.createElement("INPUT");
+      elt.type = "file";
+      elt.setAttribute("multiple", "true");
+      elt.setAttribute("accept", "image/");
       elt.onchange = function() {
          if (!this.files) {
             simpleMsg("error", i18n("noFileApiProp"));
@@ -783,7 +785,7 @@ function isUploadable() {
       return false;
    }else if (isAlbumIdRequired() && (users.getAlbumId() == null)) {
       // show the appropriate panel for selecting an album
-      var albumsPane = document.getElementById("mn_albums");
+      var albumsPane = document.getElementById("mn5");
       expandSidebarView(1);
       if (albumsPane.getAttribute("aria-expanded") !== "true") {
          albumsPane.click();
@@ -912,7 +914,7 @@ function filterAndUploadPhoto(imgRawBlob)
       uploadPhoto(imgRawBlob);
    }else {
       var sentImg = new Image();
-      document.getElementById("progresspane").style.visibility="visible";
+      document.querySelector(".progress").style.visibility="visible";
       sentImg.onload = function() {
          var canvas = document.createElement("CANVAS");
          canvas.width = sentImg.width;
@@ -925,7 +927,7 @@ function filterAndUploadPhoto(imgRawBlob)
             "image/jpeg", 0.95
          );
       };
-      sentImg.src = document.getElementById("p2_picture").src;
+      sentImg.src = document.getElementById("p22").src;
    }
 }
 
@@ -993,7 +995,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    xhr.open(method, server_url + query, true);
    xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
+         document.querySelector(".progress").style.visibility='hidden';
          if ((this.status === 200) || (this.status === 0)) {
             whenDone(this.responseText);
          }else {
@@ -1001,7 +1003,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
          }
       }
    };
-   document.getElementById("progresspane").style.visibility='visible';
+   document.querySelector(".progress").style.visibility='visible';
    if (method === "GET") {
       xhr.send();
    }else {
@@ -1010,7 +1012,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
 }
 
 function showToolbar(barNo) {
-   var elt = document.getElementById("footerTable");
+   var elt = document.querySelector("footer > table");
    var prevBarNo = -1;
    elt.parentNode.style.display = "none";
    for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
@@ -1068,7 +1070,7 @@ function showNewPhoto() {
          },
          "image/jpeg", 0.95
       );
-      document.getElementById("p2_picture").src = filters[filterChoice].src;
+      document.getElementById("p22").src = filters[filterChoice].src;
    };
    imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
 }
@@ -1077,13 +1079,13 @@ function editPhoto() {
    showToolbar(2);
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
-   document.getElementById("p3_picture").src = filters[filterChoice].src;
+   document.getElementById("p33").src = filters[filterChoice].src;
    expandPage("p3");
 }
 
 function validateEditPhoto() {
    filterChoice = tempFilterChoice;
-   document.getElementById("p2_picture").src = filters[filterChoice].src;
+   document.getElementById("p22").src = filters[filterChoice].src;
    cancelEditPhoto();
 }
 
@@ -1094,7 +1096,7 @@ function cancelEditPhoto() {
 
 function changeFilter(event) {
    if (event) tempFilterChoice = getRealTarget(event).cellIndex;
-   document.getElementById("p3_picture").src = filters[tempFilterChoice].src;
+   document.getElementById("p33").src = filters[tempFilterChoice].src;
 }
 
 function showActionMenu() {
