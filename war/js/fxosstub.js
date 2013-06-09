@@ -105,16 +105,16 @@ function toggleSidebarView() {
 
 function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
    var btn = document.getElementById('p01');
-   var drawer = document.querySelector(".drawer");
+   var principal = document.querySelector(".principal");
    var sidebar = document.querySelector(".sidebar");
    var expanded = (sidebar.getAttribute("aria-expanded") === "true");
    if (!expanded && (v >= 0)) {
-      btn.setAttribute("role", "back");
-      drawer.setAttribute("aria-shrunk", "true");
+      btn.className = "action-icon back";
+      principal.setAttribute("aria-shrunk", "true");
       sidebar.setAttribute("aria-expanded", "true");
    }else if (v <= 0) {
-      btn.setAttribute("role", "menu");
-      drawer.setAttribute("aria-shrunk", "false");
+      btn.className = "action-icon menu";
+      principal.setAttribute("aria-shrunk", "false");
       sidebar.setAttribute("aria-expanded", "false");
    }
 }
@@ -122,9 +122,9 @@ function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
 function resetSidebarButton() {
    var btn = document.getElementById('p01');
    if (document.querySelector(".sidebar").getAttribute("aria-expanded") === "true") {
-      btn.setAttribute("role", "back");
+      btn.className = "action-icon back";
    }else {
-      btn.setAttribute("role", "menu");
+      btn.className = "action-icon menu";
    }
 }
 

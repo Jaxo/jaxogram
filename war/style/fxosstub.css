@@ -17,7 +17,7 @@ header {
   z-index: 1;
 }
 
-header[role="main"] {
+.principal > header {
   background-image: url("images/header.png");
 }
 
@@ -132,7 +132,7 @@ header td:active {
   background-color: #0095dd; /* was e66000 */
 }
 
-.drawer {
+.principal {
   position: fixed;
   left: 0%;
   right: 0%;
@@ -141,7 +141,7 @@ header td:active {
 /*UU  transition: 0.4s;   */
 }
 
-.drawer[aria-shrunk=true] {
+.principal[aria-shrunk=true] {
   left: 80%;
   right: -80%;
 }

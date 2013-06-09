@@ -184,9 +184,9 @@ window.onload = function() {
    showToolbar(0);
 
    elt.addEventListener("click", changeFilter);
-   var drawer = document.querySelector(".drawer");
-   new GestureDetector(drawer).startDetecting();
-   drawer.addEventListener(
+   var principal = document.querySelector(".principal");
+   new GestureDetector(principal).startDetecting();
+   principal.addEventListener(
       "swipe",
       function(e) {
          // alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
