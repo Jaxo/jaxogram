@@ -127,14 +127,9 @@ if (-e jaxogram.zip) then
    rm jaxogram.zip
 endif
 cd war
-zip -r ../../jaxogram.zip * >& ../temp/zipped
+# zip -r ../jaxogram.zip * >& ../temp/zipped
+zip ../jaxogram.zip \
+   -r manifest.webapp index.html favicon.ico js style applogos images \
+   >& ../temp/zipped
 echo All done.  Result in jaxogram.zip
 
-# zip jaxogram -x */.DS_Store -r
-# manifest.webapp
-# index.html
-# favicon.ico
-# js
-# style
-# applogos
-# images
