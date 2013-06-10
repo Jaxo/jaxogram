@@ -220,11 +220,11 @@ var localeValues = {
       'es-ES':"¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?",
       'pl-PL':"Czy na pewno chcesz usunąć\nlogowanie dla \"%1\" na %2?"
    }, 'z_enterTweet': {
-      'en-US':"Type here (caption or tweet)",
-      'fr-FR':"Entrez ici un commentaire (titre ou tweet)",
-      'pt-BR':"Digite um comentário aqui (título ou twittar)",
-      'es-ES':"Escriba un comentario aquí (título o Twitter)",
-      'pl-PL':"Wpisz komentarz tutaj (podpis lub tweet)"
+      'en-US':"Enter title or tweet",
+      'fr-FR':"Entrez titre ou tweet",
+      'pt-BR':"Digite título ou twittar",
+      'es-ES':"Introducir el título o Twitter",
+      'pl-PL':"Wpisz tytuł lub Twitter"
    }, 'z_photosUploaded': {
       'en-US':"%1 photo(s) successfully uploaded",
       'fr-FR':"%1 photo(s) insérée(s)",
