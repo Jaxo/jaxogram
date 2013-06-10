@@ -37,6 +37,22 @@ Apps.prototype.getSelf = function() {};
 Apps.prototype.install = function(url, opt_args) {};
 Apps.prototype.getInstalled = function() {};
 
+function App() {}
+App.prototype.manifest;
+App.prototype.manifestURL;
+App.prototype.origin;
+App.prototype.installOrigin;
+App.prototype.installTime;
+App.prototype.receipts;
+App.prototype.launch = function() {};
+App.prototype.checkForUpdate = function() {};
+
+function chrome() {}
+chrome.prototype.webstore;
+chrome.prototype.webstore.install = function(url, ok_callback, fail_callback) {};
+chrome.prototype.app;
+chrome.prototype.app.isInstalled;
+
 HTMLCanvasElement.prototype.toBlob = function(callback, opt_type, opt_args) {};
 Event.prototype.isTrusted;
 END_EXTERNALS
