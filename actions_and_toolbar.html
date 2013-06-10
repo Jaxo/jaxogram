@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Action Icons & Toolbars</title>
+
+<style>
+
+/* ----------------------------------
+* This <style> is only used for the example preview,
+* Not required for the real use case.
+* ---------------------------------- */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 10px;
+  font-family: "MozTT", Sans-serif;
+  background-color: #fff;
+}
+h2 {
+  font-size: 1.8rem;
+  font-weight: lighter;
+  color: #666;
+  margin: -1px 0 0;
+  background-color: #f5f5f5;
+  padding: 0.4rem 0.4rem 0.4rem 3rem;
+  border: solid 1px #e8e8e8;
+}
+
+/* ----------------------------------
+* Toolbars
+* ----------------------------------*/
+[role="toolbar"] {
+  height: 4rem;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  background: rgba(0,0,0, 0.85);
+}
+
+[role="toolbar"] ul {
+  float: left;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+[role="toolbar"] ul:last-child {
+  float: right;
+}
+
+[role="toolbar"] li {
+  float: left;
+}
+
+[role="toolbar"] button {
+    width: 5.5rem;
+    height: 4rem;
+    border: none;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white; /* <== Remove me: this is just a test */
+    background: transparent no-repeat 50% 50% / 3rem auto;
+    padding: 0;
+    border-radius: 0;
+}
+
+[role="toolbar"] button:active {
+   background-color: #008aaa;
+}
+
+.icons li {
+  display:block;
+  float:left;
+  height: 40px;
+  width: 320px;
+  font-size: 1.7rem;
+}
+
+/* ----------------------------------
+* Action icons
+* ---------------------------------- */
+.action-icon:before {
+   background-image: url("war/style/images/action_icons.png");
+   background-position:  30px 0px;
+   display: block;
+   content:"";
+   width: 30px;
+   height: 30px;
+}
+
+.icons .action-icon:before {
+  display: inline-block;
+  position: static;
+  margin: 0;
+  background-color: rgba(0,0,0, 0.8);
+  content: "";
+  margin: 0 0.5em -0.5em 0;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+[role="toolbar"] button.action-icon:before {
+   position: absolute;
+   margin-left: 1rem;
+   bottom:0.5rem;
+}
+
+.action-icon.alarm_stop:before { background-position:  0px 0px; }
+.action-icon.back:before { background-position:  0px -30px; }
+.action-icon.bluetooth:before { background-position:  0px -60px; }
+.action-icon.bluetooth_transfer:before { background-position:  0px -90px; }
+.action-icon.bookmark:before { background-position:  0px -120px; }
+.action-icon.bookmarked:before { background-position:  0px -150px; }
+.action-icon.browser_back:before { background-position:  0px -180px; }
+.action-icon.browser_forward:before { background-position:  0px -210px; }
+.action-icon.calendar_agendaview:before { background-position:  0px -240px; }
+.action-icon.calendar_dayview:before { background-position:  0px -270px; }
+.action-icon.calendar_monthview:before { background-position:  0px -300px; }
+.action-icon.calendar_today:before { background-position:  0px -330px; }
+.action-icon.calendar_weekview:before { background-position:  0px -360px; }
+.action-icon.cancel:before { background-position:  0px -390px; }
+.action-icon.clock_addalarm:before { background-position:  0px -420px; }
+.action-icon.compose:before { background-position:  0px -450px; }
+.action-icon.contacts:before { background-position:  0px -480px; }
+.action-icon.copy:before { background-position:  0px -510px; }
+.action-icon.cut:before { background-position:  0px -540px; }
+.action-icon.delete:before { background-position:  0px -570px; }
+.action-icon.dismisskeyboard:before { background-position:  0px -600px; }
+.action-icon.download:before { background-position:  0px -630px; }
+.action-icon.downloaddark:before { background-position:  0px -660px; }
+.action-icon.editcontact:before { background-position:  0px -690px; }
+.action-icon.email_editlist:before { background-position:  0px -720px; }
+.action-icon.email_flag:before { background-position:  0px -750px; }
+.action-icon.email_forward:before { background-position:  0px -780px; }
+.action-icon.email_markread:before { background-position:  0px -810px; }
+.action-icon.email_markunread:before { background-position:  0px -840px; }
+.action-icon.email_reload:before { background-position:  0px -870px; }
+.action-icon.email_reply:before { background-position:  0px -900px; }
+.action-icon.email_replyall:before { background-position:  0px -930px; }
+.action-icon.email_send:before { background-position:  0px -960px; }
+.action-icon.email_share:before { background-position:  0px -990px; }
+.action-icon.email_sync:before { background-position:  0px -1020px; }
+.action-icon.forward:before { background-position:  0px -1050px; }
+.action-icon.lock:before { background-position:  0px -1080px; }
+.action-icon.menu:before { background-position:  0px -1110px; }
+.action-icon.move:before { background-position:  0px -1140px; }
+.action-icon.new:before { background-position:  0px -1170px; }
+.action-icon.paste:before { background-position:  0px -1200px; }
+.action-icon.search:before { background-position:  0px -1230px; }
+.action-icon.selectall:before { background-position:  0px -1260px; }
+.action-icon.settings:before { background-position:  0px -1290px; }
+.action-icon.sms:before { background-position:  0px -1320px; }
+.action-icon.snooze:before { background-position:  0px -1350px; }
+.action-icon.unlock:before { background-position:  0px -1380px; }
+.action-icon.user:before { background-position:  0px -1410px; }
+.action-icon.ut_airplanemode:before { background-position:  0px -1440px; }
+.action-icon.ut_airplanemode_focused:before { background-position:  0px -1470px; }
+.action-icon.ut_bluetooth:before { background-position:  0px -1500px; }
+.action-icon.ut_bluetooth_focused:before { background-position:  0px -1530px; }
+.action-icon.ut_settings:before { background-position:  0px -1560px; }
+.action-icon.ut_settings_data:before { background-position:  0px -1590px; }
+.action-icon.ut_settings_data_2g_focused:before { background-position:  0px -1620px; }
+.action-icon.ut_settings_data_3g_focused:before { background-position:  0px -1650px; }
+.action-icon.ut_settings_data_4g_focused:before { background-position:  0px -1680px; }
+.action-icon.ut_settings_data_e_focused:before { background-position:  0px -1710px; }
+.action-icon.ut_settings_data_hp_focused:before { background-position:  0px -1740px; }
+.action-icon.ut_settings_data_h_focused:before { background-position:  0px -1770px; }
+.action-icon.ut_settings_data_o_focused:before { background-position:  0px -1800px; }
+.action-icon.ut_settings_focused:before { background-position:  0px -1830px; }
+.action-icon.ut_wifi:before { background-position:  0px -1860px; }
+.action-icon.ut_wifi_focus:before { background-position:  0px -1890px; }
+.action-icon.retract:before { background-position:  0px -1920px; }
+.action-icon.expand:before { background-position:  0px -1950px; }
+.action-icon.confirm:before { background-position:  0px -1980px; }
+.action-icon.mail:before { background-position:  0px -2010px; }
+.action-icon.move_layout:before { background-position:  0px -2040px; }
+.action-icon.earth:before { background-position:  0px -2070px; }
+.action-icon.send_mail:before { background-position:  0px -2100px; }
+.action-icon.hide:before { background-position:  0px -2130px; }
+.action-icon.camera:before { background-position:  0px -2160px; }
+.action-icon.edit_picture:before { background-position:  0px -2190px; }
+.action-icon.done:before { background-position:  0px -2220px; }
+.action-icon.coins:before { background-position:  0px -2250px; }
+
+</style>
+  </head>
+
+  <body role="application">
+    <section class="icons">
+    <h2>Action icons</h2>
+      <ul>
+      <li class="action-icon alarm_stop">alarm_stop</li>
+      <li class="action-icon back">back</li>
+      <li class="action-icon bluetooth">bluetooth</li>
+      <li class="action-icon bluetooth_transfer">bluetooth_transfer</li>
+      <li class="action-icon bookmark">bookmark</li>
+      <li class="action-icon bookmarked">bookmarked</li>
+      <li class="action-icon browser_back">browser_back</li>
+      <li class="action-icon browser_forward">browser_forward</li>
+      <li class="action-icon calendar_agendaview">calendar_agendaview</li>
+      <li class="action-icon calendar_dayview">calendar_dayview</li>
+      <li class="action-icon calendar_monthview">calendar_monthview</li>
+      <li class="action-icon calendar_today">calendar_today</li>
+      <li class="action-icon calendar_weekview">calendar_weekview</li>
+      <li class="action-icon cancel">cancel</li>
+      <li class="action-icon clock_addalarm">clock_addalarm</li>
+      <li class="action-icon compose">compose</li>
+      <li class="action-icon contacts">contacts</li>
+      <li class="action-icon copy">copy</li>
+      <li class="action-icon cut">cut</li>
+      <li class="action-icon delete">delete</li>
+      <li class="action-icon dismisskeyboard">dismisskeyboard</li>
+      <li class="action-icon download">download</li>
+      <li class="action-icon downloaddark">downloaddark</li>
+      <li class="action-icon editcontact">editcontact</li>
+      <li class="action-icon email_editlist">email_editlist</li>
+      <li class="action-icon email_flag">email_flag</li>
+      <li class="action-icon email_forward">email_forward</li>
+      <li class="action-icon email_markread">email_markread</li>
+      <li class="action-icon email_markunread">email_markunread</li>
+      <li class="action-icon email_reply">email_reply</li>
+      <li class="action-icon email_replyall">email_replyall</li>
+      <li class="action-icon email_send">email_send</li>
+      <li class="action-icon email_share">email_share</li>
+      <li class="action-icon email_sync">email_sync</li>
+      <li class="action-icon forward">forward</li>
+      <li class="action-icon lock">lock</li>
+      <li class="action-icon menu">menu</li>
+      <li class="action-icon move">move</li>
+      <li class="action-icon new">new</li>
+      <li class="action-icon paste">paste</li>
+      <li class="action-icon search">search</li>
+      <li class="action-icon selectall">selectall</li>
+      <li class="action-icon settings">settings</li>
+      <li class="action-icon sms">sms</li>
+      <li class="action-icon snooze">snooze</li>
+      <li class="action-icon unlock">unlock</li>
+      <li class="action-icon user">user</li>
+      <li class="action-icon ut_airplanemode">ut_airplanemode</li>
+      <li class="action-icon ut_airplanemode_focused">ut_airplanemode_focused</li>
+      <li class="action-icon ut_bluetooth">ut_bluetooth</li>
+      <li class="action-icon ut_bluetooth_focused">ut_bluetooth_focused</li>
+      <li class="action-icon ut_airplanemode_focused">ut_airplanemode_focused</li>
+      <li class="action-icon ut_settings">ut_settings</li>
+      <li class="action-icon ut_settings_data">ut_settings_data</li>
+      <li class="action-icon ut_settings_data_2g_focused">ut_settings_data_2g_focused</li>
+      <li class="action-icon ut_settings_data_3g_focused">ut_settings_data_3g_focused</li>
+      <li class="action-icon ut_settings_data_4g_focused">ut_settings_data_4g_focused</li>
+      <li class="action-icon ut_settings_data_e_focused">ut_settings_data_e_focused</li>
+      <li class="action-icon ut_settings_data_hp_focused">ut_settings_data_hp_focused</li>
+      <li class="action-icon ut_settings_data_h_focused">ut_settings_data_h_focused</li>
+      <li class="action-icon ut_settings_data_o_focused">ut_settings_data_o_focused</li>
+      <li class="action-icon ut_settings_focused">ut_settings_focused</li>
+      <li class="action-icon ut_wifi">ut_wifi</li>
+      <li class="action-icon retract">retract (jaxo)</li>
+      <li class="action-icon expand">expand (jaxo)</li>
+      <li class="action-icon confirm">confirm (jaxo)</li>
+      <li class="action-icon mail">mail (jaxo)</li>
+      <li class="action-icon move_layout">move_layout (jaxo)</li>
+      <li class="action-icon earth">earth (jaxo)</li>
+      <li class="action-icon send_mail">send_mail (jaxo)</li>
+      <li class="action-icon hide">hide (jaxo)</li>
+      <li class="action-icon camera">camera (jaxo)</li>
+      <li class="action-icon edit_picture">edit_picture</li>
+      <li class="action-icon done">done (jaxo)</li>
+      <li class="action-icon coins">coins (jaxo)</li>
+      </ul>
+    </section>
+    <DIV style="clear:both;color:pink;font-size:5rem;text-align:center;height:10rem">That's all folks.</DIV>
+    <div role="toolbar">
+      <ul>
+        <li><button class="action-icon delete"/></li>
+        <li><button>Gulps</button></li>
+        <li><button>?</button></li>
+      </ul>
+      <ul>
+        <li><button class="action-icon email_flag"/></li>
+        <li><button class="action-icon mail"/></li>
+        <li><button class="action-icon move_layout"/></li>
+        <li><button class="action-icon email_send"/></li>
+        <li><button class="action-icon earth"/></li>
+      </ul>
+    </div>
+  </body>
+</html>

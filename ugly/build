@@ -31,6 +31,7 @@ set to_mangle = ( \
 #--- the externals for google closure compiler
 cat >temp/externs.js <<END_EXTERNALS
 Navigator.prototype.mozApps;
+Navigator.prototype.mozPay = function(jwts) {};
 
 function Apps() {}
 Apps.prototype.getSelf = function() {};
