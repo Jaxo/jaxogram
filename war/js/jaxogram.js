@@ -95,9 +95,8 @@ window.onload = function() {
       }
    }
    if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
-      simpleMsg("warning", i18n("testMode", server_url));
+      simpleMsg("z_warning", i18n("z_testMode", server_url));
    }
-   createDispatcher();
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
@@ -113,62 +112,61 @@ window.onload = function() {
    }
 
    dispatcher.on(
-      "install_changed",
+      "z_install_changed",
       function action(state, version) {
          if (
-            (state === "uninstalled") && !users.hasSome() &&
+            (state === "z_uninstalled") && !users.hasSome() &&
             (params.OP !== "backCall") &&
             (params.OP !== "share")
          ) {
             confirmMsg(
-               i18n('betterInstall'),
-               function() { document.getElementById("btnInstall").click(); }
+               i18n('z_betterInstall'),
+               function() { document.getElementById("z_btnInstall").click(); }
             );
-         }else if ((state === "installed") && version) {
+         }else if ((state === "z_installed") && version) {
             document.querySelector("header h1 small").textContent = version;
          }
       }
    );
 
-   setInstallButton("btnInstall");
+   setInstallButton("z_btnInstall");
    window.addEventListener("resize", fitImages, false);
    fitImages();
 
    // Listeners
-   document.getElementById("btnMain").onclick = toggleSidebarView;
+   document.getElementById("p01").parentNode.onclick = toggleSidebarView;
    var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
    for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
       radioGroupNodes[i].addEventListener("click", radioClicked);
    }
    setBuyButton();
    document.querySelector(".menuList").onclick = menuListClicked;
-   document.getElementById("mn_albums").onclick = listAlbums;
-   document.getElementById("changeLanguage").addEventListener("click", changeLanguage);
-   // document.getElementById("footerTable").onclick = function() { expandSidebarView(-1); };
-   document.getElementById("pickPhoto").onclick = pickPhoto;
-   document.getElementById("uploadPhoto").onclick = tryUploadPhoto;
-   document.getElementById("editPhoto").onclick = editPhoto;
-   document.getElementById("cancelPhoto").onclick = function() {
+   document.getElementById("mn5").onclick = listAlbums;
+   document.getElementById("ft1").onclick = pickPhoto;
+   document.getElementById("ft3").onclick = tryUploadPhoto;
+   document.getElementById("ft4").onclick = editPhoto;
+   document.getElementById("ft5").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
    };
-   document.getElementById("cancelEdit").onclick = cancelEditPhoto;
-   document.getElementById("validateEdit").onclick = validateEditPhoto;
-   document.getElementById("logins").onclick = changeLogin;
-   document.getElementById("p2_msgText").addEventListener(
+   document.getElementById("p31").onclick = cancelEditPhoto;
+   document.getElementById("p32").onclick = validateEditPhoto;
+   document.getElementById("mn4").onclick = changeLogin;
+   document.getElementById("z_enterTweet").addEventListener(
       "input", onTextEntered, false
    );
-   document.getElementById("p2_msgText").addEventListener(
+   document.getElementById("z_enterTweet").addEventListener(
       "keydown", onTextEntered, false
    );
-   // document.getElementById("mn_albums").style.display = "none";
+   // document.getElementById("mn5").style.display = "none";
    var dfltLocale = navigator.language || navigator.userLanguage;
+   formatLanguageList();
    translateBody(dfltLocale);
    formatUsersList(false);
    formatNetworkChoices();
    document.getElementById('usedLang').textContent = i18n(dfltLocale);
    document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
-   var elt = document.getElementById("imgFilters");
+   var elt = document.getElementById("ft6");
    for (var i=0, max=filters.length; i < max; ++i) {
       var tdElt = document.createElement("TD");
       var imgElt = document.createElement("IMG");
@@ -187,9 +185,9 @@ window.onload = function() {
    showToolbar(0);
 
    elt.addEventListener("click", changeFilter);
-   var eltMain = document.getElementById("corepane");
-   new GestureDetector(eltMain).startDetecting();
-   eltMain.addEventListener(
+   var principal = document.querySelector(".principal");
+   new GestureDetector(principal).startDetecting();
+   principal.addEventListener(
       "swipe",
       function(e) {
          // alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
@@ -220,7 +218,7 @@ function onTextEntered(event) {
       event.stopPropagation();
       this.blur();
    }else {
-      var countElt = document.getElementById("p2_msgCount");
+      var countElt = document.getElementById("p21");
       if (this.value.length == 0) {
          countElt.textContent = "";
       }else {
@@ -247,8 +245,8 @@ function onNetworkChange()
 {
    if (users.hasSome()) {
       var networkName = users.getNet();
-      var netImage = "../images/" + networkName + "Logo.png";
-      var connectTo = document.getElementById("connectTo");
+      var netImage = "images/" + networkName + "Logo.png";
+      var connectTo = document.getElementById("ft2");
       for (var i=0, max = networks.length; i < max; ++i) {
          var network = networks[i];
          if (network.name === networkName) {
@@ -260,25 +258,37 @@ function onNetworkChange()
          }
       }
       connectTo.style.display = "";
-      document.getElementById("initLogin").style.visibility = "";
-      document.getElementById("mn_userName").textContent = users.getUserName();
-      document.getElementById("p0_userName").innerHTML = users.getUserName();
-      document.getElementById("p0_userImage").src = users.getImageUrl();
-      document.getElementById("mn_netImage").src = netImage;
-      document.getElementById("p0_netImage").src = netImage;
-      document.getElementById("p0_userScreenName").textContent = users.getScreenName();
+      document.getElementById("z_initLogin").style.visibility = "";
+      document.getElementById("mn3").textContent = users.getUserName();
+      document.getElementById("p13").innerHTML = users.getUserName();
+      document.getElementById("p11").src = users.getImageUrl();
+      document.getElementById("mn2").src = netImage;
+      document.getElementById("p12").src = netImage;
+      document.getElementById("p14").textContent = users.getScreenName();
    }else {
-      var elt = document.getElementById("initLogin");
+      var elt = document.getElementById("z_initLogin");
       elt.style.visibility = "visible";
       elt.onclick = authorize;
-      document.getElementById("mn_user").style.display = "none";
-      document.getElementById("p0_userName").innerHTML = i18n("noNetwork");
-      document.getElementById("p0_userImage").src = "../images/none.png";
-      document.getElementById("mn_netImage").src = "../images/none.png";
-      document.getElementById("p0_netImage").src = "../images/none.png";
-      document.getElementById("p0_userScreenName").textContent = "";
-      document.getElementById("connectTo").style.display = "none";
+      document.getElementById("mn1").style.display = "none";
+      document.getElementById("p13").innerHTML = i18n("z_noNetwork");
+      document.getElementById("p11").src = "images/none.png";
+      document.getElementById("mn2").src = "images/none.png";
+      document.getElementById("p12").src = "images/none.png";
+      document.getElementById("p14").textContent = "";
+      document.getElementById("ft2").style.display = "none";
    }
+}
+
+function formatLanguageList() {
+   var listElt = document.getElementById("mn6");
+   var languages = i18nLangList();
+   for (var i=0, max=languages.length; i < max; ++i) {
+      var itmElt = document.createElement("LI");
+      itmElt.className = "i18n";
+      itmElt.id = languages[i];
+      listElt.appendChild(itmElt);
+   }
+   listElt.addEventListener("click", changeLanguage);
 }
 
 function formatUsersList(isUserRequired) {
@@ -286,18 +296,18 @@ function formatUsersList(isUserRequired) {
    if (users.hasSome()) {
       var elt;
       var itmElt;
-      var ulElt = document.getElementById("logins");
+      var ulElt = document.getElementById("mn4");
       while (ulElt.hasChildNodes()) {
          ulElt.removeChild(ulElt.lastChild);
       }
       itmElt = document.createElement("LI");
-      itmElt.className = "i18n";
-      itmElt.id = "newLogin";
+      itmElt.className = "i18n addItem";
+      itmElt.id = "z_newLogin";
       itmElt.onclick = function(event) {
          authorize();
          event.stopPropagation();
       };
-      itmElt.appendChild(document.createTextNode(i18n("newLogin")));
+      itmElt.appendChild(document.createTextNode(i18n("z_newLogin")));
       ulElt.appendChild(itmElt);
       users.forEach(
          function(name, pass, albumTitle, isSelected, net) {
@@ -305,7 +315,7 @@ function formatUsersList(isUserRequired) {
             itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
-            imgElt.src = "../images/" + net + "SmallLogo.png";
+            imgElt.src = "images/" + net + "SmallLogo.png";
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
             itmElt.appendChild(imgElt);
@@ -313,13 +323,13 @@ function formatUsersList(isUserRequired) {
             ulElt.appendChild(itmElt);
          }
       );
-      elt = document.getElementById("mn_user");
+      elt = document.getElementById("mn1");
       elt.setAttribute("aria-expanded", "false");
       elt.appendChild(ulElt);
       elt.style.display = "";
       tellAccessPass();
    }else {
-      document.getElementById("mn_user").style.display = "none";
+      document.getElementById("mn1").style.display = "none";
       if (isUserRequired) {
          authorize();
       }
@@ -337,7 +347,7 @@ function isAlbumIdRequired() {
 }
 
 function resetAlbumsList() {
-   var albums = document.getElementById("mn_albums");
+   var albums = document.getElementById("mn5");
    while (albums.hasChildNodes()) albums.removeChild(albums.lastChild);
    if (!isAlbumIdRequired()) {
       albums.style.display = "none";
@@ -350,15 +360,15 @@ function resetAlbumsList() {
 
       smallElt = document.createElement("SMALL");
       smallElt.className = "i18n";
-      smallElt.id = "photoAlbum";
-      smallElt.appendChild(document.createTextNode(i18n("photoAlbum")));
+      smallElt.id = "z_photoAlbum";
+      smallElt.appendChild(document.createTextNode(i18n("z_photoAlbum")));
       italicElt = document.createElement("I");
-      italicElt.id = "albumTitle";
+      italicElt.id = "z_albumTitle";
       if (users.getAlbumTitle()) {
          italicElt.textContent = users.getAlbumTitle();
       }else {
          italicElt.className = "i18n";
-         italicElt.appendChild(document.createTextNode(i18n("albumTitle")));
+         italicElt.appendChild(document.createTextNode(i18n("z_albumTitle")));
       }
       ulElt = document.createElement("UL");
       ulElt.id = "albumList";
@@ -385,27 +395,24 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       elt.removeChild(elt.lastChild);
    }
    liElt = document.createElement("LI");
-   liElt.className = "i18n";
-   liElt.id = "newAlbum";
+   liElt.className = "i18n addItem";
+   liElt.id = "z_newAlbum";
    liElt.onclick = function(event) {
       createAlbum(true);
       event.stopPropagation();
    };
-   liElt.appendChild(document.createTextNode(i18n('newAlbum')));
+   liElt.appendChild(document.createTextNode(i18n('z_newAlbum')));
    elt.appendChild(liElt);
    for (var i=0, max=albums.length; i < max; ++i) {
       var album = albums[i];
-      var title = album.title;
-      var description = album.description;
+      var title = album['title'];
+      var description = album['description'];
+      var thumbUrl = album['thumbnailUrl'];
       if (!title || (title.length === 0)) title = "no title";
       if (!description || (description.length === 0)) description = "";
-
+      if (!thumbUrl || (thumbUrl.length === 0)) thumbUrl = "images/unknSmall.png";
       var imgElt = document.createElement("IMG");
-      if (album.thumbnailUrl && (album.thumbnailUrl.length !== 0)) {
-         imgElt.src = album.thumbnailUrl;
-      }else {
-         imgElt.src = "../images/unknSmall.png";
-      }
+      imgElt.src = thumbUrl;
       var spanElt = document.createElement("SPAN");
       spanElt.appendChild(document.createTextNode(title));
       var smallElt = document.createElement("SMALL");
@@ -416,8 +423,8 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       divElt.appendChild(smallElt);
 
       liElt = document.createElement("LI");
-      liElt.id = album.id;
-      if (selAlbumId === album.id) {
+      liElt.id = album['id'];
+      if (selAlbumId === liElt.id) {
          liElt.setAttribute("aria-selected", "true");
          isSelAlbumOK = true;
       }
@@ -425,7 +432,7 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       liElt.appendChild(divElt);
       elt.appendChild(liElt);
    }
-   var albumTitleElt = document.getElementById('albumTitle');
+   var albumTitleElt = document.getElementById('z_albumTitle');
    if (isSelAlbumOK) {
       albumTitleElt.textContent = selAlbumTitle;
       albumTitleElt.removeAttribute("class");  // no more i18n'ed
@@ -439,19 +446,19 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       users.setAlbum(null, null);
       // 2) Reflect this fact in the Photo Album title
       albumTitleElt.className = "i18n";
-      albumTitleElt.textContent = i18n("albumTitle");
+      albumTitleElt.textContent = i18n("z_albumTitle");
    }
    // uploadPhotos();
 }
 
 function changeAlbum(elt, event) {
-   var albumTitleElt = document.getElementById('albumTitle');
+   var albumTitleElt = document.getElementById('z_albumTitle');
    var liElt = getRealTarget(event);
    var albumTitle = liElt.getElementsByTagName("SPAN")[0].textContent;
    users.setAlbum(liElt.id, albumTitle);
    albumTitleElt.textContent = albumTitle;
    albumTitleElt.removeAttribute("class"); // no more i18n'ed  (except if 'none')
-   document.getElementById("p0_userScreenName").textContent = users.getScreenName();
+   document.getElementById("p14").textContent = users.getScreenName();
    uploadPhotos();
 }
 
@@ -464,7 +471,7 @@ function changeLogin(event) {
          var img = event.target.nextSibling.src;
          confirmMsg(
             i18n(
-               "revokeAccess",
+               "z_revokeAccess",
                event.target.nextSibling.nextSibling.textContent,
                img.substring(1+img.lastIndexOf("/"), img.lastIndexOf("SmallLogo"))
             ),
@@ -512,7 +519,7 @@ function fitImage(img) {
 }
 
 function formatNetworkChoices() {
-   var eltContainer = document.getElementById("choices");
+   var eltContainer = document.getElementById("ma1");
    var btnElt;
    networks.forEach(
       function(network) {
@@ -530,7 +537,7 @@ function formatNetworkChoices() {
       }
    );
    btnElt = document.createElement("BUTTON");
-   btnElt.textContent = i18n("cancel");
+   btnElt.textContent = i18n("z_cancel");
    btnElt.onclick = hideActionMenu;
    var divElt = document.createElement("DIV");
    divElt.appendChild(btnElt);
@@ -545,10 +552,10 @@ function authorize() {
 
 function authorizePicasa() {
    hideActionMenu();
-   var eltInp1 = makeInputField("login");
-   var eltInp2 = makeInputField("passwd", "password");
+   var eltInp1 = makeInputField("z_login");
+   var eltInp2 = makeInputField("z_passwd", "password");
    showMsg(
-      "picasaLogin",
+      "z_picasaLogin",
       [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
       function() {     // whenDone
          if ((eltInp1.value.length === 0) || (eltInp2.value.length === 0)) {
@@ -564,7 +571,7 @@ function authorizePicasa() {
                   formatUsersList(false);
                },
                function(rc, val) {  // whenFailed
-                  simpleMsg("error", i18n("badLogin"));
+                  simpleMsg("z_error", i18n("z_badLogin"));
                }
             );
          }
@@ -595,7 +602,7 @@ function authorizeThruOAuth(net) {
          getVerifier();           // wait 'til it returns with the verifier
       },
       function(rc, val) {         // whenFailed
-         simpleMsg("error", "authorize RC:" + rc + "\n" + val);
+         simpleMsg("z_error", "authorize RC:" + rc + "\n" + val);
       }
    );
 }
@@ -623,7 +630,7 @@ function getVerifier() {
             }else {
                win.close();
                var obj = JSON.parse(val);
-               registerUser(obj.VRF, obj.NET);
+               registerUser(obj['VRF'], obj['NET']);
                formatUsersList(false);
             }
          }
@@ -631,10 +638,10 @@ function getVerifier() {
       function(rc, val) { // whenFailed
          var win = oauthNetwork.win;
          if (win && !win.closed) win.close();
-         simpleMsg("error", "getVerifier RC:" + rc);
+         simpleMsg("z_error", "getVerifier RC:" + rc);
       }
    );
-   document.getElementById("progresspane").style.visibility='hidden';
+   document.querySelector(".progress").style.visibility='hidden';
 }
 
 function registerUser(verifier, net) {
@@ -645,16 +652,16 @@ function registerUser(verifier, net) {
          var obj = JSON.parse(val);
          // alert(dump(obj));
          users.addUser(
-            obj.userName,
-            obj.accessPass,
+            obj['userName'],
+            obj['accessPass'],
             net,
-            obj.imageUrl,
-            obj.screenName
+            obj['imageUrl'],
+            obj['screenName']
          );
          formatUsersList(false);
       },
       function(rc, val) { // whenFailed
-         simpleMsg("error", i18n("authDenied", val));
+         simpleMsg("z_error", i18n("z_authDenied", val));
       }
    );
 }
@@ -665,7 +672,7 @@ function tellAccessPass()
       "POST", "postAccPss", users.getAccessPass(),
       function(val) {},   // whenDone
       function(rc, val) { // whenFailed
-         simpleMsg("error", "tellAccess RC: " + rc + "\n" + val);
+         simpleMsg("z_error", "tellAccess RC: " + rc + "\n" + val);
       }
    );
 }
@@ -692,10 +699,10 @@ function listAlbums(event) {
 }
 
 function createAlbum(isDirect) {
-   var eltInp1 = makeInputField("title");
-   var eltInp2 = makeInputField("description");
+   var eltInp1 = makeInputField("z_title");
+   var eltInp2 = makeInputField("z_description");
    showMsg(
-      isDirect? "createAlbumProlog1" : "createAlbumProlog2",
+      isDirect? "z_createAlbumProlog1" : "z_createAlbumProlog2",
       [getInputFieldContainer(eltInp1), getInputFieldContainer(eltInp2)],
       function() {
          hideMsg();
@@ -708,10 +715,10 @@ function createAlbum(isDirect) {
             what,
             function(albums) {
                var newAlbum = albums[0];
-               users.setAlbum(newAlbum.id, newAlbum.title);
+               users.setAlbum(newAlbum['id'], newAlbum['title']);
                formatAlbumsList(
                   albums,
-                  document.getElementById("mn_albums").getElementsByTagName("UL")[0]
+                  document.getElementById("mn5").getElementsByTagName("UL")[0]
                );
             }
          );
@@ -720,8 +727,8 @@ function createAlbum(isDirect) {
 }
 
 function pickPhoto(event) {
-   document.getElementById("p2_msgText").value = "";
-   document.getElementById("p2_msgCount").textContent = "";
+   document.getElementById("z_enterTweet").value = "";
+   document.getElementById("p21").textContent = "";
    if (typeof MozActivity !== "undefined") {
       var a = new MozActivity({ name: "pick", data: {type: "image/jpeg"}});
       a.onsuccess = function(e) {
@@ -729,15 +736,18 @@ function pickPhoto(event) {
          uploadPhotos();
       };
       a.onerror = function() {
-         simpleMsg("error", i18n('pickImageError'));
+         simpleMsg("z_error", i18n('z_pickImageError'));
       };
    }else {
-      var elt = document.getElementById('upldFile');
+      var elt = document.createElement("INPUT");
+      elt.type = "file";
+      elt.setAttribute("multiple", "true");
+      elt.setAttribute("accept", "image/");
       elt.onchange = function() {
          if (!this.files) {
-            simpleMsg("error", i18n("noFileApiProp"));
+            simpleMsg("z_error", i18n("z_noFileApiProp"));
          }else if (!this.files[0]) {
-            simpleMsg("error", i18n("noFileSelected"));
+            simpleMsg("z_error", i18n("z_noFileSelected"));
          }else {
             for (var i=0; i < this.files.length; ++i) {
                pendingPhotos.push(this.files[i]);
@@ -750,10 +760,10 @@ function pickPhoto(event) {
 }
 
 function finishUpload() {
-   expandPage("p0"); // stop p2!
+   expandPage("p1"); // stop p2!
    showToolbar(0);
    if (upldPhotosCount > 0) {
-      simpleMsg("info", i18n('photosUploaded', upldPhotosCount));
+      simpleMsg("z_info", i18n('z_photosUploaded', upldPhotosCount));
       upldPhotosCount = 0;
    }
    // FIXME: if (issuer) issuer.postResult({result: "ok"});
@@ -776,7 +786,7 @@ function isUploadable() {
       return false;
    }else if (isAlbumIdRequired() && (users.getAlbumId() == null)) {
       // show the appropriate panel for selecting an album
-      var albumsPane = document.getElementById("mn_albums");
+      var albumsPane = document.getElementById("mn5");
       expandSidebarView(1);
       if (albumsPane.getAttribute("aria-expanded") !== "true") {
          albumsPane.click();
@@ -787,7 +797,7 @@ function isUploadable() {
             if (albums[i].nodeType != 3) ++albumsCount;
          }
          if (albumsCount > 0) {
-            simpleMsg("warning", i18n("selectOrCreateAlbum"));
+            simpleMsg("z_warning", i18n("z_selectOrCreateAlbum"));
          }else {
             createAlbum(false);
          }
@@ -905,7 +915,7 @@ function filterAndUploadPhoto(imgRawBlob)
       uploadPhoto(imgRawBlob);
    }else {
       var sentImg = new Image();
-      document.getElementById("progresspane").style.visibility="visible";
+      document.querySelector(".progress").style.visibility="visible";
       sentImg.onload = function() {
          var canvas = document.createElement("CANVAS");
          canvas.width = sentImg.width;
@@ -918,7 +928,7 @@ function filterAndUploadPhoto(imgRawBlob)
             "image/jpeg", 0.95
          );
       };
-      sentImg.src = document.getElementById("p2_picture").src;
+      sentImg.src = document.getElementById("p22").src;
    }
 }
 
@@ -927,24 +937,25 @@ function uploadPhoto(imgBlob) {
    formData.append("MAX_FILE_SIZE", "2000000");
 // formData.append("IMG", file.name.substr(-3));
    if (isAlbumIdRequired()) formData.append("AID", users.getAlbumId());
-   formData.append("TIT", document.getElementById("p2_msgText").value);
+   formData.append("TIT", document.getElementById("z_enterTweet").value);
    formData.append("upldFile", imgBlob);
    issueRequest(
       "POST",
       "postImageFile&NET=" + users.getNet(),
       formData,
       function(val) {        // whenDone
-         try {
-            var media = JSON.parse(val).entities.media[0];
-            var idStr = media.id_str;
-            var expandedUrl = media.expanded_url;
-         }catch (error) {
-         }
          /*
          Response:
             var res = JSON.parse(xhr.responseText);
             var id_str = res.entities.media[0].id_str;
             var ex_url = res.entities.media[0].expanded_url;
+         *//*
+         try {
+            var media = JSON.parse(val)['entities']['media'][0];
+            var idStr = media.id_str;
+            var expandedUrl = media['expanded_url'];
+         }catch (error) {
+         }
          */
          ++upldPhotosCount;
          uploadPhotos();
@@ -967,7 +978,7 @@ function issueRequestStd(what, whenDone) {
          },
          function(rc, val) { // whenFailed
             dispatcher.clean();
-            simpleMsg("error", what + " RC: " + rc + "\n" + val);
+            simpleMsg("z_error", what + " RC: " + rc + "\n" + val);
          }
       );
    }
@@ -976,16 +987,16 @@ function issueRequestStd(what, whenDone) {
 function issueRequest(method, op, values, whenDone, whenFailed) {
    var query = "?OP=" + op + "&V=1";    // REST version #1
    if (method === "GET") query += values;
-   var xhr = new XMLHttpRequest({mozSystem: true});
+   var xhr = new XMLHttpRequest({'mozSystem': true});
    if (xhr.withCredentials === undefined) {
-      simpleMsg("error", "Sorry: can't do cross-site requests");
+      simpleMsg("z_error", "Sorry: can't do cross-site requests");
       return;
    }
    xhr.withCredentials = true;
    xhr.open(method, server_url + query, true);
    xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
-         document.getElementById("progresspane").style.visibility='hidden';
+         document.querySelector(".progress").style.visibility='hidden';
          if ((this.status === 200) || (this.status === 0)) {
             whenDone(this.responseText);
          }else {
@@ -993,7 +1004,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
          }
       }
    };
-   document.getElementById("progresspane").style.visibility='visible';
+   document.querySelector(".progress").style.visibility='visible';
    if (method === "GET") {
       xhr.send();
    }else {
@@ -1002,7 +1013,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
 }
 
 function showToolbar(barNo) {
-   var elt = document.getElementById("footerTable");
+   var elt = document.querySelector("footer > table");
    var prevBarNo = -1;
    elt.parentNode.style.display = "none";
    for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
@@ -1060,7 +1071,7 @@ function showNewPhoto() {
          },
          "image/jpeg", 0.95
       );
-      document.getElementById("p2_picture").src = filters[filterChoice].src;
+      document.getElementById("p22").src = filters[filterChoice].src;
    };
    imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
 }
@@ -1069,13 +1080,13 @@ function editPhoto() {
    showToolbar(2);
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
-   document.getElementById("p3_picture").src = filters[filterChoice].src;
+   document.getElementById("p33").src = filters[filterChoice].src;
    expandPage("p3");
 }
 
 function validateEditPhoto() {
    filterChoice = tempFilterChoice;
-   document.getElementById("p2_picture").src = filters[filterChoice].src;
+   document.getElementById("p22").src = filters[filterChoice].src;
    cancelEditPhoto();
 }
 
@@ -1086,7 +1097,7 @@ function cancelEditPhoto() {
 
 function changeFilter(event) {
    if (event) tempFilterChoice = getRealTarget(event).cellIndex;
-   document.getElementById("p3_picture").src = filters[tempFilterChoice].src;
+   document.getElementById("p33").src = filters[tempFilterChoice].src;
 }
 
 function showActionMenu() {
@@ -1117,7 +1128,7 @@ function doWipTest() {
       "<INPUT type='radio' name='g2' value='2'>does answer late</INPUT><BR/>" +
       "<INPUT type='radio' name='g2' value='0'>does not answer</INPUT><BR/>" +
       "<HR/>" +
-      "<BUTTON id='BT_Apply' style='width:8rem;margin:0.5rem;float:left'><IMG src='style/images/coins.png'</BUTTON>" +
+      "<BUTTON id='BT_Apply' style='width:8rem;margin:0.5rem;float:left'><IMG class='action-icon coins'/></BUTTON>" +
       "<BUTTON id='BT_Skip' style='width:8rem;margin:0.5rem;float:right'>Skip</BUTTON>" +
       "</FORM>" +
       "</DIV>"
@@ -1154,23 +1165,23 @@ function doWipTest() {
             break;
          }
       }
-      document.getElementById("btnBuy").style.display = "";
+      document.getElementById("p02").style.display = "";
       purchase("&test=1"+ granted + answered);
    }
 }
 
 function setBuyButton() {
+   document.getElementById("p02").style.display = "none";
    /**/ doWipTest();
    if ((navigator.mozPay !== undefined) && (users.getPayState() !== "granted")) {
-      var elt = document.getElementById("btnBuy");
+      var elt = document.getElementById("p02");
       elt.style.display = "";
       elt.onclick = function() { purchase("&test=111"); };
       // for marketplace, just do: elt.onclick = purchase;
    }
 }
-
 function purchase(test) {
-   var elt = document.getElementById("btnBuy");
+   var elt = document.getElementById("p02");
    elt.style.display = "none";
    if (!test) test = "";
    if (users.getPayState() === "pending") {
@@ -1193,12 +1204,12 @@ function purchase(test) {
             var req = navigator.mozPay([jwt]);
             req.onsuccess = function() { getPayment(elt, paykey); };
             req.onerror = function() {  // mozPay failed
-               simpleMsg("error", "Pay process" + this.error.name);
+               simpleMsg("z_error", "Pay process" + this.error.name);
                elt.style.display = "";
             }
          },
          function(rc, val) {  // whenFailed (e.g.: we didn't generate the JWT)
-            simpleMsg("error", "Payment request: server error\nRC:" + rc);
+            simpleMsg("z_error", "Payment request: server error\nRC:" + rc);
             elt.style.display = "";
          }
       );
@@ -1209,61 +1220,76 @@ function getPayment(elt, paykey) {
    issueRequest(
       "GET", "getPayment", "&PYK=" + paykey,
       function(val) {     // whenDone
-         pay = JSON.parse(val);
+         var pay = JSON.parse(val);
+         var state = pay['state'];
          var msg;
-         if (pay.state === "granted") {
-            msg = i18n("grantedPay");
+         if (state === "granted") {
+            msg = i18n("z_grantedPay");
          }else {
             elt.style.display = "";
-            if (pay.state == "denied") {
-               msg = i18n("deniedPay");
+            if (state === "denied") {
+               msg = i18n("z_deniedPay");
             }else {
-               // assume pay.state is "pending"
+               // assume pay['state'] is "pending"
                if (users.getPayState() === "pending") { // for the 2nd time
                   confirmMsg(
-                     i18n("cancelPay", i18nDate(users.getPayTime())),
+                     i18n("z_cancelPay", i18nDate(users.getPayTime())),
                      function() { cancelPayment(elt, paykey); }
                   );
                   return;
                }else {
-                  msg = i18n("pendingPay");
+                  msg = i18n("z_pendingPay");
                }
             }
          }
          users.writePayment(paykey, pay);
-         simpleMsg("info", msg);
+         simpleMsg("z_info", msg);
       },
       function(rc, val) { // whenFailed
-         simpleMsg("error", "Payment response: Server error\nRC:" + rc);
+         simpleMsg("z_error", "Payment response: Server error\nRC:" + rc);
          elt.style.display = "";
       }
    );
-   document.getElementById("progresspane").style.visibility='hidden';
+   document.querySelector(".progress").style.visibility = "hidden";
 }
 
 function cancelPayment(elt, paykey) {
    issueRequest(
       "GET", "cancelPayment", "&PYK=" + paykey,
       function(val) {     // whenDone
-         pay = JSON.parse(val);
+         var pay = JSON.parse(val);
+         var state = pay['state'];
          var msg;
-         if (pay.state === "granted") {  // payment granted in the meanwhile
-            msg = i18n("grantedPay");
+         if (state === "granted") {  // payment granted in the meanwhile
+            msg = i18n("z_grantedPay");
          }else {
             elt.style.display = "";
-            if (pay.state == "denied") { // the regular case
-               msg = i18n("deniedPay");
+            if (state === "denied") { // the regular case
+               msg = i18n("z_deniedPay");
             }else {
-               msg = i18n("pendingPay"); // should not occur
+               msg = i18n("z_pendingPay"); // should not occur
             }
          }
          users.writePayment(paykey, pay);
-         simpleMsg("info", msg);
+         simpleMsg("z_info", msg);
       },
       function(rc, val) { // whenFailed
-         simpleMsg("error", "Payment not cancelled\nRC:" + rc);
+         simpleMsg("z_error", "Payment not cancelled\nRC:" + rc);
          elt.style.display = "";
       }
    );
-   document.getElementById("progresspane").style.visibility='hidden';
+   document.querySelector(".progress").style.visibility = "hidden";
+}
+
+function getQueryParams() {
+   var query = window.location.search.substr(1).split('&');
+   if (query === "") return {};
+   var params = {};
+   for (var i=0; i < query.length; ++i) {
+       var param = query[i].split('=');
+       if (param.length === 2) {
+          params[param[0]] = decodeURIComponent(param[1].replace(/\+/g, " "));
+       }
+   }
+   return params;
 }

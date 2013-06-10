@@ -37,7 +37,7 @@ function alertMsg(idTitle, eltContents, whenDone) {
 }
 
 function confirmMsg(text, whenDone) {
-   showMsg("confirm", [makeTextField(text)], function() { hideMsg(); whenDone(); });
+   showMsg("z_confirm", [makeTextField(text)], function() { hideMsg(); whenDone(); });
 }
 
 function simpleMsg(idTitle, text) {
@@ -46,7 +46,7 @@ function simpleMsg(idTitle, text) {
 
 function execute(fct, args)
 {
-   var elt = document.getElementById("messagepane");
+   var elt = document.querySelector(".message");
    if (elt.promises === undefined) {
       elt.promises = [];
       new GestureDetector(elt).startDetecting();
@@ -72,7 +72,7 @@ function execute(fct, args)
 }
 
 function hideMsg() {
-   var elt = document.getElementById("messagepane");
+   var elt = document.querySelector(".message");
    elt.style.top = '-150%';
    elt.style.opacity = "1.0";
    elt.staged = elt.promises.shift();
@@ -82,7 +82,7 @@ function hideMsg() {
 }
 
 function shakeMsg() {
-   var elt = document.getElementById("messagepane");
+   var elt = document.querySelector(".message");
    var count = 0;
    var timer = setInterval(
       function() {
