@@ -1,0 +1,13 @@
+war/applogos/
+war/favicon.ico
+war/index.html
+war/hosted_manifest.webapp
+war/manifest.webapp
+war/images/
+war/js/
+war/style/
+war/WEB-INF/appengine-generated/
+war/WEB-INF/classes/
+temp/
+junk/
+

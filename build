@@ -1,16 +1,31 @@
 #!/bin/csh
 
-if (-d temp) then
+if (-d temp/) then
    rm -r temp
 endif
+if (-d war/js) then
+   rm -r war/js
+endif
+if (-d war/style) then
+   rm -r war/style
+endif
+if (-d war/style/images) then
+   rm -r war/style/images
+endif
+if (-d war/applogos) then
+   rm -r war/applogos
+endif
+if (-d war/images) then
+   rm -r war/images
+endif
+
 mkdir temp
 mkdir temp/js
-mkdir temp/dist
-mkdir temp/dist/js
-mkdir temp/dist/style
-mkdir temp/dist/style/images
-mkdir temp/dist/applogos
-mkdir temp/dist/images
+mkdir war/js
+mkdir war/style
+mkdir war/style/images
+mkdir war/applogos
+mkdir war/images
 
 echo Obfuscating.  Wait, it will take about ten seconds....
 
@@ -75,23 +90,23 @@ foreach name ($to_mangle)
 end
 
 # modify index.html to point at the new css and js
-sed -e '/-- REPLACED --/, /-- REPLACEMENT/d' -e '/REPLACE END --/d' ../war/index.html >temp/index.html
+sed -e '/-- REPLACED --/, /-- REPLACEMENT/d' -e '/REPLACE END --/d' pretty/index.html >temp/index.html
 
 # mangle our strings in index.html
-sed -r -f temp/sedscript temp/index.html > temp/dist/index.html
+sed -r -f temp/sedscript temp/index.html > war/index.html
 
 # mangle our strings in all js files
-foreach file(../war/js/*.js)
+foreach file(pretty/js/*.js)
    sed -r -f temp/sedscript $file > temp/js/`basename $file`
 end
 
 # compress the style sheets
-foreach file(../war/style/*.css)
-   java -classpath ../.. -jar yui.jar $file >> temp/dist/style/jaxogram.min.css
+foreach file(pretty/style/*.css)
+   java -classpath ../.. -jar buildlib/yui.jar $file >> war/style/jaxogram.min.css
 end
 
 # cook the proper java command to obfuscate all js files (closure compiler)
-set jarcmd = "java -jar compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --externs temp/externs.js --js_output_file=temp/dist/js/jaxogram.min.js"
+set jarcmd = "java -jar buildlib/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --externs temp/externs.js --js_output_file=war/js/jaxogram.min.js"
 foreach file(temp/js/*.js)
    set jarcmd = "${jarcmd} --js=${file}"
 end
@@ -100,18 +115,19 @@ end
 $jarcmd >& temp/warn
 
 # copy other required files to dist
-cp -p ../war/manifest.webapp temp/dist
-cp -p ../war/favicon.ico temp/dist
-cp -p ../war/images/* temp/dist/images
-cp -p ../war/style/images/* temp/dist/style/images
-cp -p ../war/applogos/* temp/dist/applogos
+cp -p pretty/manifest.webapp war
+cp -p pretty/hosted_manifest.webapp war
+cp -p pretty/favicon.ico war
+cp -p pretty/images/* war/images
+cp -p pretty/style/images/* war/style/images
+cp -p pretty/applogos/* war/applogos
 
 # zip it
 if (-e jaxogram.zip) then
    rm jaxogram.zip
 endif
-cd temp/dist
-zip -r ../../jaxogram.zip * >& ../zipped
+cd war
+zip -r ../../jaxogram.zip * >& ../temp/zipped
 echo All done.  Result in jaxogram.zip
 
 # zip jaxogram -x */.DS_Store -r
