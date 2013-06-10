@@ -246,7 +246,7 @@ function onNetworkChange()
 {
    if (users.hasSome()) {
       var networkName = users.getNet();
-      var netImage = "../images/" + networkName + "Logo.png";
+      var netImage = "images/" + networkName + "Logo.png";
       var connectTo = document.getElementById("connectTo");
       for (var i=0, max = networks.length; i < max; ++i) {
          var network = networks[i];
@@ -272,9 +272,9 @@ function onNetworkChange()
       elt.onclick = authorize;
       document.getElementById("mn_user").style.display = "none";
       document.getElementById("p1_userName").innerHTML = i18n("noNetwork");
-      document.getElementById("p1_userImage").src = "../images/none.png";
-      document.getElementById("mn_netImage").src = "../images/none.png";
-      document.getElementById("p1_netImage").src = "../images/none.png";
+      document.getElementById("p1_userImage").src = "images/none.png";
+      document.getElementById("mn_netImage").src = "images/none.png";
+      document.getElementById("p1_netImage").src = "images/none.png";
       document.getElementById("p1_userScreenName").textContent = "";
       document.getElementById("connectTo").style.display = "none";
    }
@@ -316,7 +316,7 @@ function formatUsersList(isUserRequired) {
             itmElt = document.createElement("LI");
             var spanElt = document.createElement("SPAN");
             if (isSelected) itmElt.setAttribute("aria-selected", "true");
-            imgElt.src = "../images/" + net + "SmallLogo.png";
+            imgElt.src = "images/" + net + "SmallLogo.png";
             spanElt.setAttribute("role", "trasher");
             itmElt.appendChild(spanElt);
             itmElt.appendChild(imgElt);
@@ -415,7 +415,7 @@ function formatAlbumsList(albums, elt) {  // elt is the UL id='albumList'
       if (album.thumbnailUrl && (album.thumbnailUrl.length !== 0)) {
          imgElt.src = album.thumbnailUrl;
       }else {
-         imgElt.src = "../images/unknSmall.png";
+         imgElt.src = "images/unknSmall.png";
       }
       var spanElt = document.createElement("SPAN");
       spanElt.appendChild(document.createTextNode(title));
