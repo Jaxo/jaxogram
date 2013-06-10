@@ -85,6 +85,7 @@
 .action-icon.camera:before { background-position:  0px -2160px; }
 .action-icon.edit_picture:before { background-position:  0px -2190px; }
 .action-icon.done:before { background-position:  0px -2220px; }
+.action-icon.coins:before { background-position:  0px -2250px; }
 /* ------- aliases (at jaxo...) ---------  */
 /* add is an alias of new                  */
 /* back stays the same                     */
