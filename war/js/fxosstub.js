@@ -5,7 +5,7 @@ function Install() {
       request.onsuccess = function () {
          if (this.result) {
             dispatcher.post(
-               "install_changed", "installed", this.result.manifest.version
+               "z_install_changed", "z_installed", this.result.manifest.version
             );
          }else {
             that.installUrl = (
@@ -18,57 +18,57 @@ function Install() {
                   var req2 = navigator.mozApps.install(that.installUrl);
                   req2.onsuccess = function(data) {
                      dispatcher.post(
-                        "install_changed",
-                        "installed",
+                        "z_install_changed",
+                        "z_installed",
                         req2.result.manifest.version
                      );
                      //*/ alert("Bingo!");
                   };
                   req2.onerror = function() {
-                     dispatcher.post("install_changed", "failed", this.error);
+                     dispatcher.post("z_install_changed", "z_failed", this.error);
                   };
                }catch (error) {
-                  dispatcher.post("install_changed", "failed", error);
+                  dispatcher.post("z_install_changed", "z_failed", error);
                }
             };
-            dispatcher.post("install_changed", "uninstalled");
+            dispatcher.post("z_install_changed", "z_uninstalled");
          }
       };
       request.onerror = function(error) {
-         dispatcher.post("install_changed", "failed", error);
+         dispatcher.post("z_install_changed", "z_failed", error);
       };
    }else if ((typeof chrome !== "undefined") && chrome.webstore && chrome.app) {
       if (chrome.app.isInstalled) {
-         dispatcher.post("install_changed", "installed");
+         dispatcher.post("z_install_changed", "z_installed");
       }else {
          this.doIt = function() {
             chrome.webstore.install(
                null,
                function() {
-                  dispatcher.post("install_changed", "installed");
+                  dispatcher.post("z_install_changed", "z_installed");
                },
                function(error) {
-                  dispatcher.post("install_changed", "failed", error);
+                  dispatcher.post("z_install_changed", "z_failed", error);
                }
             );
          };
-         dispatcher.post("install_changed", "uninstalled");
+         dispatcher.post("z_install_changed", "z_uninstalled");
       }
    }else if (typeof window.navigator.standalone !== "undefined") {
       if (window.navigator.standalone) {
-         dispatcher.post("install_changed", "installed");
+         dispatcher.post("z_install_changed", "z_installed");
       }else {
          /*
          | Right now, just asks that something show a UI element mentioning
          | how to install using Safari's "Add to Home Screen" button.
          */
          this.doIt = function() {
-            dispatcher.post("install_forIOS", navigator.platform.toLowerCase());
+            dispatcher.post("z_install_forIOS", navigator.platform.toLowerCase());
          };
-         dispatcher.post("install_changed", "uninstalled");
+         dispatcher.post("z_install_changed", "z_uninstalled");
       }
    }else {
-      dispatcher.post("install_changed", "unsupported");
+      dispatcher.post("z_install_changed", "z_unsupported");
    }
    return this;
 }
@@ -76,21 +76,21 @@ function Install() {
 function setInstallButton(buttonId) {
    var buttonElt = document.getElementById(buttonId);
    dispatcher.on(
-      "install_changed",
+      "z_install_changed",
       function action(state) {
          buttonElt.style.display = (
-            (state == "uninstalled")? "table-cell" : "none"
+            (state == "z_uninstalled")? "table-cell" : "none"
          );
-         if (state == "failed") {
-            alert(i18n("installFailure"));
+         if (state == "z_failed") {
+            alert(i18n("z_installFailure"));
          }
       }
    );
    dispatcher.on(
-      "install_forIOS",
+      "z_install_forIOS",
       function action(state) {
          buttonElt.style.display = "none";
-         alert(i18n("safariInstall"));
+         alert(i18n("z_safariInstall"));
       }
    );
    var install = new Install();
@@ -104,27 +104,27 @@ function toggleSidebarView() {
 }
 
 function expandSidebarView(v) { // -1: collapse, +1: expand, 0: toggle
-   var btnMainImg = document.getElementById('btnMainImage');
-   var drawer = document.getElementById('corepane');
-   var sidebar = document.getElementById('menupane');
+   var btn = document.getElementById('p01');
+   var principal = document.querySelector(".principal");
+   var sidebar = document.querySelector(".sidebar");
    var expanded = (sidebar.getAttribute("aria-expanded") === "true");
    if (!expanded && (v >= 0)) {
-      btnMainImg.setAttribute("role", "back");
-      drawer.setAttribute("aria-shrunk", "true");
+      btn.className = "action-icon back";
+      principal.setAttribute("aria-shrunk", "true");
       sidebar.setAttribute("aria-expanded", "true");
    }else if (v <= 0) {
-      btnMainImg.setAttribute("role", "menu");
-      drawer.setAttribute("aria-shrunk", "false");
+      btn.className = "action-icon menu";
+      principal.setAttribute("aria-shrunk", "false");
       sidebar.setAttribute("aria-expanded", "false");
    }
 }
 
 function resetSidebarButton() {
-   var btnMainImg = document.getElementById('btnMainImage');
-   if (document.getElementById('menupane').getAttribute("aria-expanded") === "true") {
-      btnMainImg.setAttribute("role", "back");
+   var btn = document.getElementById('p01');
+   if (document.querySelector(".sidebar").getAttribute("aria-expanded") === "true") {
+      btn.className = "action-icon back";
    }else {
-      btnMainImg.setAttribute("role", "menu");
+      btn.className = "action-icon menu";
    }
 }
 

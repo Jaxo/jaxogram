@@ -23,80 +23,32 @@
 |      dispatcher.off("somethingHappened", myAction);
 |
 */
-function createDispatcher() {
-   if (!window.dispatcher) {
-      Object.defineProperty(
-         window,
-         "dispatcher",
-         new (
-            function () {
-               var events = [];
-               var dispatcher = {};
-               Object.defineProperty(
-                  dispatcher,
-                  "post",
-                  {
-                     value: function(name) {
-                        if (events[name]) {
-                           var args = Array.prototype.slice.call(arguments, 1);
-                           for (var i=0, l=events[name].length; i<l; ++i) {
-                              events[name][i].apply(this, args);
-                           }
-                        }
-                     },
-                     writable: false,
-                     configurable: false,
-                     enumerable: false
-                  }
-               );
-               Object.defineProperty(
-                  dispatcher,
-                  "on",
-                  {
-                     value: function(name, func) {
-                        events[name] = (events[name] || []).concat([func]);
-                     },
-                     writable: false,
-                     configurable: false,
-                     enumerable: false
-                  }
-               );
-               Object.defineProperty(
-                  dispatcher,
-                  "off",
-                  {
-                     value: function(name, func) {
-                        if (events[name]) {
-                           var newEvents = [];
-                           for (var i=0, l=events[name].length; i<l; ++i) {
-                              var f = events[name][i];
-                              if (f != func) newEvents.push();
-                           }
-                           events[name] = newEvents;
-                        }
-                     },
-                     writable: false,
-                     configurable: false,
-                     enumerable: false
-                  }
-               );
-               Object.defineProperty(
-                  dispatcher,
-                  "clean",
-                  {
-                     value: function() { events = []; },
-                     writable: false,
-                     configurable: false,
-                     enumerable: false
-                  }
-               );
-               this.get = function () {
-                  return dispatcher;
-               };
-               this.configurable = false;
-               this.enumerable = true;
+var dispatcher = (
+   function () {
+      var events = [];
+      var dispatcher = {};
+      dispatcher.post = function(name) {
+         if (events[name]) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            for (var i=0, l=events[name].length; i<l; ++i) {
+               events[name][i].apply(this, args);
             }
-         )()
-      );
+         }
+      };
+      dispatcher.on = function(name, func) {
+         events[name] = (events[name] || []).concat([func]);
+      };
+      dispatcher.off = function(name, func) {
+         if (events[name]) {
+            var newEvents = [];
+            for (var i=0, l=events[name].length; i<l; ++i) {
+               var f = events[name][i];
+               if (f != func) newEvents.push();
+            }
+            events[name] = newEvents;
+         }
+      };
+      dispatcher.clean = function() { events = []; };
+      return dispatcher;
    }
-}
+)();

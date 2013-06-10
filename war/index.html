@@ -3,12 +3,11 @@
 <HEAD>
    <META charset="utf-8">
    <META name="viewport" content="width=device-width">
-   <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
-   <LINK rel="stylesheet" type="text/css" href="style/action_menu.css"/>
-   <LINK rel="stylesheet" type="text/css" href="style/action_icons.css"/>
    <LINK rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+   <!-- REPLACED -->
+   <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
+   <LINK rel="stylesheet" type="text/css" href="style/action_icons.css"/>
    <SCRIPT type="text/javascript" src="js/fxosstub.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/localStorage.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/gestureDetector.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/jgusers.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/dispatcher.js"></SCRIPT>
@@ -16,98 +15,98 @@
    <SCRIPT type="text/javascript" src="js/messagePane.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/jaxogram.js"></SCRIPT>
    <SCRIPT type="text/javascript" src="js/debug.js"></SCRIPT>
-   <TITLE>Jaxogram</title>
+   <!-- REPLACEMENT
+   <LINK rel="stylesheet" type="text/css" href="style/jaxogram.min.css"/>
+   <SCRIPT type="text/javascript" src="js/jaxogram.min.js"></SCRIPT>
+   REPLACE END -->
+   <TITLE>Jaxogram</TITLE>
 </HEAD>
 <BODY>
-   <SECTION id="corepane" class="drawer">
-      <HEADER role="main">
-         <DIV id="btnMain"><IMG class="action-icon" role="menu" id="btnMainImage"/></DIV>
+   <SECTION class="principal">
+      <HEADER>
+         <DIV><IMG id="p01" class="action-icon menu"/></DIV>
          <H1>Jaxogram <SMALL>web</SMALL></H1>
          <TABLE><TR>
-            <TD id="btnInstall" class="i18n"></TD>
+            <TD id="z_btnInstall" class="i18n"></TD>
          </TR></TABLE>
       </HEADER>
       <DIV id="p1" class="body" aria-expanded="true">
          <DIV class="user">
-            <IMG id="p1_userImage"/>
-            <IMG id="p1_netImage"/>
-            <DIV id="p1_userName"></DIV>
-            <DIV id="p1_userScreenName"></DIV>
+            <IMG id="p11"/>
+            <IMG id="p12"/>
+            <DIV id="p13"></DIV>
+            <DIV id="p14"></DIV>
          </DIV>
-         <BUTTON id="initLogin" class="i18n recommend"></BUTTON>
-         <DIV class="i18n" id="banner"></DIV>
-         <DIV id="p1_bot">
+         <BUTTON id="z_initLogin" class="i18n recommend invisible"></BUTTON>
+         <DIV id="z_banner" class="i18n banner"></DIV>
+         <DIV id="p15">
             <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
-            <SPAN id="p1_copy">&copy; Jaxo, Inc. 2013</SPAN>
+            <SPAN id="p16">&copy; Jaxo, Inc. 2013</SPAN>
          </DIV>
       </DIV>
       <DIV id="p2" class="body">
-         <TEXTAREA class="i18n textbox" id="p2_msgText"></TEXTAREA>
-         <SPAN id="p2_msgCount"></SPAN>
-         <DIV class="imgbox"><IMG alt="Photo" id="p2_picture"/></DIV>
+         <TEXTAREA id="z_enterTweet" class="i18n textbox"></TEXTAREA>
+         <SPAN id="p21"></SPAN>
+         <DIV class="imgbox"><IMG id="p22" alt="Photo"/></DIV>
       </DIV>
       <DIV id="p3" class="body">
          <HEADER>
-            <DIV id="cancelEdit"><IMG role="cancel" class="action-icon"/></DIV>
-            <H2 class="i18n" id="edit"></H2>
+            <DIV id="p31"><IMG class="action-icon cancel"/></DIV>
+            <H2 id="z_edit" class="i18n"></H2>
             <TABLE><TR>
-               <TD><IMG id="validateEdit" role="done" class="action-icon"/></TD>
+               <TD><IMG id="p32" class="action-icon done"/></TD>
             </TR></TABLE>
          </HEADER>
-         <DIV class="imgbox"><IMG alt="Photo" id="p3_picture"/></DIV>
+         <DIV class="imgbox"><IMG id="p33" alt="Photo"/></DIV>
       </DIV>
    </SECTION>
 
    <SECTION class="menuaction body">
-      <HEADER><H2 class="i18n" id="chooseNetwork"></H2></HEADER>
-      <MENU id="choices"></MENU>
+      <HEADER><H2 id="z_chooseNetwork" class="i18n"></H2></HEADER>
+      <MENU id="ma1"></MENU>
    </SECTION>
-   <SECTION id="menupane" class="sidebar">
-      <HEADER><H2 class="i18n" id="preferences"></H2></HEADER>
+   <SECTION class="sidebar">
+      <HEADER><H2 id="z_preferences" class="i18n"></H2></HEADER>
       <UL class="menuList">
-        <LI role="listbox" id="mn_user">
-           <SMALL class="i18n" id="loginAs"></SMALL><BR/>
-           <IMG id="mn_netImage"/>
-           <I id="mn_userName"></I>
-           <UL id="logins" role="radiogroup"></UL>
+        <LI id="mn1" role="listbox">
+           <SMALL id="z_loginAs" class="i18n"></SMALL><BR/>
+           <IMG id="mn2"/><I id="mn3"></I>
+           <UL id="mn4" role="radiogroup"></UL>
         </LI>
-        <LI role="listbox" id="mn_albums"></LI>
+        <LI id="mn5" role="listbox"></LI>
         <LI role="listbox">
-           <SMALL class="i18n" id="language"></SMALL><BR/><I id="usedLang"></I>
-           <UL role="radiogroup" id="changeLanguage"></UL>
+           <SMALL id="z_language" class="i18n"></SMALL><BR/><I id="usedLang"></I>
+           <UL id="mn6" role="radiogroup"></UL>
         </LI>
       </UL>
    </SECTION>
-   <SECTION id="messagepane">
+   <SECTION class="message">
       <DIV><DIV>
       <TABLE>
          <TR>
-            <TD class="action-icon" role="cancel"></TD>
+            <TD class="action-icon cancel"></TD>
             <TD><IMG src="style/images/separator.png"></TD>
             <TD>&nbsp;</TD>
             <TD><IMG src="style/images/separator.png"/></TD>
-            <TD class="action-icon" role="ok"></TD>
+            <TD class="action-icon ok"></TD>
          </TR><TR>
             <TD colspan="5" style="text-align:center">&nbsp;</TD>
          </TR>
       </TABLE>
       </DIV></DIV>
    </SECTION>
-   <SECTION id="progresspane"><PROGRESS></PROGRESS></SECTION>
-
-   <!-- Fallback if "no "Pick" MozActivity -->
-   <INPUT type='file' id='upldFile' multiple accept="image/"/>
+   <SECTION class="progress"><PROGRESS></PROGRESS></SECTION>
 
    <FOOTER>
-     <TABLE id="footerTable">
+     <TABLE>
         <TR>
-          <TD id="pickPhoto" class="action-icon" role="camera"></TD>
-          <TD id="connectTo" class="action-icon" role="earth"></TD>
+          <TD id="ft1" class="action-icon camera"></TD>
+          <TD id="ft2" class="action-icon earth"></TD>
         </TR><TR>
-          <TD id="uploadPhoto" class="action-icon" role="send"></TD>
-          <TD id="editPhoto" class="action-icon" role="edit_picture"></TD>
-          <TD id="cancelPhoto" class="action-icon" role="delete"></TD>
-        </TR><TR role="radiogroup" id="imgFilters">
+          <TD id="ft3" class="action-icon send"></TD>
+          <TD id="ft4" class="action-icon edit_picture"></TD>
+          <TD id="ft5" class="action-icon delete"></TD>
+        </TR><TR id="ft6" role="radiogroup">
         </TR>
      </TABLE>
    </FOOTER>

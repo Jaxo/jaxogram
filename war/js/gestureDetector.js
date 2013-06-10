@@ -83,7 +83,7 @@ var GestureDetector = (function() {
   // Internal methods
   //
 
-  GD.prototype.handleEvent = function(e) {
+  GD.prototype['handleEvent'] = function(e) {
     var handler = this.state[e.type];
     if (!handler) return;
 
@@ -93,9 +93,12 @@ var GestureDetector = (function() {
       // causes touchend events to list all touches as changed, so
       // warn if we see that bug
       if (e.type === 'touchend' && e.changedTouches.length > 1) {
-        console.warn('gesture_detector.js: spurious extra changed touch on ' +
-                     'touchend. See ' +
-                     'https://bugzilla.mozilla.org/show_bug.cgi?id=785554');
+        console.warn('GD bg7');
+           /*
+           | gesture_detector.js: spurious extra changed touch on ' +
+           | 'touchend. See ' +
+           | 'https://bugzilla.mozilla.org/show_bug.cgi?id=785554');
+           */
       }
 
       for (var i = 0; i < e.changedTouches.length; i++) {
@@ -140,7 +143,7 @@ var GestureDetector = (function() {
 
   GD.prototype.emitEvent = function(type, detail) {
     if (!this.target) {
-      console.error('Attempt to emit event with no target');
+      console.error('GD er8'); // 'Attempt to emit event with no target');
       return;
     }
 
@@ -289,13 +292,13 @@ var GestureDetector = (function() {
 
     // Switch to the touchstarted state and process the touch event there
     // Once we've started processing a touch gesture we'll ignore mouse events
-    touchstart: function(d, e, t) {
+    'touchstart': function(d, e, t) {
       d.switchTo(touchStartedState, e, t);
     },
 
     // Or if we see a mouse event first, then start processing a mouse-based
     // gesture, and ignore any touch events
-    mousedown: function(d, e) {
+    'mousedown': function(d, e) {
       d.switchTo(mouseDownState, e);
     }
   };
@@ -319,13 +322,13 @@ var GestureDetector = (function() {
         d.startTimer('holdtimeout', GD.HOLD_INTERVAL);
     },
 
-    touchstart: function(d, e, t) {
+    'touchstart': function(d, e, t) {
       // If another finger goes down in this state, then
       // go to transform state to start 2-finger gestures.
       d.clearTimer('holdtimeout');
       d.switchTo(transformState, e, t);
     },
-    touchmove: function(d, e, t) {
+    'touchmove': function(d, e, t) {
       // Ignore any touches but the initial one
       // This could happen if there was still a finger down after
       // the end of a previous 2-finger gesture, e.g.
@@ -338,7 +341,7 @@ var GestureDetector = (function() {
         d.switchTo(panStartedState, e, t);
       }
     },
-    touchend: function(d, e, t) {
+    'touchend': function(d, e, t) {
       // Ignore any touches but the initial one
       if (t.identifier !== d.touch1)
         return;
@@ -385,7 +388,7 @@ var GestureDetector = (function() {
         panStartedState.touchmove(d, e, t);
     },
 
-    touchmove: function(d, e, t) {
+    'touchmove': function(d, e, t) {
       // Ignore any fingers other than the one we're tracking
       if (t.identifier !== d.touch1)
         return;
@@ -424,7 +427,7 @@ var GestureDetector = (function() {
 
       d.last = current;
     },
-    touchend: function(d, e, t) {
+    'touchend': function(d, e, t) {
       // Ignore any fingers other than the one we're tracking
       if (t.identifier !== d.touch1)
         return;
@@ -481,7 +484,7 @@ var GestureDetector = (function() {
       d.emitEvent('holdstart', d.start);
     },
 
-    touchmove: function(d, e, t) {
+    'touchmove': function(d, e, t) {
       var current = coordinates(e, t);
       d.emitEvent('holdmove', {
         absolute: {
@@ -498,7 +501,7 @@ var GestureDetector = (function() {
       d.last = current;
     },
 
-    touchend: function(d, e, t) {
+    'touchend': function(d, e, t) {
       var current = coordinates(e, t);
       d.emitEvent('holdend', {
         start: d.start,
@@ -532,7 +535,7 @@ var GestureDetector = (function() {
       d.scaled = d.rotated = false;
     },
 
-    touchmove: function(d, e, t) {
+    'touchmove': function(d, e, t) {
       // Ignore touches we're not tracking
       if (t.identifier !== d.touch1 && t.identifier !== d.touch2)
         return;
@@ -588,7 +591,7 @@ var GestureDetector = (function() {
       }
     },
 
-    touchend: function(d, e, t) {
+    'touchend': function(d, e, t) {
       // If either finger goes up, we're done with the gesture.
       // The user might move that finger and put it right back down
       // again to begin another 2-finger gesture, so we can't go
@@ -633,11 +636,11 @@ var GestureDetector = (function() {
   // come back down or the other finger to go up too.
   var afterTransformState = {
     name: 'afterTransformState',
-    touchstart: function(d, e, t) {
+    'touchstart': function(d, e, t) {
       d.switchTo(transformState, e, t);
     },
 
-    touchend: function(d, e, t) {
+    'touchend': function(d, e, t) {
       if (t.identifier === d.touch1)
         d.switchTo(initialState);
     }
@@ -664,7 +667,7 @@ var GestureDetector = (function() {
         d.startTimer('holdtimeout', GD.HOLD_INTERVAL);
     },
 
-    mousemove: function(d, e) {
+    'mousemove': function(d, e) {
       // If the mouse has moved more than the panning threshold,
       // then switch to the mouse panning state. Otherwise remain
       // in this state
@@ -676,7 +679,7 @@ var GestureDetector = (function() {
       }
     },
 
-    mouseup: function(d, e) {
+    'mouseup': function(d, e) {
       // Remove the capturing event handlers
       var doc = d.element.ownerDocument;
       doc.removeEventListener('mousemove', d, true);
@@ -715,7 +718,7 @@ var GestureDetector = (function() {
       d.emitEvent('holdstart', d.start);
     },
 
-    mousemove: function(d, e) {
+    'mousemove': function(d, e) {
       var current = mouseCoordinates(e);
       d.emitEvent('holdmove', {
         absolute: {
@@ -732,7 +735,7 @@ var GestureDetector = (function() {
       d.last = current;
     },
 
-    mouseup: function(d, e) {
+    'mouseup': function(d, e) {
       var current = mouseCoordinates(e);
       d.emitEvent('holdend', {
         start: d.start,
@@ -753,7 +756,7 @@ var GestureDetector = (function() {
       if (e.type === 'mousemove')
         mousePannedState.mousemove(d, e);
     },
-    mousemove: function(d, e) {
+    'mousemove': function(d, e) {
       // Each time the mouse moves, emit a pan event but stay in this state
       var current = mouseCoordinates(e);
       d.emitEvent('pan', {
@@ -788,7 +791,7 @@ var GestureDetector = (function() {
 
       d.last = current;
     },
-    mouseup: function(d, e) {
+    'mouseup': function(d, e) {
       // Remove the capturing event handlers
       var doc = d.element.ownerDocument;
       doc.removeEventListener('mousemove', d, true);

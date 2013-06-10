@@ -6,7 +6,8 @@
     "en": { "description": "Jaxo's Photo Sharing App" },
     "fr": { "description": "App. Jaxo de partage de photos" },
     "pt": { "description": "App Jaxo de compartilhamento de foto" },
-    "es": { "description": "App Jaxo de uso compartido de fotos" }
+    "es": { "description": "App Jaxo de uso compartido de fotos" },
+    "pl": { "description": "App Jaxo udostepniania zdjec" }
   },
   "developer": {
     "name": "Jaxo, Inc.",

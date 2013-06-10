@@ -7,6 +7,7 @@ html, body {
   font-family: "MozTT", sans-serif;
   background-image: url("images/pattern.png");
   overflow: hidden;
+  /* -moz-user-select: none; */
 }
 
 header {
@@ -16,8 +17,12 @@ header {
   z-index: 1;
 }
 
-header[role="main"] {
+.principal > header {
   background-image: url("images/header.png");
+}
+
+.invisible {
+  visibility: hidden;
 }
 
 .body header {
@@ -127,7 +132,7 @@ header td:active {
   background-color: #0095dd; /* was e66000 */
 }
 
-.drawer {
+.principal {
   position: fixed;
   left: 0%;
   right: 0%;
@@ -136,7 +141,7 @@ header td:active {
 /*UU  transition: 0.4s;   */
 }
 
-.drawer[aria-shrunk=true] {
+.principal[aria-shrunk=true] {
   left: 80%;
   right: -80%;
 }
@@ -186,19 +191,7 @@ header td:active {
    z-index: 1;
 }
 
-#glasspane {
-  background: #FFA;
-  position: absolute;
-  width: 100%;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  opacity: 0.8;
-  z-index: 5;
-  visibility: hidden; /* visible */
-}
-
-#messagepane {
+.message {
    position:absolute;
    width: 100%;
    top:-150%;
@@ -207,24 +200,24 @@ header td:active {
    z-index:2;
    /* visibility: hidden; */
 }
-#messagepane > div:first-child {
+.message > div:first-child {
    display:table-cell;
    vertical-align:middle;
    padding: 0 6rem;
 }
-#messagepane > div:first-child > div:first-child {
+.message > div:first-child > div:first-child {
    display:table-cell;
    background-color: #C2C5CA;
    opacity: 0.90;
    font-size:1.4rem;
    border: none;
 }
-#messagepane > div:first-child > div:first-child > table {
+.message > div:first-child > div:first-child > table {
    width:100%;
    padding:0;
    border-collapse: collapse;
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child {
+.message > div:first-child > div:first-child > table tr:first-child {
    background:-moz-linear-gradient(top,#222b2d 0%,#000000 100%);
    /* background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#222b2d),color-stop(100%,#000000)); */
    /* background:-webkit-linear-gradient(top,#222b2d 0%,#000000 100%);                                          */
@@ -232,45 +225,45 @@ header td:active {
    /* background:-ms-linear-gradient(top,#222b2d 0%,#000000 100%);                                              */
    /* background:linear-gradient(top,#222b2d 0%,#000000 100%);                                                  */
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:first-child {
+.message > div:first-child > div:first-child > table tr:first-child > td:first-child {
    position: absolute;
    padding: 1rem 2rem 0rem 0rem
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:first-child img {
+.message > div:first-child > div:first-child > table tr:first-child > td:first-child img {
    margin: 0;
    padding: 1rem 0 1rem 0
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:first-child img:active {
+.message > div:first-child > div:first-child > table tr:first-child > td:first-child img:active {
    background-color: #0095dd;
    color: #555;
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(2) {
+.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(2) {
    padding-left: 3rem
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(3) {
+.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(3) {
    width:99%;
    color:#e7e7e7;
    font-size:1.5rem;
    font-weight:bold;
    text-align:center
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(4) {
+.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(4) {
    padding-right:3.2rem;
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) {
+.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) {
    position:absolute;
    margin:1rem -0.2rem 0rem -3.2rem
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) img {
+.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) img {
    margin:0;
    padding:1rem 0 1rem 0
 }
-#messagepane > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) img:active {
+.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) img:active {
    background-color: #0095dd;
    color: #555;
 }
 
-#progresspane {
+.progress {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -454,11 +447,11 @@ button.recommend:active {
 [role=radiogroup] li:before {
   background-position: 30px; /* NONE */
 }
-#newLogin, #newAlbum {
+.addItem {
    padding-left: 3.5rem;
    color: #D0D0D0;
 }
-#newLogin:before, #newAlbum:before {
+.addItem:before {
    background: url("images/action_icons.png") no-repeat 0px -1170px transparent;
    position: absolute;
    left: 0rem;
@@ -536,14 +529,14 @@ li[aria-selected=true], li[role=listbox] {
 /*    -webkit-object-fit:contain;             */
 /* }                                          */
 
-#mn_user img {
+#mn1 img {
    position: relative;
    top: 0.3rem;
    margin-right: 0.7rem;
    height: 2rem;
 }
 
-#mn_user ul img {
+#mn1 ul img {
   position: relative;
   top: 0.3rem;
   margin: 0 0.5rem 0 2.7rem;
@@ -555,7 +548,7 @@ li[aria-selected=true], li[role=listbox] {
    text-shadow:#aaa 0px 1px 0, #000 0 -1px 0;
 }
 
-.user{
+.user {
   overflow: hidden;
   margin: 0rem;
   padding: 0.5rem 0.5rem 0rem 0.5rem;
@@ -566,18 +559,18 @@ li[aria-selected=true], li[role=listbox] {
   /* -moz-transition: height 500ms; */
 }
 
-#p1_userImage {
+#p11 {
   float: left;
   margin-right: 1rem;
   height: 3.5rem;
 }
 
-#p1_netImage {
+#p12 {
   margin-right: 0.5rem;
   float: right;
 }
 
-#banner {
+.banner {
    /* position: absolute; */
    width: 100%;
    text-align: center;
@@ -588,14 +581,14 @@ li[aria-selected=true], li[role=listbox] {
    -moz-box-sizing: border-box;
    -webkit-box-sizing: border-box;
 }
-#p1_bot {
+#p15 {
     position: absolute;
     width: 10rem;
     height: 8rem;
     right: 1rem;
     bottom: 4.5rem; /* reduced: 0rem; */
 }
-#p1_copy {
+#p16 {
     position: absolute;
     right: 0;
     bottom: 0;
@@ -622,14 +615,7 @@ li[aria-selected=true], li[role=listbox] {
    position: relative;
 }
 
-.p2_top {
-  position: relative;
-  font-size: 1.4rem;
-  background-color: rgba(60, 70, 72, 0.6);
-  height: 7rem;
-}
-
-#p2_msgCount {
+#p21 {
   position: relative;
   float: right;
   right: 0.5rem;
@@ -639,29 +625,15 @@ li[aria-selected=true], li[role=listbox] {
   font-size: 1.3rem;
 }
 
-#p2_msgText {
-   overflow:hidden;
-   height: 1.7rem;
-   resize: none;
-   /* background: inherit; */
-   background-color: rgba(60, 70, 72, 0.8);
-}
-
-#upldFile {
-   display: none;
-}
-
-#initLogin {
-  visibility: hidden;
-}
-
-.textbox{
+.textbox {
    white-space: pre-wrap;
    border: none;
    margin: auto;
    width: calc(100% - 8rem);
-   height: 2.1rem;
+   height: 1.7rem;
    padding: 0.5rem 4rem 0.5rem 4rem;
+   background-color: rgba(60, 70, 72, 0.8);
+   resize: none;
    word-wrap: break-word;
    text-align: center;
    font-family: "MozTT", sans-serif;
@@ -677,4 +649,98 @@ span.type1 {
    font-size: 1.8rem;
    font-weight: bold;
    text-shadow: none;
+}
+
+/* ----------------------------------
+ * Action menu
+ * Has to appear after, due to collisions with body
+ * ---------------------------------- */
+
+.menuaction {
+   z-index: 2;
+   opacity: 1;
+   display: none;
+   background-image: url('images/pattern.png');
+}
+
+.menuaction menu {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  /* border: none;     */
+  /* background: none; */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8rem;
+  max-height: calc(100% - 8rem);
+  overflow: auto;
+}
+
+.menuaction menu > button {
+  width: calc(100% - 3rem);
+  height: 4rem;
+  -moz-box-sizing: border-box;
+  vertical-align: middle;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-family: 'MozTT', Sans-serif;
+  font-weight: normal;
+  line-height: 4rem;
+  outline: none;
+  font-size: 1.4rem;
+  color: #fff;
+  text-shadow: none;
+  text-align: left;
+  padding: 0 1rem;
+  margin: 0 1.5rem 1rem 1.5rem;
+  background: #5f5f5f padding-box;
+  border-radius: 0.2rem;
+  border: none;
+}
+
+.menuaction menu + div {
+   position: fixed;
+   height: 7rem;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   padding: 0 1.5rem;
+   background: url(images/am_pattern.png) repeat scroll left top #2D2D2D;
+   border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
+}
+
+.menuaction menu + div > button {
+   text-shadow: 0.1rem 0.1rem 0 rgba(255,255,255,0.3);
+   color: #333;
+   font-weight: 500;
+   background: #fafafa url(images/default.png) repeat-x left bottom / auto 100%;
+   border: solid 0.1rem #a6a6a6;
+   margin-top: 1.5rem;
+   text-align: center;
+   font-size: 1.6rem;
+   width: 100%;
+}
+
+/* Press state */
+.menuaction menu > button:active {
+  background-color: #006f86;
+  color: #333;
+  text-shadow: 0 0.1rem 0 rgba(255, 255, 255, 0.25);
+}
+
+.menuaction menu + div > button:active {
+  border: solid 0.1rem #008aaa;
+  background: #008aaa;
+  color: #333;
+}
+
+/* Disabled */
+.menuaction menu > button[disabled] {
+  background: #4d4d4d;
+  color: #333;
+  text-shadow: none;
+  border: none;
+  pointer-events: none;
 }
