@@ -223,11 +223,11 @@ var localeValues = {
       "¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?",
       "Czy na pewno chcesz usunąć\nlogowanie dla \"%1\" na %2?"
    ], 'z_enterTweet': [
-      "Type here (caption or tweet)",
-      "Entrez ici un commentaire (titre ou tweet)",
-      "Digite um comentário aqui (título ou twittar)",
-      "Escriba un comentario aquí (título o Twitter)",
-      "Wpisz komentarz tutaj (podpis lub tweet)"
+      "Enter title or tweet",
+      "Entrez titre ou tweet",
+      "Digite título ou twittar",
+      "Introducir el título o Twitter",
+      "Wpisz tytuł lub Twitter"
    ], 'z_photosUploaded': [
       "%1 photo(s) successfully uploaded",
       "%1 photo(s) insérée(s)",

@@ -635,7 +635,7 @@ li[aria-selected=true], li[role=listbox] {
    background-color: rgba(60, 70, 72, 0.8);
    resize: none;
    word-wrap: break-word;
-   text-align: center;
+   text-align: left;
    font-family: "MozTT", sans-serif;
    font-size: 1.4rem;
    /* font-weight: bold; */
