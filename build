@@ -94,12 +94,24 @@ end
 # modify index.html to point at the new css and js
 sed -e '/-- REPLACED --/, /-- REPLACEMENT/d' -e '/REPLACE END --/d' pretty/index.html >temp/index.html
 
+switch ($OSTYPE)
+    case "linux-gnu":
+      set sedregopt = "r" 
+      breaksw
+    case "darwin"*:
+      set sedregopt = "E" 
+      breaksw
+    default:
+      set sedregopt = "r"
+      breaksw
+endsw
+
 # mangle our strings in index.html
-sed -r -f temp/sedscript temp/index.html > war/index.html
+sed -$sedregopt -f temp/sedscript temp/index.html > war/index.html
 
 # mangle our strings in all js files
 foreach file(pretty/js/*.js)
-   sed -r -f temp/sedscript $file > temp/js/`basename $file`
+   sed -$sedregopt -f temp/sedscript $file > temp/js/`basename $file`
 end
 
 # compress the style sheets
