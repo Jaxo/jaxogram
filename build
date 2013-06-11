@@ -41,6 +41,7 @@ set to_mangle = ( \
    z_photoAlbum z_albumTitle z_email z_phone z_gender z_birthday z_grantedPay \
    z_deniedPay z_pendingPay z_cancelPay z_install_changed z_installed \
    z_uninstalled z_failed z_unsupported z_install_forIOS \
+   z_usedLang \
 )
 
 #--- the externals for google closure compiler

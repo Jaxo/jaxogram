@@ -159,13 +159,10 @@ window.onload = function() {
       "keydown", onTextEntered, false
    );
    // document.getElementById("mn5").style.display = "none";
-   var dfltLocale = navigator.language || navigator.userLanguage;
    formatLanguageList();
-   translateBody(dfltLocale);
+   translateBody();
    formatUsersList(false);
    formatNetworkChoices();
-   document.getElementById('usedLang').textContent = i18n(dfltLocale);
-   document.getElementById(dfltLocale).setAttribute("aria-selected", "true");
    var elt = document.getElementById("ft6");
    for (var i=0, max=filters.length; i < max; ++i) {
       var tdElt = document.createElement("TD");
@@ -270,7 +267,11 @@ function onNetworkChange()
       elt.style.visibility = "visible";
       elt.onclick = authorize;
       document.getElementById("mn1").style.display = "none";
-      document.getElementById("p13").innerHTML = i18n("z_noNetwork");
+      document.getElementById("p13").innerHTML = (
+         "<SPAN class='i18n' id='z_noNetwork'>" +
+         i18n('z_noNetwork') +
+         "</SPAN>"
+      );
       document.getElementById("p11").src = "images/none.png";
       document.getElementById("mn2").src = "images/none.png";
       document.getElementById("p12").src = "images/none.png";
@@ -281,14 +282,16 @@ function onNetworkChange()
 
 function formatLanguageList() {
    var listElt = document.getElementById("mn6");
-   var languages = i18nLangList();
-   for (var i=0, max=languages.length; i < max; ++i) {
-      var itmElt = document.createElement("LI");
-      itmElt.className = "i18n";
-      itmElt.id = languages[i];
-      listElt.appendChild(itmElt);
-   }
-   listElt.addEventListener("click", changeLanguage);
+   forEachLanguage(
+      function(language, selected) {
+         var itmElt = document.createElement("LI");
+         itmElt.className = "i18n";
+         itmElt.id = language;
+         if (selected) itmElt.setAttribute("aria-selected", "true");
+         listElt.appendChild(itmElt);
+      }
+   );
+   listElt.addEventListener("click", translateBody);
 }
 
 function formatUsersList(isUserRequired) {
@@ -487,12 +490,6 @@ function changeLogin(event) {
          tellAccessPass();
       }
    }
-}
-
-function changeLanguage(event) {
-   var clicked = event.target;
-   translateBody(clicked.id);
-   document.getElementById('usedLang').textContent = clicked.textContent;
 }
 
 function fitImages() {
