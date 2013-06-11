@@ -48,6 +48,7 @@ set to_mangle = ( \
 cat >temp/externs.js <<END_EXTERNALS
 Navigator.prototype.mozApps;
 Navigator.prototype.mozPay = function(jwts) {};
+Navigator.prototype.mozSetMessageHandler = function(type, handler) {};
 
 function Apps() {}
 Apps.prototype.getSelf = function() {};
