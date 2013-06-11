@@ -5,373 +5,389 @@
 | - you *must* use UTF-8!
 | - %1 %2 ... are variables to be substituted by their values at run time
 |
-| localeValues['z_language'] (i.e. the first sublist) enumerates the languages
-| this app understood.  Adding, for instance,  'tli-KP': ""  to
-| this sublist would enable Klingon, as spoken on Krios Prime.  If some entries
-| have not been translated, the default translation (en-US)  will be used.
+| languages (i.e. the first array) enumerates the languages this app understood.
+| Adding, for instance,  'tli-KP': 5 to this array would enable Klingon, as spoken
+| on Krios Prime.  If some entries have not been translated, the default
+| translation (en-US)  will be used.
 */
-var locale = "en-US";
+var locale = 0;
+var languages = {
+   'en-US': 0,
+   'fr-FR': 1,
+   'pt-BR': 2,
+   'es-ES': 3,
+   'pl-PL': 4
+};
 var localeValues = {
-   'z_language' : {
-      'en-US':"Language: ",
-      'fr-FR':"Langage : ",
-      'pt-BR':"Língua: ",
-      'es-ES':"Idioma: ",
-      'pl-PL':"Język: "
-   }, 'en-US': {
-      'en-US':"US English",
-      'fr-FR':"Anglais",
-      'pt-BR':"Inglês",
-      'es-ES':"Inglés",
-      'pl-PL':"Angielski"
-   }, 'fr-FR': {
-      'en-US':"French",
-      'fr-FR':"Français",
-      'pt-BR':"Francês",
-      'es-ES':"Francés",
-      'pl-PL':"Francuski"
-   }, 'pt-BR': {
-      'en-US':"Portuguese",
-      'fr-FR':"Portugais",
-      'pt-BR':"Português",
-      'es-ES':"Portugués",
-      'pl-PL':"Portugalski"
-   }, 'es-ES': {
-      'en-US':"Spanish",
-      'fr-FR':"Espagnol",
-      'pt-BR':"Espanhol",
-      'es-ES':"Español",
-      'pl-PL':"Hiszpański"
-   }, 'pl-PL': {
-      'en-US':"Polish",
-      'fr-FR':"Polonais",
-      'pt-BR':"Polonês",
-      'es-ES':"Polaco",
-      'pl-PL':"Polski"
-   }, 'z_months': {
-      'en-US': [
+   'z_language' : [
+      "Language: ",
+      "Langage : ",
+      "Língua: ",
+      "Idioma: ",
+      "Język: "
+   ], 'en-US': [
+      "US English",
+      "Anglais",
+      "Inglês",
+      "Inglés",
+      "Angielski"
+   ], 'fr-FR': [
+      "French",
+      "Français",
+      "Francês",
+      "Francés",
+      "Francuski"
+   ], 'pt-BR': [
+      "Portuguese",
+      "Portugais",
+      "Português",
+      "Portugués",
+      "Portugalski"
+   ], 'es-ES': [
+      "Spanish",
+      "Espagnol",
+      "Espanhol",
+      "Español",
+      "Hiszpański"
+   ], 'pl-PL': [
+      "Polish",
+      "Polonais",
+      "Polonês",
+      "Polaco",
+      "Polski"
+   ], 'z_months': [
+      [
           "January", "February", "March", "April", "May", "June",
           "July", "August", "September", "October", "November", "December"
-      ],
-      'fr-FR': [
+      ], [
           "janvier", "février", "mars", "avril", "mai", "juin",
           "juillet", "août", "septembre", "octobre", "novembre", "décembre"
-      ],
-      'pt-BR': [
+      ], [
           "janeiro", "fevereiro", "março", "abril", "maio", "junho",
           "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
-      ],
-      'es-ES': [
+      ], [
           "enero", "febrero", "marzo", "abril", "mayo", "junio",
           "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
-      ],
-      'pl-PL': [
+      ], [
           "Styczeń", "Luto", "Marzec", "Kwiecień", "Maj", "Czerwiec",
           "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
       ]
-   }, 'z_date': {
-      'en-US':"%2 %3, %1 at %4:%5",
-      'fr-FR':"%3 %2 %1 à %4h%5",
-      'pt-BR':"%3 de %2 de %1, às %4h %5",
-      'es-ES':"%3 de %2 %1 a las %4h %5",
-      'pl-PL':"%3 %2 %1 o %4:%5"
-   }, 'z_btnInstall': {
-      'en-US':"Install",
-      'fr-FR':"Installer",
-      'pt-BR':"Instalar",
-      'es-ES':"Instalar",
-      'pl-PL':"Zainstalować"
-   }, 'z_betterInstall': {
-      'en-US':"Jaxogram works nicer when installed,\nand it will remember your sign-in settings.\n\nInstall it now?",
-      'fr-FR':"Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion.\n\nInstaller maintenant?",
-      'pt-BR':"Jaxogram funciona melhor quando instalado\ne ele se lembra de suas configurações de conexão.\n\nInstalá-lo agora?",
-      'es-ES':"Jaxogram funciona mejor cuando se instalan\ny se recuerda la configuración de conexión.\n\n¿Instalar ahora?",
-      'pl-PL':"Jaxogram działa ładniejszy po zainstalowaniu\ni będzie pamiętać swój znak-w ustawieniach.\n\nZainstaluj go teraz?"
-   }, 'z_installFailure': {
-      'en-US':"Install failed",
-      'fr-FR':"Echec de l'installation",
-      'pt-BR':"Instalação falhou",
-      'es-ES':"Instalar ha fallado",
-      'pl-PL':"Instalacja nie powiodła się"
-   }, 'z_safariInstall': {
-      'en-US':"To install, press the forward arrow in Safari and touch \"Add to Home Screen\"",
-      'fr-FR':"Pour installer, appuyez sur la flèche droite dans Safari, puis \"Ajouter à l'écran d'accueil\"",
-      'pt-BR':"Para instalar, pressione a seta para a frente no Safari e toque \"Adicionar à Tela Início\"",
-      'es-ES':"Para instalarlo, pulse la flecha de avance en Safari y toca \"Añadir a pantalla de inicio\"",
-      'pl-PL':"Aby zainstalować program, należy nacisnąć strzałkę do przodu w Safari i dotyku \"Dodaj do ekranu głównego\""
-   }, 'z_OK': {
-      'en-US':"OK",
-      'fr-FR':"OK",
-      'pt-BR':"OK",
-      'es-ES':"Aceptar",
-      'pl-PL':"Dobrze"
-   }, 'z_cancel': {
-      'en-US':"Cancel",
-      'fr-FR':"Annuler",
-      'pt-BR':"Cancelar",
-      'es-ES':"Cancelar",
-      'pl-PL':"Anulować"
-   }, 'z_info': {
-      'en-US':"Info",
-      'fr-FR':"Information",
-      'pt-BR':"Informação",
-      'es-ES':"Info",
-      'pl-PL':"Info"
-   }, 'z_warning': {
-      'en-US':"Warning",
-      'fr-FR':"Alerte",
-      'pt-BR':"Aviso",
-      'es-ES':"Alerta",
-      'pl-PL':"Ostrzeżenie"
-   }, 'z_error': {
-      'en-US':"Error",
-      'fr-FR':"Erreur",
-      'pt-BR':"Erro",
-      'es-ES':"Error",
-      'pl-PL':"Błąd"
-   }, 'z_confirm': {
-      'en-US':"Confirm",
-      'fr-FR':"Validez",
-      'pt-BR':"Confirmar",
-      'es-ES':"Confirmar",
-      'pl-PL':"Potwierdzać"
-   }, 'z_preferences': {
-      'en-US':"Preferences",
-      'fr-FR':"Préférences",
-      'pt-BR':"Preferências",
-      'es-ES':"Preferencias",
-      'pl-PL':"Preferencje"
-   }, 'z_edit': {
-      'en-US':"Edit",
-      'fr-FR':"Modifier",
-      'pt-BR':"Editar",
-      'es-ES':"Editar",
-      'pl-PL':"Edycja"
-   }, 'z_testMode': {
-      'en-US':"Test version.\nServer at\n%1",
-      'fr-FR':"Version de test.\nServeur\n%1",
-      'pt-BR':"A versão de teste.\nServidor\n%1",
-      'es-ES':"Prueba de versión.\nServidor\n%1",
-      'pl-PL':"Wersja testowa.\nServer na\n%1"
-   }, 'z_noFileApi': {
-      'en-US':"The file API isn't supported on this browser yet.",
-      'fr-FR':"Pas d'interface 'File' pour ce navigateur",
-      'pt-BR':"A API de arquivo não é compatível com este navegador ainda.",
-      'es-ES':"La API de archivo no se admite en este navegador aún.",
-      'pl-PL':"API pliku nie jest obsługiwany on tej przeglądarce jeszcze."
-   }, 'z_noFileApiProp': {
-      'en-US':"Your browser doesn't seem to support the 'files' property of file inputs.",
-      'fr-FR':"L'interface 'File' n'a pas la propriété 'files'",
-      'pt-BR':"Seu navegador não parecem apoiar a propriedade dos 'arquivos' de entradas de arquivos.",
-      'es-ES':"Su navegador no parecen apoyar la propiedad de los 'archivos' de las entradas de archivo.",
-      'pl-PL':"Twoja przeglądarka nie wydają się potwierdzać własność 'pliki' wejść plików."
-   }, 'z_noFileSelected': {
-      'en-US':"No file selected",
-      'fr-FR':"Pas de fichier selecté",
-      'pt-BR':"Nenhum arquivo selecionado",
-      'es-ES':"No existe el fichero seleccionado",
-      'pl-PL':"Nie wybrany plik"
-   }, 'z_pickImageError': {
-      'en-US':"The selection of the photo failed",
-      'fr-FR':"Erreur lors de la sélection de la photo",
-      'pt-BR':"Falha seleccionando uma foto",
-      'es-ES':"La falta seleccionar una foto",
-      'pl-PL':"Wybór zdjęcie nie udało"
-   }, 'z_banner': {
-      'en-US':"Share camera & gallery photos on well-known social networks",
-      'fr-FR':"Partagez caméra et galerie photos sur la plupart des réseaux sociaux",
-      'pt-BR':"Compartilhar câmera e galeria de fotos na maioria das redes sociais",
-      'es-ES':"Compartir de la cámara y galería de fotos en la mayoría de las redes sociales",
-      'pl-PL':"Kamera akcji i galeria zdjęć na znanych portalach społecznościowych"
-   }, 'z_newLogin': {
-      'en-US':"Create Login",
-      'fr-FR':"Nouvel Utilisateur",
-      'pt-BR':"Criar Login",
-      'es-ES':"Crear Login",
-      'pl-PL':"Utwórz Logowanie"
-   }, 'z_badLogin': {
-      'en-US':"Invalid Login or Password",
-      'fr-FR':"Nom d'utilisateur ou mot de passe incorrect",
-      'pt-BR':"Inválida login ou senha",
-      'es-ES':"Válido de usuario o contraseña",
-      'pl-PL':"Nieprawidłowy login lub hasło"
-   }, 'z_loginAs': {
-      'en-US':"User: ",
-      'fr-FR':"Utilisateur : ",
-      'pt-BR':"Usuário: ",
-      'es-ES':"Usuario: ",
-      'pl-PL':"Użytkownik: "
-   }, 'z_newAlbum': {
-      'en-US':"Create album",
-      'fr-FR':"Nouvel album",
-      'pt-BR':"Criar álbum",
-      'es-ES':"Crear álbum",
-      'pl-PL':"Tworzenie albumu"
-   }, 'z_authDenied': {
-      'en-US':"Authorization denied\n(%1)",
-      'fr-FR':"Autorisation refusée\n(%1)",
-      'pt-BR':"Autorização negada\n(%1)",
-      'es-ES':"Autorización denegada\n(%1)",
-      'pl-PL':"Odmowa autoryzacji\n(%1)"
-   }, 'z_revokeAccess': {
-      'en-US':"Are you sure you want to delete\nthe login for \"%1\" on %2?",
-      'fr-FR':"Veuiller confirmer la suppression\nde l'utilisateur %2 \"%1\".",
-      'pt-BR':"Tem certeza de que deseja excluir\no %2 login para \"%1\"?",
-      'es-ES':"¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?",
-      'pl-PL':"Czy na pewno chcesz usunąć\nlogowanie dla \"%1\" na %2?"
-   }, 'z_enterTweet': {
-      'en-US':"Type here (caption or tweet)",
-      'fr-FR':"Entrez ici un commentaire (titre ou tweet)",
-      'pt-BR':"Digite um comentário aqui (título ou twittar)",
-      'es-ES':"Escriba un comentario aquí (título o Twitter)",
-      'pl-PL':"Wpisz komentarz tutaj (podpis lub tweet)"
-   }, 'z_photosUploaded': {
-      'en-US':"%1 photo(s) successfully uploaded",
-      'fr-FR':"%1 photo(s) insérée(s)",
-      'pt-BR':"%1 foto(s) carregado com sucesso",
-      'es-ES':"%1 foto(s) cargado correctamente",
-      'pl-PL':"%1 photo(s) pomyślnie przesłany"
-   }, 'z_albumCreated': {
-      'en-US':"Album \"%1\" was created",
-      'fr-FR':"L'album \"%1\" a été créé.",
-      'pt-BR':"\"%1\" álbum criado.",
-      'es-ES':"Album \"%1\" creada.",
-      'pl-PL':"Album \"%1\" stworzony."
-   }, 'z_chooseNetwork': {
-      'en-US':"Choose your social network",
-      'fr-FR':"Choisissez votre réseau social",
-      'pt-BR':"Escolha sua rede social",
-      'es-ES':"Elija su red social",
-      'pl-PL':"Wybierz swoją sieć społeczną"
-   }, 'z_noNetwork': {
-      'en-US':"No social network defined.",
-      'fr-FR':"Il n'y a aucun réseau social défini.",
-      'pt-BR':"Nenhuma rede social definido.",
-      'es-ES':"No hay red social que definido.",
-      'pl-PL':"No społecznościowy zdefiniowane."
-   }, 'z_initLogin': {
-      'en-US':"Connect to my network",
-      'fr-FR':"Me connecter à mon réseau",
-      'pt-BR':"Conectar a minha rede",
-      'es-ES':"Conectar a mi red",
-      'pl-PL':"Podłącz do mojej sieci"
-   }, 'z_picasaLogin': {
-      'en-US':"Login to Picasa …",
-      'fr-FR':"Connexion à Picasa …",
-      'pt-BR':"Entrar para o Picasa …",
-      'es-ES':"Ingresar a Picasa …",
-      'pl-PL':"Logowanie do programu Picasa …"
-   }, 'z_login': {
-      'en-US':"Login",
-      'fr-FR':"Identifiant",
-      'pt-BR':"Login",
-      'es-ES':"Login",
-      'pl-PL':"Login"
-   }, 'z_passwd': {
-      'en-US':"Password",
-      'fr-FR':"Mot de passe",
-      'pt-BR':"Senha",
-      'es-ES':"Contraseña",
-      'pl-PL':"Hasło"
-   }, 'z_selectOrCreateAlbum': {
-      'en-US':"You need first to select or create the album in which the photo will be inserted",
-      'fr-FR':"Vous devez d'abord sélectionner ou créer l'album dans lequel la photo sera insérée",
-      'pt-BR':"Você precisa primeiro selecionar ou criar o álbum em que a foto será inserida",
-      'es-ES':"Usted necesita primero seleccionar o crear el álbum en el que se inserta la foto",
-      'pl-PL':"Musisz najpierw wybrać lub stworzyć album, w którym zdjęcie zostanie wstawiony"
-   }, 'z_createAlbumProlog1': {
-      'en-US':"New album\n\n",
-      'fr-FR':"Nouvel album\n\n",
-      'pt-BR':"Novo álbum\n\n",
-      'es-ES':"Nuevo álbum\n\n",
-      'pl-PL':"Nowy album\n\n"
-   }, 'z_createAlbumProlog2': {
-      'en-US':"You need first to create an album in which the photo will be inserted\n\n",
-      'fr-FR':"Vous devez d'abord créer un album dans lequel la photo sera insérée\n\n",
-      'pt-BR':"Você precisa primeiro criar um álbum em que a foto será inserida\n\n",
-      'es-ES':"Necesitas primero en crear un álbum en el que se inserta la foto\n\n",
-      'pl-PL':"Musisz najpierw utworzyć album, w którym zdjęcie zostanie wstawiony\n\n"
-   }, 'z_title': {
-      'en-US':"Album title",
-      'fr-FR':"Titre de l'album",
-      'pt-BR':"Título do álbum",
-      'es-ES':"Título del álbum",
-      'pl-PL':"Tytuł albumu"
-   }, 'z_description': {
-      'en-US':"Description",
-      'fr-FR':"Description",
-      'pt-BR':"Descrição",
-      'es-ES':"Descripción",
-      'pl-PL':"Opis"
-   }, 'z_albumDescr': {
-      'en-US':"Uploads",
-      'fr-FR':"Téléchargements",
-      'pt-BR':"Carregamentos",
-      'es-ES':"Subidas",
-      'pl-PL':"Uploads"
-   }, 'z_photoAlbum': {
-      'en-US':"Photo album: ",
-      'fr-FR':"Album photo : ",
-      'pt-BR':"Álbum de fotos: ",
-      'es-ES':"Álbum de fotos: ",
-      'pl-PL':"Album zdjęć: "
-   }, 'z_albumTitle': {
-      'en-US':"(unspecified)",
-      'fr-FR':"(non précisé)",
-      'pt-BR':"(indeterminado)",
-      'es-ES':"(sin especificar)",
-      'pl-PL':"(nieokreślona)"
-   }, 'z_email': {
-      'en-US':"Email",
-      'fr-FR':"Email",
-      'pt-BR':"Email",
-      'es-ES':"Email",
-      'pl-PL':"Email"
-   }, 'z_phone': {
-      'en-US':"Telephone",
-      'fr-FR':"Téléphone",
-      'pt-BR':"Telefone",
-      'es-ES':"Teléfono",
-      'pl-PL':"Telefon"
-   }, 'z_gender': {
-      'en-US':"Gender",
-      'fr-FR':"Sexe",
-      'pt-BR':"Sexo",
-      'es-ES':"Género",
-      'pl-PL':"Płeć"
-   }, 'z_birthday': {
-      'en-US':"Birthday",
-      'fr-FR':"Anniversaire",
-      'pt-BR':"Aniversário",
-      'es-ES':"Cumpleaños",
-      'pl-PL':"Urodziny"
-   }, 'z_grantedPay': {
-      'en-US':"Your payment has been granted.\nThank you for using Jaxogram.",
-      'fr-FR':"Votre paiement a été effectué.\nMerci de votre confiance.",
-      'pt-BR':"O pagamento foi feito.\nObrigado por sua confiança.",
-      'es-ES':"Su pago se ha hecho.\nGracias por su confianza.",
-      'pl-PL':"Twoja płatność została przyznana.\nDziękujemy za korzystanie z Jaxogram."
-   }, 'z_deniedPay': {
-      'en-US':"Your payment was denied.\nYou may reissue later.",
-      'fr-FR':"Votre paiement a été refusé.\nVous pouvez le réémettre plus tard.",
-      'pt-BR':"Seu pagamento foi negado.\nVocê pode reeditar mais tarde.",
-      'es-ES':"El pago fue denegado.\nNo puede volver a emitir más tarde.",
-      'pl-PL':"Twoja płatność została odrzucona.\nMożesz ponownie wystawić później."
-   }, 'z_pendingPay': {
-      'en-US':"Payment not yet received.\nPlease, later press again the purchase button",
-      'fr-FR':"Paiement en cours.\nRé-appuyez plus tard sur le bouton d'achat",
-      'pt-BR':"Pagamento em processo.\nDepois pressione novamente o botão de compra",
-      'es-ES':"Pago en proceso.\nDespués pulse de nuevo el botón de compra",
-      'pl-PL':"Płatność z procesu.\nProszę, później ponownie nacisnąć przycisk kupna"
-   }, 'z_cancelPay': {
-      'en-US':"Since %1 your payment has not been confirmed. Should we cancel?",
-      'fr-FR':"Depuis %1 votre paiement n'a pas été confirmé. Faut-il l'annuler?",
-      'pt-BR':"Desde %1 o seu pagamento não foi confirmado. Devemos cancelar?",
-      'es-ES':"Desde %1 el pago no ha sido confirmado. ¿Hay que cancelar?",
-      'pl-PL':"Od %1 płatność nie została potwierdzona. Czy mamy zrezygnować?"
-   }
+   ], 'z_date': [
+      "%2 %3, %1 at %4:%5",
+      "%3 %2 %1 à %4h%5",
+      "%3 de %2 de %1, às %4h %5",
+      "%3 de %2 %1 a las %4h %5",
+      "%3 %2 %1 o %4:%5"
+   ], 'z_btnInstall': [
+      "Install",
+      "Installer",
+      "Instalar",
+      "Instalar",
+      "Zainstalować"
+   ], 'z_betterInstall': [
+      "Jaxogram works nicer when installed,\nand it will remember your sign-in settings.\n\nInstall it now?",
+      "Jaxogram fonctionne mieux lorsqu'il est installé,\net il mémorise vos paramètres de connexion.\n\nInstaller maintenant?",
+      "Jaxogram funciona melhor quando instalado\ne ele se lembra de suas configurações de conexão.\n\nInstalá-lo agora?",
+      "Jaxogram funciona mejor cuando se instalan\ny se recuerda la configuración de conexión.\n\n¿Instalar ahora?",
+      "Jaxogram działa ładniejszy po zainstalowaniu\ni będzie pamiętać swój znak-w ustawieniach.\n\nZainstaluj go teraz?"
+   ], 'z_installFailure': [
+      "Install failed",
+      "Echec de l'installation",
+      "Instalação falhou",
+      "Instalar ha fallado",
+      "Instalacja nie powiodła się"
+   ], 'z_safariInstall': [
+      "To install, press the forward arrow in Safari and touch \"Add to Home Screen\"",
+      "Pour installer, appuyez sur la flèche droite dans Safari, puis \"Ajouter à l'écran d'accueil\"",
+      "Para instalar, pressione a seta para a frente no Safari e toque \"Adicionar à Tela Início\"",
+      "Para instalarlo, pulse la flecha de avance en Safari y toca \"Añadir a pantalla de inicio\"",
+      "Aby zainstalować program, należy nacisnąć strzałkę do przodu w Safari i dotyku \"Dodaj do ekranu głównego\""
+   ], 'z_OK': [
+      "OK",
+      "OK",
+      "OK",
+      "Aceptar",
+      "Dobrze"
+   ], 'z_cancel': [
+      "Cancel",
+      "Annuler",
+      "Cancelar",
+      "Cancelar",
+      "Anulować"
+   ], 'z_info': [
+      "Info",
+      "Information",
+      "Informação",
+      "Info",
+      "Info"
+   ], 'z_warning': [
+      "Warning",
+      "Alerte",
+      "Aviso",
+      "Alerta",
+      "Ostrzeżenie"
+   ], 'z_error': [
+      "Error",
+      "Erreur",
+      "Erro",
+      "Error",
+      "Błąd"
+   ], 'z_confirm': [
+      "Confirm",
+      "Validez",
+      "Confirmar",
+      "Confirmar",
+      "Potwierdzać"
+   ], 'z_preferences': [
+      "Preferences",
+      "Préférences",
+      "Preferências",
+      "Preferencias",
+      "Preferencje"
+   ], 'z_edit': [
+      "Edit",
+      "Modifier",
+      "Editar",
+      "Editar",
+      "Edycja"
+   ], 'z_testMode': [
+      "Test version.\nServer at\n%1",
+      "Version de test.\nServeur\n%1",
+      "A versão de teste.\nServidor\n%1",
+      "Prueba de versión.\nServidor\n%1",
+      "Wersja testowa.\nServer na\n%1"
+   ], 'z_noFileApi': [
+      "The file API isn't supported on this browser yet.",
+      "Pas d'interface 'File' pour ce navigateur",
+      "A API de arquivo não é compatível com este navegador ainda.",
+      "La API de archivo no se admite en este navegador aún.",
+      "API pliku nie jest obsługiwany on tej przeglądarce jeszcze."
+   ], 'z_noFileApiProp': [
+      "Your browser doesn't seem to support the 'files' property of file inputs.",
+      "L'interface 'File' n'a pas la propriété 'files'",
+      "Seu navegador não parecem apoiar a propriedade dos 'arquivos' de entradas de arquivos.",
+      "Su navegador no parecen apoyar la propiedad de los 'archivos' de las entradas de archivo.",
+      "Twoja przeglądarka nie wydają się potwierdzać własność 'pliki' wejść plików."
+   ], 'z_noFileSelected': [
+      "No file selected",
+      "Pas de fichier selecté",
+      "Nenhum arquivo selecionado",
+      "No existe el fichero seleccionado",
+      "Nie wybrany plik"
+   ], 'z_pickImageError': [
+      "The selection of the photo failed",
+      "Erreur lors de la sélection de la photo",
+      "Falha seleccionando uma foto",
+      "La falta seleccionar una foto",
+      "Wybór zdjęcie nie udało"
+   ], 'z_banner': [
+      "Share camera & gallery photos on well-known social networks",
+      "Partagez caméra et galerie photos sur la plupart des réseaux sociaux",
+      "Compartilhar câmera e galeria de fotos na maioria das redes sociais",
+      "Compartir de la cámara y galería de fotos en la mayoría de las redes sociales",
+      "Kamera akcji i galeria zdjęć na znanych portalach społecznościowych"
+   ], 'z_newLogin': [
+      "Create Login",
+      "Nouvel Utilisateur",
+      "Criar Login",
+      "Crear Login",
+      "Utwórz Logowanie"
+   ], 'z_badLogin': [
+      "Invalid Login or Password",
+      "Nom d'utilisateur ou mot de passe incorrect",
+      "Inválida login ou senha",
+      "Válido de usuario o contraseña",
+      "Nieprawidłowy login lub hasło"
+   ], 'z_loginAs': [
+      "User: ",
+      "Utilisateur : ",
+      "Usuário: ",
+      "Usuario: ",
+      "Użytkownik: "
+   ], 'z_newAlbum': [
+      "Create album",
+      "Nouvel album",
+      "Criar álbum",
+      "Crear álbum",
+      "Tworzenie albumu"
+   ], 'z_authDenied': [
+      "Authorization denied\n(%1)",
+      "Autorisation refusée\n(%1)",
+      "Autorização negada\n(%1)",
+      "Autorización denegada\n(%1)",
+      "Odmowa autoryzacji\n(%1)"
+   ], 'z_revokeAccess': [
+      "Are you sure you want to delete\nthe login for \"%1\" on %2?",
+      "Veuiller confirmer la suppression\nde l'utilisateur %2 \"%1\".",
+      "Tem certeza de que deseja excluir\no %2 login para \"%1\"?",
+      "¿Está seguro que desea eliminar\n, el inicio de %2 sesión para \"%1\"?",
+      "Czy na pewno chcesz usunąć\nlogowanie dla \"%1\" na %2?"
+   ], 'z_enterTweet': [
+      "Type here (caption or tweet)",
+      "Entrez ici un commentaire (titre ou tweet)",
+      "Digite um comentário aqui (título ou twittar)",
+      "Escriba un comentario aquí (título o Twitter)",
+      "Wpisz komentarz tutaj (podpis lub tweet)"
+   ], 'z_photosUploaded': [
+      "%1 photo(s) successfully uploaded",
+      "%1 photo(s) insérée(s)",
+      "%1 foto(s) carregado com sucesso",
+      "%1 foto(s) cargado correctamente",
+      "%1 photo(s) pomyślnie przesłany"
+   ], 'z_albumCreated': [
+      "Album \"%1\" was created",
+      "L'album \"%1\" a été créé.",
+      "\"%1\" álbum criado.",
+      "Album \"%1\" creada.",
+      "Album \"%1\" stworzony."
+   ], 'z_chooseNetwork': [
+      "Choose your social network",
+      "Choisissez votre réseau social",
+      "Escolha sua rede social",
+      "Elija su red social",
+      "Wybierz swoją sieć społeczną"
+   ], 'z_noNetwork': [
+      "No social network defined.",
+      "Il n'y a aucun réseau social défini.",
+      "Nenhuma rede social definido.",
+      "No hay red social que definido.",
+      "No społecznościowy zdefiniowane."
+   ], 'z_initLogin': [
+      "Connect to my network",
+      "Me connecter à mon réseau",
+      "Conectar a minha rede",
+      "Conectar a mi red",
+      "Podłącz do mojej sieci"
+   ], 'z_picasaLogin': [
+      "Login to Picasa …",
+      "Connexion à Picasa …",
+      "Entrar para o Picasa …",
+      "Ingresar a Picasa …",
+      "Logowanie do programu Picasa …"
+   ], 'z_login': [
+      "Login",
+      "Identifiant",
+      "Login",
+      "Login",
+      "Login"
+   ], 'z_passwd': [
+      "Password",
+      "Mot de passe",
+      "Senha",
+      "Contraseña",
+      "Hasło"
+   ], 'z_selectOrCreateAlbum': [
+      "You need first to select or create the album in which the photo will be inserted",
+      "Vous devez d'abord sélectionner ou créer l'album dans lequel la photo sera insérée",
+      "Você precisa primeiro selecionar ou criar o álbum em que a foto será inserida",
+      "Usted necesita primero seleccionar o crear el álbum en el que se inserta la foto",
+      "Musisz najpierw wybrać lub stworzyć album, w którym zdjęcie zostanie wstawiony"
+   ], 'z_createAlbumProlog1': [
+      "New album\n\n",
+      "Nouvel album\n\n",
+      "Novo álbum\n\n",
+      "Nuevo álbum\n\n",
+      "Nowy album\n\n"
+   ], 'z_createAlbumProlog2': [
+      "You need first to create an album in which the photo will be inserted\n\n",
+      "Vous devez d'abord créer un album dans lequel la photo sera insérée\n\n",
+      "Você precisa primeiro criar um álbum em que a foto será inserida\n\n",
+      "Necesitas primero en crear un álbum en el que se inserta la foto\n\n",
+      "Musisz najpierw utworzyć album, w którym zdjęcie zostanie wstawiony\n\n"
+   ], 'z_title': [
+      "Album title",
+      "Titre de l'album",
+      "Título do álbum",
+      "Título del álbum",
+      "Tytuł albumu"
+   ], 'z_description': [
+      "Description",
+      "Description",
+      "Descrição",
+      "Descripción",
+      "Opis"
+   ], 'z_albumDescr': [
+      "Uploads",
+      "Téléchargements",
+      "Carregamentos",
+      "Subidas",
+      "Uploads"
+   ], 'z_photoAlbum': [
+      "Photo album: ",
+      "Album photo : ",
+      "Álbum de fotos: ",
+      "Álbum de fotos: ",
+      "Album zdjęć: "
+   ], 'z_albumTitle': [
+      "(unspecified)",
+      "(non précisé)",
+      "(indeterminado)",
+      "(sin especificar)",
+      "(nieokreślona)"
+   ], 'z_email': [
+      "Email",
+      "Email",
+      "Email",
+      "Email",
+      "Email"
+   ], 'z_phone': [
+      "Telephone",
+      "Téléphone",
+      "Telefone",
+      "Teléfono",
+      "Telefon"
+   ], 'z_gender': [
+      "Gender",
+      "Sexe",
+      "Sexo",
+      "Género",
+      "Płeć"
+   ], 'z_birthday': [
+      "Birthday",
+      "Anniversaire",
+      "Aniversário",
+      "Cumpleaños",
+      "Urodziny"
+   ], 'z_grantedPay': [
+      "Your payment has been granted.\nThank you for using Jaxogram.",
+      "Votre paiement a été effectué.\nMerci de votre confiance.",
+      "O pagamento foi feito.\nObrigado por sua confiança.",
+      "Su pago se ha hecho.\nGracias por su confianza.",
+      "Twoja płatność została przyznana.\nDziękujemy za korzystanie z Jaxogram."
+   ], 'z_deniedPay': [
+      "Your payment was denied.\nYou may reissue later.",
+      "Votre paiement a été refusé.\nVous pouvez le réémettre plus tard.",
+      "Seu pagamento foi negado.\nVocê pode reeditar mais tarde.",
+      "El pago fue denegado.\nNo puede volver a emitir más tarde.",
+      "Twoja płatność została odrzucona.\nMożesz ponownie wystawić później."
+   ], 'z_pendingPay': [
+      "Payment not yet received.\nPlease, later press again the purchase button",
+      "Paiement en cours.\nRé-appuyez plus tard sur le bouton d'achat",
+      "Pagamento em processo.\nDepois pressione novamente o botão de compra",
+      "Pago en proceso.\nDespués pulse de nuevo el botón de compra",
+      "Płatność z procesu.\nProszę, później ponownie nacisnąć przycisk kupna"
+   ], 'z_cancelPay': [
+      "Since %1 your payment has not been confirmed. Should we cancel?",
+      "Depuis %1 votre paiement n'a pas été confirmé. Faut-il l'annuler?",
+      "Desde %1 o seu pagamento não foi confirmado. Devemos cancelar?",
+      "Desde %1 el pago no ha sido confirmado. ¿Hay que cancelar?",
+      "Od %1 płatność nie została potwierdzona. Czy mamy zrezygnować?"
+   ]
 }
 /*----------------- end of strings requiring translation --------------------*/
+function setLocale(iso_639) {
+   locale = languages[
+      iso_639 || navigator.language || navigator.userLanguage
+   ] || 0;
+   localeValues['z_usedLang'] = [
+      localeValues['en-US'][0],
+      localeValues['fr-FR'][1],
+      localeValues['pt-BR'][2],
+      localeValues['es-ES'][3],
+      localeValues['pl-PL'][4]
+   ];
+}
+
 function i18n(msgName) {
    var value;
    var values = localeValues[msgName];
@@ -380,7 +396,7 @@ function i18n(msgName) {
    }else {
       value = values[locale];
       if (value === undefined) {
-         value = values['en-US'];
+         value = values[0];
       }
    }
    for (var i=1, max=arguments.length; i < max; ++i) {
@@ -388,8 +404,9 @@ function i18n(msgName) {
    }
    return value;
 }
-function translateBody(newLocale) {
-   locale = newLocale;
+
+function translateBody(event) {
+   setLocale(event? event.target.id : undefined);
    var elts = document.getElementsByClassName('i18n');
    for (var i=0, max=elts.length; i < max; ++i) {
       var elt = elts[i];
@@ -401,6 +418,7 @@ function translateBody(newLocale) {
       }
    }
 }
+
 function i18nDate(time) {
    var date = new Date(+time);
    return i18n(
@@ -413,6 +431,9 @@ function i18nDate(time) {
    );
 }
 
-function i18nLangList() {
-   return Object.keys(localeValues['z_language']);
+function forEachLanguage(fct) {
+   var i = 0;
+   for (var lang in languages) {
+      fct(lang, i === locale);
+   }
 }
