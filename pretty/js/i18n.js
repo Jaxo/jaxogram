@@ -1,25 +1,32 @@
 /*
 | This script is a simple and efficient way to do I18n
-| This is the unique source to modify for adding languages.
+| This is an unique location where all translationa are defined.
 |
+| `languages', the first array, enumerates all languages this app is enabled for.
+| Adding, for instance,  'tli-KP' to this array would enable Klingon, as spoken
+| on Krios Prime.
+|
+| `localeValues' is a series of:
+| 'z_msgIdentifier' : ["valueA", "valueB", ... "valueZ"]
+| "valueA", .. "valueZ" being the translation of the message for the languages
+| enumerated at `languages', in the exact same order.
+|
+| Notes:
 | - you *must* use UTF-8!
 | - %1 %2 ... are variables to be substituted by their values at run time
-|
-| languages (i.e. the first array) enumerates the languages this app understood.
-| Adding, for instance,  'tli-KP': 5 to this array would enable Klingon, as spoken
-| on Krios Prime.  If some entries have not been translated, the default
+| - If some entries have not been translated, the default
 | translation (en-US)  will be used.
 */
-var locale = 0;
-var languages = {
-   'en-US': 0,
-   'fr-FR': 1,
-   'pt-BR': 2,
-   'es-ES': 3,
-   'pl-PL': 4
-};
 var localeValues = {
-   'z_language' : [
+   languages : [
+   /*--------------- enabled languages -------------------------*/
+      'en-US',
+      'fr-FR',
+      'pt-BR',
+      'es-ES',
+      'pl-PL'
+   /*---------------- start of strings requiring translation ---*/
+   ], 'z_language' : [
       "Language: ",
       "Langage : ",
       "Língua: ",
@@ -373,19 +380,30 @@ var localeValues = {
       "Desde %1 el pago no ha sido confirmado. ¿Hay que cancelar?",
       "Od %1 płatność nie została potwierdzona. Czy mamy zrezygnować?"
    ]
-}
-/*----------------- end of strings requiring translation --------------------*/
+   /*----------------- end of strings requiring translation ----*/
+};
+(
+   function() {
+      var usedLang = [];
+      for (var i=0, max=localeValues.languages.length; i < max; ++i) {
+         usedLang[i] = localeValues[localeValues.languages[i]][i];
+      }
+      localeValues['z_usedLang'] = usedLang;
+   }
+)();
+var locale = 0;
+
 function setLocale(iso_639) {
-   locale = languages[
-      iso_639 || navigator.language || navigator.userLanguage
-   ] || 0;
-   localeValues['z_usedLang'] = [
-      localeValues['en-US'][0],
-      localeValues['fr-FR'][1],
-      localeValues['pt-BR'][2],
-      localeValues['es-ES'][3],
-      localeValues['pl-PL'][4]
-   ];
+   locale = 0;
+   iso_639 = iso_639 || navigator.language;
+   if (iso_639) {
+      for (var i=0, max=localeValues.languages.length; i < max; ++i) {
+         if (iso_639 === localeValues.languages[i]) {
+            locale = i;
+            break;
+         }
+      }
+   }
 }
 
 function i18n(msgName) {
@@ -432,8 +450,7 @@ function i18nDate(time) {
 }
 
 function forEachLanguage(fct) {
-   var i = 0;
-   for (var lang in languages) {
-      fct(lang, i === locale);
+   for (var i=0, max=localeValues.languages.length; i < max; ++i) {
+      fct(localeValues.languages[i], i === locale);
    }
 }
