@@ -1,6 +1,6 @@
 {
   "name": "Jaxogram",
-  "version": "13.3",
+  "version": "13.4",
   "description": "Jaxo's Photo Sharing App",
   "launch_path": "/index.html",
   "locales": {
@@ -41,7 +41,6 @@
         "type": "image/*"
       },
       "disposition": "window",
-      "returnValue": true,
       "href": "/index.html?OP=share"
     }
   }
