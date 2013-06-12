@@ -13,9 +13,11 @@ var thumbMaxHeight = 0;
 var filters = [
    {
       name: "raw",
-      img: new Image(),
+      value: "",
+      vignette: {},
       src: "",
-      thumbImg: ""
+      thumbImg: "",
+      img: new Image()
    }, {
       name: "Nichole1",
       value:"<feComponentTransfer><feFuncR type='table' tableValues='0.0471, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.4902, 0.6274, 0.7804, 0.9294, 1'/><feFuncB type='table' tableValues='0.0863, 0.1922, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feColorMatrix type='matrix' values=' 0.7875 0.1930 0.0194 0.0000 0.0000 0.0575 0.9230 0.0194 0.0000 0.0000 0.0575 0.1930 0.7494 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000'/><feComponentTransfer><feFuncR type='linear' slope='1.0309' intercept='-0.0155'/><feFuncG type='linear' slope='1.0309' intercept='-0.0155'/><feFuncB type='linear' slope='1.0309' intercept='-0.0155'/></feComponentTransfer>",
@@ -207,6 +209,7 @@ window.onload = function() {
          }
       );
    }
+   initFilters();
 };
 
 function onTextEntered(event) {
@@ -1055,21 +1058,66 @@ function showNewPhoto() {
       canvas.setAttribute("height", h);
       canvas.getContext('2d').drawImage(imgRawElt, 0, 0, w, h);
       // 3) derive the filtered thumbnails
-      canvas.toBlob(
-         function(thumbBlob) {
-            var rawThumb = URL.createObjectURL(thumbBlob);
-            filters[0].thumbImg.src = rawThumb;
-            for (var i=1, max=filters.length; i < max; ++i) {
-               filters[i].thumbImg.src = URL.createObjectURL(
-                  doFilter(w, h, rawThumb, filters[i])
-               );
-            }
-         },
-         "image/jpeg", 0.95
-      );
+      if (!canvas.toBlob) {
+         // Shit. Fuckin' Chrome has no canvas.toBlob.
+         buildThumbNails(simulateCanvasToBlob(canvas), w, h);
+      }else {
+         canvas.toBlob(
+            function(thumbBlob) {
+               buildThumbNails(thumbBlob, w, h);
+//             var rawThumb = URL.createObjectURL(thumbBlob);
+//             filters[0].thumbImg.src = rawThumb;
+//             for (var i=1, max=filters.length; i < max; ++i) {
+//                filters[i].thumbImg.src = URL.createObjectURL(
+//                   doFilter(w, h, rawThumb, filters[i])
+//                );
+//             }
+            },
+            "image/jpeg", 0.95
+         );
+      }
       document.getElementById("p22").src = filters[filterChoice].src;
    };
    imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
+}
+
+function buildThumbNails(thumbBlob, w, h) {
+   var rawThumb = URL.createObjectURL(thumbBlob);
+   filters[0].thumbImg.src = rawThumb;
+   gougou(rawThumb, w, h);
+// for (var i=1, max=filters.length; i < max; ++i) {
+//    filters[i].thumbImg.src = URL.createObjectURL(
+//       doFilter(w, h, rawThumb, filters[i])
+//    );
+// }
+}
+function gougou(imgSrc, w, h) {
+   var html = "";
+   for (var i=0; i < 6; ++i) {
+      var filter = filters[i];
+      html += "<td>";
+      if (filter.vignette.radius) { // if (Object.keys(filter.vignette) !== 0)
+         html += doVignette(w, h, imgSrc, filter);
+      }else {
+         html += (
+            "<svg width='" + w + "' height='" + h + "'>" +
+            makeSvgImage(imgSrc, filter, w, h) + "</svg></td>"
+         );
+      }
+      html += "</td>";
+   }
+   document.getElementById("ft6").innerHTML = html;
+   showToolbar(2);
+}
+
+function simulateCanvasToBlob(canvas) {
+   var dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+   var binData = atob(dataUrl.split(',')[1]);         // base64 to raw binary
+   var buffer = [];                                   // then to an array
+   for (var i=0, max=binData.length; i < max; ++i) {
+      buffer.push(binData.charCodeAt(i));
+   }
+   return new Blob([new Uint8Array(buffer)], {type: 'image/jpeg'});
 }
 
 function editPhoto() {
