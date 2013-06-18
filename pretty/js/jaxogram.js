@@ -3,51 +3,38 @@ var server_url = "http://jaxogram.appspot.com/jaxogram";
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
 
-var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
 var tempFilterChoice = 0;
 var filterChoice = 0;
-var thumbMaxWidth = 0;
-var thumbMaxHeight = 0;
 var filters = [
    {
       name: "raw",
       value: "",
       vignette: {},
       src: "",
-      thumbImg: "",
+      thumbSrc: "",
       img: new Image()
    }, {
       name: "Nichole1",
-      value:"<feComponentTransfer><feFuncR type='table' tableValues='0.0471, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.4902, 0.6274, 0.7804, 0.9294, 1'/><feFuncB type='table' tableValues='0.0863, 0.1922, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feColorMatrix type='matrix' values=' 0.7875 0.1930 0.0194 0.0000 0.0000 0.0575 0.9230 0.0194 0.0000 0.0000 0.0575 0.1930 0.7494 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000'/><feComponentTransfer><feFuncR type='linear' slope='1.0309' intercept='-0.0155'/><feFuncG type='linear' slope='1.0309' intercept='-0.0155'/><feFuncB type='linear' slope='1.0309' intercept='-0.0155'/></feComponentTransfer>",
-      vignette: {},
-      src: "",
-      thumbImg: ""
+      value:"<feComponentTransfer><feFuncR type='table' tableValues='0.0471, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.4902, 0.6274, 0.7804, 0.9294, 1'/><feFuncB type='table' tableValues='0.0863, 0.1922, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feColorMatrix type='matrix' values='.79 .19 .02 0 0 .06 .92 .02 0 0 .06 .19 .75 0 0 0   0   0   1 0'/><feComponentTransfer><feFuncR type='linear' slope='1.0309' intercept='-0.0155'/><feFuncG type='linear' slope='1.0309' intercept='-0.0155'/><feFuncB type='linear' slope='1.0309' intercept='-0.0155'/></feComponentTransfer>",
+      vignette: {}
    }, {
       name: "Nichole2",
       value:"<feComponentTransfer><feFuncR type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncG type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/><feFuncB type='table' tableValues='0, 0.1255, 0.251, 0.3765, 0.502, 0.6274, 0.7529, 0.8784, 1'/></feComponentTransfer><feComponentTransfer><feFuncR type='linear' slope='1.0695' intercept='-0.0348'/><feFuncG type='linear' slope='1.0695' intercept='-0.0348'/><feFuncB type='linear' slope='1.0695' intercept='-0.0348'/></feComponentTransfer>",
-      vignette: {},
-      src: "",
-      thumbImg: ""
+      vignette: {}
    }, {
       name: "Vignette",
       value:"",
-      vignette: { radius: 65, bright: 60},
-      src: "",
-      thumbImg: ""
+      vignette: { radius: 65, bright: 60}
    },{
       name: "f4",
       value: "<feColorMatrix type=\"matrix\" values=\"0.6666 0.6666 0.6666 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\"/>",
-      vignette: {},
-      src: "",
-      thumbImg: ""
+      vignette: {}
    },{
       name: "f5",
       value: "<feColorMatrix type=\"matrix\" values=\"-0.0257 1.2426 -0.0402 0.0000 0.0000 0.3113 0.0074 0.1600 0.0000 0.0000 0.8248 0.1325 -1.1995 0.0000 0.0000 0.0000 0.0000 0.0000 1.0000 0.0000\"/>",
-      vignette: {},
-      src: "",
-      thumbImg: ""
+      vignette: {}
    }
 ];
 var users;
@@ -132,8 +119,8 @@ window.onload = function() {
    );
 
    setInstallButton("z_btnInstall");
-   window.addEventListener("resize", fitImages, false);
-   fitImages();
+   // window.addEventListener("resize", fitImages, false); FIXME!
+   // fitImages();                                         FIXME!
 
    // Listeners
    document.getElementById("p01").parentNode.onclick = toggleSidebarView;
@@ -159,30 +146,15 @@ window.onload = function() {
    document.getElementById("z_enterTweet").addEventListener(
       "keydown", onTextEntered, false
    );
+   document.getElementById("ft6").addEventListener("click", changeFilter);
    // document.getElementById("mn5").style.display = "none";
+
    formatLanguageList();
    translateBody();
    formatUsersList(false);
    formatNetworkChoices();
-   var elt = document.getElementById("ft6");
-   for (var i=0, max=filters.length; i < max; ++i) {
-      var tdElt = document.createElement("TD");
-      var imgElt = document.createElement("IMG");
-      imgElt.onload = function() {
-        // no longer need to read the blob so it's revoked
-        if (this.src) URL.revokeObjectURL(this.src);
-      };
-      filters[i].thumbImg = imgElt;
-      tdElt.setAttribute("align", "center");
-      tdElt.appendChild(imgElt);
-      elt.appendChild(tdElt);
-   }
-   showToolbar(2);
-   thumbMaxWidth = (elt.cells)[0].offsetWidth;
-   thumbMaxHeight = (elt.cells)[0].offsetHeight;
-   showToolbar(0);
 
-   elt.addEventListener("click", changeFilter);
+   showToolbar(0);
    var principal = document.querySelector(".principal");
    new GestureDetector(principal).startDetecting();
    principal.addEventListener(
@@ -209,7 +181,6 @@ window.onload = function() {
          }
       );
    }
-   initFilters();
 };
 
 function onTextEntered(event) {
@@ -491,29 +462,6 @@ function changeLogin(event) {
          onNetworkChange();
          tellAccessPass();
       }
-   }
-}
-
-function fitImages() {
-   // workaround, until "object-fit:contain;" gets implemented
-   var images = document.querySelectorAll(".imgbox img");
-   for (var i=0; i < images.length; ++i) {
-      var img = images[i];
-      img.addEventListener("load", function() { fitImage(this); });
-      fitImage(img);
-   }
-}
-
-function fitImage(img) {
-   var elt = img.parentNode;
-   if ((elt.offsetHeight * img.offsetWidth)<(img.offsetHeight * elt.offsetWidth)) {
-      img.style.top = "0";
-      img.style.width = "";
-      img.style.height = "100%";
-   }else {
-      img.style.top = ((elt.offsetHeight - img.offsetHeight) / 2) + "px";
-      img.style.width = "100%";
-      img.style.height = "";
    }
 }
 
@@ -809,103 +757,45 @@ function isUploadable() {
 }
 
 function tryUploadPhoto() {
-   if (isUploadable()) {
-      filterAndUploadPhoto(pendingPhotos.shift());
-   }
+   gougou();
+// if (isUploadable()) {
+//    filterAndUploadPhoto(pendingPhotos.shift());
+// }
 }
 
-function doFilter(w, h, imgUrl, filter) {
-   var fId = filter.name;
-   var data = (
-     "<g><image preserveAspectRatio='xMinYMin meet'" +
-     " width='" + w + "' height='" + h + "' xlink:href='" + imgUrl
-   );
-   if (filter.value) {
-      data += (
-        "' filter='url(data:image/svg+xml," +
-        escape(
-           "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + fId + "'>" +
-           filter.value +
-           "</filter></svg>"
-        ) +
-        "#" + fId + ")"
-      );
+function gougou() {
+   var imgBase = new Image();
+   imgBase.onload = function() {
+      var data = makeSelf(this.src, filters[3], this.width, this.height);
+      var blob = new Blob([data], {type:"image/svg+xml"});
+//    URL.revokeObjectURL(this.src);
+      document.getElementById("gg").src = URL.createObjectURL(blob);
    }
-   data += (
-     "'></image></g>"
-   );
-   if (filter.vignette.radius) { // if (Object.keys(filter.vignette) !== 0)
-      data = vignetize(data, w, h, imgUrl, filter);
-   }else {
-      data = svgHeader + " width='" + w + "' height='" + h + "' >" + data + "</svg>";
-   }
-   return new Blob([data], {type:"image/svg+xml"});
-}
+   imgBase.src = URL.createObjectURL(pendingPhotos[0]);
 
-function vignetize(data, w, h, imgUrl, filter) {
-   var f2 = filter.name + "_2";
-   var f3 = filter.name + "_3";
-   var f4 = filter.name + "_4";
-   var r = filter.vignette.radius / 100;
-   var b = filter.vignette.bright / 100;
-   var m, t, u, p, q, cx, cy;
-   if (h < w) {
-      m = h;
-      t = (h-w)/2;
-      u = 0;
-      p = 1.0;
-      q = w/h;
-   }else {
-      m = w;
-      t = 0;
-      u = (w-h)/2;
-      p = h/w;
-      q = 1.0;
-   }
-   var border = (m * 0.0214) | 0;
-   if (border < 2) border = 2;
-   return (
-     svgHeader + " width='" + m + "' height='" + m +
-       "'><g transform='translate(" + t + "," + u + ")'>" +
-         data +
-         "<g>" +
-            "<image xlink:href='" + imgUrl +
-            "' width='" + w + "' height='" + h +
-            "' filter='url(data:image/svg+xml," +
-            escape(
-               "<svg xmlns='http://www.w3.org/2000/svg'><filter id='" + f2 + "'>" +
-               "<feGaussianBlur stdDeviation='2'/>" +
-               "<feColorMatrix type='matrix' values='" + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 " + b + " 0 0 0 0 0 1 0'/>" +
-               "</filter></svg>"
-            ) +
-            "#" + f2 +
-            ")' mask ='url(data:image/svg+xml," +
-            escape(
-               "<svg xmlns='http://www.w3.org/2000/svg'>" +
-               "<mask id='" + f3 +
-               "' maskUnits='objectBoundingBox' maskContentUnits='objectBoundingBox'>" +
-               "<rect x='0' y='0' width='1' height='1' stroke-width='0'" +
-               " fill='url(data:image/svg+xml," +
-               escape(
-                  "<svg xmlns='http://www.w3.org/2000/svg'><radialGradient id='" + f3 + "'" +
-                     " gradientUnits='objectBoundingBox' cx='" + (1/(2*p)) + "' cy='" + (1/(2*q)) + "' r='" + r + "'" +
-                     " gradientTransform='scale(" + p + "," + q + ")'" +
-                  ">" +
-                     "<stop offset='0.4' stop-color='#ffffff' stop-opacity='0'/>" +
-                     "<stop offset='0.6' stop-color='#ffffff' stop-opacity='1'/>" +
-                  "</radialGradient></svg>"
-               ) +
-               "#" + f3 + ")'/>" +
-               "</mask></svg>"
-            ) +
-            "#" + f3 + ")'></image>" +
-         "</g>" +
-         "<g fill='none' stroke='white' stroke-width='" + border + "' >" +
-           "<rect x='" + ((border/2)-t) + "' y='" + ((border/2)-u) + "' width='" + (m-border) + "' height='" + (m-border) + "'/>" +
-         "</g>" +
-       "</g>" +
-     "</svg>"
+/*
+   // var sentImg = new Image();
+   var sentImg = document.getElementByI("gg");
+   var data = makeSvg(
+      pendingPhotos[0],
+      filters[filterChoice],
+      800, 600
    );
+   var url =  URL.createObjectURL([data], {type:"image/svg+xml"});
+   sentImg.src = url;
+// sentImg.src = URL.createObjectURL(
+//    new Blob(
+//       [
+//          makeSvg(
+//             pendingPhotos[0],
+//             filters[filterChoice],
+//             800, 600
+//          )
+//       ],
+//       {type:"image/svg+xml"}
+//    )
+// );
+*/
 }
 
 function filterAndUploadPhoto(imgRawBlob)
@@ -932,6 +822,7 @@ function filterAndUploadPhoto(imgRawBlob)
 }
 
 function uploadPhoto(imgBlob) {
+
    var formData = new FormData();
    formData.append("MAX_FILE_SIZE", "2000000");
 // formData.append("IMG", file.name.substr(-3));
@@ -1030,84 +921,88 @@ function showToolbar(barNo) {
 
 function showNewPhoto() {
    // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
-   var imgRawElt = filters[0].img;
-   imgRawElt.onload = function() {
+   var img = filters[0].img;
+   img.onload = function() {
       if (filters[0].src) URL.revokeObjectURL(filters[0].src);
-      filters[0].src = imgRawElt.src;
-      // 0) Set the filters
-      for (var i=1, max=filters.length; i < max; ++i) {
-         var filter = filters[i];
-         if (filter.src) URL.revokeObjectURL(filter.src);
-         filter.src = URL.createObjectURL(
-            doFilter(imgRawElt.width, imgRawElt.height, imgRawElt.src, filter)
-         );
-      }
+      filters[0].src = img.src;
       // 1) Compute the thumbnails size
-      var w = thumbMaxHeight / filters[0].img.height;
-      var h = thumbMaxWidth / filters[0].img.width;
+      var footElt = document.querySelector("footer");
+      var maxW = footElt.offsetWidth / filters.length;
+      var maxH = footElt.offsetHeight;
+      var w = maxH / img.height;
+      var h = maxW / img.width;
       if (w < h) {
-         w = Math.round(filters[0].img.width * w);
-         h = thumbMaxHeight;
+         w = Math.round(img.width * w);
+         h = maxH;
       }else {
-         w = thumbMaxWidth;
-         h = Math.round(filters[0].img.height * h);
+         w = maxW;
+         h = Math.round(img.height * h);
       }
       // 2) draw the raw thumbnail
       var canvas = document.createElement("CANVAS");
       canvas.setAttribute("width", w);
       canvas.setAttribute("height", h);
-      canvas.getContext('2d').drawImage(imgRawElt, 0, 0, w, h);
-      // 3) derive the filtered thumbnails
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+      // 3) populate the footer with the thumbnails (SVG images)
       if (!canvas.toBlob) {
-         // Shit. Fuckin' Chrome has no canvas.toBlob.
+         // canvas.toBlob not implemented
          buildThumbNails(simulateCanvasToBlob(canvas), w, h);
       }else {
          canvas.toBlob(
             function(thumbBlob) {
                buildThumbNails(thumbBlob, w, h);
-//             var rawThumb = URL.createObjectURL(thumbBlob);
-//             filters[0].thumbImg.src = rawThumb;
-//             for (var i=1, max=filters.length; i < max; ++i) {
-//                filters[i].thumbImg.src = URL.createObjectURL(
-//                   doFilter(w, h, rawThumb, filters[i])
-//                );
-//             }
             },
             "image/jpeg", 0.95
          );
       }
-      document.getElementById("p22").src = filters[filterChoice].src;
+//    // 4) Compute the main image size
+//    var divElt = document.getElementById("p22");
+//    maxW = divElt.offsetWidth;
+//    maxH = divElt.offsetHeight;
+//    w = maxH / img.height;
+//    h = maxW / img.width;
+//    if (w < h) {
+//       w = Math.round(img.width * w);
+//       h = maxH;
+//    }else {
+//       w = maxW;
+//       h = Math.round(img.height * h);
+//    }
+//    // 5) show the main image
+//    divElt.innerHTML = makeSvg(img.src, filters[filterChoice], w, h);
+      showMainImage("p22", filterChoice);
    };
-   imgRawElt.src = URL.createObjectURL(pendingPhotos[0]);
+   img.src = URL.createObjectURL(pendingPhotos[0]);
+}
+
+function showMainImage(divId, choice) {
+   var img = filters[0].img;
+   var divElt = document.getElementById(divId);
+   var maxW = divElt.offsetWidth;
+   var maxH = divElt.offsetHeight;
+   var w = maxH / img.height;
+   var h = maxW / img.width;
+   if (w < h) {
+      w = Math.round(img.width * w);
+      h = maxH;
+   }else {
+      w = maxW;
+      h = Math.round(img.height * h);
+   }
+   divElt.innerHTML = makeSvg(img.src, filters[choice], w, h);
 }
 
 function buildThumbNails(thumbBlob, w, h) {
-   var rawThumb = URL.createObjectURL(thumbBlob);
-   filters[0].thumbImg.src = rawThumb;
-   gougou(rawThumb, w, h);
-// for (var i=1, max=filters.length; i < max; ++i) {
-//    filters[i].thumbImg.src = URL.createObjectURL(
-//       doFilter(w, h, rawThumb, filters[i])
-//    );
-// }
-}
-function gougou(imgSrc, w, h) {
+   var thumbSrc = URL.createObjectURL(thumbBlob);
+   if (filters[0].thumbSrc) URL.revokeObjectURL(filters[0].thumbSrc);
+   filters[0].thumbSrc = thumbSrc;
    var html = "";
-   for (var i=0; i < 6; ++i) {
+   for (var i=0, max=filters.length; i < max; ++i) {
       var filter = filters[i];
-      html += "<td>";
-      if (filter.vignette.radius) { // if (Object.keys(filter.vignette) !== 0)
-         html += doVignette(w, h, imgSrc, filter);
-      }else {
-         html += (
-            "<svg width='" + w + "' height='" + h + "'>" +
-            makeSvgImage(imgSrc, filter, w, h) + "</svg></td>"
-         );
-      }
-      html += "</td>";
+      html += "<td>" + makeSvg(thumbSrc, filters[i], w, h) + "</td>";
    }
    document.getElementById("ft6").innerHTML = html;
-   showToolbar(2);
 }
 
 function simulateCanvasToBlob(canvas) {
@@ -1124,13 +1019,13 @@ function editPhoto() {
    showToolbar(2);
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
-   document.getElementById("p33").src = filters[filterChoice].src;
+   document.getElementById("p33").src = filters[filterChoice].src; // FIXME!
    expandPage("p3");
 }
 
 function validateEditPhoto() {
    filterChoice = tempFilterChoice;
-   document.getElementById("p22").src = filters[filterChoice].src;
+   document.getElementById("p22").src = filters[filterChoice].src;  // FIXME!
    cancelEditPhoto();
 }
 
@@ -1141,7 +1036,7 @@ function cancelEditPhoto() {
 
 function changeFilter(event) {
    if (event) tempFilterChoice = getRealTarget(event).cellIndex;
-   document.getElementById("p33").src = filters[tempFilterChoice].src;
+   showMainImage("p33", tempFilterChoice);
 }
 
 function showActionMenu() {
