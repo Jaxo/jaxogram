@@ -12,7 +12,6 @@ var filters = [
       name: "raw",
       value: "",
       vignette: {},
-      src: "",
       thumbSrc: "",
       img: new Image()
    }, {
@@ -131,23 +130,23 @@ window.onload = function() {
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn5").onclick = listAlbums;
    document.getElementById("ft1").onclick = pickPhoto;
-   document.getElementById("ft3").onclick = tryUploadPhoto;
+   document.getElementById("ft3").onclick = filterAndUploadPhoto;
    document.getElementById("ft4").onclick = editPhoto;
    document.getElementById("ft5").onclick = function() {
       pendingPhotos.shift();
       uploadPhotos();
    };
+   document.getElementById("ft6").addEventListener("click", changeFilter);
    document.getElementById("p31").onclick = cancelEditPhoto;
    document.getElementById("p32").onclick = validateEditPhoto;
    document.getElementById("mn4").onclick = changeLogin;
+   // document.getElementById("mn5").style.display = "none";
    document.getElementById("z_enterTweet").addEventListener(
       "input", onTextEntered, false
    );
    document.getElementById("z_enterTweet").addEventListener(
       "keydown", onTextEntered, false
    );
-   document.getElementById("ft6").addEventListener("click", changeFilter);
-   // document.getElementById("mn5").style.display = "none";
 
    formatLanguageList();
    translateBody();
@@ -756,73 +755,39 @@ function isUploadable() {
    }
 }
 
-function tryUploadPhoto() {
-   gougou();
+function filterAndUploadPhoto() {
 // if (isUploadable()) {
-//    filterAndUploadPhoto(pendingPhotos.shift());
-// }
-}
-
-function gougou() {
-   var imgBase = new Image();
-   imgBase.onload = function() {
-      var data = makeSelf(this.src, filters[3], this.width, this.height);
+      pendingPhotos.shift();
+      var data = makeSvg(
+         filters[0].img.src,
+         filters[filterChoice],
+         filters[0].img.width,
+         filters[0].img.height,
+         true   // all in data url
+      );
       var blob = new Blob([data], {type:"image/svg+xml"});
-//    URL.revokeObjectURL(this.src);
-      document.getElementById("gg").src = URL.createObjectURL(blob);
-   }
-   imgBase.src = URL.createObjectURL(pendingPhotos[0]);
-
-/*
-   // var sentImg = new Image();
-   var sentImg = document.getElementByI("gg");
-   var data = makeSvg(
-      pendingPhotos[0],
-      filters[filterChoice],
-      800, 600
-   );
-   var url =  URL.createObjectURL([data], {type:"image/svg+xml"});
-   sentImg.src = url;
-// sentImg.src = URL.createObjectURL(
-//    new Blob(
-//       [
-//          makeSvg(
-//             pendingPhotos[0],
-//             filters[filterChoice],
-//             800, 600
-//          )
-//       ],
-//       {type:"image/svg+xml"}
-//    )
-// );
-*/
-}
-
-function filterAndUploadPhoto(imgRawBlob)
-{
-   if (filterChoice === 0) {
-      uploadPhoto(imgRawBlob);
-   }else {
-      var sentImg = new Image();
-      document.querySelector(".progress").style.visibility="visible";
-      sentImg.onload = function() {
+//document.getElementById("gg").src = URL.createObjectURL(blob);
+      var toSendImg = new Image();
+      toSendImg.onload = function() {
          var canvas = document.createElement("CANVAS");
-         canvas.width = sentImg.width;
-         canvas.height = sentImg.height;
+         canvas.width = toSendImg.width;
+         canvas.height = toSendImg.height;
          var ctx = canvas.getContext('2d');
-         ctx.drawImage(sentImg, 0, 0);
-         // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
-         canvas.toBlob(
-            function(imgFilteredBlob) { uploadPhoto(imgFilteredBlob); },
+         ctx.drawImage(toSendImg, 0, 0);
+         doCanvasToBlob(
+            canvas,
+//          function(blob2) { uploadPhoto(blob); },   FIXME!
+            function(blob2) {
+               document.getElementById("gg").src = URL.createObjectURL(blob2);
+            },
             "image/jpeg", 0.95
          );
       };
-      sentImg.src = document.getElementById("p22").src;
-   }
+      toSendImg.src = URL.createObjectURL(blob);
+// }
 }
 
 function uploadPhoto(imgBlob) {
-
    var formData = new FormData();
    formData.append("MAX_FILE_SIZE", "2000000");
 // formData.append("IMG", file.name.substr(-3));
@@ -923,8 +888,6 @@ function showNewPhoto() {
    // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
    var img = filters[0].img;
    img.onload = function() {
-      if (filters[0].src) URL.revokeObjectURL(filters[0].src);
-      filters[0].src = img.src;
       // 1) Compute the thumbnails size
       var footElt = document.querySelector("footer");
       var maxW = footElt.offsetWidth / filters.length;
@@ -945,34 +908,16 @@ function showNewPhoto() {
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
 
       // 3) populate the footer with the thumbnails (SVG images)
-      if (!canvas.toBlob) {
-         // canvas.toBlob not implemented
-         buildThumbNails(simulateCanvasToBlob(canvas), w, h);
-      }else {
-         canvas.toBlob(
-            function(thumbBlob) {
-               buildThumbNails(thumbBlob, w, h);
-            },
-            "image/jpeg", 0.95
-         );
-      }
-//    // 4) Compute the main image size
-//    var divElt = document.getElementById("p22");
-//    maxW = divElt.offsetWidth;
-//    maxH = divElt.offsetHeight;
-//    w = maxH / img.height;
-//    h = maxW / img.width;
-//    if (w < h) {
-//       w = Math.round(img.width * w);
-//       h = maxH;
-//    }else {
-//       w = maxW;
-//       h = Math.round(img.height * h);
-//    }
-//    // 5) show the main image
-//    divElt.innerHTML = makeSvg(img.src, filters[filterChoice], w, h);
+      doCanvasToBlob(
+         canvas,
+         function(blob) { buildThumbNails(blob, w, h); },
+         "image/jpeg", 0.95
+      );
+
+      // 4) Show the main image
       showMainImage("p22", filterChoice);
    };
+   if (img.src) URL.revokeObjectURL(img.src);
    img.src = URL.createObjectURL(pendingPhotos[0]);
 }
 
@@ -990,7 +935,7 @@ function showMainImage(divId, choice) {
       w = maxW;
       h = Math.round(img.height * h);
    }
-   divElt.innerHTML = makeSvg(img.src, filters[choice], w, h);
+   divElt.innerHTML = makeSvg(img.src, filters[choice], w, h, false);
 }
 
 function buildThumbNails(thumbBlob, w, h) {
@@ -1000,32 +945,37 @@ function buildThumbNails(thumbBlob, w, h) {
    var html = "";
    for (var i=0, max=filters.length; i < max; ++i) {
       var filter = filters[i];
-      html += "<td>" + makeSvg(thumbSrc, filters[i], w, h) + "</td>";
+      html += "<td>" + makeSvg(thumbSrc, filters[i], w, h, false) + "</td>";
    }
    document.getElementById("ft6").innerHTML = html;
 }
 
-function simulateCanvasToBlob(canvas) {
-   var dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-   var binData = atob(dataUrl.split(',')[1]);         // base64 to raw binary
-   var buffer = [];                                   // then to an array
-   for (var i=0, max=binData.length; i < max; ++i) {
-      buffer.push(binData.charCodeAt(i));
+function doCanvasToBlob(canvas, whenDone, mimeType, quality) {
+   if (canvas.toBlob) {
+      // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
+      canvas.toBlob(whenDone, mimeType, quality);
+   }else {  // canvas.toBlob not implemented (Chromium)
+      var dataUrl = canvas.toDataURL(mimeType, quality);
+      var binData = atob(dataUrl.split(',')[1]);         // base64 to raw binary
+      var buffer = [];                                   // then to an array
+      for (var i=0, max=binData.length; i < max; ++i) {
+         buffer.push(binData.charCodeAt(i));
+      }
+      whenDone(new Blob([new Uint8Array(buffer)], {type: mimeType}));
    }
-   return new Blob([new Uint8Array(buffer)], {type: 'image/jpeg'});
 }
 
 function editPhoto() {
    showToolbar(2);
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
-   document.getElementById("p33").src = filters[filterChoice].src; // FIXME!
+   showMainImage("p33", filterChoice);
    expandPage("p3");
 }
 
 function validateEditPhoto() {
    filterChoice = tempFilterChoice;
-   document.getElementById("p22").src = filters[filterChoice].src;  // FIXME!
+   showMainImage("p22", filterChoice);
    cancelEditPhoto();
 }
 
