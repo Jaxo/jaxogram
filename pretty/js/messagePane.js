@@ -116,11 +116,11 @@ function buildMessagePane(elt, args) {
    eltCell.id = args[0];                      // idTitle
    eltCell.childNodes[0].textContent = i18n(args[0]);
    if (args[2]) {                             // whenDone
-      row.cells[3].style.visibility = "visible";
+      row.cells[3].firstChild.style.visibility = "visible";
       row.cells[4].style.visibility = "visible";
       row.cells[4].onclick = args[2];
    }else {
-      row.cells[3].style.visibility = "hidden";
+      row.cells[3].firstChild.style.visibility = "hidden";
       row.cells[4].style.visibility = "hidden";
    }
    eltCell = eltRows[1].cells[0];
