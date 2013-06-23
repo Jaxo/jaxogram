@@ -142,7 +142,7 @@ window.onload = function() {
    document.querySelector(".menuList").onclick = menuListClicked;
    document.getElementById("mn5").onclick = listAlbums;
    document.getElementById("ft1").onclick = pickPhoto;
-   document.getElementById("ft3").onclick = tryUploadPhoto;
+   document.getElementById("ft3").onclick = uploadFilteredPhoto;
    document.getElementById("ft4").onclick = editPhoto;
    document.getElementById("ft5").onclick = function() {
       pendingPhotos.shift();
@@ -805,12 +805,6 @@ function isUploadable() {
    }
 }
 
-function tryUploadPhoto() {
-   if (isUploadable()) {
-      filterAndUploadPhoto(pendingPhotos.shift());
-   }
-}
-
 function doFilter(w, h, imgUrl, filter) {
    var fId = filter.name;
    var data = (
@@ -905,26 +899,29 @@ function vignetize(data, w, h, imgUrl, filter) {
    );
 }
 
-function filterAndUploadPhoto(imgRawBlob)
+function uploadFilteredPhoto(imgRawBlob)
 {
-   if (filterChoice === 0) {
-      uploadPhoto(imgRawBlob);
-   }else {
-      var sentImg = new Image();
-      document.querySelector(".progress").style.visibility="visible";
-      sentImg.onload = function() {
-         var canvas = document.createElement("CANVAS");
-         canvas.width = sentImg.width;
-         canvas.height = sentImg.height;
-         var ctx = canvas.getContext('2d');
-         ctx.drawImage(sentImg, 0, 0);
-         // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
-         canvas.toBlob(
-            function(imgFilteredBlob) { uploadPhoto(imgFilteredBlob); },
-            "image/jpeg", 0.95
-         );
-      };
-      sentImg.src = document.getElementById("p22").src;
+   if (isUploadable()) {
+      var imgRawBlob = pendingPhotos.shift();
+      if (filterChoice === 0) {
+         uploadPhoto(imgRawBlob);
+      }else {
+         var sentImg = new Image();
+         document.querySelector(".progress").style.visibility="visible";
+         sentImg.onload = function() {
+            var canvas = document.createElement("CANVAS");
+            canvas.width = sentImg.width;
+            canvas.height = sentImg.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(sentImg, 0, 0);
+            // see https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement#Example.3A_Getting_a_file_representing_the_canvas
+            canvas.toBlob(
+               function(imgFilteredBlob) { uploadPhoto(imgFilteredBlob); },
+               "image/jpeg", 0.95
+            );
+         };
+         sentImg.src = document.getElementById("p22").src;
+      }
    }
 }
 
