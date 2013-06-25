@@ -46,6 +46,18 @@ var filters = [
       vignette: {},
       src: "",
       thumbImg: ""
+   },{
+      name: "Impressions",
+      value: "<feMorphology operator=\"dilate\" radius=\"5\"/><feMorphology operator=\"erode\" radius=\"7\"/>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
+   },{
+      name: "f7",
+      value: "<feColorMatrix type=\"luminanceToAlpha\"/><feDiffuseLighting diffuseConstant=\"1\" surfaceScale=\"10\" result=\"diffuse3\"><feDistantLight elevation=\"28\" azimuth=\"90\"/></feDiffuseLighting><feComposite operator=\"in\" in2=\"diffuse3\"/>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
    }
 ];
 var users;
@@ -542,7 +554,7 @@ function formatNetworkChoices() {
 }
 
 function authorize() {
-   expandSidebarView(-1);
+   // expandSidebarView(-1);
    showActionMenu();
 }
 

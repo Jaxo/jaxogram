@@ -10,47 +10,49 @@ html, body {
   /* -moz-user-select: none; */
 }
 
-header {
-  background-repeat: repeat-x;
-  color: #FFFFFF;
-  height: 5rem;
-  z-index: 1;
-}
-
 .principal > header {
+  top: 0;
   background-image: url("images/header.png");
+  border-bottom: 0.1rem solid #323232;
 }
 
-.invisible {
-  visibility: hidden;
-}
-
-.body header {
-   width: 100%;
-   display: inline-block;
-   border-bottom: 0.1rem solid #616262;
-   -moz-box-sizing: border-box;
-   position:fixed;
-   top:0;
-   height:5rem;
-   left:0;
-   right:0;
-   background: url('images/am_pattern.png') repeat scroll left top,
-   url('images/am_gradient.png') no-repeat scroll left top / 100% 100% transparent;
-}
-
-.sidebar header {
+.sidebar > header {
+  top: 0;
   background-image: url("images/header2.png");
+  border-bottom: 0.1rem solid #323232;
+}
+.body header {
+  background-image: url("images/dark_header.png");
+  top:-5rem;
+}
+
+header {
+  z-index: 1;
+  display: inline-block;
+  position:relative;
+  top:0;
+  left:0;
+  right:0;
+  height: 5rem;
+  width: 100%;
+  border-bottom: 0.1rem solid #919393; /* #616262; */
+  color: #FFFFFF;
+  background-repeat: repeat-x;
 }
 
 header:after {
   content: "";
-  position: absolute;
-  width: 100%;
-  background: #222323;
-  height: 0.1rem;
+  display: block;
+  height: 0.3rem;
   left: 0;
-  top: 5rem;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: url('images/shadow_header.png') repeat-x scroll 0 0 / auto 100% transparent;
+}
+
+.invisible {
+  visibility: hidden;
 }
 
 header h1 small {
@@ -67,10 +69,10 @@ header > div:active > span {
 }
 
 header > div > span {
-  background: url("images/mainsepa.png") no-repeat scroll right top rgba(0, 0, 0, 0.25);
+  background: url("images/mainsepa.png") no-repeat scroll right top rgba(0, 0, 0, 0.15);
   display:block;
-  margin: 0rem 2.6rem 0rem -0.6rem;
-  padding: 1rem 0rem 0.8rem 0.2rem;
+  margin: 0rem 2.6rem 0rem -0.3rem;
+  padding: 1rem 0rem 0.7rem 0rem;
   z-index: -1;
 }
 
@@ -148,9 +150,6 @@ header td:active {
    /* top: 5.7rem; */
    top: 0;
    bottom: 4rem;
-/*UU   margin-right: 0rem;   */
-/*UU   margin-left: 0rem;   */
-
 /*UU   transition: 0.4s;   */
 /*UU   overflow-y: auto;   */
    background: url("images/shadow.png") right top repeat-y;
@@ -165,19 +164,11 @@ header td:active {
   position: absolute;
   left: 0;
   right: 0;
-  top: 5rem;       /* reduced: 5.6rem; */
-  bottom: 0rem;    /* reduced: 0.6rem; */
-/* reduced: margin-left: 0.6rem;       */
-/* reduced: margin-right: 0.6rem;      */
+  top: 5rem;
+  bottom: 0rem;
   opacity: 0;
 /*UU transition: opacity 0.2s; */
   z-index: -1;
-/* reduced: background-color: #3e4449;                  */
-/* reduced: border-left: 1px solid #B0B0B0;             */
-/* reduced: border-top: 1px solid #B0B0B0;              */
-/* reduced: border-right: 1px solid #808080;            */
-/* reduced: border-bottom: 1px solid #808080;           */
-/* reduced: border-radius: 0.5rem 0.5rem 0.5rem 0.5rem; */
   border: none;
 }
 
@@ -385,7 +376,7 @@ button.recommend:active {
    padding: 0;
    font-size: 2rem;
    cursor: pointer;
-   top: 5.2rem;
+   top: 5rem;
    height: calc(100% - 5.2rem);
    width: 100%;
    overflow: auto;
@@ -594,12 +585,10 @@ li[aria-selected=true], li[role=listbox] {
 .imgbox {
   display: block;
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 2px;
+  bottom: 3px;
   left: 0;
   right: 0;
-  /* border: 1px solid #D1D1D1; */
-  /* border-radius: 0.5rem 0.5rem 0.5rem 0.5rem; */
   text-align: center;
   /* either width:100%; or height:100%; */
   z-index: -1;
@@ -647,14 +636,19 @@ span.type1 {
 
 /* ----------------------------------
  * Action menu
- * Has to appear after, due to collisions with body
  * ---------------------------------- */
-
 .menuaction {
+   position: absolute;
+   left: 0;
+   right: 0;
+   top: 0rem;
+   bottom: 0rem;
+   border: none;
    z-index: 2;
    opacity: 1;
    display: none;
-   background-image: url('images/pattern.png');
+   background: url('images/am_pattern.png') repeat scroll left top,
+               url('images/am_gradient.png') no-repeat scroll left top / 100% 100% transparent;
 }
 
 .menuaction menu {
