@@ -96,10 +96,10 @@ sed -e '/-- REPLACED --/, /-- REPLACEMENT/d' -e '/REPLACE END --/d' pretty/index
 
 switch ($OSTYPE)
     case "linux-gnu":
-      set sedregopt = "r" 
+      set sedregopt = "r"
       breaksw
     case "darwin"*:
-      set sedregopt = "E" 
+      set sedregopt = "E"
       breaksw
     default:
       set sedregopt = "r"
@@ -121,6 +121,8 @@ end
 
 # cook the proper java command to obfuscate all js files (closure compiler)
 set jarcmd = "java -jar buildlib/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --externs temp/externs.js --js_output_file=war/js/jaxogram.min.js"
+# to avoid obfuscation (debug):
+# set jarcmd = "java -jar buildlib/compiler.jar --compilation_level WHITESPACE_ONLY --formatting PRETTY_PRINT --externs temp/externs.js --js_output_file=war/js/jaxogram.min.js"
 foreach file(temp/js/*.js)
    set jarcmd = "${jarcmd} --js=${file}"
 end
