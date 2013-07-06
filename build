@@ -131,6 +131,10 @@ end
 $jarcmd >& temp/warn
 
 # copy other required files to dist
+cp -p pretty/WEB-INF/appengine-web.xml war/WEB-INF
+cp -p pretty/WEB-INF/web.xml war/WEB-INF
+cp -p pretty/WEB-INF/logging.properties war/WEB-INF
+cp -p pretty/WEB-INF/lib war/WEB-INF
 cp -p pretty/manifest.webapp war
 cp -p pretty/hosted_manifest.webapp war
 cp -p pretty/favicon.ico war
