@@ -3,29 +3,19 @@
 if (-d temp/) then
    rm -r temp
 endif
-if (-d war/js) then
-   rm -r war/js
-endif
-if (-d war/style) then
-   rm -r war/style
-endif
-if (-d war/style/images) then
-   rm -r war/style/images
-endif
-if (-d war/applogos) then
-   rm -r war/applogos
-endif
-if (-d war/images) then
-   rm -r war/images
+if (-d war) then
+   rm -r war
 endif
 
 mkdir temp
 mkdir temp/js
+mkdir war
 mkdir war/js
 mkdir war/style
 mkdir war/style/images
 mkdir war/applogos
 mkdir war/images
+mkdir war/WEB-INF
 
 echo Obfuscating.  Wait, it will take about ten seconds....
 
@@ -134,7 +124,7 @@ $jarcmd >& temp/warn
 cp -p pretty/WEB-INF/appengine-web.xml war/WEB-INF
 cp -p pretty/WEB-INF/web.xml war/WEB-INF
 cp -p pretty/WEB-INF/logging.properties war/WEB-INF
-cp -p pretty/WEB-INF/lib war/WEB-INF
+cp -p -r pretty/WEB-INF/lib war/WEB-INF
 cp -p pretty/manifest.webapp war
 cp -p pretty/hosted_manifest.webapp war
 cp -p pretty/favicon.ico war
