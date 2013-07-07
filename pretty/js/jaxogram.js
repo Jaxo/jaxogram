@@ -146,7 +146,6 @@ window.onload = function() {
    fitImages();
 
    // Listeners
-   document.getElementById("p01").parentNode.onclick = toggleSidebarView;
    var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
    for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
       radioGroupNodes[i].addEventListener("click", radioClicked);
@@ -176,20 +175,20 @@ window.onload = function() {
    formatNetworkChoices();
    var elt = document.getElementById("ft6");
    for (var i=0, max=filters.length; i < max; ++i) {
-      var tdElt = document.createElement("TD");
+      var liElt = document.createElement("LI");
       var imgElt = document.createElement("IMG");
       imgElt.onload = function() {
         // no longer need to read the blob so it's revoked
         if (this.src) URL.revokeObjectURL(this.src);
       };
       filters[i].thumbImg = imgElt;
-      tdElt.setAttribute("align", "center");
-      tdElt.appendChild(imgElt);
-      elt.appendChild(tdElt);
+      liElt.setAttribute("align", "center");
+      liElt.appendChild(imgElt);
+      elt.appendChild(liElt);
    }
    showToolbar(2);
-   thumbMaxWidth = (elt.cells)[0].offsetWidth;
-   thumbMaxHeight = (elt.cells)[0].offsetHeight;
+   thumbMaxWidth = elt.firstElementChild.offsetWidth;
+   thumbMaxHeight = elt.firstElementChild.offsetHeight;
    showToolbar(0);
 
    elt.addEventListener("click", changeFilter);
@@ -1015,23 +1014,6 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    }else {
       xhr.send(values);
    }
-}
-
-function showToolbar(barNo) {
-   var elt = document.querySelector("footer > table");
-   var prevBarNo = -1;
-   elt.parentNode.style.display = "none";
-   for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
-      var row = rows[i];
-      if (!row.style.display) prevBarNo = i;
-      if (i == barNo) {
-         elt.parentNode.style.display = "";
-         row.style.display = "";
-      }else {
-         row.style.display = "none";
-      }
-   }
-   return prevBarNo;
 }
 
 function showNewPhoto() {

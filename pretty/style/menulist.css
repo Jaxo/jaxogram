@@ -1,0 +1,174 @@
+div.menulist {
+  overflow: auto;
+  height: calc(100% - 9rem);
+}
+div.menulist menu,
+div.menulist menuitem {
+   display: block;
+   margin: 0 2rem 0 2rem;
+   border-top: 1px solid #596068;
+   border-right: 3px solid transparent;
+}
+div.menulist menu {
+   overflow: hidden;
+   padding: 0;
+   color: #ddd;
+   font-size: 1.6rem;
+   font-style: oblique;
+   transition: height 0.5s ease;
+   -moz-transition: height 0.5s ease;
+   /* -ms-transition: 0.5s;           */
+   /* -o-transition: 0.5s;            */
+   /* -webkit-transition: 0.5s;       */
+}
+div.menulist menu:before,
+div.menulist menuitem:before {
+   background-repeat: no-repeat;
+   background-size: 2.8rem auto;
+   line-height: 4rem;
+   display: block;
+   content: attr(label);
+}
+div.menulist menu:before {
+   background-position: right 0.2rem center;
+}
+div.menulist menu[aria-expanded]:before {
+   background-image: url("images/icons/up.png");
+   /* max-height: 80rem; */
+}
+div.menulist menu:not([aria-expanded]):before {
+   background-image: url("images/icons/down.png");
+   /* max-height: 4rem; */
+}
+div.menulist > menu {
+   margin: 0;
+   padding-left:0.5rem;
+}
+div.menulist > menu:last-child {
+   border-bottom: solid 0.1rem #596068;
+}
+div.menulist > menu:first-child {
+   border-top: none;
+}
+div.menulist menuitem {
+   font-size: 1.4rem;
+   font-style: normal;
+}
+div.menulist menuitem:before {
+   background-position: left 0 center;
+   padding-left: 2.5rem;
+   background-image: url("images/icons/check_off.png");
+   color:#777;
+}
+div.menulist menuitem[checked]:before {
+   background-image: url("images/icons/check_on.png");
+   color:#eee;
+}
+div.menulist menuitem[type="radio"]:before {
+   background-image: url("images/icons/radio_off.png");
+}
+div.menulist menuitem[type="radio"][checked]:before {
+   background-image: url("images/icons/radio_on.png");
+}
+
+/* ======================== SOON TO BE OBSOLETE ==============================*/
+.menuList {
+   position: absolute;
+   /* list-style: none; */
+   margin: 0;
+   padding: 0;
+   font-size: 2rem;
+   cursor: pointer;
+   top: 5rem;
+   height: calc(100% - 5.2rem);
+   width: 100%;
+   overflow: auto;
+}
+.menuList small {
+  font-size: 66%;
+}
+.menuList ul  {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  font-size: 75%;
+  height: 0;
+  /* display: none; */
+  color: #aaa;
+  line-height: 3.1rem;
+  background-image: url("images/pattern.png");
+  background-color: #61666c;               /* Mobile only */
+  transition: height 0.3s ease 0s;
+}
+
+.menuList li {
+  vertical-align: bottom;
+  border-bottom: solid 1px #596068;
+  border-right: solid 3px transparent;
+  padding: 0 2em 0 0.5em;
+  /* padding:0.5em; padding-right: 2em; */
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.menuList li:before {
+  right: 0.7rem;
+  /* top: 0.5rem; */
+  padding-bottom: 0;
+  width: 3rem;
+  height: 3rem;
+  line-height:1em;
+  position: absolute;
+  content: "";
+}
+.menuList li[role=listbox]:before {
+  background: url("images/icons/down.png") no-repeat;
+}
+.menuList li[role=listbox][aria-expanded=true]:before {
+  background: url("images/icons/up.png") no-repeat;
+}
+[role=radiogroup] li[aria-selected="true"]:before {
+  background: none;
+}
+[role=radiogroup] li:before {
+  background: none;
+}
+.addItem {
+   padding-left: 3.5rem;
+   color: #D0D0D0;
+}
+.addItem:before {
+   background: url("images/icons/new.png") no-repeat 0 0 transparent;
+   position: absolute;
+   left: 0rem;
+   width: 3rem;
+}
+span[role=trasher] {                   /* */
+   background: url("images/icons/delete.png") no-repeat 0 0 transparent;
+   position: absolute;
+   left: 0rem;
+   width: 3rem;
+   height: 3rem;
+   content: "";
+}
+span[role=trasher]:active {
+   background-color: #FC2200;
+   color:white;
+}
+li[aria-selected=true], li[role=listbox] {
+   /* color: #eee; */
+  color: #fff;
+}
+.menuList li ul li {
+   border: none;
+   border-top: solid 1px #54575F;
+}
+/* .menuList li:hover {               */  /* Desktop only! */
+/*   background: rgba(0, 0, 0, 0.50); */
+/* }                                  */
+.menuList li:active {
+  background-color: #0095dd;
+  color:#222;
+}
+
