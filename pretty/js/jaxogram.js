@@ -531,25 +531,17 @@ function formatNetworkChoices() {
    networks.forEach(
       function(network) {
          var name = network.name;
-         var imgElt = document.createElement("IMG");
-         imgElt.src= "images/" + name + "Logo.png";
-         btnElt = document.createElement("BUTTON");
+         var itmElt = document.createElement("menuitem");
+         itmElt.style.backgroundImage = "url(\"images/" + name + "Logo.png\")";
          if (name === "picasa") {
-            btnElt.onclick = authorizePicasa;
+            itmElt.onclick = authorizePicasa;
          }else {
-            btnElt.onclick = function() { authorizeThruOAuth(name); }
+            itmElt.onclick = function() { authorizeThruOAuth(name); }
          }
-         btnElt.appendChild(imgElt);
-         eltContainer.appendChild(btnElt);
+         eltContainer.appendChild(itmElt);
       }
    );
-   btnElt = document.createElement("BUTTON");
-   btnElt.textContent = i18n("z_cancel");
-   btnElt.onclick = hideActionMenu;
-   var divElt = document.createElement("DIV");
-   divElt.appendChild(btnElt);
-   eltContainer.parentNode.appendChild(divElt);
-// eltContainer.appendChild(btnElt);
+   document.getElementById("z_cancel").onclick = hideActionMenu;
 }
 
 function authorize() {
@@ -1085,14 +1077,6 @@ function cancelEditPhoto() {
 function changeFilter(event) {
    if (event) tempFilterChoice = getRealTarget(event).cellIndex;
    document.getElementById("p33").src = filters[tempFilterChoice].src;
-}
-
-function showActionMenu() {
-   document.querySelector(".menuaction").style.display="block";
-}
-
-function hideActionMenu() {
-   document.querySelector(".menuaction").style.display="none";
 }
 
 function getQueryParams() {

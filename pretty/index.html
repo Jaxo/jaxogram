@@ -10,15 +10,18 @@
    <link rel="stylesheet" type="text/css" href="style/header.css"/>
    <link rel="stylesheet" type="text/css" href="style/toolbar.css"/>
    <link rel="stylesheet" type="text/css" href="style/sidebar.css"/>
+   <link rel="stylesheet" type="text/css" href="style/menuaction.css"/>
    <link rel="stylesheet" type="text/css" href="style/menulist.css"/>
    <link rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
    <script type="text/javascript" src="js/fxosstub.js"></script>
    <script type="text/javascript" src="js/gestureDetector.js"></script>
    <script type="text/javascript" src="js/jgusers.js"></script>
-   <script type="text/javascript" src="js/dispatcher.js"></script>
    <script type="text/javascript" src="js/i18n.js"></script>
+   <script type="text/javascript" src="js/dispatcher.js"></script>
+   <script type="text/javascript" src="js/install.js"></script>
    <script type="text/javascript" src="js/toolbar.js"></script>
    <script type="text/javascript" src="js/sidebar.js"></script>
+   <script type="text/javascript" src="js/menuaction.js"></script>
    <script type="text/javascript" src="js/messagePane.js"></script>
    <!-- script type="text/javascript" src="js/menulist.js"></script -->
    <script type="text/javascript" src="js/jaxogram.js"></script>
@@ -40,22 +43,22 @@
       </header>
       <div id="p1" class="body" aria-expanded="true">
          <div class="user">
-            <IMG id="p11"/>
-            <IMG id="p12"/>
+            <img id="p11"/>
+            <img id="p12"/>
             <div id="p13"></div>
             <div id="p14"></div>
          </div>
          <BUTTON id="z_initLogin" class="i18n recommend invisible"></BUTTON>
          <div id="z_banner" class="i18n banner"></div>
          <div id="p15">
-            <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
-            <SPAN id="p16">&copy; Jaxo, Inc. 2013</SPAN>
+            <img src="images/jaxologo.svg" type="image/svg+xml"/>
+            <span id="p16">&copy; Jaxo, Inc. 2013</span>
          </div>
       </div>
       <div id="p2" class="body">
          <TEXTAREA id="z_enterTweet" class="i18n textbox"></TEXTAREA>
-         <SPAN id="p21"></SPAN>
-         <div class="imgbox"><IMG id="p22" alt="Photo"/></div>
+         <span id="p21"></span>
+         <div class="imgbox"><img id="p22" alt="Photo"/></div>
       </div>
       <div id="p3" class="body">
          <header>
@@ -65,20 +68,22 @@
                <li id="p32" class="icon done"/></li>
             </ul>
          </header>
-         <div class="imgbox"><IMG id="p33" alt="Photo"/></div>
+         <div class="imgbox"><img id="p33" alt="Photo"/></div>
       </div>
    </section>
 
    <section class="menuaction">
-      <header><H2 id="z_chooseNetwork" class="i18n"></H2></header>
-      <menu id="ma1"></menu>
+      <header><h2 id="z_chooseNetwork" class="i18n"></h2></header>
+      <menu type="popup" id="ma1"></menu>
+      <footer><button id="z_cancel" class="i18n"></button></footer>
    </section>
+
    <section class="sidebar">
-      <header><H2 id="z_preferences" class="i18n"></H2></header>
+      <header><h2 id="z_preferences" class="i18n"></h2></header>
       <UL class="menuList">
         <LI id="mn1" role="listbox">
            <SMALL id="z_loginAs" class="i18n"></SMALL><BR/>
-           <IMG id="mn2"/><I id="mn3"></I>
+           <img id="mn2"/><I id="mn3"></I>
            <UL id="mn4" role="radiogroup"></UL>
         </LI>
         <LI id="mn5" role="listbox"></LI>
@@ -89,32 +94,15 @@
         </LI>
       </UL>
    </section>
-<!--
-   <section class="sidebar">
-      <header><H2 id="z_preferences" class="i18n"></H2></header>
-      <div class="menulist">
-        <menu type="popup" id="mn1">
-           <SMALL id="z_loginAs" class="i18n"></SMALL><BR/>
-           <IMG id="mn2"/><I id="mn3"></I>
-           <menu id="mn4" role="radiogroup"></menu>
-        </menu>
-        <menu id="mn5" role="listbox"></LI>
-        <LI role="listbox">
-           <SMALL id="z_language" class="i18n"></SMALL><BR/>
-           <I class="i18n" id="z_usedLang"></I>
-           <menu id="mn6" role="radiogroup"></menu>
-        </LI>
-      </UL>
-   </section>
--->
+
    <section class="message">
       <div><div>
       <TABLE>
          <TR>
             <TD class="icon cancel"></TD>
-            <TD><IMG src="style/images/separator.png"></TD>
+            <TD><img src="style/images/separator.png"></TD>
             <TD>&nbsp;</TD>
-            <TD><IMG src="style/images/separator.png"/></TD>
+            <TD><img src="style/images/separator.png"/></TD>
             <TD class="icon done"></TD>
          </TR><TR>
             <TD colspan="5" style="text-align:center">&nbsp;</TD>
@@ -122,22 +110,9 @@
       </TABLE>
       </div></div>
    </section>
-   <section class="progress"><PROGRESS></PROGRESS></section>
-<!--
-   <footer>
-     <TABLE>
-        <TR>
-          <TD id="ft1" class="icon camera"></TD>
-          <TD id="ft2" class="icon earth"></TD>
-        </TR><TR>
-          <TD id="ft3" class="icon send"></TD>
-          <TD id="ft4" class="icon edit_picture"></TD>
-          <TD id="ft5" class="icon delete"></TD>
-        </TR><TR id="ft6" role="radiogroup">
-        </TR>
-     </TABLE>
-   </footer>
--->
+
+   <section class="progress"><progress></progress></section>
+
    <footer class="toolbar">
      <menu type="toolbar">
        <li id="ft1" class="icon camera"></li>

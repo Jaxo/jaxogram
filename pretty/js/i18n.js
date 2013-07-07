@@ -98,11 +98,17 @@ var localeValues = {
       "Jaxogram funciona mejor cuando se instalan\ny se recuerda la configuración de conexión.\n\n¿Instalar ahora?",
       "Jaxogram działa ładniejszy po zainstalowaniu\ni będzie pamiętać swój znak-w ustawieniach.\n\nZainstaluj go teraz?"
    ], 'z_installFailure': [
-      "Install failed",
-      "Echec de l'installation",
-      "Instalação falhou",
-      "Instalar ha fallado",
-      "Instalacja nie powiodła się"
+      "Install failed (%1)",
+      "Echec de l'installation (%1)",
+      "Instalação falhou (%1)",
+      "Instalar ha fallado (%1)",
+      "Instalacja nie powiodła się (%1)"
+   ], 'z_installConflict': [
+      "Conflict with \"%1\" v.%2 from same origin.\n\"%3\"\nVersion: %2\nFrom: %4\nInstalled: %5\nLast check: %6",
+      "Conflit avec \"%1\" v.%2 de même origine.\n\"%3\"\nVersion: %2\nDe: %4\nInstallée: %5\nDernière vérification: %6",
+      "Conflito com \"%1\" v.%2 da mesma origem.\n\"%3\"\nVersão: %2\nDe: %4\nInstalada: %5\nÚltimo cheque: %6",
+      "Conflicto con \"%1\" v.%2 del mismo origen.\n\"%3\"\nVersión: %2\nDe: %4\nInstalado: %5\nÚltima visita: %6",
+      "Konflikt z \"%1\" v.%2 od samego pochodzenia.\n\"%3\"\nWersja: %2\nOd: %4\nZainstalowana: %5\nOstatni sprawdzić: %6"
    ], 'z_safariInstall': [
       "To install, press the forward arrow in Safari and touch \"Add to Home Screen\"",
       "Pour installer, appuyez sur la flèche droite dans Safari, puis \"Ajouter à l'écran d'accueil\"",
@@ -418,7 +424,7 @@ function i18n(msgName) {
       }
    }
    for (var i=1, max=arguments.length; i < max; ++i) {
-      value = value.replace("%"+i, arguments[i]);
+      value = value.replace("%"+i, arguments[i], 'g');
    }
    return value;
 }
