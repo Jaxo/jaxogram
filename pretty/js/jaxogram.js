@@ -46,6 +46,18 @@ var filters = [
       vignette: {},
       src: "",
       thumbImg: ""
+   },{
+      name: "Impressions",
+      value: "<feMorphology operator=\"dilate\" radius=\"5\"/><feMorphology operator=\"erode\" radius=\"7\"/>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
+   },{
+      name: "f7",
+      value: "<feColorMatrix type=\"luminanceToAlpha\"/><feDiffuseLighting diffuseConstant=\"1\" surfaceScale=\"10\" result=\"diffuse3\"><feDistantLight elevation=\"28\" azimuth=\"90\"/></feDiffuseLighting><feComposite operator=\"in\" in2=\"diffuse3\"/>",
+      vignette: {},
+      src: "",
+      thumbImg: ""
    }
 ];
 var users;
@@ -134,7 +146,7 @@ window.onload = function() {
    fitImages();
 
    // Listeners
-   document.getElementById("p01").parentNode.onclick = toggleSidebarView;
+   document.getElementById('p01').onclick = toggleSidebarView;
    var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
    for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
       radioGroupNodes[i].addEventListener("click", radioClicked);
@@ -164,20 +176,20 @@ window.onload = function() {
    formatNetworkChoices();
    var elt = document.getElementById("ft6");
    for (var i=0, max=filters.length; i < max; ++i) {
-      var tdElt = document.createElement("TD");
+      var liElt = document.createElement("LI");
       var imgElt = document.createElement("IMG");
       imgElt.onload = function() {
-        // no longer need to read the blob so it's revoked
-        if (this.src) URL.revokeObjectURL(this.src);
+         // no longer need to read the blob so it's revoked
+         if (this.src) URL.revokeObjectURL(this.src);
       };
       filters[i].thumbImg = imgElt;
-      tdElt.setAttribute("align", "center");
-      tdElt.appendChild(imgElt);
-      elt.appendChild(tdElt);
+      liElt.setAttribute("align", "center");
+      liElt.appendChild(imgElt);
+      elt.appendChild(liElt);
    }
    showToolbar(2);
-   thumbMaxWidth = (elt.cells)[0].offsetWidth;
-   thumbMaxHeight = (elt.cells)[0].offsetHeight;
+   thumbMaxWidth = elt.firstElementChild.offsetWidth;
+   thumbMaxHeight = elt.firstElementChild.offsetHeight;
    showToolbar(0);
 
    elt.addEventListener("click", changeFilter);
@@ -520,29 +532,21 @@ function formatNetworkChoices() {
    networks.forEach(
       function(network) {
          var name = network.name;
-         var imgElt = document.createElement("IMG");
-         imgElt.src= "images/" + name + "Logo.png";
-         btnElt = document.createElement("BUTTON");
+         var itmElt = document.createElement("menuitem");
+         itmElt.style.backgroundImage = "url(\"images/" + name + "Logo.png\")";
          if (name === "picasa") {
-            btnElt.onclick = authorizePicasa;
+            itmElt.onclick = authorizePicasa;
          }else {
-            btnElt.onclick = function() { authorizeThruOAuth(name); }
+            itmElt.onclick = function() { authorizeThruOAuth(name); }
          }
-         btnElt.appendChild(imgElt);
-         eltContainer.appendChild(btnElt);
+         eltContainer.appendChild(itmElt);
       }
    );
-   btnElt = document.createElement("BUTTON");
-   btnElt.textContent = i18n("z_cancel");
-   btnElt.onclick = hideActionMenu;
-   var divElt = document.createElement("DIV");
-   divElt.appendChild(btnElt);
-   eltContainer.parentNode.appendChild(divElt);
-// eltContainer.appendChild(btnElt);
+   document.getElementById("z_cancel").onclick = hideActionMenu;
 }
 
 function authorize() {
-   expandSidebarView(-1);
+   // expandSidebarView(-1);
    showActionMenu();
 }
 
@@ -637,7 +641,7 @@ function getVerifier() {
          simpleMsg("z_error", "getVerifier RC:" + rc);
       }
    );
-   document.querySelector(".progress").style.visibility='hidden';
+   showProgress(false);
 }
 
 function registerUser(verifier, net) {
@@ -756,7 +760,7 @@ function pickPhoto(event) {
 }
 
 function finishUpload() {
-   expandPage("p1"); // stop p2!
+   revealPage("p1"); // stop p2!
    showToolbar(0);
    if (upldPhotosCount > 0) {
       simpleMsg("z_info", i18n('z_photosUploaded', upldPhotosCount));
@@ -771,7 +775,7 @@ function uploadPhotos() {
    }else {
       showToolbar(1);
       showNewPhoto();
-      expandPage("p2");
+      revealPage("p2");
       // ?? isUploadable();
    }
 }
@@ -907,7 +911,7 @@ function uploadFilteredPhoto(imgRawBlob)
          uploadPhoto(imgRawBlob);
       }else {
          var sentImg = new Image();
-         document.querySelector(".progress").style.visibility="visible";
+         showProgress(true);
          sentImg.onload = function() {
             var canvas = document.createElement("CANVAS");
             canvas.width = sentImg.width;
@@ -989,7 +993,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    xhr.open(method, server_url + query, true);
    xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
-         document.querySelector(".progress").style.visibility='hidden';
+         showProgress(false);
          if ((this.status === 200) || (this.status === 0)) {
             whenDone(this.responseText);
          }else {
@@ -997,29 +1001,12 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
          }
       }
    };
-   document.querySelector(".progress").style.visibility='visible';
+   showProgress(true);
    if (method === "GET") {
       xhr.send();
    }else {
       xhr.send(values);
    }
-}
-
-function showToolbar(barNo) {
-   var elt = document.querySelector("footer > table");
-   var prevBarNo = -1;
-   elt.parentNode.style.display = "none";
-   for (var rows=elt.rows, max=rows.length, i=0; i < max; ++i) {
-      var row = rows[i];
-      if (!row.style.display) prevBarNo = i;
-      if (i == barNo) {
-         elt.parentNode.style.display = "";
-         row.style.display = "";
-      }else {
-         row.style.display = "none";
-      }
-   }
-   return prevBarNo;
 }
 
 function showNewPhoto() {
@@ -1074,7 +1061,7 @@ function editPhoto() {
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
    document.getElementById("p33").src = filters[filterChoice].src;
-   expandPage("p3");
+   revealPage("p3");
 }
 
 function validateEditPhoto() {
@@ -1085,20 +1072,12 @@ function validateEditPhoto() {
 
 function cancelEditPhoto() {
    showToolbar(1);
-   expandPage("p2");
+   revealPage("p2");
 }
 
 function changeFilter(event) {
-   if (event) tempFilterChoice = getRealTarget(event).cellIndex;
+   tempFilterChoice = getIndex(event);
    document.getElementById("p33").src = filters[tempFilterChoice].src;
-}
-
-function showActionMenu() {
-   document.querySelector(".menuaction").style.display="block";
-}
-
-function hideActionMenu() {
-   document.querySelector(".menuaction").style.display="none";
 }
 
 function getQueryParams() {
