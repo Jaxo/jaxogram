@@ -24,42 +24,18 @@ header:after {
   background: url('images/shadow_header.png') repeat-x scroll 0 0 / auto 100% transparent;
 }
 
-/* button {                                          */
-/*   height: 3.8rem;                                 */
-/*   width: 12rem;                                   */
-/*   padding: 0;                                     */
-/*   font-family: "MozTT", sans-serif;               */
-/*   font-size: 1.6rem;                              */
-/*   font-weight: 600;                               */
-/*   overflow: hidden;                               */
-/*   text-overflow: ellipsis;                        */
-/*   white-space: nowrap;                            */
-/*   color: #333333;                                 */
-/*   border-radius: 0.3rem 0.3rem 0.3rem 0.3rem;     */
-/*   display: table;                                 */
-/*   margin: auto;                                   */
-/* }                                                 */
-
-button.recommend {
-   background-image: url("images/recommend.png");
-   border: 0.1rem solid #006E8B;
-   max-width: 35rem;
-   width: calc(100% - 5rem);
-}
-button.recommend:active {
-    background: none repeat scroll 0 0 / auto 100% #008AAA;
-    border-color: #008AAA;
-    color: #333333;
-}
-
 header > button {
   display: inline-block;
   vertical-align: top;
   background: url("images/mainsepa.png") repeat-y scroll right top rgba(0, 0, 0, 0.15);
   margin: 0rem 2rem 0rem -0.3rem;
   padding: 1rem 0rem 0.7rem 0rem;
+  color: inherit;
   border: none;
+  border-radius: 0;
   height: 100%;
+  width: auto;
+  font-size: 1.4rem;
   z-index: -1;
 }
 
@@ -113,104 +89,3 @@ header ul > li {
 header ul > li:active {
   background-color: #0095dd;
 }
-
-/* OBSOLETE */
-/* header {                                                                                       */
-/*   z-index: 1;                                                                                  */
-/*   display: inline-block;                                                                       */
-/*   position:relative;                                                                           */
-/*   top:0;                                                                                       */
-/*   left:0;                                                                                      */
-/*   right:0;                                                                                     */
-/*   height: 5rem;                                                                                */
-/*   width: 100%;                                                                                 */
-/*   border-bottom: 0.1rem solid #919393; /* #616262; */                                          */
-/*   color: #FFFFFF;                                                                              */
-/*   background-repeat: repeat-x;                                                                 */
-/* }                                                                                              */
-/*                                                                                                */
-/* header:after {                                                                                 */
-/*   content: "";                                                                                 */
-/*   display: block;                                                                              */
-/*   height: 0.3rem;                                                                              */
-/*   left: 0;                                                                                     */
-/*   position: absolute;                                                                          */
-/*   right: 0;                                                                                    */
-/*   top: 100%;                                                                                   */
-/*   background: url('images/shadow_header.png') repeat-x scroll 0 0 / auto 100% transparent;     */
-/* }                                                                                              */
-/*                                                                                                */
-/* header h1 small {                                                                              */
-/*   font-size:1.2rem;                                                                            */
-/*   text-shadow:none                                                                             */
-/* }                                                                                              */
-/*                                                                                                */
-/* header > div {                                                                                 */
-/*   display:inline-block;                                                                        */
-/* }                                                                                              */
-/*                                                                                                */
-/* header > div:active > span {                                                                   */
-/*   background-color: #0095dd; /* was e66000 */                                                  */
-/* }                                                                                              */
-/*                                                                                                */
-/* header > div > span {                                                                          */
-/*   background: url("images/mainsepa.png") no-repeat scroll right top rgba(0, 0, 0, 0.15);       */
-/*   display:block;                                                                               */
-/*   margin: 0rem 2.6rem 0rem -0.3rem;                                                            */
-/*   padding: 1rem 0rem 0.7rem 0rem;                                                              */
-/*   z-index: -1;                                                                                 */
-/* }                                                                                              */
-/*                                                                                                */
-/* header h1, header h2 {                                                                         */
-/*   display: inline;                                                                             */
-/*   margin: 0;                                                                                   */
-/*   font-weight: normal;                                                                         */
-/*   height: 5rem;                                                                                */
-/*   padding: 0 0 0 1rem;                                                                         */
-/*   overflow: hidden;                                                                            */
-/*   text-align: left;                                                                            */
-/*   text-overflow: ellipsis;                                                                     */
-/*   white-space: nowrap;                                                                         */
-/* }                                                                                              */
-/*                                                                                                */
-/* header div + h1, header div + h2 {                                                             */
-/*   margin-left: -2rem;                                                                          */
-/*   position: relative;                                                                          */
-/*   top: -0.8rem;                                                                                */
-/* }                                                                                              */
-/*                                                                                                */
-/* header h1 {                                                                                    */
-/*    font-size: 2.3rem;                                                                          */
-/* }                                                                                              */
-/* header h2 {                                                                                    */
-/*    font-size: 1.9rem;                                                                          */
-/*    line-height: 4.9rem;                                                                        */
-/* }                                                                                              */
-/*                                                                                                */
-/* header table {                                                                                 */
-/*   margin: 0px;                                                                                 */
-/*   padding: 0px;                                                                                */
-/*   float: right;                                                                                */
-/*   height: 100%;                                                                                */
-/*   border: none;                                                                                */
-/*   border-collapse: collapse;                                                                   */
-/* }                                                                                              */
-/*                                                                                                */
-/* header td {                                                                                    */
-/*   background: url("images/separator.png") no-repeat scroll left top;                           */
-/*   min-width: 3rem;                                                                             */
-/*   padding: 0rem 0.5rem 0rem 0.5rem;                                                            */
-/*   text-align: center;                                                                          */
-/*   width: auto;                                                                                 */
-/*   font-size: 1.4rem;                                                                           */
-/*   font-weight: 600;                                                                            */
-/* }                                                                                              */
-/*                                                                                                */
-/* header td img {                                                                                */
-/*   vertical-align: middle;                                                                      */
-/* }                                                                                              */
-/*                                                                                                */
-/* header td:active {                                                                             */
-/*   background-color: #0095dd; /* was e66000 */                                                  */
-/* }                                                                                              */
-

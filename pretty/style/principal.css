@@ -16,32 +16,42 @@ body {
   overflow: hidden;
 }
 
-/* html, body {                                          */
-/*   font-size: 10px;                                    */
-/*   width: 100%;                                        */
-/*   height: 100%;  bouh                                 */
-/*   padding: 0;                                         */
-/*   margin: 0;                                          */
-/*   font-family: "MozTT", sans-serif;                   */
-/*   background-image: url("images/pattern.png");        */
-/*   overflow: hidden;                                   */
-/*   [* -moz-user-select: none; *]                       */
-/* }                                                     */
-
 * {
    user-select: none;
    -webkit-user-select: none;
    -moz-user-select: none;
 }
 
+button {
+    border-radius: 0.3rem;
+    color: #333333;
+    display: table;
+    font-family: inherit;
+    font-size: 1.6rem;
+    font-weight: 600;
+    height: 3.8rem;
+    margin: auto;
+    overflow: hidden;
+    padding: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 12rem;
+}
+
+button.recommend {
+  background-image: url("images/recommend.png");
+  border: 0.1rem solid #006E8B;
+  max-width: 35rem;
+  width: calc(100% - 5rem);
+}
+
+button.recommend:active {
+  background: none repeat scroll 0 0 / auto 100% #008AAA;
+  border-color: #008AAA;
+  color: #333333;
+}
+
 section.principal > header {
   background-image: url("images/header.png");
   border-bottom: 0.1rem solid #323232;
 }
-
-/* .principal > header {                                 */
-/*   top: 0;                                             */
-/*   background-image: url("images/header.png");         */
-/*   border-bottom: 0.1rem solid #323232;                */
-/* }                                                     */
-

@@ -2,7 +2,7 @@ var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
-
+var appRecord = null;
 var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
@@ -125,7 +125,7 @@ window.onload = function() {
 
    dispatcher.on(
       "z_install_changed",
-      function action(state, version) {
+      function action(state, app) {
          if (
             (state === "z_uninstalled") && !users.hasSome() &&
             (params.OP !== "backCall") &&
@@ -135,13 +135,21 @@ window.onload = function() {
                i18n('z_betterInstall'),
                function() { document.getElementById("z_btnInstall").click(); }
             );
-         }else if ((state === "z_installed") && version) {
-            document.querySelector("header h1 small").textContent = version;
+         }else if ((state === "z_installed") && app) {
+            var appObject = {};
+            document.querySelector("header h1 small").textContent = (
+               app.manifest.version
+            );
+            for (var name in app) {
+               appObject[name] = app[name];
+            }
+            appRecord = JSON.stringify(appObject);
+alert(appRecord);
          }
       }
    );
-
    setInstallButton("z_btnInstall");
+
    window.addEventListener("resize", fitImages, false);
    fitImages();
 
