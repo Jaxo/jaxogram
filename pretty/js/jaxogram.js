@@ -1114,8 +1114,8 @@ function doWipTest() {
       "<INPUT type='radio' name='g2' value='2'>does answer late</INPUT><BR/>" +
       "<INPUT type='radio' name='g2' value='0'>does not answer</INPUT><BR/>" +
       "<HR/>" +
-      "<BUTTON id='BT_Apply' style='width:8rem;margin:0.5rem;float:left'><IMG class='action-icon coins'/></BUTTON>" +
-      "<BUTTON id='BT_Skip' style='width:8rem;margin:0.5rem;float:right'>Skip</BUTTON>" +
+      "<BUTTON id='BT_Apply' style='width:8rem;height:3.5rem;margin:0.5rem;float:left'><IMG class='icon coins'/></BUTTON>" +
+      "<BUTTON id='BT_Skip' style='width:8rem;height:3.5rem;margin:0.5rem;float:right'>Skip</BUTTON>" +
       "</FORM>" +
       "</DIV>"
    );
