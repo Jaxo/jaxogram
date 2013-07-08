@@ -88,14 +88,14 @@ function getRealTarget(clickedEvent) {
    return elt;
 }
 
-function expandPage(id) {
-   var elt = document.getElementById(id);
-   var siblings = elt.parentNode.children;
-   for (var i=0; i < siblings.length; ++i) {
-      var sib = siblings[i];
-      if (sib != elt) {
-         sib.setAttribute("aria-expanded", "false");
-      }
+function getIndex(clickedEvent) {
+   var elt = clickedEvent.target;      // the item that was clicked
+   while ((elt != null) && (elt.nodeName != "LI")) {
+      elt = elt.parentNode;
    }
-   elt.setAttribute("aria-expanded", "true");
+   var index = 0;
+   for (var l=elt.parentNode.firstElementChild; l && (l != elt); l=l.nextElementSibling) {
+      ++index;
+   }
+   return index;
 }

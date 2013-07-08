@@ -178,8 +178,8 @@ window.onload = function() {
       var liElt = document.createElement("LI");
       var imgElt = document.createElement("IMG");
       imgElt.onload = function() {
-        // no longer need to read the blob so it's revoked
-        if (this.src) URL.revokeObjectURL(this.src);
+         // no longer need to read the blob so it's revoked
+         if (this.src) URL.revokeObjectURL(this.src);
       };
       filters[i].thumbImg = imgElt;
       liElt.setAttribute("align", "center");
@@ -759,7 +759,7 @@ function pickPhoto(event) {
 }
 
 function finishUpload() {
-   expandPage("p1"); // stop p2!
+   revealPage("p1"); // stop p2!
    showToolbar(0);
    if (upldPhotosCount > 0) {
       simpleMsg("z_info", i18n('z_photosUploaded', upldPhotosCount));
@@ -774,7 +774,7 @@ function uploadPhotos() {
    }else {
       showToolbar(1);
       showNewPhoto();
-      expandPage("p2");
+      revealPage("p2");
       // ?? isUploadable();
    }
 }
@@ -1060,7 +1060,7 @@ function editPhoto() {
    tempFilterChoice = filterChoice;
    expandSidebarView(-1);
    document.getElementById("p33").src = filters[filterChoice].src;
-   expandPage("p3");
+   revealPage("p3");
 }
 
 function validateEditPhoto() {
@@ -1071,11 +1071,11 @@ function validateEditPhoto() {
 
 function cancelEditPhoto() {
    showToolbar(1);
-   expandPage("p2");
+   revealPage("p2");
 }
 
 function changeFilter(event) {
-   if (event) tempFilterChoice = getRealTarget(event).cellIndex;
+   tempFilterChoice = getIndex(event);
    document.getElementById("p33").src = filters[tempFilterChoice].src;
 }
 

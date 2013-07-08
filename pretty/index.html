@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
-<HTML>
-<HEAD>
+<html>
+<head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width">
    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
@@ -12,6 +12,7 @@
    <link rel="stylesheet" type="text/css" href="style/sidebar.css"/>
    <link rel="stylesheet" type="text/css" href="style/menuaction.css"/>
    <link rel="stylesheet" type="text/css" href="style/menulist.css"/>
+   <link rel="stylesheet" type="text/css" href="style/pagebody.css"/>
    <link rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
    <script type="text/javascript" src="js/fxosstub.js"></script>
    <script type="text/javascript" src="js/gestureDetector.js"></script>
@@ -22,6 +23,7 @@
    <script type="text/javascript" src="js/toolbar.js"></script>
    <script type="text/javascript" src="js/sidebar.js"></script>
    <script type="text/javascript" src="js/menuaction.js"></script>
+   <script type="text/javascript" src="js/pagebody.js"></script>
    <script type="text/javascript" src="js/messagePane.js"></script>
    <!-- script type="text/javascript" src="js/menulist.js"></script -->
    <script type="text/javascript" src="js/jaxogram.js"></script>
@@ -30,9 +32,9 @@
    <link rel="stylesheet" type="text/css" href="style/jaxogram.min.css"/>
    <script type="text/javascript" src="js/jaxogram.min.js"></script>
    REPLACE END -->
-   <TITLE>Jaxogram</TITLE>
-</HEAD>
-<BODY>
+   <title>Jaxogram</title>
+</head>
+<body>
    <section class="principal">
       <header>
          <button id="p01" class="icon menu"/></button>
@@ -41,7 +43,7 @@
             <li id="z_btnInstall" class="i18n"></li>
          </ul>
       </header>
-      <div id="p1" class="body" aria-expanded="true">
+      <div id="p1" class="pagebody" aria-expanded="true">
          <div class="user">
             <img id="p11"/>
             <img id="p12"/>
@@ -55,12 +57,12 @@
             <span id="p16">&copy; Jaxo, Inc. 2013</span>
          </div>
       </div>
-      <div id="p2" class="body">
-         <TEXTAREA id="z_enterTweet" class="i18n textbox"></TEXTAREA>
+      <div id="p2" class="pagebody">
+         <textarea id="z_enterTweet" class="i18n textbox"></textarea>
          <span id="p21"></span>
          <div class="imgbox"><img id="p22" alt="Photo"/></div>
       </div>
-      <div id="p3" class="body">
+      <div id="p3" class="pagebody">
          <header>
             <button id="p31" class="icon cancel"/></button>
             <h2 id="z_edit" class="i18n"></h2>
@@ -80,19 +82,19 @@
 
    <section class="sidebar">
       <header><h2 id="z_preferences" class="i18n"></h2></header>
-      <UL class="menuList">
-        <LI id="mn1" role="listbox">
-           <SMALL id="z_loginAs" class="i18n"></SMALL><BR/>
+      <ul class="menuList">
+        <li id="mn1" role="listbox">
+           <small id="z_loginAs" class="i18n"></small><br/>
            <img id="mn2"/><I id="mn3"></I>
-           <UL id="mn4" role="radiogroup"></UL>
-        </LI>
-        <LI id="mn5" role="listbox"></LI>
-        <LI role="listbox">
-           <SMALL id="z_language" class="i18n"></SMALL><BR/>
-           <I class="i18n" id="z_usedLang"></I>
-           <UL id="mn6" role="radiogroup"></UL>
-        </LI>
-      </UL>
+           <ul id="mn4" role="radiogroup"></ul>
+        </li>
+        <li id="mn5" role="listbox"></li>
+        <li role="listbox">
+           <small id="z_language" class="i18n"></small><br/>
+           <i class="i18n" id="z_usedLang"></i>
+           <ul id="mn6" role="radiogroup"></ul>
+        </li>
+      </ul>
    </section>
 
    <section class="message">

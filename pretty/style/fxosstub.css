@@ -1,29 +1,6 @@
 .invisible {
   visibility: hidden;
 }
-
-.body header {
-  background-image: url("images/dark_header.png");
-  top:-5rem;
-}
-
-.body {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 5rem;
-  bottom: 0rem;
-  opacity: 0;
-/*UU transition: opacity 0.2s; */
-  z-index: -1;
-  border: none;
-}
-
-.body[aria-expanded=true] {
-   opacity: 1;
-   z-index: 1;
-}
-
 .message {
    position:absolute;
    width: 100%;
@@ -307,4 +284,3 @@ span.type1 {
    font-weight: bold;
    text-shadow: none;
 }
-
