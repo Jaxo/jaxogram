@@ -1,0 +1,100 @@
+.menuList {
+   position: absolute;
+   /* list-style: none; */
+   margin: 0;
+   padding: 0;
+   font-size: 2rem;
+   cursor: pointer;
+   top: 5rem;
+   height: calc(100% - 5.2rem);
+   width: 100%;
+   overflow: auto;
+}
+.menuList small {
+  font-size: 66%;
+}
+.menuList ul  {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  font-size: 75%;
+  height: 0;
+  /* display: none; */
+  color: #aaa;
+  line-height: 3.1rem;
+  background-image: url("images/pattern.png");
+  background-color: #61666c;               /* Mobile only */
+  transition: height 0.3s ease 0s;
+}
+
+.menuList li {
+  vertical-align: bottom;
+  border-bottom: solid 1px #596068;
+  border-right: solid 3px transparent;
+  padding: 0 2em 0 0.5em;
+  /* padding:0.5em; padding-right: 2em; */
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.menuList li:before {
+  right: 0.7rem;
+  /* top: 0.5rem; */
+  padding-bottom: 0;
+  width: 3rem;
+  height: 3rem;
+  line-height:1em;
+  position: absolute;
+  content: "";
+}
+.menuList li[role=listbox]:before {
+  background: url("images/icons/down.png") no-repeat;
+}
+.menuList li[role=listbox][aria-expanded=true]:before {
+  background: url("images/icons/up.png") no-repeat;
+}
+[role=radiogroup] li[aria-selected="true"]:before {
+  background: none;
+}
+[role=radiogroup] li:before {
+  background: none;
+}
+.menuList .addItem {
+   padding-left: 3.5rem;
+   color: #D0D0D0;
+}
+.menuList .addItem:before {
+   background: url("images/icons/new.png") no-repeat 0 0 transparent;
+   position: absolute;
+   left: 0rem;
+   width: 3rem;
+}
+.menuList span[role=trasher] {                   /* */
+   background: url("images/icons/delete.png") no-repeat 0 0 transparent;
+   position: absolute;
+   left: 0rem;
+   width: 3rem;
+   height: 3rem;
+   content: "";
+}
+.menuList span[role=trasher]:active {
+   background-color: #FC2200;
+   color:white;
+}
+.menuList li[aria-selected=true], li[role=listbox] {
+   /* color: #eee; */
+  color: #fff;
+}
+.menuList li ul li {
+   border: none;
+   border-top: solid 1px #54575F;
+}
+/* .menuList li:hover {               */  /* Desktop only! */
+/*   background: rgba(0, 0, 0, 0.50); */
+/* }                                  */
+.menuList li:active {
+  background-color: #0095dd;
+  color:#222;
+}
+

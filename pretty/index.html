@@ -1,117 +1,135 @@
 <!DOCTYPE HTML>
-<HTML>
-<HEAD>
-   <META charset="utf-8">
-   <META name="viewport" content="width=device-width">
-   <LINK rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
    <!-- REPLACED -->
-   <LINK rel="stylesheet" type="text/css" href="style/fxosstub.css"/>
-   <LINK rel="stylesheet" type="text/css" href="style/action_icons.css"/>
-   <SCRIPT type="text/javascript" src="js/fxosstub.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/gestureDetector.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/jgusers.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/dispatcher.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/i18n.js"></SCRIPT>
+   <link rel="stylesheet" type="text/css" href="style/icons.css"/>
+   <link rel="stylesheet" type="text/css" href="style/principal.css"/>
+   <link rel="stylesheet" type="text/css" href="style/header.css"/>
+   <link rel="stylesheet" type="text/css" href="style/toolbar.css"/>
+   <link rel="stylesheet" type="text/css" href="style/sidebar.css"/>
+   <link rel="stylesheet" type="text/css" href="style/menuaction.css"/>
+   <link rel="stylesheet" type="text/css" href="style/menulist.css"/>
+   <link rel="stylesheet" type="text/css" href="style/pagebody.css"/>
+   <link rel="stylesheet" type="text/css" href="style/message.css"/>
+   <link rel="stylesheet" type="text/css" href="style/progress.css"/>
+   <link rel="stylesheet" type="text/css" href="style/jaxogram.css"/>
+   <script type="text/javascript" src="js/util.js"></script>
+   <script type="text/javascript" src="js/gestureDetector.js"></script>
+   <script type="text/javascript" src="js/jgusers.js"></script>
+   <script type="text/javascript" src="js/i18n.js"></script>
    <SCRIPT type="text/javascript" src="js/Base64.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/messagePane.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/jaxogram.js"></SCRIPT>
-   <SCRIPT type="text/javascript" src="js/debug.js"></SCRIPT>
+   <script type="text/javascript" src="js/dispatcher.js"></script>
+   <script type="text/javascript" src="js/install.js"></script>
+   <script type="text/javascript" src="js/toolbar.js"></script>
+   <script type="text/javascript" src="js/sidebar.js"></script>
+   <script type="text/javascript" src="js/menuaction.js"></script>
+   <script type="text/javascript" src="js/menulist.js"></script>
+   <script type="text/javascript" src="js/pagebody.js"></script>
+   <script type="text/javascript" src="js/message.js"></script>
+   <script type="text/javascript" src="js/progress.js"></script>
+   <script type="text/javascript" src="js/jaxogram.js"></script>
+   <script type="text/javascript" src="js/debug.js"></script>
    <!-- REPLACEMENT
-   <LINK rel="stylesheet" type="text/css" href="style/jaxogram.min.css"/>
-   <SCRIPT type="text/javascript" src="js/jaxogram.min.js"></SCRIPT>
+   <link rel="stylesheet" type="text/css" href="style/jaxogram.min.css"/>
+   <script type="text/javascript" src="js/jaxogram.min.js"></script>
    REPLACE END -->
-   <TITLE>Jaxogram</TITLE>
-</HEAD>
-<BODY>
-   <SECTION class="principal">
-      <HEADER>
-         <DIV><SPAN id="p01" class="action-icon menu"/></DIV>
-         <H1>Jaxogram <SMALL>web</SMALL></H1>
-         <TABLE><TR>
-            <TD id="z_btnInstall" class="i18n"></TD>
-            <TD id="p02"><IMG class="action-icon coins"/></TD>
-         </TR></TABLE>
-      </HEADER>
-      <DIV id="p1" class="body" aria-expanded="true">
-         <DIV class="user">
-            <IMG id="p11"/>
-            <IMG id="p12"/>
-            <DIV id="p13"></DIV>
-            <DIV id="p14"></DIV>
-         </DIV>
+   <title>Jaxogram</title>
+</head>
+<body>
+   <section class="principal">
+      <header>
+         <button id="p01" class="icon menu"/></button>
+         <h1>Jaxogram <small>web</small></h1>
+         <ul>
+            <li id="z_btnInstall" class="i18n"></li>
+         </ul>
+      </header>
+      <div id="p1" class="pagebody" aria-expanded="true">
+         <div class="user">
+            <img id="p11"/>
+            <img id="p12"/>
+            <div id="p13"></div>
+            <div id="p14"></div>
+         </div>
          <BUTTON id="z_initLogin" class="i18n recommend invisible"></BUTTON>
-         <DIV id="z_banner" class="i18n banner"></DIV>
-         <DIV id="p15">
-            <IMG src="images/jaxologo.svg" type="image/svg+xml"/>
-            <SPAN id="p16">&copy; Jaxo, Inc. 2013</SPAN>
-         </DIV>
-      </DIV>
-      <DIV id="p2" class="body">
-         <TEXTAREA id="z_enterTweet" class="i18n textbox"></TEXTAREA>
-         <SPAN id="p21"></SPAN>
-         <DIV class="imgbox"><IMG id="p22" alt="Photo"/></DIV>
-      </DIV>
-      <DIV id="p3" class="body">
-         <HEADER>
-            <DIV id="p31"><SPAN class="action-icon cancel"/></DIV>
-            <H2 id="z_edit" class="i18n"></H2>
-            <TABLE><TR>
-               <TD><SPAN id="p32" class="action-icon done"/></TD>
-            </TR></TABLE>
-         </HEADER>
-         <DIV class="imgbox"><IMG id="p33" alt="Photo"/></DIV>
-      </DIV>
-   </SECTION>
+         <div id="z_banner" class="i18n banner"></div>
+         <div id="p15">
+            <img src="images/jaxologo.svg" type="image/svg+xml"/>
+            <span id="p16">&copy; Jaxo, Inc. 2013</span>
+         </div>
+      </div>
+      <div id="p2" class="pagebody">
+         <textarea id="z_enterTweet" class="i18n textbox"></textarea>
+         <span id="p21"></span>
+         <div class="imgbox"><img id="p22" alt="Photo"/></div>
+      </div>
+      <div id="p3" class="pagebody">
+         <header>
+            <button id="p31" class="icon cancel"/></button>
+            <h2 id="z_edit" class="i18n"></h2>
+            <ul>
+               <li id="p32" class="icon done"/></li>
+            </ul>
+         </header>
+         <div class="imgbox"><img id="p33" alt="Photo"/></div>
+      </div>
+   </section>
 
-   <SECTION class="menuaction body">
-      <HEADER><H2 id="z_chooseNetwork" class="i18n"></H2></HEADER>
-      <MENU id="ma1"></MENU>
-   </SECTION>
-   <SECTION class="sidebar">
-      <HEADER><H2 id="z_preferences" class="i18n"></H2></HEADER>
-      <UL class="menuList">
-        <LI id="mn1" role="listbox">
-           <SMALL id="z_loginAs" class="i18n"></SMALL><BR/>
-           <IMG id="mn2"/><I id="mn3"></I>
-           <UL id="mn4" role="radiogroup"></UL>
-        </LI>
-        <LI id="mn5" role="listbox"></LI>
-        <LI role="listbox">
-           <SMALL id="z_language" class="i18n"></SMALL><BR/>
-           <I class="i18n" id="z_usedLang"></I>
-           <UL id="mn6" role="radiogroup"></UL>
-        </LI>
-      </UL>
-   </SECTION>
-   <SECTION class="message">
-      <DIV><DIV>
+   <section class="menuaction">
+      <header><h2 id="z_chooseNetwork" class="i18n"></h2></header>
+      <menu type="popup" id="ma1"></menu>
+      <footer><button id="z_cancel" class="i18n"></button></footer>
+   </section>
+
+   <section class="sidebar">
+      <header><h2 id="z_preferences" class="i18n"></h2></header>
+      <ul class="menuList">
+        <li id="mn1" role="listbox">
+           <small id="z_loginAs" class="i18n"></small><br/>
+           <img id="mn2"/><I id="mn3"></I>
+           <ul id="mn4" role="radiogroup"></ul>
+        </li>
+        <li id="mn5" role="listbox"></li>
+        <li role="listbox">
+           <small id="z_language" class="i18n"></small><br/>
+           <i class="i18n" id="z_usedLang"></i>
+           <ul id="mn6" role="radiogroup"></ul>
+        </li>
+      </ul>
+   </section>
+
+   <section class="message">
+      <div><div>
       <TABLE>
          <TR>
-            <TD class="action-icon cancel"></TD>
-            <TD><IMG src="style/images/separator.png"></TD>
+            <TD class="icon cancel"></TD>
+            <TD><img src="style/images/separator.png"></TD>
             <TD>&nbsp;</TD>
-            <TD><IMG src="style/images/separator.png"/></TD>
-            <TD class="action-icon ok"></TD>
+            <TD><img src="style/images/separator.png"/></TD>
+            <TD class="icon done"></TD>
          </TR><TR>
             <TD colspan="5" style="text-align:center">&nbsp;</TD>
          </TR>
       </TABLE>
-      </DIV></DIV>
-   </SECTION>
-   <SECTION class="progress"><PROGRESS></PROGRESS></SECTION>
+      </div></div>
+   </section>
 
-   <FOOTER>
-     <TABLE>
-        <TR>
-          <TD id="ft1" class="action-icon camera"></TD>
-          <TD id="ft2" class="action-icon earth"></TD>
-        </TR><TR>
-          <TD id="ft3" class="action-icon send"></TD>
-          <TD id="ft4" class="action-icon edit_picture"></TD>
-          <TD id="ft5" class="action-icon delete"></TD>
-        </TR><TR id="ft6" role="radiogroup">
-        </TR>
-     </TABLE>
-   </FOOTER>
-</BODY>
-</HTML>
+   <section class="progress"><progress></progress></section>
+
+   <footer class="toolbar">
+     <menu type="toolbar">
+       <li id="ft1" class="icon camera"></li>
+       <li id="ft2" class="icon earth"></li>
+     </menu>
+     <menu type="toolbar">
+       <li id="ft3" class="icon send"></li>
+       <li id="ft4" class="icon edit_picture"></li>
+       <li id="ft5" class="icon delete"></li>
+     </menu>
+     <menu id="ft6" type="toolbar"></menu>
+   </footer>
+</body>
+</html>

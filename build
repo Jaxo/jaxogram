@@ -3,35 +3,26 @@
 if (-d temp/) then
    rm -r temp
 endif
-if (-d war/js) then
-   rm -r war/js
-endif
-if (-d war/style) then
-   rm -r war/style
-endif
-if (-d war/style/images) then
-   rm -r war/style/images
-endif
-if (-d war/applogos) then
-   rm -r war/applogos
-endif
-if (-d war/images) then
-   rm -r war/images
+if (-d war) then
+   rm -r war
 endif
 
 mkdir temp
 mkdir temp/js
+mkdir war
 mkdir war/js
 mkdir war/style
 mkdir war/style/images
 mkdir war/applogos
 mkdir war/images
+mkdir war/WEB-INF
 
 echo Obfuscating.  Wait, it will take about ten seconds....
 
 #--- list here all the names to be mangled
 set to_mangle = ( \
    z_language z_months z_date z_btnInstall z_betterInstall z_installFailure \
+   z_installConflict \
    z_safariInstall z_OK z_cancel z_info z_warning z_error z_confirm z_preferences \
    z_edit z_testMode z_noFileApi z_noFileApiProp z_noFileSelected z_pickImageError \
    z_whoAmI z_banner z_newLogin z_badLogin z_loginAs z_newAlbum z_authDenied \
@@ -96,10 +87,10 @@ sed -e '/-- REPLACED --/, /-- REPLACEMENT/d' -e '/REPLACE END --/d' pretty/index
 
 switch ($OSTYPE)
     case "linux-gnu":
-      set sedregopt = "r" 
+      set sedregopt = "r"
       breaksw
     case "darwin"*:
-      set sedregopt = "E" 
+      set sedregopt = "E"
       breaksw
     default:
       set sedregopt = "r"
@@ -121,6 +112,8 @@ end
 
 # cook the proper java command to obfuscate all js files (closure compiler)
 set jarcmd = "java -jar buildlib/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS --externs temp/externs.js --js_output_file=war/js/jaxogram.min.js"
+# to avoid obfuscation (debug):
+# set jarcmd = "java -jar buildlib/compiler.jar --compilation_level WHITESPACE_ONLY --formatting PRETTY_PRINT --externs temp/externs.js --js_output_file=war/js/jaxogram.min.js"
 foreach file(temp/js/*.js)
    set jarcmd = "${jarcmd} --js=${file}"
 end
@@ -129,6 +122,10 @@ end
 $jarcmd >& temp/warn
 
 # copy other required files to dist
+cp -p pretty/WEB-INF/appengine-web.xml war/WEB-INF
+cp -p pretty/WEB-INF/web.xml war/WEB-INF
+cp -p pretty/WEB-INF/logging.properties war/WEB-INF
+cp -p -r pretty/WEB-INF/lib war/WEB-INF
 cp -p pretty/manifest.webapp war
 cp -p pretty/hosted_manifest.webapp war
 cp -p pretty/favicon.ico war
