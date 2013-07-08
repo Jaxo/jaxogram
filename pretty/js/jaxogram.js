@@ -146,6 +146,7 @@ window.onload = function() {
    fitImages();
 
    // Listeners
+   document.getElementById('p01').onclick = toggleSidebarView;
    var radioGroupNodes = document.querySelectorAll("[role=radiogroup]");
    for (var i=0, max=radioGroupNodes.length; i < max; ++i) {
       radioGroupNodes[i].addEventListener("click", radioClicked);

@@ -144,9 +144,9 @@
    white-space: pre-wrap;
    border: none;
    margin: auto;
-   width: calc(100% - 8rem);
+   width: calc(100% - 2rem);
    height: 1.7rem;
-   padding: 0.5rem 4rem 0.5rem 4rem;
+   padding: 0.5rem 1rem 0.5rem 1rem;
    background-color: rgba(60, 70, 72, 0.8);
    resize: none;
    word-wrap: break-word;
