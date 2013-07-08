@@ -144,7 +144,6 @@ window.onload = function() {
                appObject[name] = app[name];
             }
             appRecord = JSON.stringify(appObject);
-alert(appRecord);
          }
       }
    );
