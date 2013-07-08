@@ -1,124 +1,7 @@
+/*-- Styles specific to jaxogram --*/
+
 .invisible {
   visibility: hidden;
-}
-.message {
-   position:absolute;
-   width: 100%;
-   top:-150%;
-   height:100%;
-   display:table;
-   z-index:2;
-   /* visibility: hidden; */
-}
-.message > div:first-child {
-   display:table-cell;
-   vertical-align:middle;
-   padding: 0 6rem;
-}
-.message > div:first-child > div:first-child {
-   display:table-cell;
-   background-color: #C2C5CA;
-   opacity: 0.90;
-   font-size:1.4rem;
-   border: none;
-}
-.message > div:first-child > div:first-child > table {
-   width:100%;
-   padding:0;
-   border-collapse: collapse;
-}
-.message > div:first-child > div:first-child > table tr:first-child {
-   background:-moz-linear-gradient(top,#222b2d 0%,#000000 100%);
-   background:-webkit-linear-gradient(top,#222b2d 0%,#000000 100%);
-   /* background:-o-linear-gradient(top,#222b2d 0%,#000000 100%);     */
-   /* background:-ms-linear-gradient(top,#222b2d 0%,#000000 100%);    */
-   /* background:linear-gradient(top,#222b2d 0%,#000000 100%);        */
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:first-child {
-   position: absolute;
-   padding: 1rem 2rem 0rem 0rem
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:first-child img {
-   margin: 0;
-   padding: 1rem 0 1rem 0
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:first-child img:active {
-   background-color: #0095dd;
-   color: #555;
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(2) {
-   padding-left: 3rem
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(3) {
-   width:99%;
-   color:#e7e7e7;
-   font-size:1.5rem;
-   font-weight:bold;
-   text-align:center
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(4) {
-   padding-right:3.2rem;
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) {
-   position:absolute;
-   margin:1rem -0.2rem 0rem -3.2rem
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) img {
-   margin:0;
-   padding:1rem 0 1rem 0
-}
-.message > div:first-child > div:first-child > table tr:first-child > td:nth-child(5) img:active {
-   background-color: #0095dd;
-   color: #555;
-}
-
-.progress {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  left: 50%;
-  top: 50%;
-  z-index: 5;
-  visibility: hidden;
-}
-
-progress {
-  background: url(images/progress.png) no-repeat center center / 100% auto;
-  animation: 0.9s rotate infinite steps(30);
-  width: 5.8rem;
-  height: 5.8rem;
-  border: none;
-  position: relative;
-  top: -2.9rem;
-  left: -2.9rem;
-}
-
-progress::-moz-progress-bar {
-  background: none;
-}
-
-@keyframes rotate {
-  from { transform: rotate(1deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.buttonLike {
-  -moz-appearance: button;
-  /* -webkit-appearance: button; */
-  /* appearance: button; */
-  display: inline-table;
-  /* outline: transparent; */
-  padding: 0 1.5rem;
-  margin: 1rem;
-  line-height: 3.8rem;
-  text-decoration: none;
-  vertical-align: top;
-  color: ButtonText;
-  font-family: "MozTT", sans-serif;
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 #albumList li {
@@ -150,8 +33,6 @@ progress::-moz-progress-bar {
    position: absolute;
    clip: rect(0, 3.2rem, 3rem, 0);
 }
-
-/*-- Styles specific to jaxogram --*/
 
 /* Alas, FF 17 does not implement it yet...   */
 /* So, I did a JS work-around: fitImages()    */

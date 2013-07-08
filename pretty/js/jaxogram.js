@@ -640,7 +640,7 @@ function getVerifier() {
          simpleMsg("z_error", "getVerifier RC:" + rc);
       }
    );
-   document.querySelector(".progress").style.visibility='hidden';
+   showProgress(false);
 }
 
 function registerUser(verifier, net) {
@@ -910,7 +910,7 @@ function uploadFilteredPhoto(imgRawBlob)
          uploadPhoto(imgRawBlob);
       }else {
          var sentImg = new Image();
-         document.querySelector(".progress").style.visibility="visible";
+         showProgress(true);
          sentImg.onload = function() {
             var canvas = document.createElement("CANVAS");
             canvas.width = sentImg.width;
@@ -992,7 +992,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
    xhr.open(method, server_url + query, true);
    xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
-         document.querySelector(".progress").style.visibility='hidden';
+         showProgress(false);
          if ((this.status === 200) || (this.status === 0)) {
             whenDone(this.responseText);
          }else {
@@ -1000,7 +1000,7 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
          }
       }
    };
-   document.querySelector(".progress").style.visibility='visible';
+   showProgress(true);
    if (method === "GET") {
       xhr.send();
    }else {

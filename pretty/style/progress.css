@@ -1,0 +1,30 @@
+.progress {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+  visibility: hidden;
+}
+
+progress {
+  background: url(images/progress.png) no-repeat center center / 100% auto;
+  animation: 0.9s rotate infinite steps(30);
+  width: 5.8rem;
+  height: 5.8rem;
+  border: none;
+  position: relative;
+  top: -2.9rem;
+  left: -2.9rem;
+}
+
+progress::-moz-progress-bar {
+  background: none;
+}
+
+@keyframes rotate {
+  from { transform: rotate(1deg); }
+  to   { transform: rotate(360deg); }
+}
+
