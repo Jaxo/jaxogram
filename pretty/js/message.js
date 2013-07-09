@@ -40,8 +40,12 @@ function confirmMsg(text, whenDone) {
    showMsg("z_confirm", [makeTextField(text)], function() { hideMsg(); whenDone(); });
 }
 
-function simpleMsg(idTitle, text) {
-   alertMsg(idTitle, [makeTextField(text)]);
+function simpleMsg(idTitle, text, dontErase) {
+   if (dontErase) {
+      showMsg(idTitle, [makeTextField(text)]);
+   }else {
+      alertMsg(idTitle, [makeTextField(text)]);
+   }
 }
 
 function execute(fct, args)

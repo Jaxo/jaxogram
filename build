@@ -22,7 +22,7 @@ echo Obfuscating.  Wait, it will take about ten seconds....
 #--- list here all the names to be mangled
 set to_mangle = ( \
    z_language z_months z_date z_btnInstall z_betterInstall z_installFailure \
-   z_installConflict \
+   z_installConflict z_noReceipts \
    z_safariInstall z_OK z_cancel z_info z_warning z_error z_confirm z_preferences \
    z_edit z_testMode z_noFileApi z_noFileApiProp z_noFileSelected z_pickImageError \
    z_whoAmI z_banner z_newLogin z_badLogin z_loginAs z_newAlbum z_authDenied \

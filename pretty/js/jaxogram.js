@@ -135,15 +135,30 @@ window.onload = function() {
                i18n('z_betterInstall'),
                function() { document.getElementById("z_btnInstall").click(); }
             );
-         }else if ((state === "z_installed") && app) {
-            var appObject = {};
-            document.querySelector("header h1 small").textContent = (
-               app.manifest.version
-            );
-            for (var name in app) {
-               appObject[name] = app[name];
+         }else if (state === "z_installed") {
+            if (app) {
+               var appObject = {};
+               document.querySelector("header h1 small").textContent = (
+                  app.manifest.version
+               );
+               for (var name in app) {
+                  appObject[name] = app[name];
+               }
+               appRecord = JSON.stringify(appObject);
+               issueRequest(
+                  "POST", "appCred", appRecord,
+                  function(val) {},   // whenDone
+                  function(rc, val) { // whenFailed
+                     simpleMsg(
+                        "z_warning",
+                        "(RC: " + rc + ")\n" + i18n("z_noReceipts"),
+                        true // don't erase
+                     );
+                  }
+               );
+            }else {
+               simpleMsg("z_warning", i18n("z_noReceipts"), true);
             }
-            appRecord = JSON.stringify(appObject);
          }
       }
    );
@@ -989,7 +1004,7 @@ function issueRequestStd(what, whenDone) {
 }
 
 function issueRequest(method, op, values, whenDone, whenFailed) {
-   var query = "?OP=" + op + "&V=1";    // REST version #1
+   var query = "?OP=" + op + "&V=2";    // REST version #2 (postAccPss)
    if (method === "GET") query += values;
    var xhr = new XMLHttpRequest({'mozSystem': true});
    if (xhr.withCredentials === undefined) {

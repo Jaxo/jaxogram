@@ -60,6 +60,10 @@ header h1 {
 header h2 {
   font-size: 1.9rem;
 }
+header h1 small {
+  font-size:1.2rem;
+  text-shadow:none
+}
 
 header button + h1, header button + h2 {
   margin-left: -2rem;
