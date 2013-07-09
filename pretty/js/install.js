@@ -130,7 +130,6 @@ function Install() {
                   ** and remove the entry in webapps.json **
                   cd ~
                   rm -r  .http\;localhost\;8888/
-                  ls ~/.http*
                   */
 
                   // var req4 = apps[i].checkForUpdate();
