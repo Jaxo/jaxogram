@@ -385,6 +385,12 @@ var localeValues = {
       "Desde %1 o seu pagamento não foi confirmado. Devemos cancelar?",
       "Desde %1 el pago no ha sido confirmado. ¿Hay que cancelar?",
       "Od %1 płatność nie została potwierdzona. Czy mamy zrezygnować?"
+   ], 'z_noReceipts': [
+      "Because no valid receipts of your purchase were found, <I>Jaxogram</I> operates in degraded mode.<BR/>Please, reinstall from the Marketplace.",
+      "En raison de l'absence du reçu officiel de votre achat, <I>Jaxogram</I> fonctionne en mode dégradé.<BR/>Veuillez réinstaller.",
+      "Porque não foram encontrados recibos válidos de sua compra, <I>Jaxogram</I> opera em modo degradado.<BR/>Por favor, reinstale a partir do \"MarketPlace\".",
+      "Porque no se encontraron recibos válidos de su compra, <I>Jaxogram</I> funciona en modo degradado.<BR/>Por favor, vuelva a instalar del \"MarketPlace\".",
+      "Ponieważ nie ma ważnych wpływy zakupu stwierdzono, <I>Jaxogram</I> działa w trybie awaryjnym.<BR/>Proszę, zainstaluj z Marketplace."
    ]
    /*----------------- end of strings requiring translation ----*/
 };

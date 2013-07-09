@@ -279,6 +279,13 @@ public class JaxogramServlet extends HttpServlet
                // issued repeatedly by packaged application
                writer.print(getVerifierFromStore(req.getParameter("JXK")));
 
+            }else if (op.equals("appCred")) {
+               InputStream in = req.getInputStream();
+               req.getSession(true).setAttribute(
+                  "apprecord", IOUtils.toString(in)
+               );
+/**/           logger.info("App Record: " + req.getSession(true).getAttribute("apprecord"));
+               IOUtils.closeQuietly(in);
             }else if (op.equals("postAccPss")) {
                InputStream in = req.getInputStream();
                req.getSession(true).setAttribute("accesspass", IOUtils.toString(in));

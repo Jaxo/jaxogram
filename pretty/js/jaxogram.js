@@ -2,7 +2,7 @@
 // -- only for our internal testing --
 var server_url = "http://12.jaxogram.appspot.com/jaxogram"; // FIXME
 // var server_url = "http://localhost:8888/jaxogram";
-
+var appRecord = null;
 var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
 var upldPhotosCount = 0;
@@ -125,7 +125,7 @@ window.onload = function() {
 
    dispatcher.on(
       "z_install_changed",
-      function action(state, version) {
+      function action(state, app) {
          if (
             (state === "z_uninstalled") && !users.hasSome() &&
             (params.OP !== "backCall") &&
@@ -135,13 +135,35 @@ window.onload = function() {
                i18n('z_betterInstall'),
                function() { document.getElementById("z_btnInstall").click(); }
             );
-         }else if ((state === "z_installed") && version) {
-            document.querySelector("header h1 small").textContent = version;
+         }else if (state === "z_installed") {
+            if (app) {
+               var appObject = {};
+               document.querySelector("header h1 small").textContent = (
+                  app.manifest.version
+               );
+               for (var name in app) {
+                  appObject[name] = app[name];
+               }
+               appRecord = JSON.stringify(appObject);
+               issueRequest(
+                  "POST", "appCred", appRecord,
+                  function(val) {},   // whenDone
+                  function(rc, val) { // whenFailed
+                     simpleMsg(
+                        "z_warning",
+                        "(RC: " + rc + ")\n" + i18n("z_noReceipts"),
+                        true // don't erase
+                     );
+                  }
+               );
+            }else {
+               simpleMsg("z_warning", i18n("z_noReceipts"), true);
+            }
          }
       }
    );
-
    setInstallButton("z_btnInstall");
+
    window.addEventListener("resize", fitImages, false);
    fitImages();
 
@@ -983,7 +1005,7 @@ function issueRequestStd(what, whenDone) {
 }
 
 function issueRequest(method, op, values, whenDone, whenFailed) {
-   var query = "?OP=" + op + "&V=1";    // REST version #1
+   var query = "?OP=" + op + "&V=2";    // REST version #2 (postAccPss)
    if (method === "GET") query += values;
    var xhr = new XMLHttpRequest({'mozSystem': true});
    if (xhr.withCredentials === undefined) {

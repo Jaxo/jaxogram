@@ -40,9 +40,7 @@ function Install() {
             )
          ) {
             // if  we already run as OWA, then nothing to be done
-            dispatcher.post(
-               "z_install_changed", "z_installed", request.result.manifest.version
-            );
+            dispatcher.post("z_install_changed", "z_installed", request.result);
          }else {
             // we are not running as OWA.
             // Don't bother.  Assume this app was not installed.
@@ -132,7 +130,6 @@ function Install() {
                   ** and remove the entry in webapps.json **
                   cd ~
                   rm -r  .http\;localhost\;8888/
-                  ls ~/.http*
                   */
 
                   // var req4 = apps[i].checkForUpdate();
@@ -147,11 +144,7 @@ function Install() {
                "/hosted_manifest.webapp"
             );
             req3.onsuccess = function() {
-               dispatcher.post(
-                  "z_install_changed",
-                  "z_installed",
-                  req3.result.manifest.version
-               );
+               dispatcher.post("z_install_changed", "z_installed", req3.result);
             };
             req3.onerror = function() {
                dispatcher.post("z_install_changed", "z_failed", req3.error);
