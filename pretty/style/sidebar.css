@@ -3,12 +3,6 @@ section.sidebar > header {
   border-bottom: 0.1rem solid #323232;
 }
 
-/* .sidebar > header {                                           */
-/*   top: 0;                                                     */
-/*   background-image: url("images/header2.png");                */
-/*   border-bottom: 0.1rem solid #323232;                        */
-/* }                                                             */
-
 section.principal {
   position: fixed;
   left: 0;
@@ -19,24 +13,10 @@ section.principal {
   transition: 1s;
 }
 
-/* .principal {                               */
-/*   position: fixed;                         */
-/*   left: 0%;                                */
-/*   right: 0%;                               */
-/*   top: 0rem;                               */
-/*   bottom: 0rem;                            */
-/*   UU  transition: 0.4s;                    */
-/* }                                          */
-
 section.principal[aria-expanded=false] {
   left: 80%;
   right: -80%;
 }
-
-/* .principal[aria-shrunk=true] {             */
-/*   left: 80%;                               */
-/*   right: -80%;                             */
-/* }                                          */
 
 section.sidebar {
    position: absolute;
@@ -48,26 +28,7 @@ section.sidebar {
    transition: 1s;
 }
 
-/* .sidebar {                                                    */
-/*    position: absolute;                                        */
-/*    left: -80%;                                                */
-/*    right: 100%;                                               */
-/*XX  top: 5.7rem;                                               */
-/*    top: 0;                                                    */
-/*    bottom: 4rem;                                              */
-/*UU  transition: 0.4s;                                          */
-/*UU  overflow-y: auto;                                          */
-/*    background: url("images/shadow.png") right top repeat-y;   */
-/* }                                                             */
-
 section.sidebar[aria-expanded=true] {
    left: 0;
    right: 20%;
 }
-
-/*                                                               */
-/* .sidebar[aria-expanded=true] {                                */
-/*    left: 0;                                                   */
-/*    right: 20%;                                                */
-/* }                                                             */
-
