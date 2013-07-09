@@ -130,7 +130,7 @@ cp -p pretty/manifest.webapp war
 cp -p pretty/hosted_manifest.webapp war
 cp -p pretty/favicon.ico war
 cp -p pretty/images/* war/images
-cp -p pretty/style/images/* war/style/images
+cp -p -r pretty/style/images/* war/style/images
 cp -p pretty/applogos/* war/applogos
 
 # zip it
