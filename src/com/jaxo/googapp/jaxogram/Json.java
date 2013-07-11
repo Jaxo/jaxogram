@@ -60,7 +60,7 @@ public class Json
 
    /*-------------------------------------------------------------------parse-+
    *//**
-   * Construct a Json.Root form parsing a String
+   * Construct a Json.Root from reading JSON text off a Reader
    *
    * @param in Reader of the JSON text.
    * @return a Json.Root

@@ -9,13 +9,16 @@
 * Written: 7/10/2013
 */
 package com.jaxo.googapp.jaxogram;
+import java.io.OutputStream;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 /**/ import java.util.logging.Logger;
-/**/ import java.util.logging.Level;
+
+import org.apache.commons.io.IOUtils;
 
 /*-- class ReceiptVerifier --+
 *//**
@@ -33,6 +36,10 @@ class ReceiptVerifier {
       }
    }
 
+   /*------------------------------------------------------------------verify-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    static void verify(String app) throws Exception {
 /**/  Logger logger = Logger.getLogger(
 /**/     "com.jaxo.googapp.jaxogram.ReceiptVerifier"
@@ -41,51 +48,131 @@ class ReceiptVerifier {
       for (Json.Member appMbr : ((Json.Object)appRoot).members) {
          if (appMbr.getKey().equals("receipts")) {
             for (Object value : ((Json.Array)appMbr.getValue()).values) {
-               String jwt = (String)value;
-               // split up the JWT to get the part that contains the jwt
-               int ix;
-               ix = jwt.indexOf('~');
-               if (ix == -1) {
-                  throw new Exception("Invalid JWT");
-               }
-               jwt = jwt.substring(1+jwt.indexOf('.', ix+1));
-               ix = jwt.indexOf('.');
-               if (ix == -1) {
-                  ix = jwt.indexOf('~');
-                  if (ix == -1) {
-                     ix = jwt.length();
-                  }
-               }
-               Json.Root rcpRoot = Json.parse(
-                  new StringReader(Base64.Url.decode(jwt.substring(0, ix)))
-               );
-               ReceiptType rcpType = null;
-               String issuerStore = null;
-               Date issuedAt = null;
-               URL verifierUrl = null;
-               for (Json.Member rcpMbr : ((Json.Object)rcpRoot).members) {
-                  String key = rcpMbr.getKey();
-                  if (key.equals("typ")) {
-                     rcpType = ReceiptType.make((String)rcpMbr.getValue());
-                  }else if (key.equals("iss")) {
-                     issuerStore = (String)rcpMbr.getValue();
-                  }else if (key.equals("iat")) {
-                     issuedAt = new Date((Long)rcpMbr.getValue());
-                  }else if (key.equals("verify")) {
-                     verifierUrl = new URL((String)rcpMbr.getValue());
-                  }
-               }
-               logger.info(
-                  "\nReceipt Type:\t" + rcpType +
-                  "\nIssuer store:\t" + issuerStore +
-                  "\nIssued At: \t" + issuedAt +
-                  "\nVerifier URL:\t" + verifierUrl
-               );
+               checkReceipt((String)value);
             }
          }
       }
    }
 
+   /*------------------------------------------------------------checkReceipt-+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   static private boolean checkReceipt(String jwt) throws Exception
+   {
+      // split up the JWT to get the part that contains the receipt
+      int ix;
+      ix = jwt.indexOf('~');
+      if (ix == -1) {
+         throw new Exception("Invalid JWT");
+      }
+      String subJwt = jwt.substring(1+jwt.indexOf('.', ix+1));
+      ix = subJwt.indexOf('.');
+      if (ix == -1) {
+         ix = subJwt.indexOf('~');
+         if (ix == -1) {
+            ix = subJwt.length();
+         }
+      }
+      Json.Root rcpRoot = Json.parse(
+         new StringReader(Base64.Url.decode(subJwt.substring(0, ix)))
+      );
+      ReceiptType rcpType = null;
+      String storeUrl = null;
+      Date issuedAt = null;
+      String verifierUrl = null;
+      for (Json.Member rcpMbr : ((Json.Object)rcpRoot).members) {
+         String key = rcpMbr.getKey();
+         if (key.equals("typ")) {
+            rcpType = ReceiptType.make((String)rcpMbr.getValue());
+         }else if (key.equals("iss")) {
+            storeUrl = (String)rcpMbr.getValue();
+         }else if (key.equals("iat")) {
+            // currently, we do nothing with it
+            issuedAt = new Date((Long)rcpMbr.getValue());
+         }else if (key.equals("verify")) {
+            verifierUrl = (String)rcpMbr.getValue();
+         }
+      }
+      if (
+         (rcpType == null) ||
+         !rcpType.isAllowed() ||
+         (issuedAt == null) ||
+         (storeUrl == null) ||
+         (verifierUrl == null) ||
+         !isSubdomain(storeUrl, verifierUrl)
+      ) {
+         return false;
+      }else {
+         String response = post(
+            new URL(verifierUrl), jwt.getBytes("UTF-8")
+         );
+         String status = null;
+         Json.Root rspRoot = Json.parse(new StringReader(response));
+         for (Json.Member rspMbr : ((Json.Object)rspRoot).members) {
+            String key = rspMbr.getKey();
+            if (key.equals("status")) {
+               status = (String)rspMbr.getValue();
+               break;
+            }
+         }
+         if (status.equals("ok")) {
+            return true;
+         }
+      }
+      return false;
+//    logger.info(
+//       "\nReceipt Type:\t" + rcpType +
+//       "\nIssuer store:\t" + storeUrl +
+//       "\nIssued At: \t" + issuedAt +
+//       "\nVerifier URL:\t" + verifierUrl +
+//       "\nVerifier Response:\n\"" +
+//       response + "\""
+//    );
+   }
+
+   /*-------------------------------------------------------------isSubdomain-+
+   *//**
+   * Returns true if subdomain is the same as base, or a subdomain of it,
+   * irregardless of protocol or port
+   *//*
+   +-------------------------------------------------------------------------*/
+   private static boolean isSubdomain(String base, String subdomain) {
+      String re1 = "^https?:\\/\\/"; // to remove the protocol
+      String re2 = "[:\\/].*";       // to remove the path
+      String sb1 = base.replace(re1, "").replace(re2, "");
+      String sb2 = subdomain.replace(re1, "").replace(re2, "");
+      int ofs = sb2.length() - sb1.length();
+      return ((ofs >= 0) && sb1.equalsIgnoreCase(sb2.substring(ofs)));
+   }
+
+   /*--------------------------------------------------------------------post-+
+   *//**
+   * Post the full JWT to the verifier URL and retunrs the responce
+   *//*
+   +-------------------------------------------------------------------------*/
+   private static String post(URL verifierUrl, byte[] jwt) throws Exception {
+      HttpURLConnection conn = null;
+      try {
+         conn = (HttpURLConnection)verifierUrl.openConnection();
+         conn.setRequestMethod("POST");
+         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+         conn.setRequestProperty("Content-Length", Integer.toString(jwt.length));
+         conn.setDoInput(true);
+         conn.setDoOutput(true);
+         OutputStream out = conn.getOutputStream();
+         out.write(jwt);
+         out.close();
+         return IOUtils.toString(conn.getInputStream());
+      }finally {
+         if (conn != null) conn.disconnect();
+      }
+   }
+
+   /*------------------------------------------------------ enum ReceiptType -+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
    static enum ReceiptType {
       PURCHASE("purchase-receipt", true),
       DEVELOPER("developer-receipt", true),
@@ -105,162 +192,12 @@ class ReceiptVerifier {
       public String toString() {
          return super.toString() + " => " + m_isAllowed;
       }
+      public boolean isAllowed() {
+         return m_isAllowed;
+      }
       public static ReceiptType make(String name) {
          return m_fromName.get(name);
       }
    }
-
 }
-/*
-  var receipts = JSON.parse(app).receipts;
-  if ((!receipts) || (!receipts.length)) {
-    if (receipts === undefined) {
-      alert("ERROR: the receipts property of the app object is undefined");
-    }else {
-       alert("No receipts were found or installed");
-    }
-    return;
-  }
-  foreach(
-    receipts,
-    function(receipt) {
-    }
-
-  );
-  var parsed;
-  try {
-    parsed = JSON.parse(receipt);
-  }catch (e) {
-    alert("Error decoding JSON: " + e);
-    return;
-  }
-  var typ = parsed.typ;
-  if (this.typsAllowed.indexOf(typ) < 0) {
-    alert("Wrong receipt type: " + typ);
-    callback();
-    return;
-  }
-  var iss = parsed.iss;
-  if (! iss) {
-    this._addReceiptError(receipt, new this.errors.ReceiptFormatError("No (or empty) iss field"), {parsed: parsed});
-    callback();
-    return;
-  }
-  // FIXME: somewhat crude checking, case-sensitive:
-  if (this.installs_allowed_from && _forceIndexOf(this.installs_allowed_from, iss) == -1 && _forceIndexOf(this.installs_allowed_from, "*") == -1) {
-    this._addReceiptError(receipt, new this.errors.InvalidReceiptIssuer("Issuer (iss) of receipt is not a valid installer: " + iss, {iss: iss, installs_allowed_from: this.installs_allowed_from}));
-    callback();
-    return;
-  }
-  var verify = parsed.verify;
-  if (! verify) {
-    this._addReceiptError(receipt, new this.errors.ReceiptFormatError("No (or empty) verify field"), {parsed: parsed});
-    callback();
-    return;
-  }
-  if (! isSubdomain(parsed.iss, verify)) {
-    this._addReceiptError(receipt, new this.errors.VerifyDomainMismatch("Verifier domain is not the same (or a subdomain) of the issuer domain", {parsed: parsed, iss: parsed.iss, verify: parsed.verify}));
-    callback();
-    return;
-  }
-  // Node.js
-  if (typeof XMLHttpRequest === "undefined") {
-    XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-  }
-  var req = new XMLHttpRequest();
-  var self = this;
-  var timeout = null;
-  this.log(this.levels.INFO, "POSTing to " + verify);
-  req.open("POST", verify);
-  req.onreadystatechange = function () {
-    if (req.readyState != 4) {
-      return;
-    }
-    self.log(self.levels.INFO, "Request to " + verify + " completed with status: " + req.status);
-    if (timeout) {
-      clearTimeout(timeout);
-      timeout = null;
-    }
-    if (req.status === 0) {
-      self._addReceiptError(
-        receipt,
-        new self.errors.ConnectionError("Server could not be contacted", {request: req, url: verify}));
-      callback();
-      return;
-    }
-    if (req.status == 404) {
-      self._addReceiptError(
-        receipt,
-        new self.errors.ServerStatusError("Server responded with 404 to " + verify,
-                                          {request: req, status: req.status, url: verify}));
-      callback();
-      return;
-    }
-    if (req.status != 200) {
-      self._addReceiptError(
-        receipt,
-        new self.errors.ServerStatusError("Server responded with non-200 status: " + req.status,
-        {request: req, status: req.status, url: verify}));
-      callback();
-      return;
-    }
-    var result;
-    try {
-      result = JSON.parse(req.responseText);
-    } catch (e) {
-      self._addReceiptError(receipt, new self.errors.InvalidServerResponse("Invalid JSON from server", {request: req, text: req.responseText}));
-      callback();
-      return;
-    }
-    if (typeof result != "object" || result === null) {
-      self._addReceiptError(receipt, new self.errors.InvalidServerResponse("Server did not respond with a JSON object (" + JSON.stringify(result) + ")", {request: req, text: req.responseText}));
-      callback();
-      return;
-    }
-    self.log(self.levels.INFO, "Receipt (" + receipt.substr(0, 4) + "...) completed with result: " + JSON.stringify(result));
-    if (result.status == "ok" || result.status == "pending") {
-      // FIXME: should represent pending better:
-      self._addReceiptVerification(receipt, result);
-      if (result.status == "ok") {
-        // FIXME: maybe pending should be saved too, in case of future network error
-        self._saveResults(receipt, parsed, result);
-      }
-      callback();
-      return;
-    }
-    if (result.status == "refunded") {
-      self._addReceiptError(receipt, new self.errors.Refunded("Application payment was refunded", {result: result}));
-      callback();
-      return;
-    }
-    if (result.status == "expired") {
-      self._addReceiptError(receipt, new self.errors.ReceiptExpired("Receipt expired", {result: result}));
-      // FIXME: sometimes an error, sometimes not?  Accumulate separately?
-      self._addReceiptVerification(receipt, result);
-      callback();
-      return;
-    }
-    if (result.status == "invalid") {
-      self._addReceiptError(receipt, new self.errors.InvalidFromStore("The store reports the receipt is invalid", {result: result}));
-      callback();
-      return;
-    }
-    self._addReceiptError(receipt, new self.errors.InvalidServerResponse("Store replied with unknown status: " + result.status, {result: result}));
-    callback();
-  };
-  req.send(receipt);
-  if (this.requestTimeout) {
-    timeout = setTimeout(function () {
-      req.abort();
-      self.log(self.levels.ERROR, "Request to " + verify + " timed out");
-      self._addReceiptError(
-        receipt,
-        new self.errors.RequestTimeout(
-          "The request timed out after " + self.requestTimeout + " milliseconds",
-          {request: req, url: verify})
-      );
-      callback();
-    }, this.requestTimeout);
-  }
-};
-*/
+/*===========================================================================*/
