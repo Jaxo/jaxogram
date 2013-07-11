@@ -13,6 +13,7 @@
 * Written: 11/30/1998
 */
 package com.jaxo.googapp.jaxogram;
+import java.io.UnsupportedEncodingException;
 
 /*-- class Base64 --+
 *//**
@@ -98,6 +99,24 @@ public class Base64
       public static byte[] decode(byte[] inBuf) {
          return Base64.decode(inBuf, unxlateUrl);
       }
+
+      /*---------------------------------------------------------------decode-+
+      *//**
+      * Helper to decode an UTF-8 string into an UTF-8 String
+      *
+      * @param inString UTF-8 String to decode
+      * @return decoded UTF-8 String
+      * @throws UnsupportedEncodingException
+      *//*
+      +----------------------------------------------------------------------*/
+      public static String decode(String inString)
+      throws UnsupportedEncodingException
+      {
+         return new String(
+            Base64.decode(inString.getBytes("UTF-8"), unxlateUrl),
+            "UTF-8"
+         );
+      }
    }
 
    /*------------------------------------------------------------------encode-+
@@ -176,7 +195,6 @@ public class Base64
       int outIx = 0;
       int iTimes = -1;
       byte b2 = 0;
-
       for (int inIx=0; inIx < inLen; ++inIx) {
          int v = inBuf[inIx] - 43;
          if (v >= 0) {               // skip CR, LF, TABS, etc...
