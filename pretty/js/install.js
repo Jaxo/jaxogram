@@ -35,7 +35,7 @@ function Install() {
             request.result
             // work-around for a bug in Firefox OS Desktop
             || (
-               window.location.href.startsWith("http://") &&
+               (window.location.protocol === "http:") &&
                !window.locationbar.visible
             )
          ) {
