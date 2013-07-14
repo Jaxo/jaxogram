@@ -1,7 +1,7 @@
-// var server_url = "http://jaxogram.appspot.com/jaxogram";
+var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
-var server_url = "http://localhost:8888/jaxogram";
+// var server_url = "http://localhost:8888/jaxogram";
 var appRecord = null;
 var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
