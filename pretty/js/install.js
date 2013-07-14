@@ -121,9 +121,9 @@ function Install() {
                            manifest.name,
                            manifest.version,
                            manifest.description,
-                           manifest.developer.name,
-                           i18nDate(apps[i].installTime),
-                           i18nDate(apps[i].lastUpdateCheck)
+                           manifest["developer"].name,
+                           i18nDate(apps[i]["installTime"]),
+                           i18nDate(apps[i]["lastUpdateCheck"])
                         )
                      }
                   );
