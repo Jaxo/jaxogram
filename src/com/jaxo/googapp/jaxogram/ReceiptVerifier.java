@@ -280,12 +280,12 @@ public class ReceiptVerifier
       TESTONLY(
          "",
          new String[] {
-            "Test receipt",
-            "Récépissé d'essai",
-            "Certificado de Teste",
-            "Certificado de prueba",
-            "Certificat de prova",
-            "Test Certyfikat"
+            "Certificate of convenience",
+            "Certificat de convénience",
+            "Certificado de conveniência",
+            "Certificado de conveniencia",
+            "Certificat de conveniència",
+            "Certyfikat wygody"
          }
       ),
       INVALID(
@@ -386,7 +386,7 @@ public class ReceiptVerifier
                break;
             }
          }
-         return toCharRef(m_msgs[ix]) + " (" + ordinal() + ")";
+         return toCharRef(m_msgs[ix]) + " (rc:" + ordinal() + ")";
       }
       public static String toCharRef(String msg) {
          StringBuilder sb = new StringBuilder();
