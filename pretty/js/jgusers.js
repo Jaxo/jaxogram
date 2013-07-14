@@ -41,6 +41,17 @@ function JgUsers() {
    this.getAlbumId = function() {
       return users[selectedIndex]["ai"];
    }
+   this.getLocale = function() {
+      var iso639 = localStorage.getItem("jgLocale");
+      if (!iso639) {
+         iso639 = navigator.language;
+         localStorage.setItem("jgLocale", iso639);
+      }
+      return iso639;
+   }
+   this.setLocale = function(iso639) {
+      localStorage.setItem("jgLocale", iso639);
+   }
    this.getPayState = function() {
       if (payment == null) {
          return "none";
@@ -114,6 +125,8 @@ function JgUsers() {
    }
    this.destroy = function() {
       localStorage.removeItem("jgUsers");
+      localStorage.removeItem("jgPayment");
+      localStorage.removeItem("jgLocale");
       localStorage.removeItem("jgSelectAt");
       readUsers();
    }

@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-/**/ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,9 +26,8 @@ import java.util.regex.Pattern;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class ReceiptVerifier {
-/**/ static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.ReceiptVerifier");
-
+public class ReceiptVerifier
+{
    /*------------------------------------------------------------------verify-+
    *//**
    * Verify whether an Application has the proper payment receipt.
@@ -45,21 +43,26 @@ public class ReceiptVerifier {
    +-------------------------------------------------------------------------*/
    static public Status verify(String app)
    {
-      Status status = Status.ERROR;
-      try {
-         Json.Root appRoot = Json.parse(new StringReader(app));
-         for (Json.Member appMbr : ((Json.Object)appRoot).members) {
-            if (appMbr.getKey().equals("receipts")) {
-               for (Object value : ((Json.Array)appMbr.getValue()).values) {
-                  status = Status.getBestOf(
-                     checkReceipt((String)value), status
-                  );
-                  if (status == Status.OK) return status;
+      if (app.length() == 0) {
+         return Status.EMPTY;
+      }else {
+         Status status = Status.ERROR;
+         try {
+            Json.Root appRoot = Json.parse(new StringReader(app));
+            for (Json.Member appMbr : ((Json.Object)appRoot).members) {
+               if (appMbr.getKey().equals("receipts")) {
+                  for (Object value : ((Json.Array)appMbr.getValue()).values) {
+                     status = Status.getBestOf(
+                        checkReceipt((String)value), status
+                     );
+                     if (status == Status.OK) return status;
+                  }
+                  break;
                }
             }
-         }
-      }catch (Exception e) {}
-      return status;
+         }catch (Exception e) {}
+         return status;
+      }
    }
 
    /*------------------------------------------------------------checkReceipt-+
@@ -195,52 +198,6 @@ public class ReceiptVerifier {
       return Status.UNKNOWN;
    }
 
-   /*----------------------------------------------------------- enum Status -+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   public static enum Status {
-      OK("ok", true, 20),
-      PENDING("pending", true, 18),
-      REFUNDED("refunded", true, 16),
-      EXPIRED("expired", true, 14),
-      TESTONLY("this receipt is only valid for tests", false, 12),
-      INVALID("invalid", true, 10),
-      BAD_FIELDS("this receipt cannot be verified", false, 5),
-      BAD_JWT("this receipt is unreadable", false, 4),
-      ERROR("uncorrectable errors found", false, 3),
-      UNKNOWN(null, true, 2);
-
-      private String m_name;
-      private int m_rank;
-      private boolean m_isFromStore;
-      private static Map<String, Status> m_fromName = new HashMap<String, Status>();
-      static {
-         for (Status t : values()) {
-            if (t.m_isFromStore) m_fromName.put(t.m_name, t);
-         }
-      }
-      private Status(String name, boolean isFromStore, int rank) {
-         m_isFromStore = isFromStore;
-         m_name = name;
-         m_rank = rank;
-      }
-      public static Status make(String name) {
-         Status status = m_fromName.get(name);
-         return (status == null)? UNKNOWN : status;
-      }
-      public static Status getBestOf(Status status1, Status status2) {
-         return (status1.m_rank > status2.m_rank)? status1 : status2;
-      }
-      public String toString() {
-         if (m_isFromStore) {
-            return("Issuer said: \"" + ((m_name!=null)? m_name : "?") + "\"");
-         }else {
-            return(m_name);
-         }
-      }
-   }
-
    /*------------------------------------------------------ enum ReceiptType -+
    *//**
    *//*
@@ -268,6 +225,180 @@ public class ReceiptVerifier {
       public static ReceiptType make(String name) {
          ReceiptType type = m_fromName.get(name);
          return (type == null)? UNKNOWN : type;
+      }
+   }
+
+   /*----------------------------------------------------------- enum Status -+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   public static enum Status {
+      OK(
+         "ok",
+         new String[] {
+            "Receipt validated",
+            "Récépissé validé",
+            "Recibo validado",
+            "Recibo validado",
+            "Rebut validat",
+            "Otrzymanie zatwierdzony"
+         }
+      ),
+      PENDING(
+         "pending",
+         new String[] {
+            "Payment in progress",
+            "Paiement en cours",
+            "Pagamento em andamento",
+            "Pago en curso",
+            "Pagament en curs",
+            "Płatność w toku",
+         }
+      ),
+      REFUNDED(
+         "refunded",
+         new String[] {
+            "Purchase refunded",
+            "Achat remboursé",
+            "Dinheiro devolvido",
+            "El dinero reembolsado",
+            "Els diners reemborsat",
+            "Pieniądze zwracane"
+         }
+      ),
+      EXPIRED(
+         "expired",
+         new String[] {
+            "Expiry date has passed",
+            "Date de validation expirée",
+            "Prazo de validade",
+            "Fecha de caducidad ha pasado",
+            "Data de caducitat ha passat",
+            "Termin ważności upłynął"
+         }
+      ),
+      TESTONLY(
+         "",
+         new String[] {
+            "Certificate of convenience",
+            "Certificat de convénience",
+            "Certificado de conveniência",
+            "Certificado de conveniencia",
+            "Certificat de conveniència",
+            "Certyfikat wygody"
+         }
+      ),
+      INVALID(
+         "invalid",
+         new String[] {
+            "Invalid receipt",
+            "Récépissé non valide",
+            "O certificado não é válido",
+            "Certificado no válido",
+            "Certificat no vàlid",
+            "Certyfikat nieważny"
+         }
+      ),
+      EMPTY(
+         "",
+         new String[] {
+            "No receipts found",
+            "Absence de récépissés",
+            "Não há recibos",
+            "No hay recibos",
+            "No hi ha rebuts",
+            "Brak otrzymane"
+         }
+      ),
+      BAD_FIELDS(
+         "",
+         new String[] {
+            "Improper receipt",
+            "Récépissé non conforme",
+            "Certificado impróprio",
+            "Certificado incorrecto",
+            "Certificat incorrecte",
+            "Niewłaściwe Certyfikat"
+         }
+      ),
+      BAD_JWT(
+         "",
+         new String[] {
+            "Unreadable receipt",
+            "Récépissé illisible",
+            "Certificado ilegível",
+            "Certificado ilegible",
+            "Certificat il · legible",
+            "Nieczytelne certyfikat"
+         }
+      ),
+      ERROR(
+         "",
+         new String[] {
+            "Processing errors",
+            "Erreurs au traitement",
+            "Erros de processamento",
+            "Errores de procesamiento",
+            "Errors de processament",
+            "Błędy przetwarzania"
+         }
+      ),
+      UNKNOWN(
+         "",
+         new String[] {
+            "Unrecognized validation",
+            "Validation non reconnue",
+            "Validação não reconhecido",
+            "Validación no reconocido",
+            "Validació no reconegut",
+            "Nierozpoznany walidacji"
+         }
+      );
+      static final String[] i18nLang = { "en", "fr", "pt", "es", "ca", "pl" };
+      private String m_name;
+      private String[] m_msgs;
+      private static Map<String, Status> m_fromName = new HashMap<String, Status>();
+      static {
+         for (Status t : values()) {
+            if (t.m_name.length() > 0) m_fromName.put(t.m_name, t);
+         }
+      }
+      private Status(String name, String[] msgs) {
+         m_name = name;
+         m_msgs = msgs;
+      }
+      public static Status make(String name) {
+         Status status = m_fromName.get(name);
+         return (status == null)? UNKNOWN : status;
+      }
+      public static Status getBestOf(Status status1, Status status2) {
+         return (status1.ordinal() < status2.ordinal())? status1 : status2;
+      }
+      public String toString() {
+         return toString("en");
+      }
+      public String toString(String iso639) {
+         int ix = 0;
+         // no time to implement a ResourceBundle...
+         for (int i=0, max=i18nLang.length; i < max; ++i) {
+            if (iso639.startsWith(i18nLang[i])) {
+               ix = i;
+               break;
+            }
+         }
+         return toCharRef(m_msgs[ix]) + " (rc:" + ordinal() + ")";
+      }
+      public static String toCharRef(String msg) {
+         StringBuilder sb = new StringBuilder();
+         for (int i=0, max = msg.length(); i < max; ++i) {
+            int ch = msg.charAt(i);
+            if (ch < 0x80) {
+               sb.append((char)ch);
+            }else {
+               sb.append(String.format("&#x%04x;", ch));
+            }
+         }
+         return sb.toString();
       }
    }
 }

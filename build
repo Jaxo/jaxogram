@@ -30,9 +30,7 @@ set to_mangle = ( \
    z_noNetwork z_initLogin z_picasaLogin z_login z_passwd z_selectOrCreateAlbum \
    z_createAlbumProlog1 z_createAlbumProlog2 z_title z_description z_albumDescr \
    z_photoAlbum z_albumTitle z_email z_phone z_gender z_birthday z_grantedPay \
-   z_deniedPay z_pendingPay z_cancelPay z_install_changed z_installed \
-   z_uninstalled z_failed z_unsupported z_install_forIOS \
-   z_usedLang \
+   z_deniedPay z_pendingPay z_cancelPay z_install_changed z_usedLang \
 )
 
 #--- the externals for google closure compiler

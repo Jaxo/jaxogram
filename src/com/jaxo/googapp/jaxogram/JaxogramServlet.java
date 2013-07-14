@@ -280,12 +280,32 @@ public class JaxogramServlet extends HttpServlet
                writer.print(getVerifierFromStore(req.getParameter("JXK")));
 
             }else if (op.equals("appCred")) {
+               /*
+               | All Jaxogram Web App go thru here when started.
+               | From here, we could send a short HTML ad.
+               */
+               String iso639 = req.getParameter("loc");
+               String stt = req.getParameter("stt");
                InputStream in = req.getInputStream();
-               req.getSession(true).setAttribute(
-                  "apprecord", IOUtils.toString(in)
-               );
-/**/           logger.info("App Record: " + req.getSession(true).getAttribute("apprecord"));
+               String appRecord = IOUtils.toString(in);
                IOUtils.closeQuietly(in);
+               ReceiptVerifier.Status status;
+               if (stt.equals("1" /* INSTALLED */ )) {
+                  status = ReceiptVerifier.verify(appRecord);
+                  if (status != ReceiptVerifier.Status.OK) {
+                     resp.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
+                  }
+               }else {
+                  status = ReceiptVerifier.Status.EMPTY;
+               }
+               req.getSession(true).setAttribute("appstatus", status);
+               writer.print(
+                  "{\"msg\":\"" + status.toString(iso639) +
+                  "\",\"ad\":\"" + getHtmlAdvertizement(iso639) +
+                  "\"}"
+               );
+//*/           logger.info(status.toString());
+//*/           logger.info("App Record: " + req.getSession(true).getAttribute("apprecord"));
             }else if (op.equals("postAccPss")) {
                InputStream in = req.getInputStream();
                req.getSession(true).setAttribute("accesspass", IOUtils.toString(in));
@@ -445,6 +465,15 @@ public class JaxogramServlet extends HttpServlet
 //*/     e.printStackTrace();
          writer.print(e.getMessage());
       }
+   }
+
+   /*----------------------------------------------------getHtmlAdvertizement-+
+   *//**
+   * This is a provision for the case where we want to pass a message...
+   *//*
+   +-------------------------------------------------------------------------*/
+   private static String getHtmlAdvertizement(String iso639) {
+      return "";
    }
 
    /*-------------------------------------------------------------makeNetwork-+

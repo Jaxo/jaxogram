@@ -10,10 +10,11 @@
 .message > div:first-child {
    display:table-cell;
    vertical-align:middle;
-   padding: 0 6rem;
+   text-align: center;
+   padding: 1rem;
 }
 .message > div:first-child > div:first-child {
-   display:table-cell;
+   display:inline-table;
    background-color: #C2C5CA;
    opacity: 0.90;
    font-size:1.4rem;
