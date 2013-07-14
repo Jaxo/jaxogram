@@ -129,7 +129,7 @@ var localeValues = {
       "Conflit avec \"%1\" v.%2 de même origine.\n\"%3\"\nVersion: %2\nDe: %4\nInstallée: %5\nDernière vérification: %6",
       "Conflito com \"%1\" v.%2 da mesma origem.\n\"%3\"\nVersão: %2\nDe: %4\nInstalada: %5\nÚltimo cheque: %6",
       "Conflicto con \"%1\" v.%2 del mismo origen.\n\"%3\"\nVersión: %2\nDe: %4\nInstalado: %5\nÚltima visita: %6",
-      "Conflicte amb \"%1\" v.%2 del mateix origen.\n\"3\"\nVersió: %2 De: %4\nInstal · \nlat: %5\nÚltima visita: %6",
+      "Conflicte amb \"%1\" v.%2 del mateix origen.\n\"%3\"\nVersió: %2\nDe: %4\nInstal · lat: %5\nÚltima visita: %6",
       "Konflikt z \"%1\" v.%2 od samego pochodzenia.\n\"%3\"\nWersja: %2\nOd: %4\nZainstalowana: %5\nOstatni sprawdzić: %6"
    ], 'z_safariInstall': [
       "To install, press the forward arrow in Safari and touch \"Add to Home Screen\"",
@@ -143,14 +143,14 @@ var localeValues = {
       "OK",
       "OK",
       "Aceptar",
-      "acceptar",
+      "Acceptar",
       "Dobrze"
    ], 'z_cancel': [
       "Cancel",
       "Annuler",
       "Cancelar",
       "Cancelar",
-      "Cancel",
+      "Cancel · lar",
       "Anulować"
    ], 'z_info': [
       "Info",
@@ -171,14 +171,14 @@ var localeValues = {
       "Erreur",
       "Erro",
       "Error",
-      "error",
+      "Error",
       "Błąd"
    ], 'z_confirm': [
       "Confirm",
       "Validez",
       "Confirmar",
       "Confirmar",
-      "confirmar",
+      "Confirmar",
       "Potwierdzać"
    ], 'z_preferences': [
       "Preferences",
@@ -473,15 +473,14 @@ var localeValues = {
    }
 )();
 
-var locale = 0;
+var localeNo = 0;
 
-function setLocaleNo(iso639) {
-   locale = 0;
+function setLocale(iso639) {
    iso639 = iso639 || navigator.language;
    if (iso639) {
       for (var i=0, max=localeValues.languages.length; i < max; ++i) {
          if (iso639 === localeValues.languages[i]) {
-            locale = i;
+            localeNo = i;
             break;
          }
       }
@@ -494,7 +493,7 @@ function i18n(msgName) {
    if (values === undefined) {
       value = "unknown text: " + msgName;
    }else {
-      value = values[locale];
+      value = values[localeNo];
       if (value === undefined) {
          value = values[0];
       }
@@ -506,7 +505,7 @@ function i18n(msgName) {
 }
 
 function translateBody(iso639) {
-   setLocaleNo(iso639);
+   setLocale(iso639);
    var elts = document.getElementsByClassName('i18n');
    for (var i=0, max=elts.length; i < max; ++i) {
       var elt = elts[i];
@@ -533,6 +532,6 @@ function i18nDate(time) {
 
 function forEachLanguage(fct) {
    for (var i=0, max=localeValues.languages.length; i < max; ++i) {
-      fct(localeValues.languages[i], i === locale);
+      fct(localeValues.languages[i], i === localeNo);
    }
 }

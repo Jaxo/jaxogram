@@ -1,7 +1,9 @@
 function JgUsers() {
    var selectedIndex = 0;
    var that = this;
-   var users = [];
+   var users = [];  // n x JgUserItem
+   var payment;     // JgPayment
+   readPayment();
    readUsers();
 
    this.getAccessPass = function() {
@@ -38,6 +40,38 @@ function JgUsers() {
    }
    this.getAlbumId = function() {
       return users[selectedIndex]["ai"];
+   }
+   this.getLocale = function() {
+      var iso639 = localStorage.getItem("jgLocale");
+      if (!iso639) {
+         iso639 = navigator.language;
+         localStorage.setItem("jgLocale", iso639);
+      }
+      return iso639;
+   }
+   this.setLocale = function(iso639) {
+      localStorage.setItem("jgLocale", iso639);
+   }
+   this.getPayState = function() {
+      if (payment == null) {
+         return "none";
+      }else {
+         return payment['s'];
+      }
+   }
+   this.getPayTime = function() {
+      if (payment == null) {
+         return 0;
+      }else {
+         return payment['d'];
+      }
+   }
+   this.getPayKey = function() {
+      if (payment == null) {
+         return 0;
+      }else {
+         return payment['pk'];
+      }
    }
    this.setAlbum = function(albumId, albumTitle) {
       users[selectedIndex]["ai"] = albumId;
@@ -91,6 +125,8 @@ function JgUsers() {
    }
    this.destroy = function() {
       localStorage.removeItem("jgUsers");
+      localStorage.removeItem("jgPayment");
+      localStorage.removeItem("jgLocale");
       localStorage.removeItem("jgSelectAt");
       readUsers();
    }
@@ -127,6 +163,22 @@ function JgUsers() {
       localStorage.setItem("jgSelectAt", index);
       selectedIndex = index;
    }
+   function readPayment() {
+      var value = localStorage.getItem("jgPayment");
+      if (value == null) {
+         payment = null;
+      }else {
+         payment = JSON.parse(value);
+      }
+   }
+   this.writePayment = function(payKey, pay) {
+      payment = new JgPayment(payKey, pay);
+      localStorage.setItem("jgPayment", JSON.stringify(payment));
+   }
+   this.deletePayment = function() {
+      localStorage.removeItem("jgPayment");
+      payment = null;
+   }
 }
 
 function JgUserItem(userName, userPass, userNet, userImg, userScreen) {
@@ -137,4 +189,10 @@ function JgUserItem(userName, userPass, userNet, userImg, userScreen) {
    this["s"] = userScreen; // screen name
    this["ai"] = null;   // album id
    this["tt"] = null;   // album title
+}
+
+function JgPayment(payKey, pay) {
+   this['pk'] = payKey;
+   this['s'] = pay['state'];
+   this['d'] = pay['date'];
 }

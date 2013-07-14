@@ -17,7 +17,6 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-/**/ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,9 +26,8 @@ import java.util.regex.Pattern;
 * @author  Pierre G. Richard
 * @version $Id: $
 */
-public class ReceiptVerifier {
-/**/ static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.ReceiptVerifier");
-
+public class ReceiptVerifier
+{
    /*------------------------------------------------------------------verify-+
    *//**
    * Verify whether an Application has the proper payment receipt.
@@ -200,6 +198,36 @@ public class ReceiptVerifier {
       return Status.UNKNOWN;
    }
 
+   /*------------------------------------------------------ enum ReceiptType -+
+   *//**
+   *//*
+   +-------------------------------------------------------------------------*/
+   private static enum ReceiptType {
+      PURCHASE("purchase-receipt", true),
+      DEVELOPER("developer-receipt", true),
+      REVIEWER("reviewer-receipt", true),
+      TEST("test-receipt", true),
+      UNKNOWN(null, false);
+
+      private String m_name;
+      private boolean m_isAllowed;
+      private static Map<String, ReceiptType> m_fromName = new HashMap<String, ReceiptType>();
+      static {
+         for (ReceiptType t : values()) m_fromName.put(t.m_name, t);
+      }
+      private ReceiptType(String name, boolean isAllowed) {
+         m_name = name;
+         m_isAllowed = isAllowed;
+      }
+      public boolean isAllowed() {
+         return m_isAllowed;
+      }
+      public static ReceiptType make(String name) {
+         ReceiptType type = m_fromName.get(name);
+         return (type == null)? UNKNOWN : type;
+      }
+   }
+
    /*----------------------------------------------------------- enum Status -+
    *//**
    *//*
@@ -358,37 +386,19 @@ public class ReceiptVerifier {
                break;
             }
          }
-         return m_msgs[ix] + " (" + ordinal() + ")";
+         return toCharRef(m_msgs[ix]) + " (" + ordinal() + ")";
       }
-   }
-
-   /*------------------------------------------------------ enum ReceiptType -+
-   *//**
-   *//*
-   +-------------------------------------------------------------------------*/
-   private static enum ReceiptType {
-      PURCHASE("purchase-receipt", true),
-      DEVELOPER("developer-receipt", true),
-      REVIEWER("reviewer-receipt", true),
-      TEST("test-receipt", true),
-      UNKNOWN(null, false);
-
-      private String m_name;
-      private boolean m_isAllowed;
-      private static Map<String, ReceiptType> m_fromName = new HashMap<String, ReceiptType>();
-      static {
-         for (ReceiptType t : values()) m_fromName.put(t.m_name, t);
-      }
-      private ReceiptType(String name, boolean isAllowed) {
-         m_name = name;
-         m_isAllowed = isAllowed;
-      }
-      public boolean isAllowed() {
-         return m_isAllowed;
-      }
-      public static ReceiptType make(String name) {
-         ReceiptType type = m_fromName.get(name);
-         return (type == null)? UNKNOWN : type;
+      public static String toCharRef(String msg) {
+         StringBuilder sb = new StringBuilder();
+         for (int i=0, max = msg.length(); i < max; ++i) {
+            int ch = msg.charAt(i);
+            if (ch < 0x80) {
+               sb.append((char)ch);
+            }else {
+               sb.append(String.format("&#x%04x;", ch));
+            }
+         }
+         return sb.toString();
       }
    }
 }

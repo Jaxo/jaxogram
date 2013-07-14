@@ -1,12 +1,13 @@
 {
   "name": "Jaxogram",
-  "version": "14.1h",
+  "version": "14.2h",
   "description": "Jaxo's Photo Sharing App",
   "locales": {
     "en": { "description": "Jaxo's Photo Sharing App" },
     "fr": { "description": "App. Jaxo de partage de photos" },
     "pt": { "description": "App Jaxo de compartilhamento de foto" },
     "es": { "description": "App Jaxo de uso compartido de fotos" },
+    "ca": { "description": "App Jaxo d'us compartit de fotos" },
     "pl": { "description": "App Jaxo udostepniania zdjec" }
   },
   "developer": {

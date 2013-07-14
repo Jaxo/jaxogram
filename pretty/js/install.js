@@ -1,24 +1,30 @@
+/*
+| States:
+| 0 IDLE
+| 1 INSTALLED
+| 2 FORIOS
+| 3 FAILED
+| 4 UNSUPPORTED
+*/
+
 function setInstallButton(buttonId) {
    var buttonElt = document.getElementById(buttonId);
    dispatcher.on(
       "z_install_changed",
       function action(state, info) {
          buttonElt.style.display = (
-            (state == "z_uninstalled")? "table-cell" : "none"
+            (state == 0 /* IDLE */)? "table-cell" : "none"
          );
-         if (state == "z_failed") {
+         if (state == 2 /* FORIOS */) {
+            alert(i18n("z_safariInstall"));
+            // navigator.platform.toLowerCase());
+         }
+         if (state == 3 /* FAILED */) {
             alert(
               i18n("z_installFailure", info.name) +
               (info.message? ("\n" + info.message) : "")
             );
          }
-      }
-   );
-   dispatcher.on(
-      "z_install_forIOS",
-      function action(state) {
-         buttonElt.style.display = "none";
-         alert("To install, press the forward arrow in Safari and tap \"Add to Home Screen\"");
       }
    );
    var install = new Install();
@@ -40,49 +46,49 @@ function Install() {
             )
          ) {
             // if  we already run as OWA, then nothing to be done
-            dispatcher.post("z_install_changed", "z_installed", request.result);
+            dispatcher.post("z_install_changed", 1 /* INSTALLED */, request.result);
          }else {
             // we are not running as OWA.
             // Don't bother.  Assume this app was not installed.
             that.doIt = mozInstall;
-            dispatcher.post("z_install_changed", "z_uninstalled");
+            dispatcher.post("z_install_changed", 0 /* IDLE */);
          }
       };
       request.onerror = function() {
-         dispatcher.post("z_install_changed", "z_failed", req1.error);
+         dispatcher.post("z_install_changed", 3 /* FAILED */, req1.error);
       };
    }else if ((typeof chrome !== "undefined") && chrome.webstore && chrome.app) {
       if (chrome.app.isInstalled) {
-         dispatcher.post("z_install_changed", "z_installed");
+         dispatcher.post("z_install_changed", 1 /* INSTALLED */);
       }else {
          this.doIt = function() {
             chrome.webstore.install(
                null,
                function() {
-                  dispatcher.post("z_install_changed", "z_installed");
+                  dispatcher.post("z_install_changed", 1 /* INSTALLED */);
                },
                function(error) {
-                  dispatcher.post("z_install_changed", "z_failed", error);
+                  dispatcher.post("z_install_changed", 3 /* FAILED */, error);
                }
             );
          };
-         dispatcher.post("z_install_changed", "z_uninstalled");
+         dispatcher.post("z_install_changed", 0 /* IDLE */);
       }
    }else if (typeof window.navigator.standalone !== "undefined") {
       if (window.navigator.standalone) {
-         dispatcher.post("z_install_changed", "z_installed");
+         dispatcher.post("z_install_changed", 1 /* INSTALLED */);
       }else {
          /*
          | Right now, just asks that something show a UI element mentioning
          | how to install using Safari's "Add to Home Screen" button.
          */
          this.doIt = function() {
-            dispatcher.post("z_install_forIOS", navigator.platform.toLowerCase());
+            dispatcher.post("z_install_changed", 2 /* FORIOS */);
          };
-         dispatcher.post("z_install_changed", "z_uninstalled");
+         dispatcher.post("z_install_changed", 0 /* IDLE */);
       }
    }else {
-      dispatcher.post("z_install_changed", "z_unsupported");
+      dispatcher.post("z_install_changed", 4 /* UNSUPPORTED */);
    }
 
    function mozInstall() {
@@ -107,8 +113,8 @@ function Install() {
                ) {
                   var manifest = apps[i].manifest;
                   dispatcher.post(
-                     "z_install_changed",
-                     "z_failed", {
+                     "z_install_changed", 3 /* FAILED */,
+                     {
                         "name": "SAME_ORIGIN_CONFLICT",
                         "message": i18n(
                            "z_installConflict",
@@ -144,17 +150,17 @@ function Install() {
                "/hosted_manifest.webapp"
             );
             req3.onsuccess = function() {
-               dispatcher.post("z_install_changed", "z_installed", req3.result);
+               dispatcher.post("z_install_changed", 1 /* INSTALLED */, req3.result);
             };
             req3.onerror = function() {
-               dispatcher.post("z_install_changed", "z_failed", req3.error);
+               dispatcher.post("z_install_changed", 3 /* FAILED */, req3.error);
             };
          };
          req2.onerror = function() {
-             dispatcher.post("z_install_changed", "z_failed", req2.error);
+             dispatcher.post("z_install_changed", 3 /* FAILED */, req2.error);
          };
       }catch (error) {
-         dispatcher.post("z_install_changed", "z_failed", error);
+         dispatcher.post("z_install_changed", 3 /* FAILED */, error);
       }
    }
 }

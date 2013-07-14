@@ -1,7 +1,7 @@
-var server_url = "http://jaxogram.appspot.com/jaxogram";
+// var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
-// var server_url = "http://localhost:8888/jaxogram";
+var server_url = "http://localhost:8888/jaxogram";
 var appRecord = null;
 var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
@@ -126,40 +126,22 @@ window.onload = function() {
    dispatcher.on(
       "z_install_changed",
       function action(state, app) {
-         if (
-            (state === "z_uninstalled") && !users.hasSome() &&
-            (params.OP !== "backCall") &&
-            (params.OP !== "share")
-         ) {
-            confirmMsg(
-               i18n('z_betterInstall'),
-               function() { document.getElementById("z_btnInstall").click(); }
-            );
-         }else if (state === "z_installed") {
-            if (app) {
-               var appObject = {};
-               document.querySelector("header h1 small").textContent = (
-                  app.manifest.version
+         if (state === 0 /* IDLE */) {
+            if (
+               !users.hasSome() &&
+               (params.OP !== "backCall") && (params.OP !== "share")
+            ) {
+               confirmMsg(
+                  i18n('z_betterInstall'),
+                  function() { document.getElementById("z_btnInstall").click(); }
                );
-               for (var name in app) {
-                  appObject[name] = app[name];
-               }
-               appRecord = JSON.stringify(appObject);
-               issueRequest(
-                  "POST", "appCred", appRecord,
-                  function(val) {},   // whenDone
-                  function(rc, val) { // whenFailed
-                     simpleMsg(
-                        "z_warning",
-                        "(RC: " + rc + ")\n" + i18n("z_noReceipts"),
-                        true // don't erase
-                     );
-                  }
-               );
-            }else {
-               simpleMsg("z_warning", i18n("z_noReceipts"), true);
             }
+         }else if ((state === 1 /* INSTALLED */) && app) {
+            document.querySelector("header h1 small").textContent = (
+               app.manifest.version
+            );
          }
+         checkCredentials(app, state);
       }
    );
    setInstallButton("z_btnInstall");
@@ -193,7 +175,6 @@ window.onload = function() {
    );
    // document.getElementById("mn5").style.display = "none";
    formatLanguageList();
-   translateBody();
    formatUsersList(false);
    formatNetworkChoices();
    var elt = document.getElementById("ft6");
@@ -315,6 +296,7 @@ function onNetworkChange()
 
 function formatLanguageList() {
    var listElt = document.getElementById("mn6");
+   setLocale(users.getLocale());
    forEachLanguage(
       function(language, selected) {
          var itmElt = document.createElement("LI");
@@ -324,7 +306,15 @@ function formatLanguageList() {
          listElt.appendChild(itmElt);
       }
    );
-   listElt.addEventListener("click", translateBody);
+   listElt.addEventListener(
+      "click",
+      function(event) {
+         var iso639 = event.target.id;
+         users.setLocale(iso639);
+         translateBody(iso639);
+      }
+   );
+   translateBody(users.getLocale());
 }
 
 function formatUsersList(isUserRequired) {
@@ -982,6 +972,38 @@ function uploadPhoto(imgBlob) {
       function(rc, val) {    // whenFailed
          finishUpload();
          // FIXME: if (issuer) issuer.postError(message);
+      }
+   );
+}
+
+function checkCredentials(app, state) {
+   var appRecord = "";
+   if (app) {
+      var appObject = {};
+      for (var name in app) appObject[name] = app[name];
+      appRecord = JSON.stringify(appObject);
+   }
+   issueRequest(
+      "POST",
+      "appCred&stt=" + state + "&loc=" + users.getLocale(),
+      appRecord,
+      function(val) {     // whenDone
+         var ad = JSON.parse(val)["ad"];
+         if (ad) simpleMsg("z_info", ad, true);
+      },
+      function(rc, val) { // whenFailed
+         if (rc == 402) { // Payment Required
+            var obj = JSON.parse(val);
+            var ad = obj["ad"];
+            simpleMsg(
+               "z_warning",
+               obj["msg"] + "<HR/>" + i18n("z_noReceipts"),
+               true // don't erase
+            );
+         }else {
+            simpleMsg("z_error", "Server RC: " + rc + "\n" + val);
+         }
+         if (ad) simpleMsg("z_info", ad, true);
       }
    );
 }
