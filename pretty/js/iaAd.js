@@ -23,12 +23,12 @@ var iaAdOptions = {
    KEYWORDS: "Rock,Pop,Jazz,Blues",
    LOCATION: "",
    GPS_COORDINATES: "",
-   DEVICE_WIDTH: window.innerWidth, //resolution width of the devic,
+   DEVICE_WIDTH: window.innerWidth,   //resolution width of the devic,
    DEVICE_HEIGHT: window.innerHeight, //resolution height of the devic,
    MOBILE_NETWORK_CODE: "",
    MOBILE_COUNTRY_CODE: "",
-   NETWORK: "", //values are 3G and WIF,
-   OPTIONAL_WIDTH: "", //optional ad widt,
+   NETWORK: "",         //values are 3G and WIF,
+   OPTIONAL_WIDTH: "",  //optional ad widt,
    OPTIONAL_HEIGHT: "", //optional ad heigh,
    REQUIRED_WIDTH: 300, //required ad widt,
    REQUIRED_HEIGHT: 50, //required ad heigh,
@@ -40,7 +40,8 @@ var iaAdOptions = {
 
 function iaAd(opts) {
    this._el = document.createElement("iframe");
-   this._el.style.border = "0";
+   this._el.className = "iaAd";
+   // this._el.style.border = "0";
 
    if (!opts.DEVICE_WIDTH && !opts.DEVICE_HEIGHT) {
       opts.DEVICE_WIDTH = window.innerWidth;
@@ -92,9 +93,8 @@ function iaAd(opts) {
       "</body></html>"
    ];
 
-   //dont include metatag if value is -1
    var refreshRate = opts.REFRESH_RATE || 30;
-   if (refreshRate !== -1) {
+   if (refreshRate !== -1) {  // don't include metatag if value is -1
       html.splice(1, 0, "<meta http-equiv='refresh' content='" + refreshRate + "'/>");
    }
 
@@ -102,13 +102,12 @@ function iaAd(opts) {
       this.setSize(opts.REQUIRED_WIDTH, opts.REQUIRED_HEIGHT);
    }
 
-    if (opts.FS) {
-       //fullscreen
+    if (opts.FS) { //fullscreen
        this.setSize(320, 480);
     }
 
     this._el.src = "data:text/html;charset=utf-8," + html.join("\n");
-    this._el.style.overflow = "hidden";
+    // this._el.style.overflow = "hidden";
     this._el.setAttribute("scrolling", "no");
 }
 
@@ -116,48 +115,44 @@ iaAd.prototype = {
    setSize: function (width, height) {
       this._el.width = width;
       this._el.height = height;
-      if (this.placeVertical || this.placeHorizontal) {
-         //re calculate the placement on size change
-         this.placement(this.placeVertical, this.placeHorizontal);
-      }
+  //  if (this.placeVertical || this.placeHorizontal) {
+  //     //re calculate the placement on size change
+  //     this.placement(this.placeVertical, this.placeHorizontal);
+  //  }
       return this;
    },
-   placement: function (vertical, horizontal) {
-      this._el.style.position = "fixed";
-      if (vertical) { this.placeVertical = vertical; }
-      if (horizontal) { this.placeHorizontal = horizontal; }
+// placement: function (vertical, horizontal) {
+//    this._el.style.position = "fixed";
+//    if (vertical) { this.placeVertical = vertical; }
+//    if (horizontal) { this.placeHorizontal = horizontal; }
+//
+//    //position the vertical position
+//    switch (vertical) {
+//    case "bottom":
+//       this._el.style.bottom = "0px";
+//       break;
+//    case "top":
+//       this._el.style.top = "0px";
+//       break;
+//    }
+//
+//    switch (horizontal) {
+//    case "left":
+//       this._el.style.left = "0px";
+//       break;
+//    case "right":
+//       this._el.style.left = "0px";
+//       break;
+//    case "center":
+//       var pos = (window.innerWidth - this._el.width) / 2;
+//       this._el.style.left = Math.floor(pos) + "px";
+//       break;
+//    }
+//    return this;
+// },
 
-      //position the vertical position
-      switch (vertical) {
-      case "bottom":
-         this._el.style.bottom = "0px";
-         break;
-      case "top":
-         this._el.style.top = "0px";
-         break;
-      }
-
-      switch (horizontal) {
-      case "left":
-         this._el.style.left = "0px";
-         break;
-      case "right":
-         this._el.style.left = "0px";
-         break;
-      case "center":
-         var pos = (window.innerWidth - this._el.width) / 2;
-         this._el.style.left = Math.floor(pos) + "px";
-         break;
-      }
-      return this;
-   },
-
-   addTo: function(parent) {
-      if (this._el.parentNode) {
-         this._el.parentNode.removeChild(this._el);
-      }
-      parent.appendChild(this._el);
-      return this;
+   iframe: function() {
+      return this._el;
    }
 };
 

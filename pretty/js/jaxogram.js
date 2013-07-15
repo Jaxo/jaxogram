@@ -225,8 +225,10 @@ window.onload = function() {
    // FIXME (iaAd test)
    document.getElementById("adShow").onclick = function() {
       var ad = new iaAd(iaAdOptions);
-      ad.placement("bottom", "center");
-      ad.addTo(document.getElementById("adPane"));
+//    ad.placement("bottom", "center");
+      var elt = document.getElementById("adPane");
+      if (elt.firstChild) elt.removeChild(elt.firstChild);
+      elt.appendChild(ad.iframe());
    }
 };
 
