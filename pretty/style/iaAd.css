@@ -1,22 +1,24 @@
 section.ads {
-  position: relative;
-  top: 6rem;
-  z-index: 5;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
 }
 
-.ads iframe {
-   display: block;
-   overflow: hidden;
-   border: 0;
+section.ads iframe {
+  display: block;
+  overflow: hidden;
+  border: 0;
 }
-.ads iframe[role="banner"] {
+
+section.ads iframe[role="banner"] {
   width: 300px;
   height: 50px;
-  margin: calc(50% - 25px) auto 0;
+  margin: -25px -150px;
 }
 
-.ads iframe[role="complementary"] {
+section.ads iframe[role="complementary"] {
    width: 320px;
    height: 480px;
-   margin: calc(50% - 240px) auto 0;
- }
+   margin: -240px -160px;
+}

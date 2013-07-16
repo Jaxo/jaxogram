@@ -10,6 +10,7 @@ var tempFilterChoice = 0;
 var filterChoice = 0;
 var thumbMaxWidth = 0;
 var thumbMaxHeight = 0;
+var advertizer;
 var filters = [
    {
       name: "raw",
@@ -112,8 +113,9 @@ window.onload = function() {
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
-   var params = getQueryParams();
+   advertizer = new iaAd();
 
+   var params = getQueryParams();
    if (params.OP === "backCall") {
       /*
       | this occurs for non-packaged applications only:
@@ -224,16 +226,17 @@ window.onload = function() {
    }
    // FIXME (iaAd test)
    document.getElementById("adBanner").onclick = function() {
-      var ad = new iaAd(iaAdOptions);
       var elt = document.getElementById("adPane");
-      if (elt.firstChild) elt.removeChild(elt.firstChild);
-      elt.appendChild(ad.makeBannerFrame());
+      advertizer.showBanner(elt.firstChild);
+      elt.style.display="";
    }
    document.getElementById("adSplash").onclick = function() {
-      var ad = new iaAd(iaAdOptions);
       var elt = document.getElementById("adPane");
-      if (elt.firstChild) elt.removeChild(elt.firstChild);
-      elt.appendChild(ad.makeSplashFrame());
+      advertizer.showSplash(elt.firstChild);
+      elt.style.display="";
+   }
+   document.getElementById("adHide").onclick = function() {
+      document.getElementById("adPane").style.display = "none";
    }
 };
 

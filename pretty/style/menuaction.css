@@ -9,7 +9,7 @@ section.menuaction {
   top: 0rem;
   bottom: 0rem;
   border: none;
-  z-index: 2;
+  z-index: 3;
   opacity: 1;
   display: none;
   background:
