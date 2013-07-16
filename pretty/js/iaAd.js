@@ -106,9 +106,9 @@ function iaAd() {
    );
    var htmlEpilog = (
       "'><\/script>" +
-//    "<script language='javascript'>" +
-//    "document.body.removeAttribute('onclick');" +
-//    "<\/script>" +
+      "<script language='javascript'>" +
+      "document.body.removeAttribute('onclick');" +
+      "<\/script>" +
       "</body></html>"
    );
    this.bannerSrc = (
