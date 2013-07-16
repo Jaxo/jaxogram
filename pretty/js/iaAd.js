@@ -95,7 +95,7 @@ function iaAd() {
         (opts.REFRESH_RATE && (opts.REFRESH_RATE > 0))?
         "<meta http-equiv='refresh' content='" + opts.REFRESH_RATE + "'/>" : ""
       ) +
-      "<!-- base target='_blank' / -->" +
+      "<base target='_self' />" +
       "</head>" +
       "<body" +
       " style='padding:0;margin:0;overflow:hidden'" +
@@ -106,6 +106,9 @@ function iaAd() {
    );
    var htmlEpilog = (
       "'><\/script>" +
+//    "<script language='javascript'>" +
+//    "document.body.removeAttribute('onclick');" +
+//    "<\/script>" +
       "</body></html>"
    );
    this.bannerSrc = (

@@ -7,7 +7,6 @@ section.ads {
 
 section.ads iframe {
   display: block;
-  overflow: hidden;
   border: 0;
 }
 
