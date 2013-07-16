@@ -223,12 +223,17 @@ window.onload = function() {
       );
    }
    // FIXME (iaAd test)
-   document.getElementById("adShow").onclick = function() {
+   document.getElementById("adBanner").onclick = function() {
       var ad = new iaAd(iaAdOptions);
-//    ad.placement("bottom", "center");
       var elt = document.getElementById("adPane");
       if (elt.firstChild) elt.removeChild(elt.firstChild);
-      elt.appendChild(ad.iframe());
+      elt.appendChild(ad.makeBannerFrame());
+   }
+   document.getElementById("adSplash").onclick = function() {
+      var ad = new iaAd(iaAdOptions);
+      var elt = document.getElementById("adPane");
+      if (elt.firstChild) elt.removeChild(elt.firstChild);
+      elt.appendChild(ad.makeSplashFrame());
    }
 };
 

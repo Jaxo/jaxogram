@@ -32,7 +32,7 @@
    <script type="text/javascript" src="js/progress.js"></script>
    <script type="text/javascript" src="js/jaxogram.js"></script>
    <script type="text/javascript" src="js/debug.js"></script>
-   <script type="text/javascript" src="js/iaAd.js"></script><!-- FIXME (iaAd test) -->
+   <script type="text/javascript" src="js/iaAd.js"></script>
    <!-- REPLACEMENT
    <link rel="stylesheet" type="text/css" href="style/jaxogram.min.css"/>
    <script type="text/javascript" src="js/jaxogram.min.js"></script>
@@ -45,7 +45,6 @@
          <button id="p01" class="icon menu"/></button>
          <h1>Jaxogram <small>web</small></h1>
          <ul>
-<li id="adShow">Ad</li><!-- FIXME (iaAd test) -->
             <li id="z_btnInstall" class="i18n"></li>
          </ul>
       </header>
@@ -121,10 +120,12 @@
 
    <section class="progress"><progress></progress></section>
 
-   <div id="adPane"></div><!-- FIXME (iaAd test) -->
+   <section class="ads" id="adPane"></section>
 
    <footer class="toolbar">
      <menu type="toolbar">
+       <li id="adBanner">Banner</li><!-- FIXME (iaAd test) -->
+       <li id="adSplash">Splash</li><!-- FIXME (iaAd test) -->
        <li id="ft1" class="icon camera"></li>
        <li id="ft2" class="icon earth"></li>
      </menu>

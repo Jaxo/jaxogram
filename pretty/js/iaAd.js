@@ -1,6 +1,19 @@
+//      Phones                         Tablets
+//
+//  168 x  28 (M)                  468 x  60 (XXXL)
+//  216 x  36 (L)                  728 x  90 (XXXXL)
+//  300 x  50 (XL)                1024 x  90 (XXXXXL)
+//  300 x 250 (Rectangle)         1024 x 768 (Full Screen L)
+//  320 x  50 (XXL)                900 x 500 (Full Screen M)
+//  320 x 480 (Fulll Screen)      1280 x 800 (Full Screen XL)
+
 var iaAdOptions = {
    APP_ID: "Jaxo_Jaxogram_other",  // "Mozilla_AppTest_other",
    PORTAL: 642,
+   BANNER_REQUIRED_WIDTH: 300,     // if you change it, keep iaAd.css in synch!
+   BANNER_REQUIRED_HEIGHT: 50,
+   SPLASH_REQUIRED_WIDTH: 320,
+   SPLASH_REQUIRED_HEIGHT: 480,
    IS_MOBILE_WEB: true,
    IS_ORMMA_SUPPORT: false,
    IS_MRAID_SUPPORT: false,
@@ -23,136 +36,111 @@ var iaAdOptions = {
    KEYWORDS: "Rock,Pop,Jazz,Blues",
    LOCATION: "",
    GPS_COORDINATES: "",
-   DEVICE_WIDTH: window.innerWidth,   //resolution width of the devic,
-   DEVICE_HEIGHT: window.innerHeight, //resolution height of the devic,
    MOBILE_NETWORK_CODE: "",
    MOBILE_COUNTRY_CODE: "",
-   NETWORK: "",         //values are 3G and WIF,
-   OPTIONAL_WIDTH: "",  //optional ad widt,
-   OPTIONAL_HEIGHT: "", //optional ad heigh,
-   REQUIRED_WIDTH: 300, //required ad widt,
-   REQUIRED_HEIGHT: 50, //required ad heigh,
-   IMPRESSION_PIXEL: "",
-   CLICK_PIXEL: "",
+   NETWORK: "",                       // values are 3G and WIFI,
+   OPTIONAL_WIDTH: "",                // optional ad width,
+   OPTIONAL_HEIGHT: "",               // optional ad height,
    FAILOVER: "",
-   REFRESH_RATE: -1
+   REFRESH_RATE: 0
 };
 
 function iaAd(opts) {
-   this._el = document.createElement("iframe");
-   this._el.className = "iaAd";
-   // this._el.style.border = "0";
-
-   if (!opts.DEVICE_WIDTH && !opts.DEVICE_HEIGHT) {
-      opts.DEVICE_WIDTH = window.innerWidth;
-      opts.DEVICE_HEIGHT = window.innerHeight;
-   }
-
-   var url = "<script language='javascript' src='http://ad-tag.inner-active.mobi/simpleM2M/RequestTagAd?v=" +
-      ((opts.IS_ORMMA_SUPPORT) ? ((opts.IS_MRAID_SUPPORT) ? "Stag-2.1.0&f=116" : "Stag-2.1.0&f=52") : ((opts.IS_MRAID_SUPPORT) ? "Stag-2.1.0&f=84" : "Stag-2.0.1&f=20")) +
-      ((opts.IS_INTERSTITIAL_AD) ? "&fs=true" : "&fs=false") +
-      "&aid=" + encodeURIComponent(opts.APP_ID) +
+   var params = (
+      "?v=" + (
+         (opts.IS_ORMMA_SUPPORT)? (
+            (opts.IS_MRAID_SUPPORT)? "Stag-2.1.0&f=116" : "Stag-2.1.0&f=52"
+         ) : (
+            (opts.IS_MRAID_SUPPORT)? "Stag-2.1.0&f=84" : "Stag-2.0.1&f=20"
+         )
+      ) + (
+         (opts.IS_INTERSTITIAL_AD)? "&fs=true" : "&fs=false"
+      ) +
+      "&aid=" + opts.APP_ID +
       "&po=" + opts.PORTAL +
-      "&c=" + encodeURIComponent(opts.CATEGORY) +
-      "&k=" + encodeURIComponent(opts.KEYWORDS) +
-      ((opts.FAILOVER) ? "&noadstring=" + encodeURIComponent(opts.FAILOVER) : "&test=true") +
+      "&c=" + opts.CATEGORY +
+      "&k=" + encodeURIComponent(opts.KEYWORDS) + (
+         (opts.FAILOVER)?
+         "&noadstring=" + encodeURIComponent(opts.FAILOVER) :
+         "&test=true"
+      ) +
       "&lg=" + encodeURIComponent(opts.GPS_COORDINATES) +
       "&l=" + encodeURIComponent(opts.LOCATION) +
       "&mw=" + ((opts.IS_MOBILE_WEB) ? "true" : "false") +
-      "&iemd=" + encodeURIComponent(opts.IMEI_MD5) +
-      "&iesha=" + encodeURIComponent(opts.IMEI_SHA1) +
-      "&mmd=" + encodeURIComponent(opts.MAC_MD5) +
-      "&msha=" + encodeURIComponent(opts.MAC_SHA1) +
-      "&dmd=" + encodeURIComponent(opts.UDID_MD5) +
-      "&dsha=" + encodeURIComponent(opts.UDID_SHA1) +
-      "&ismd=" + encodeURIComponent(opts.IMSI_MD5) +
-      "&issha=" + encodeURIComponent(opts.IMSI_SHA1) +
-      "&amd=" + encodeURIComponent(opts.ANDROID_ID_MD5) +
-      "&asha=" + encodeURIComponent(opts.ANDROID_ID_SHA1) +
-      "&idfa=" + encodeURIComponent(opts.IDFA) +
-      "&idfv=" + encodeURIComponent(opts.IDFV) +
-      "&a=" + encodeURIComponent(opts.AGE) +
-      "&g=" + encodeURIComponent(opts.GENDER) +
-      "&w=" + encodeURIComponent(opts.DEVICE_WIDTH) +
-      "&h=" + encodeURIComponent(opts.DEVICE_HEIGHT) +
-      "&mnc=" + encodeURIComponent(opts.MOBILE_NETWORK_CODE) +
-      "&mcc=" + encodeURIComponent(opts.MOBILE_COUNTRY_CODE) +
-      "&nt=" + encodeURIComponent(opts.NETWORK) +
-      "&ow=" + encodeURIComponent(opts.OPTIONAL_WIDTH) +
-      "&oh=" + encodeURIComponent(opts.OPTIONAL_HEIGHT) +
-      "&rw=" + encodeURIComponent(opts.REQUIRED_WIDTH) +
-      "&rh=" + encodeURIComponent(opts.REQUIRED_HEIGHT);
+      "&iemd=" + opts.IMEI_MD5 +
+      "&iesha=" + opts.IMEI_SHA1 +
+      "&mmd=" + opts.MAC_MD5 +
+      "&msha=" + opts.MAC_SHA1 +
+      "&dmd=" + opts.UDID_MD5 +
+      "&dsha=" + opts.UDID_SHA1 +
+      "&ismd=" + opts.IMSI_MD5 +
+      "&issha=" + opts.IMSI_SHA1 +
+      "&amd=" + opts.ANDROID_ID_MD5 +
+      "&asha=" + opts.ANDROID_ID_SHA1 +
+      "&idfa=" + opts.IDFA +
+      "&idfv=" + opts.IDFV +
+      "&a=" + opts.AGE +
+      "&g=" + opts.GENDER +
+      "&w=" + window.innerWidth +
+      "&h=" + window.innerHeight +
+      "&mnc=" + opts.MOBILE_NETWORK_CODE +
+      "&mcc=" + opts.MOBILE_COUNTRY_CODE +
+      "&nt=" + opts.NETWORK +
+      "&ow=" + opts.OPTIONAL_WIDTH +
+      "&oh=" + opts.OPTIONAL_HEIGHT
+   );
 
-   url += "'><\/script>";
-
-   var html = [
-      "<html><head>",
-      "<base target='_blank' />",
-      "</head><body style='padding:0;margin:0;overflow:hidden' onclick='location.reload();'>",
-      url,
+   var htmlProlog = (
+      "<html><head>" + (
+        (opts.REFRESH_RATE && (opts.REFRESH_RATE > 0))?
+        "<meta http-equiv='refresh' content='" + opts.REFRESH_RATE + "'/>" : ""
+      ) +
+      "<base target='_blank' />" +
+      "</head>" +
+      "<body" +
+      " style='padding:0;margin:0;overflow:hidden'" +
+      " onclick='location.reload();'>" +
+      "<script language='javascript' " +
+      "src='http://ad-tag.inner-active.mobi/simpleM2M/RequestTagAd" +
+      params
+   );
+   var htmlEpilog = (
+      "'><\/script>" +
       "</body></html>"
-   ];
-
-   var refreshRate = opts.REFRESH_RATE || 30;
-   if (refreshRate !== -1) {  // don't include metatag if value is -1
-      html.splice(1, 0, "<meta http-equiv='refresh' content='" + refreshRate + "'/>");
-   }
-
-   if (opts.REQUIRED_WIDTH && opts.REQUIRED_HEIGHT) {
-      this.setSize(opts.REQUIRED_WIDTH, opts.REQUIRED_HEIGHT);
-   }
-
-    if (opts.FS) { //fullscreen
-       this.setSize(320, 480);
-    }
-
-    this._el.src = "data:text/html;charset=utf-8," + html.join("\n");
-    // this._el.style.overflow = "hidden";
-    this._el.setAttribute("scrolling", "no");
+   );
+   this.bannerSrc = (
+      "data:text/html;charset=utf-8," +
+      htmlProlog +
+      "&rw=" + opts.BANNER_REQUIRED_WIDTH +
+      "&rh=" + opts.BANNER_REQUIRED_HEIGHT +
+      htmlEpilog
+   );
+   this.splashSrc = (
+      "data:text/html;charset=utf-8," +
+      htmlProlog +
+      "&rw=" + opts.SPLASH_REQUIRED_WIDTH +
+      "&rh=" + opts.SPLASH_REQUIRED_HEIGHT +
+      htmlEpilog
+   );
 }
 
 iaAd.prototype = {
-   setSize: function (width, height) {
-      this._el.width = width;
-      this._el.height = height;
-  //  if (this.placeVertical || this.placeHorizontal) {
-  //     //re calculate the placement on size change
-  //     this.placement(this.placeVertical, this.placeHorizontal);
-  //  }
-      return this;
+   makeBannerFrame: function() {
+      var frame = document.createElement("iframe");
+      frame.src = this.bannerSrc;
+      frame.setAttribute("role", "banner");
+      frame.setAttribute("scrolling", "no");
+      return frame;
    },
-// placement: function (vertical, horizontal) {
-//    this._el.style.position = "fixed";
-//    if (vertical) { this.placeVertical = vertical; }
-//    if (horizontal) { this.placeHorizontal = horizontal; }
-//
-//    //position the vertical position
-//    switch (vertical) {
-//    case "bottom":
-//       this._el.style.bottom = "0px";
-//       break;
-//    case "top":
-//       this._el.style.top = "0px";
-//       break;
-//    }
-//
-//    switch (horizontal) {
-//    case "left":
-//       this._el.style.left = "0px";
-//       break;
-//    case "right":
-//       this._el.style.left = "0px";
-//       break;
-//    case "center":
-//       var pos = (window.innerWidth - this._el.width) / 2;
-//       this._el.style.left = Math.floor(pos) + "px";
-//       break;
-//    }
-//    return this;
-// },
-
-   iframe: function() {
-      return this._el;
-   }
+   makeSplashFrame: function() {
+      var frame = document.createElement("iframe");
+      frame.src = this.splashSrc;
+      frame.setAttribute("role", "complementary");
+      frame.setAttribute("scrolling", "no");
+      return frame;
+   },
+// refresh: function() {
+//    frame.src = frame.src;
+// }
 };
 
