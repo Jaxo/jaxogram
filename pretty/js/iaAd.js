@@ -8,8 +8,8 @@
 //  320 x 480 (Fulll Screen)      1280 x 800 (Full Screen XL)
 
 
-create_iaAd = function(eltSektion) {
-   var eltSection = eltSektion;
+create_iaAd = function(container, onNavigate) {
+   var eltSection = container;
    var eltFrame = document.createElement("iframe");
    var eltBtnHide = document.createElement("button");
    var opts = {
@@ -78,6 +78,21 @@ create_iaAd = function(eltSektion) {
       "&oh="      // OPTIONAL_HEIGHT
    );
 
+   /*
+   | We cannot use "target='_blank' b/c it would violate the same-origin
+   | policy, and the sandbox attribute doesn't work, etc.
+   | So let's go "base='_self', and stay in the iframe?
+   | Alas, the "_self" frame size is appropriate for a banner, not for a splash.
+   | As well as the burden for keeping a "back" button all the way...
+   |
+   | The only valid possibility is to post a message to the top browser window,
+   | and let him do the navigation (overriding the <A> onclick event handler of
+   | this cross-origin frame)
+   |
+   | When a navigation is launched, the iaAd instance calls the "onNavigate"
+   | passed as an argument to the create_iaAd method.  "onNavigate" takes
+   | one argument: the URL to navigate to.
+   */
    var htmlProlog = (
       "<html><head>" + (
         (opts.REFRESH_RATE && (opts.REFRESH_RATE > 0))?
@@ -95,7 +110,12 @@ create_iaAd = function(eltSektion) {
    var htmlEpilog = (
       "'><\/script>" +
       "<script language='javascript'>" +
-      "document.body.removeAttribute('onclick');" +
+         "var daddy = parent;" +
+         "document.body.removeAttribute('onclick');" +
+         "document.getElementById('iaAdContainerDiv').querySelector('a').onclick = function() { " +
+            "daddy.postMessage('iaAd' + this.href, '*');" +
+            "return false;" +
+         "};" +
       "<\/script>" +
       "</body></html>"
    );
@@ -130,16 +150,22 @@ create_iaAd = function(eltSektion) {
       eltFrame.setAttribute("role", role);
       eltSection.style.display="block";
       eltFrame.src = src;
-//    eltFrame.addEventListener(
-//       "transitionend",
-//       function() {
-//          button.setVisibility = afterTransed();
-//          this.removeEventListener("transitionend", arguments.callee, true);
-//       },
-//       true
-//    );
    }
 
+   var doNavigate = onNavigate;
+
+   addEventListener(
+      "message",
+      function(e) {
+         if (doNavigate) {
+            var message = e.data;
+            if (message.substr(0, 4) == "iaAd") {
+               doNavigate(message.substr(4));
+            }
+         }
+      },
+      false
+   );
    eltBtnHide.textContent = "\u00d7";
    eltBtnHide.onclick = hide;
    eltSection.appendChild(eltFrame);

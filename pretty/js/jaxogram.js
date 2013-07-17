@@ -113,7 +113,10 @@ window.onload = function() {
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
-   advertizer = create_iaAd(document.getElementById("adPane"));
+   advertizer = create_iaAd(
+      document.getElementById("adPane"),
+      function(url) { window.open(url, "iaAd"); }
+   );
 
    var params = getQueryParams();
    if (params.OP === "backCall") {
