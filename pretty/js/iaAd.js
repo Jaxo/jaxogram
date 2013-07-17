@@ -10,9 +10,9 @@
 
 function iaAd() {
    var opts = {
-      APP_ID: "Jaxo_Jaxogram_other",  // "Mozilla_AppTest_other",
+      APP_ID: "Jaxo_Jaxogram_other", // "Mozilla_AppTest_other",
       PORTAL: 642,
-      BANNER_REQUIRED_WIDTH: 300,     // if you change it, keep iaAd.css in synch!
+      BANNER_REQUIRED_WIDTH: 300,    // if you change it, keep iaAd.css in synch!
       BANNER_REQUIRED_HEIGHT: 50,
       SPLASH_REQUIRED_WIDTH: 320,
       SPLASH_REQUIRED_HEIGHT: 480,
@@ -20,18 +20,6 @@ function iaAd() {
       IS_ORMMA_SUPPORT: false,
       IS_MRAID_SUPPORT: false,
       IS_INTERSTITIAL_AD: false,
-      IMEI_MD5: "",
-      IMEI_SHA1: "",
-      MAC_MD5: "",
-      MAC_SHA1: "",
-      UDID_MD5: "",
-      UDID_SHA1: "",
-      IMSI_MD5: "",
-      IMSI_SHA1: "",
-      ANDROID_ID_MD5: "",
-      ANDROID_ID_SHA1: "",
-      IDFA: "",
-      IDFV: "",
       CATEGORY: "Music",
       AGE: "",
       GENDER: "",
@@ -40,9 +28,7 @@ function iaAd() {
       GPS_COORDINATES: "",
       MOBILE_NETWORK_CODE: "",
       MOBILE_COUNTRY_CODE: "",
-      NETWORK: "",                       // values are 3G and WIFI,
-      OPTIONAL_WIDTH: "",                // optional ad width,
-      OPTIONAL_HEIGHT: "",               // optional ad height,
+      NETWORK: "",                   // 3G or WIFI
       FAILOVER: "",
       REFRESH_RATE: 0
    };
@@ -53,9 +39,8 @@ function iaAd() {
          ) : (
             (opts.IS_MRAID_SUPPORT)? "Stag-2.1.0&f=84" : "Stag-2.0.1&f=20"
          )
-      ) + (
-         (opts.IS_INTERSTITIAL_AD)? "&fs=true" : "&fs=false"
       ) +
+      "&fs=" + ((opts.IS_INTERSTITIAL_AD)? "true" : "false") +
       "&aid=" + opts.APP_ID +
       "&po=" + opts.PORTAL +
       "&c=" + opts.CATEGORY +
@@ -67,18 +52,18 @@ function iaAd() {
       "&lg=" + encodeURIComponent(opts.GPS_COORDINATES) +
       "&l=" + encodeURIComponent(opts.LOCATION) +
       "&mw=" + ((opts.IS_MOBILE_WEB) ? "true" : "false") +
-      "&iemd=" + opts.IMEI_MD5 +
-      "&iesha=" + opts.IMEI_SHA1 +
-      "&mmd=" + opts.MAC_MD5 +
-      "&msha=" + opts.MAC_SHA1 +
-      "&dmd=" + opts.UDID_MD5 +
-      "&dsha=" + opts.UDID_SHA1 +
-      "&ismd=" + opts.IMSI_MD5 +
-      "&issha=" + opts.IMSI_SHA1 +
-      "&amd=" + opts.ANDROID_ID_MD5 +
-      "&asha=" + opts.ANDROID_ID_SHA1 +
-      "&idfa=" + opts.IDFA +
-      "&idfv=" + opts.IDFV +
+      "&iemd=" +  // IMEI_MD5
+      "&iesha=" + // IMEI_SHA1
+      "&mmd=" +   // MAC_MD5
+      "&msha=" +  // MAC_SHA1
+      "&dmd=" +   // UDID_MD5
+      "&dsha=" +  // UDID_SHA1
+      "&ismd=" +  // IMSI_MD5
+      "&issha=" + // IMSI_SHA1
+      "&amd=" +   // ANDROID_ID_MD5
+      "&asha=" +  // ANDROID_ID_SHA1
+      "&idfa=" +  // IDFA
+      "&idfv=" +  // IDFV
       "&a=" + opts.AGE +
       "&g=" + opts.GENDER +
       "&w=" + window.innerWidth +
@@ -86,8 +71,8 @@ function iaAd() {
       "&mnc=" + opts.MOBILE_NETWORK_CODE +
       "&mcc=" + opts.MOBILE_COUNTRY_CODE +
       "&nt=" + opts.NETWORK +
-      "&ow=" + opts.OPTIONAL_WIDTH +
-      "&oh=" + opts.OPTIONAL_HEIGHT
+      "&ow=" +    // OPTIONAL_WIDTH +
+      "&oh=" +    // OPTIONAL_HEIGHT
    );
 
    var htmlProlog = (
