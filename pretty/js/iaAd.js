@@ -8,7 +8,10 @@
 //  320 x 480 (Fulll Screen)      1280 x 800 (Full Screen XL)
 
 
-function iaAd() {
+create_iaAd = function(eltSektion) {
+   var eltSection = eltSektion;
+   var eltFrame = document.createElement("iframe");
+   var eltBtnHide = document.createElement("button");
    var opts = {
       APP_ID: "Jaxo_Jaxogram_other", // "Mozilla_AppTest_other",
       PORTAL: 642,
@@ -96,37 +99,63 @@ function iaAd() {
       "<\/script>" +
       "</body></html>"
    );
-   this.bannerSrc = (
+   var bannerSrc = (
       "data:text/html;charset=utf-8," +
       htmlProlog +
       "&rw=" + opts.BANNER_REQUIRED_WIDTH +
       "&rh=" + opts.BANNER_REQUIRED_HEIGHT +
       htmlEpilog
    );
-   this.splashSrc = (
+   var splashSrc = (
       "data:text/html;charset=utf-8," +
       htmlProlog +
       "&rw=" + opts.SPLASH_REQUIRED_WIDTH +
       "&rh=" + opts.SPLASH_REQUIRED_HEIGHT +
       htmlEpilog
    );
-}
 
-iaAd.prototype = {
-   show: function(frame, role, src) {
-      frame.style.visibility = "hidden";
-      frame.style.opacity = "0";
-      frame.onload = function() {
+   var hide = function() {
+      eltSection.style.display = "none";
+      eltBtnHide.style.display = "none";
+   };
+
+   var show = function(role, src) {
+      eltFrame.style.visibility = "hidden";
+      eltFrame.style.opacity = "0";
+      eltFrame.onload = function() {
          this.style.visibility = "";
          this.style.opacity = "1";
+         eltBtnHide.style.opacity = "1";
       }
-      frame.setAttribute("role", role);
-      frame.src = src;
-   },
-   showBanner: function(frame) {
-      this.show(frame, "banner", this.bannerSrc);
-   },
-   showSplash: function(frame) {
-      this.show(frame, "complementary", this.splashSrc);
+      eltFrame.setAttribute("role", role);
+      eltSection.style.display="block";
+      eltFrame.src = src;
+//    eltFrame.addEventListener(
+//       "transitionend",
+//       function() {
+//          button.setVisibility = afterTransed();
+//          this.removeEventListener("transitionend", arguments.callee, true);
+//       },
+//       true
+//    );
    }
-};
+
+   eltBtnHide.textContent = "\u00d7";
+   eltBtnHide.onclick = hide;
+   eltSection.appendChild(eltFrame);
+   eltSection.appendChild(eltBtnHide);
+   return {
+      hide: hide,
+      showBanner: function() {
+         eltBtnHide.style.display = "none";
+         show("banner", bannerSrc);
+      },
+      showSplash: function() {
+         eltBtnHide.style.opacity = "0";
+         eltBtnHide.style.display = "block";
+         show("complementary", splashSrc);
+      }
+   };
+}
+
+

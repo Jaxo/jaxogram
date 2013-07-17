@@ -113,7 +113,7 @@ window.onload = function() {
    users = new JgUsers();
    // users.cleanUp();
    // users.destroy();
-   advertizer = new iaAd();
+   advertizer = create_iaAd(document.getElementById("adPane"));
 
    var params = getQueryParams();
    if (params.OP === "backCall") {
@@ -225,30 +225,8 @@ window.onload = function() {
       );
    }
    // FIXME (iaAd test)
-   document.getElementById("adHide").onclick = adHide;
-
-   document.getElementById("adBanner").onclick = function() {
-      var elt = document.getElementById("adPane");
-      advertizer.showBanner(elt.firstElementChild);
-      elt.style.display="block";
-      setTimeout(adHide, 10000);
-
-   }
-   document.getElementById("adSplash").onclick = function() {
-      var elt = document.getElementById("adPane");
-      elt.style.display="block";
-      advertizer.showSplash(elt.firstElementChild);
-      setTimeout(
-         function() {
-            document.getElementById("adHide").style.display = "block";
-         },
-         1500
-      );
-   }
-   function adHide() {
-      document.getElementById("adPane").style.display = "none";
-      document.getElementById("adHide").style.display = "none";
-   }
+   document.getElementById("adBanner").onclick = advertizer.showBanner;
+   document.getElementById("adSplash").onclick = advertizer.showSplash;
 };
 
 function onTextEntered(event) {
