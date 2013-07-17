@@ -72,7 +72,7 @@ function iaAd() {
       "&mcc=" + opts.MOBILE_COUNTRY_CODE +
       "&nt=" + opts.NETWORK +
       "&ow=" +    // OPTIONAL_WIDTH +
-      "&oh=" +    // OPTIONAL_HEIGHT
+      "&oh="      // OPTIONAL_HEIGHT
    );
 
    var htmlProlog = (
@@ -113,16 +113,20 @@ function iaAd() {
 }
 
 iaAd.prototype = {
-   showBanner: function(frame) {
+   show: function(frame, role, src) {
       frame.style.visibility = "hidden";
-      frame.onload = function() { this.style.visibility = ""; }
-      frame.setAttribute("role", "banner");
-      frame.src = this.bannerSrc;
+      frame.style.opacity = "0";
+      frame.onload = function() {
+         this.style.visibility = "";
+         this.style.opacity = "1";
+      }
+      frame.setAttribute("role", role);
+      frame.src = src;
+   },
+   showBanner: function(frame) {
+      this.show(frame, "banner", this.bannerSrc);
    },
    showSplash: function(frame) {
-      frame.style.visibility = "hidden";
-      frame.onload = function() { this.style.visibility = ""; }
-      frame.setAttribute("role", "complementary");
-      frame.src = this.splashSrc;
+      this.show(frame, "complementary", this.splashSrc);
    }
 };

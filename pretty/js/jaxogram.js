@@ -225,18 +225,29 @@ window.onload = function() {
       );
    }
    // FIXME (iaAd test)
+   document.getElementById("adHide").onclick = adHide;
+
    document.getElementById("adBanner").onclick = function() {
       var elt = document.getElementById("adPane");
-      advertizer.showBanner(elt.firstChild);
-      elt.style.display="";
+      advertizer.showBanner(elt.firstElementChild);
+      elt.style.display="block";
+      setTimeout(adHide, 10000);
+
    }
    document.getElementById("adSplash").onclick = function() {
       var elt = document.getElementById("adPane");
-      advertizer.showSplash(elt.firstChild);
-      elt.style.display="";
+      elt.style.display="block";
+      advertizer.showSplash(elt.firstElementChild);
+      setTimeout(
+         function() {
+            document.getElementById("adHide").style.display = "block";
+         },
+         1500
+      );
    }
-   document.getElementById("adHide").onclick = function() {
+   function adHide() {
       document.getElementById("adPane").style.display = "none";
+      document.getElementById("adHide").style.display = "none";
    }
 };
 

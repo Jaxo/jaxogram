@@ -2,12 +2,14 @@ section.ads {
   position: absolute;
   left: 50%;
   top: 50%;
+  display: none;
   z-index: 2;
 }
 
 section.ads iframe {
   display: block;
   border: 0;
+  transition: opacity 1s ease-in-out;
 }
 
 section.ads iframe[role="banner"] {
@@ -21,3 +23,19 @@ section.ads iframe[role="complementary"] {
    height: 480px;
    margin: -240px -160px;
 }
+
+section.ads button {
+  position: fixed;
+  right: 0.5rem;
+  top: 0.5rem;
+  background-color: rgba(180, 180, 180, 0.5);
+  height: 4rem;
+  width: 4.2rem;
+  border-radius: 4rem;
+  border: 1px solid #A0A0A0;
+  line-height: 3.7rem;
+  font-size: 3.5rem;
+  display: none;
+}
+section.ads button:active {
+  background-color: #0095dd;
