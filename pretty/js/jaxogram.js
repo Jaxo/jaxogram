@@ -228,7 +228,6 @@ window.onload = function() {
       );
    }
    // FIXME (iaAd test)
-   setGpsCoordinates();
    document.getElementById("adBanner").onclick = advertizer.showBanner;
    document.getElementById("adSplash").onclick = advertizer.showSplash;
 };
@@ -1144,23 +1143,4 @@ function getQueryParams() {
        }
    }
    return params;
-}
-
-function setGpsCoordinates() {
-   var geoloc = navigator.geolocation;
-   if (geoloc) {
-      geoloc.getCurrentPosition(
-         function(position) {   // OK!
-            var coords = position.coords;
-            advertizer.setGpsCoordinates(coords.latitude, coords.longitude);
-         },
-         function(error) {
-         },
-         {
-            enableHighAccuracy: false,
-            timeout: 300000,       // allow 5 minutes for searching
-            maximumAge: 86400000   // position found last day is ok
-         }
-      );
-   }
 }
