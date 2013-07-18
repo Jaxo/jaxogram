@@ -27,8 +27,8 @@ create_iaAd = function(container, onNavigate) {
       AGE: "",
       GENDER: "",
       KEYWORDS: "Rock,Pop,Jazz,Blues",
+      DEFAULT_GPS_COORDINATES: "40.41694,-3.70081",
       LOCATION: "",
-      GPS_COORDINATES: "",
       MOBILE_NETWORK_CODE: "",
       MOBILE_COUNTRY_CODE: "",
       NETWORK: "",                   // 3G or WIFI
@@ -52,7 +52,6 @@ create_iaAd = function(container, onNavigate) {
          "&noadstring=" + encodeURIComponent(opts.FAILOVER) :
          "&test=true"
       ) +
-      "&lg=" + encodeURIComponent(opts.GPS_COORDINATES) +
       "&l=" + encodeURIComponent(opts.LOCATION) +
       "&mw=" + ((opts.IS_MOBILE_WEB) ? "true" : "false") +
       "&iemd=" +  // IMEI_MD5
@@ -119,9 +118,11 @@ create_iaAd = function(container, onNavigate) {
       "<\/script>" +
       "</body></html>"
    );
+   var gpsCoordinates = encodeURIComponent(DEFAULT_GPS_COORDINATES);
    var bannerSrc = (
       "data:text/html;charset=utf-8," +
       htmlProlog +
+      "&lg=" + gpsCoordinates +
       "&rw=" + opts.BANNER_REQUIRED_WIDTH +
       "&rh=" + opts.BANNER_REQUIRED_HEIGHT +
       htmlEpilog
@@ -129,6 +130,7 @@ create_iaAd = function(container, onNavigate) {
    var splashSrc = (
       "data:text/html;charset=utf-8," +
       htmlProlog +
+      "&lg=" + gpsCoordinates +
       "&rw=" + opts.SPLASH_REQUIRED_WIDTH +
       "&rh=" + opts.SPLASH_REQUIRED_HEIGHT +
       htmlEpilog
@@ -180,6 +182,9 @@ create_iaAd = function(container, onNavigate) {
          eltBtnHide.style.opacity = "0";
          eltBtnHide.style.display = "block";
          show("complementary", splashSrc);
+      },
+      setGpsCoordinates(latitude, longitude) {
+         gpsCoordinates = encodeURIComponent(latitude + "," + longitude);
       }
    };
 }
