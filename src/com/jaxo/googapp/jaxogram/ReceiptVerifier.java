@@ -252,7 +252,7 @@ public class ReceiptVerifier
             "Pagamento em andamento",
             "Pago en curso",
             "Pagament en curs",
-            "Płatność w toku",
+            "Płatność w toku"
          }
       ),
       REFUNDED(
@@ -261,7 +261,7 @@ public class ReceiptVerifier
             "Purchase refunded",
             "Achat remboursé",
             "Dinheiro devolvido",
-            "El dinero reembolsado",
+            "Dinero reembolsado",
             "Els diners reemborsat",
             "Pieniądze zwracane"
          }
@@ -305,7 +305,7 @@ public class ReceiptVerifier
             "No receipts found",
             "Absence de récépissés",
             "Não há recibos",
-            "No hay recibos",
+            "Ausencia de recibos",
             "No hi ha rebuts",
             "Brak otrzymane"
          }
@@ -316,7 +316,7 @@ public class ReceiptVerifier
             "Improper receipt",
             "Récépissé non conforme",
             "Certificado impróprio",
-            "Certificado incorrecto",
+            "Certificado no conforme",
             "Certificat incorrecte",
             "Niewłaściwe Certyfikat"
          }
@@ -349,7 +349,7 @@ public class ReceiptVerifier
             "Unrecognized validation",
             "Validation non reconnue",
             "Validação não reconhecido",
-            "Validación no reconocido",
+            "Validación no reconocida",
             "Validació no reconegut",
             "Nierozpoznany walidacji"
          }
