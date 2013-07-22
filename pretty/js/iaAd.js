@@ -236,7 +236,7 @@ create_iaAd = function(container, onNavigate) {
       showBanner: function() {
          eltBtnHide.style.display = "none";
          show("banner", bannerSrc);
-//       timeoutId = setTimeout(hide, 15000);
+         timeoutId = setTimeout(hide, 15000);
       },
       showSplash: function() {
          clearTimeout(timeoutId);
@@ -244,5 +244,8 @@ create_iaAd = function(container, onNavigate) {
          eltBtnHide.style.display = "block";
          show("complementary", splashSrc);
       },
+      refreshBannerIn: function(customEltFrame) {
+         customEltFrame.src = bannerSrc;
+      }
    };
 }

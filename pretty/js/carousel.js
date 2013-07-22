@@ -25,25 +25,39 @@ create_carousel = function(
       carousel.appendChild(eltFigure);
       theta += thetaIncrt;
    }
+   var figNo = 0;
    var rotate = function(val) {
-      theta += thetaIncrt * val;
+      figNo = (figNo + val) % nbFigures;
+      theta -= thetaIncrt * val;
       carousel.style["transform"] = (
          "translateZ(-" + zPx + ") " + rotateXform + "(" + theta + "deg)"
       );
-      // if (theta == -360) theta = 0;
    };
    var interval;
    container.appendChild(carousel);
    return {
-      rotateEach: function(ms) {
-         if (ms == 0) {
+      rotateEach: function(millis, whenRotating) {
+         if (millis == 0) {
             if (interval) clearInterval(interval);
          }else {
-            interval = setInterval(function() { rotate(-1); }, ms);
+            interval = setInterval(
+               function() {
+                  if (whenRotating) whenRotating(figNo);
+                  rotate(1);
+               },
+               millis
+            );
          }
       },
-      setInnerHTML: function(html, figNo) {
-         carousel.children[figNo].innerHTML = html;
+      setFigureContents: function(elt, figNo) {
+         var figureElt = carousel.children[figNo];
+         while (figureElt.hasChildNodes()) {
+            figureElt.removeChild(figureElt.lastChild);
+         }
+         figureElt.appendChild(elt);
+      },
+      getFigureContents: function(figNo) {
+         return carousel.children[figNo].children[0];
       }
    }
 };

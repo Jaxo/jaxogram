@@ -228,18 +228,35 @@ window.onload = function() {
       );
    }
    // FIXME (iaAd test)
-   document.getElementById("adBanner").onclick = advertizer.showBanner;
    document.getElementById("adSplash").onclick = advertizer.showSplash;
 
-   var caroElt = document.getElementById("adCarousel");
-   // caroElt.style.bottom = "3rem";
-   // <section id="adCarousel" class="carousel" style="height: 50px; margin: calc(100% - 2.5rem) auto 0px; width: 300px;">
-   var caro = create_carousel(caroElt, 300, 50, 4, true);
-   caro.rotateEach(2000);
-   caro.setInnerHTML("Pierre", 0);
-   caro.setInnerHTML("Paul", 1);
-   caro.setInnerHTML("Christine", 2);
-   caro.setInnerHTML("Louis", 3);
+   var carousel = create_carousel(
+      document.getElementById("adCarousel"), 300, 50, 4, true
+   );
+   for (var i=0; i < 4; ++i) {
+      carousel.setFigureContents(document.createElement("iframe"), i);
+   }
+   var no = -1;
+   function bufferizeAds() {
+      if (++no > 0) {
+         this.onload = null;
+      }
+      if (no < 2) {  // bufferize only 2 sides
+         var f = carousel.getFigureContents(no);
+         f.onload = bufferizeAds;
+         advertizer.refreshBannerIn(f);
+      }else {
+         carousel.rotateEach(
+            15000,
+            function whenRotating(figNo) {
+               advertizer.refreshBannerIn(
+                  carousel.getFigureContents((figNo+2)%4)
+               );
+            }
+         );
+      }
+   }
+   bufferizeAds();
 };
 
 function onTextEntered(event) {
