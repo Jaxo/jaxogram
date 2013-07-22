@@ -157,6 +157,7 @@ create_iaAd = function(container, onNavigate) {
    }
 
    var doNavigate = onNavigate;
+   var timeoutId;
 
    addEventListener(
       "message",
@@ -235,9 +236,10 @@ create_iaAd = function(container, onNavigate) {
       showBanner: function() {
          eltBtnHide.style.display = "none";
          show("banner", bannerSrc);
-         setTimeout(hide, 15000);
+//       timeoutId = setTimeout(hide, 15000);
       },
       showSplash: function() {
+         clearTimeout(timeoutId);
          eltBtnHide.style.opacity = "0";
          eltBtnHide.style.display = "block";
          show("complementary", splashSrc);

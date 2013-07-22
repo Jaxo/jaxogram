@@ -1,0 +1,40 @@
+.carousel {
+  position: absolute;
+  bottom: 5rem;
+  left: calc(50% - 150px);
+  margin: 0;
+  border: none;
+  perspective: 1200px;
+}
+
+.carousel div {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 1s;
+}
+
+.carousel div figure {
+  display: block;
+  position: absolute;
+  left: 0px;
+  /* border: 2px solid rgba(255, 0, 0, 0); */
+  border none;
+  font-weight: bold;
+  color: #101010;
+  text-align: center;
+  backface-visibility: hidden;
+  margin: 0;
+}
+
+.carousel figure:nth-child(1) { background: hsla(0, 100%, 50%, 1); }
+.carousel figure:nth-child(2) { background: hsla(40, 100%, 50%, 1); }
+.carousel figure:nth-child(3) { background: hsla(80, 100%, 50%, 1); }
+.carousel figure:nth-child(4) { background: hsla(120, 100%, 50%, 1); }
+.carousel figure:nth-child(5) { background: hsla(160, 100%, 50%, 1); }
+.carousel figure:nth-child(6) { background: hsla(200, 100%, 50%, 1); }
+.carousel figure:nth-child(7) { background: hsla(240, 100%, 50%, 1); }
+.carousel figure:nth-child(8) { background: hsla(280, 100%, 50%, 1); }
+.carousel figure:nth-child(9) { background: hsla(320, 100%, 50%, 1); }

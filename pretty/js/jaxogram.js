@@ -230,6 +230,16 @@ window.onload = function() {
    // FIXME (iaAd test)
    document.getElementById("adBanner").onclick = advertizer.showBanner;
    document.getElementById("adSplash").onclick = advertizer.showSplash;
+
+   var caroElt = document.getElementById("adCarousel");
+   // caroElt.style.bottom = "3rem";
+   // <section id="adCarousel" class="carousel" style="height: 50px; margin: calc(100% - 2.5rem) auto 0px; width: 300px;">
+   var caro = create_carousel(caroElt, 300, 50, 4, true);
+   caro.rotateEach(2000);
+   caro.setInnerHTML("Pierre", 0);
+   caro.setInnerHTML("Paul", 1);
+   caro.setInnerHTML("Christine", 2);
+   caro.setInnerHTML("Louis", 3);
 };
 
 function onTextEntered(event) {
