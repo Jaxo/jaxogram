@@ -66,6 +66,7 @@
 }
 
 .user {
+  position: relative;
   overflow: hidden;
   margin: 0rem;
   padding: 0.5rem 0.5rem 0rem 0.5rem;
@@ -93,23 +94,22 @@
    text-align: center;
    font-size: 2rem;
    color: white;
-   padding: 0rem 2rem;
-   margin: 1.5rem 0 5rem 0;
+   padding: 0rem 1rem;
+   margin: -1rem 0 5rem 0;
    -moz-box-sizing: border-box;
    -webkit-box-sizing: border-box;
 }
 #p15 {
     position: absolute;
-    width: 10rem;
-    height: 8rem;
-    right: 1rem;
-    bottom: 4.5rem; /* reduced: 0rem; */
+    margin-top: 2.7rem;
+    right: 0.5rem;
+    width: 8rem;
 }
 #p16 {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    font-size: 1.1rem;
+    position: relative;
+    display: inline-block;
+    top: -1.6rem;
+    font-size: 0.8rem;
     color: white;
 }
 
