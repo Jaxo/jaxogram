@@ -4,6 +4,7 @@
   left: calc(50% - 150px);
   margin: 0;
   border: none;
+  z-index: 2;
   perspective: 1200px;
 }
 
