@@ -9,6 +9,12 @@
 
 
 create_iaAd = function(container, onNavigate) {
+   /*
+   | `onNavigate' is a function which is called when the frame window.location
+   | changes.  The argument passed is an url -- e.g.: onNavigate(url).
+   | The url can be an empty string if the user just closed the frame (really
+   | hidden, not closed).
+   */
    var eltSection = container;
    var eltFrame = document.createElement("iframe");
    var eltBtnHide = document.createElement("button");
@@ -162,6 +168,7 @@ create_iaAd = function(container, onNavigate) {
    addEventListener(
       "message",
       function(e) {
+         hide();
          if (doNavigate) {
             var message = e.data;
             if (message.substr(0, 4) == "iaAd") {
@@ -172,7 +179,10 @@ create_iaAd = function(container, onNavigate) {
       false
    );
    eltBtnHide.textContent = "\u00d7";
-   eltBtnHide.onclick = hide;
+   eltBtnHide.onclick = function() {
+      hide();
+      if (doNavigate) doNavigate("");
+   }
    eltSection.appendChild(eltFrame);
    eltSection.appendChild(eltBtnHide);
 

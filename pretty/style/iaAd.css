@@ -25,9 +25,9 @@ section.ads iframe[role="complementary"] {
 }
 
 section.ads button {
-position: relative; /* fixed;  */
-right: -11rem;    /* 0.5rem; */
-top: -23.5rem;     /* 0.5rem; */
+position: relative;
+right: -11rem;
+top: -22rem;
   background-color: rgba(180, 180, 180, 0.5);
   height: 4rem;
   width: 4.2rem;

@@ -8,6 +8,8 @@ create_carousel = function(
    var thetaIncrt = 360 / nbFigures;
    var theta = 0;
    var zPx = isVertical? height : width;
+   var figNo = 0;
+   var interval;
 
    zPx = (zPx / (2 * Math.tan(Math.PI / nbFigures))) + "px";
    carousel.style['transform'] = "translateZ(-" + zPx + ")";
@@ -25,7 +27,6 @@ create_carousel = function(
       carousel.appendChild(eltFigure);
       theta += thetaIncrt;
    }
-   var figNo = 0;
    var rotate = function(val) {
       figNo = (figNo + val) % nbFigures;
       theta -= thetaIncrt * val;
@@ -33,13 +34,15 @@ create_carousel = function(
          "translateZ(-" + zPx + ") " + rotateXform + "(" + theta + "deg)"
       );
    };
-   var interval;
+   container.style.visibility = "hidden";
    container.appendChild(carousel);
    return {
       rotateEach: function(millis, whenRotating) {
+         if (interval) clearInterval(interval);
          if (millis == 0) {
-            if (interval) clearInterval(interval);
+            carousel.parentNode.style.visibility = "hidden";
          }else {
+            carousel.parentNode.style.visibility = "";
             interval = setInterval(
                function() {
                   if (whenRotating) whenRotating(figNo);

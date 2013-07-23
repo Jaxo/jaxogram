@@ -10,7 +10,6 @@ var tempFilterChoice = 0;
 var filterChoice = 0;
 var thumbMaxWidth = 0;
 var thumbMaxHeight = 0;
-var advertizer;
 var filters = [
    {
       name: "raw",
@@ -111,12 +110,9 @@ window.onload = function() {
       simpleMsg("z_warning", i18n("z_testMode", server_url));
    }
    users = new JgUsers();
+   advertize();
    // users.cleanUp();
    // users.destroy();
-   advertizer = create_iaAd(
-      document.getElementById("adPane"),
-      function(url) { window.open(url, "iaAd"); }
-   );
 
    var params = getQueryParams();
    if (params.OP === "backCall") {
@@ -227,36 +223,6 @@ window.onload = function() {
          }
       );
    }
-   // FIXME (iaAd test)
-   document.getElementById("adSplash").onclick = advertizer.showSplash;
-
-   var carousel = create_carousel(
-      document.getElementById("adCarousel"), 300, 50, 4, true
-   );
-   for (var i=0; i < 4; ++i) {
-      carousel.setFigureContents(document.createElement("iframe"), i);
-   }
-   var no = -1;
-   function bufferizeAds() {
-      if (++no > 0) {
-         this.onload = null;
-      }
-      if (no < 2) {  // bufferize only 2 sides
-         var f = carousel.getFigureContents(no);
-         f.onload = bufferizeAds;
-         advertizer.refreshBannerIn(f);
-      }else {
-         carousel.rotateEach(
-            15000,
-            function whenRotating(figNo) {
-               advertizer.refreshBannerIn(
-                  carousel.getFigureContents((figNo+2)%4)
-               );
-            }
-         );
-      }
-   }
-   bufferizeAds();
 };
 
 function onTextEntered(event) {
@@ -1157,6 +1123,51 @@ function cancelEditPhoto() {
 function changeFilter(event) {
    tempFilterChoice = getIndex(event);
    document.getElementById("p33").src = filters[tempFilterChoice].src;
+}
+
+function advertize() {
+   var carousel = create_carousel(
+      document.getElementById("adCarousel"), 300, 50, 4, true
+   );
+   var advertizer = create_iaAd(
+      document.getElementById("adPane"),
+      function(url) { // url is empty if splash hidden
+         startCarousel();
+         if (url) window.open(url, "iaAd");
+      }
+   );
+   // FIXME (iaAd test)
+   document.getElementById("adSplash").onclick = function() {
+      carousel.rotateEach(0); // i.e. stop
+      advertizer.showSplash();
+   }
+   for (var i=0; i < 4; ++i) {
+      carousel.setFigureContents(document.createElement("iframe"), i);
+   }
+   function startCarousel() {
+      carousel.rotateEach(
+         50000,   // time in millis between each ad
+         function whenRotating(figNo) {
+            advertizer.refreshBannerIn(
+               carousel.getFigureContents((figNo+2)%4)
+            );
+         }
+      );
+   }
+   (
+      function bufferizeAds(no) {
+         if (++no > 0) {
+            this.onload = null;
+         }
+         if (no < 2) {  // bufferize only 2 sides
+            var f = carousel.getFigureContents(no);
+            f.onload = bufferizeAds(no);
+            advertizer.refreshBannerIn(f);
+         }else {
+            startCarousel();
+         }
+      }
+   )(-1);
 }
 
 function getQueryParams() {
