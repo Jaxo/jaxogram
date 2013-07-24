@@ -41,6 +41,7 @@ function Install() {
             request.result
             // work-around for a bug in Firefox OS Desktop
             || (
+               (navigator.userAgent.indexOf("Mobile") < 0) &&
                (window.location.protocol === "http:") &&
                !window.locationbar.visible
             )
