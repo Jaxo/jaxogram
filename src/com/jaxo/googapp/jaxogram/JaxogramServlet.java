@@ -168,23 +168,27 @@ public class JaxogramServlet extends HttpServlet
                InputStream in = req.getInputStream();
                String appRecord = IOUtils.toString(in);
                IOUtils.closeQuietly(in);
-               ReceiptVerifier.Status status;
-               if (stt.equals("1" /* INSTALLED */ )) {
-                  status = ReceiptVerifier.verify(appRecord);
-                  if (status != ReceiptVerifier.Status.OK) {
-                     resp.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
+               if ((iso639 != null) && (stt != null)) {
+                  ReceiptVerifier.Status status;
+                  if (stt.equals("1" /* INSTALLED */ )) {
+                     status = ReceiptVerifier.verify(appRecord);
+                     if (status != ReceiptVerifier.Status.OK) {
+                        resp.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
+                     }
+                  }else {
+                     status = ReceiptVerifier.Status.EMPTY;
                   }
+                  req.getSession(true).setAttribute("appstatus", status);
+                  writer.print(
+                     "{\"msg\":\"" + status.toString(iso639) +
+                     "\",\"ad\":\"" + getHtmlAdvertizement(iso639) +
+                     "\"}"
+                  );
+/**/              logger.info(status.toString());
                }else {
-                  status = ReceiptVerifier.Status.EMPTY;
+/**/              logger.info("[V14.1]");
                }
-               req.getSession(true).setAttribute("appstatus", status);
-               writer.print(
-                  "{\"msg\":\"" + status.toString(iso639) +
-                  "\",\"ad\":\"" + getHtmlAdvertizement(iso639) +
-                  "\"}"
-               );
-//*/           logger.info(status.toString());
-//*/           logger.info("App Record: " + req.getSession(true).getAttribute("apprecord"));
+/**/           logger.info("App Record: " + appRecord);
             }else if (op.equals("postAccPss")) {
                InputStream in = req.getInputStream();
                req.getSession(true).setAttribute("accesspass", IOUtils.toString(in));
