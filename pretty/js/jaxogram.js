@@ -141,7 +141,7 @@ window.onload = function() {
                app.manifest.version
             );
          }
-         checkCredentials(app, state);
+         checkCredentials(state, app);
       }
    );
    setInstallButton("z_btnInstall");
@@ -976,7 +976,7 @@ function uploadPhoto(imgBlob) {
    );
 }
 
-function checkCredentials(app, state) {
+function checkCredentials(state, app) {
    var appRecord = "";
    if (app) {
       var appObject = {};

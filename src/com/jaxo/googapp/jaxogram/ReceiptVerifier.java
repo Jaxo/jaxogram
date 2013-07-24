@@ -17,8 +17,12 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.IOUtils;
 
 /*-- class ReceiptVerifier --+
 *//**
@@ -28,6 +32,8 @@ import java.util.regex.Pattern;
 */
 public class ReceiptVerifier
 {
+   private static Logger logger = Logger.getLogger("com.jaxo.googapp.jaxogram.ReceiptVerifier");
+
    /*------------------------------------------------------------------verify-+
    *//**
    * Verify whether an Application has the proper payment receipt.
@@ -175,9 +181,15 @@ public class ReceiptVerifier
          OutputStream out = conn.getOutputStream();
          out.write(jwt);
          out.close();
-         return Json.parse(
-            new InputStreamReader(conn.getInputStream(), "UTF-8")
-         );
+         if (conn.getResponseCode() == 200) {
+            return Json.parse(
+               new InputStreamReader(conn.getInputStream(), "UTF-8")
+            );
+         }else {
+            logger.log(Level.WARNING, "Server response " + conn.getResponseCode());
+//          String response = IOUtils.toString(conn.getInputStream());
+            throw new Exception("RC=" + conn.getResponseCode());
+         }
       }finally {
          if (conn != null) conn.disconnect();
       }
