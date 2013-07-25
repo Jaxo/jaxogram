@@ -6,7 +6,7 @@
    font-size: 2rem;
    cursor: pointer;
    top: 5rem;
-   height: calc(100% - 5.2rem);
+   height: calc(100% - 9.2rem);
    width: 100%;
    overflow: auto;
 }
