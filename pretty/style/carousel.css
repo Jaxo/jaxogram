@@ -22,7 +22,7 @@
   position: absolute;
   left: 0px;
   /* border: 2px solid rgba(255, 0, 0, 0); */
-  border none;
+  border: none;
   font-weight: bold;
   color: #101010;
   text-align: center;
