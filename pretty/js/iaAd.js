@@ -178,7 +178,6 @@ create_iaAd = function(container, onNavigate) {
       },
       false
    );
-   eltBtnHide.textContent = "\u00d7";
    eltBtnHide.onclick = function() {
       hide();
       if (doNavigate) doNavigate("");
