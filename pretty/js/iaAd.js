@@ -105,9 +105,9 @@ create_iaAd = function(container, onNavigate) {
       "<base target='_self' />" +
       "</head>" +
       "<body" +
-      " style='padding:0;margin:0;overflow:hidden'" +
-      " onclick='location.reload();'>" +
-      "<script language='javascript' " +
+      " style='padding:0;margin:0;overflow:hidden" +
+//    "' onclick='location.reload();" +
+      "'><script language='javascript' " +
       "src='http://ad-tag.inner-active.mobi/simpleM2M/RequestTagAd" +
       params
    );
@@ -115,7 +115,7 @@ create_iaAd = function(container, onNavigate) {
       "'><\/script>" +
       "<script language='javascript'>" +
          "var daddy = parent;" +
-         "document.body.removeAttribute('onclick');" +
+//       "document.body.removeAttribute('onclick');" +
          "document.getElementById('iaAdContainerDiv').querySelector('a').onclick = function() { " +
             "daddy.postMessage('iaAd' + this.href, '*');" +
             "return false;" +

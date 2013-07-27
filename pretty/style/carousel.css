@@ -30,7 +30,7 @@
   margin: 0;
 }
 
-.carousel div figure iframe {
+.carousel div figure :first-child {
   display: block;
   border: 0;
   width: 300px;
