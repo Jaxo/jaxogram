@@ -84,15 +84,18 @@ public class AdFactory {
       public String adHeight;
       public String adNetwork;
       Ad(BufferedReader in) throws Exception { // Arghhh...
-StringBuilder dbgBuf = new StringBuilder();
+         /*
+         | Parse the HTML respnse from inner-active to remove unsafe
+         | inline script, while executing their "onload" part.
+         | This code relies on the format of the response provided
+         | by inner-active and is somehow unstable.
+         */
          StringBuilder buf = new StringBuilder();
          String line;
          String trackingPixelSrc = null;
          boolean isInScript = false;
          int beg;
          while ((line=in.readLine()) != null) {
-dbgBuf.append(line);
-dbgBuf.append("\n");
             line = line.trim();
             if (line.length() > 0) {
                if (isInScript) {
@@ -139,10 +142,6 @@ dbgBuf.append("\n");
             buf.append(trackingPixelSrc);
             buf.append("'/>");
          }
-String dbgStr = dbgBuf.toString();
-if (dbgStr.startsWith("Roudoudou")) {
-   error = "Riquiqui";
-}
          html = buf.toString();
       }
    }

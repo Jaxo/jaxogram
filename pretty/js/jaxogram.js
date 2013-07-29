@@ -1,6 +1,6 @@
-var server_url = "http://jaxogram.appspot.com/jaxogram";
+// var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
-// var server_url = "http://11.jaxogram.appspot.com/jaxogram";
+var server_url = "http://15.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://localhost:8888/jaxogram";
 var appRecord = null;
 var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
@@ -1142,7 +1142,7 @@ function advertize() {
       advertizer.showSplash();
    }
    for (var i=0; i < 4; ++i) {
-      carousel.setFigureContents(document.createElement("iframe"), i);
+      carousel.setFigureContents(document.createElement("div"), i);
    }
    function startCarousel() {
       carousel.rotateEach(
