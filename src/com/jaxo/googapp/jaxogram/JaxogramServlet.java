@@ -158,6 +158,9 @@ public class JaxogramServlet extends HttpServlet
                // issued repeatedly by packaged application
                writer.print(getVerifierFromStore(req.getParameter("JXK")));
 
+            }else if (op.equals("getIaAd")) {
+               writer.print((AdFactory.makeAd(req)).html);
+
             }else if (op.equals("appCred")) {
                /*
                | All Jaxogram Web App go thru here when started.

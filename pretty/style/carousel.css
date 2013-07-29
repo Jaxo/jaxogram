@@ -8,7 +8,7 @@
   perspective: 1200px;
 }
 
-.carousel div {
+.carousel > div {
   position: absolute;
   top: 0px;
   width: 100%;
@@ -17,7 +17,7 @@
   transition: transform 1s;
 }
 
-.carousel div figure {
+.carousel > div figure {
   display: block;
   position: absolute;
   left: 0px;
@@ -30,7 +30,7 @@
   margin: 0;
 }
 
-.carousel div figure :first-child {
+.carousel > div figure :first-child {
   display: block;
   border: 0;
   width: 300px;
