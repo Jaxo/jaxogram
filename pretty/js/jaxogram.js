@@ -1142,7 +1142,7 @@ function advertize() {
       advertizer.showSplash();
    }
    for (var i=0; i < 4; ++i) {
-      carousel.setFigureContents(document.createElement("div"), i);
+      carousel.setFigureContents(document.createElement("iframe"), i);
    }
    function startCarousel() {
       carousel.rotateEach(

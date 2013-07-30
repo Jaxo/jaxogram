@@ -14,10 +14,16 @@ create_iaAd = function(container, onNavigate) {
    | The url can be an empty string if the user just closed the frame (really
    | hidden, not closed).
    */
+// var adServer = "http://m2m1.inner-active.mobi";
+// var adPath = "/simpleM2M/requestEnhancedHtmlAd";
+   var adServer = "http://www.jaxo-systems.com";
+   var adPath = "/requestAd.html";
+   var adAppId = "Jaxo_Jaxogram_other";
+   var cid = "";
    var timeoutId;
    var doNavigate = onNavigate;
    var eltSection = container;
-   var eltFrame = document.createElement("div");
+   var eltFrame = document.createElement("iframe");
    var eltBtnHide = document.createElement("button");
    var opts = {
       PORTAL: 642,              // FIXME: that's for iPhone/iPod
@@ -40,6 +46,8 @@ create_iaAd = function(container, onNavigate) {
       NETWORK: ""                                    // 3G or WIFI
    };
    var params = (
+      "&v=Sm2m-2.0.1" +
+      "&f=20" +   // HTMLserving ads
       "&fs=" + ((opts.IS_INTERSTITIAL_AD)? "true" : "false") +
       "&po=" + opts.PORTAL +
       "&c=" + opts.CATEGORY +
@@ -69,36 +77,22 @@ create_iaAd = function(container, onNavigate) {
    var location = encodeURIComponent(opts.DEFAULT_LOCATION);
 
    var getIaAd = function(targetElt, width, height) {
-      issueRequest(
-         "GET", "getIaAd",
-         params +
+      targetElt.src = (
+         adServer + adPath + "?aid=" + adAppId + cid + params +
          "&l=" + location +
          "&lg=" + gpsCoordinates +
          "&rw=" + width +
-         "&rh=" + height,
-         function(htmlAd) {
-            targetElt.innerHTML = htmlAd;
-            if (doNavigate) {
-               targetElt.querySelector('a').onclick = function() {
-                  hide();
-                  doNavigate(this.href);
-                  return false;
-               };
-            }
-         }
+         "&rh=" + height
       );
    };
-
    var show = function(width, height, role) {
-//Fx1 eltFrame.style.visibility = "hidden";
-//Fx1 eltFrame.style.opacity = "0";
-      eltFrame.style.opacity = "1";    //Fx1
-      eltBtnHide.style.opacity = "1";  //Fx1
-//Fx1 eltFrame.onload = function() {
-//Fx1    this.style.visibility = "";
-//Fx1    this.style.opacity = "1";
-//Fx1    eltBtnHide.style.opacity = "1";
-//Fx1 }
+      eltFrame.style.visibility = "hidden";
+      eltFrame.style.opacity = "0";
+      eltFrame.onload = function() {
+         this.style.visibility = "";
+         this.style.opacity = "1";
+         eltBtnHide.style.opacity = "1";
+      }
       eltFrame.setAttribute("role", role);
       eltSection.style.display="block";
       getIaAd(eltFrame, width, height);
@@ -108,6 +102,27 @@ create_iaAd = function(container, onNavigate) {
       eltSection.style.display = "none";
       eltBtnHide.style.display = "none";
    };
+
+   addEventListener(
+      "message",
+      function(ev) {
+         if (ev.origin === adServer) {
+            hide();
+            var message = JSON.parse(ev.data);
+            if (message.op === "load") {
+               cid = "&cid=" + message.cid;
+               // message.error
+               // message.ad-type
+               // message.ad-width
+               // message.ad-height
+               // message.ad-network
+            }else if (doNavigate && (message.op === "link")) {
+               doNavigate(message.href);
+            }
+         }
+      },
+      false
+   );
 
    eltBtnHide.onclick = function() {
       hide();
