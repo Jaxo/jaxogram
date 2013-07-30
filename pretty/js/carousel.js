@@ -9,7 +9,9 @@ create_carousel = function(
    var theta = 0;
    var zPx = isVertical? height : width;
    var figNo = 0;
-   var interval;
+   var interval = null;
+   var rotatePeriod = 0;
+   var whenRotating = null;
 
    zPx = (zPx / (2 * Math.tan(Math.PI / nbFigures))) + "px";
    carousel.style['transform'] = "translateZ(-" + zPx + ")";
@@ -28,30 +30,42 @@ create_carousel = function(
       theta += thetaIncrt;
    }
    var rotate = function(val) {
+      if (whenRotating) whenRotating(figNo);
       figNo = (figNo + val) % nbFigures;
       theta -= thetaIncrt * val;
       carousel.style["transform"] = (
          "translateZ(-" + zPx + ") " + rotateXform + "(" + theta + "deg)"
       );
    };
+   var rotateEach = function(period, onStart) {
+      if (period) rotatePeriod = period;
+      if (onStart) whenRotating = onStart;
+      if (interval) {
+         clearInterval(interval);
+         interval = null;
+      }
+      if (rotatePeriod == 0) {
+         carousel.parentNode.style.visibility = "hidden";
+      }else {
+         carousel.parentNode.style.visibility = "";
+         interval = setInterval(function() { rotate(1); }, rotatePeriod);
+      }
+   };
    container.style.visibility = "hidden";
    container.appendChild(carousel);
-   return {
-      rotateEach: function(millis, whenRotating) {
-         if (interval) clearInterval(interval);
-         if (millis == 0) {
-            carousel.parentNode.style.visibility = "hidden";
+   document.addEventListener(
+      "visibilitychange",
+      function() {
+         if (document["hidden"]) {
+            if (interval) clearInterval(interval);
          }else {
-            carousel.parentNode.style.visibility = "";
-            interval = setInterval(
-               function() {
-                  if (whenRotating) whenRotating(figNo);
-                  rotate(1);
-               },
-               millis
-            );
+            rotateEach();
          }
       },
+      false
+   );
+   return {
+      rotateEach: rotateEach,
       setFigureContents: function(elt, figNo) {
          var figureElt = carousel.children[figNo];
          while (figureElt.hasChildNodes()) {
