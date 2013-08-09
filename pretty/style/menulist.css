@@ -24,7 +24,10 @@
   line-height: 3.1rem;
   background-image: url("images/pattern.png");
   background-color: #61666c;               /* Mobile only */
-  transition: height 0.3s ease 0s;
+  transition-property: height;
+  transition-duration: 0.3s;
+  -webkit-transition-property: height;
+  -webkit-transition-duration: 0.3s;
 }
 
 .menuList li {

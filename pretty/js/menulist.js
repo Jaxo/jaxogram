@@ -27,6 +27,14 @@ function menuListClicked(event) {
             },
             true
          );
+         ulChildElt.addEventListener(
+            "webkitTransitionEnd",
+            function() {
+               afterTransed();
+               this.removeEventListener("webkitTransitionEnd", arguments.callee, true);
+            },
+            true
+         );
       }
    }else if (liElt.parentNode.getAttribute("role") !=="radiogroup") {
       // for lambda lists, select toggles the selected state

@@ -17,6 +17,8 @@ function alertMsg(idTitle, eltContents, whenDone) {
          buildMessagePane(elt, args);
          elt.style.transitionProperty = "opacity";
          elt.style.transitionDuration = "3s";
+         elt.style.webkitTransitionProperty = "opacity";
+         elt.style.webkitTransitionDuration = "3s";
          elt.style.top = "0";
          setTimeout(
             function() {
@@ -25,6 +27,14 @@ function alertMsg(idTitle, eltContents, whenDone) {
                   "transitionend",
                   function() {
                      elt.removeEventListener("transitionend", arguments.callee, true);
+                     hideMsg();
+                  },
+                  true
+               );
+               elt.addEventListener(
+                  "webkitTransitionEnd",
+                  function() {
+                     elt.removeEventListener("webkitTransitionEnd", arguments.callee, true);
                      hideMsg();
                   },
                   true
@@ -53,16 +63,18 @@ function execute(fct, args)
    var elt = document.querySelector(".message");
    if (elt.promises === undefined) {
       elt.promises = [];
-      new GestureDetector(elt).startDetecting();
-      elt.addEventListener(
-         "swipe",
-         function(e) {
-            var direction = e.detail.direction;
-            if (e.detail.direction === 'up') {
-               hideMsg();
-            }
-         }
-      );
+      /*   Not understood by Amazon (i.e. by android WebViewer)
+      | new GestureDetector(elt).startDetecting();
+      | elt.addEventListener(
+      |    "swipe",
+      |    function(e) {
+      |       var direction = e.detail.direction;
+      |       if (e.detail.direction === 'up') {
+      |          hideMsg();
+      |       }
+      |    }
+      | );
+      */
    }
    if (elt.staged) {
       var obj = new Object();

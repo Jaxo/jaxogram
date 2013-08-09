@@ -1,7 +1,9 @@
 var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
-// var server_url = "http://localhost:8888/jaxogram";
+// var local_server_url = "http://localhost:8888";
+// var local_server_url = "http://ottokar"
+var local_server_url = "http://10.110.2.205:8888";
 var appRecord = null;
 var svgHeader = "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'";
 var pendingPhotos = [];  // array of blobs or files
@@ -102,8 +104,8 @@ window.onload = function() {
       var host = loc.host;
       if (host.indexOf("appspot") >= 0) {              // appspot default, or versioned
          server_url = "http://" + host + "/jaxogram";
-      }else {                                          // "http://localhost:8888/", or
-         server_url = "http://localhost:8888/jaxogram" // "http://ottokar/jaxogram/index.html"
+      }else {
+         server_url = local_server_url + "/jaxogram";
       }
    }
    if (server_url !== "http://jaxogram.appspot.com/jaxogram") {
@@ -123,28 +125,28 @@ window.onload = function() {
       registerUser(params.VRF, params.NET);
    }
 
-   dispatcher.on(
-      "z_install_changed",
-      function action(state, app) {
-         if (state === 0 /* IDLE */) {
-            if (
-               !users.hasSome() &&
-               (params.OP !== "backCall") && (params.OP !== "share")
-            ) {
-               confirmMsg(
-                  i18n('z_betterInstall'),
-                  function() { document.getElementById("z_btnInstall").click(); }
-               );
-            }
-         }else if ((state === 1 /* INSTALLED */) && app) {
-            document.querySelector("header h1 small").textContent = (
-               app.manifest.version
-            );
-         }
-         checkCredentials(state, app);
-      }
-   );
-   setInstallButton("z_btnInstall");
+//ZON   dispatcher.on(
+//ZON      "z_install_changed",
+//ZON      function action(state, app) {
+//ZON         if (state === 0 /* IDLE */) {
+//ZON            if (
+//ZON               !users.hasSome() &&
+//ZON               (params.OP !== "backCall") && (params.OP !== "share")
+//ZON            ) {
+//ZON               confirmMsg(
+//ZON                  i18n('z_betterInstall'),
+//ZON                  function() { document.getElementById("z_btnInstall").click(); }
+//ZON               );
+//ZON            }
+//ZON         }else if ((state === 1 /* INSTALLED */) && app) {
+//ZON            document.querySelector("header h1 small").textContent = (
+//ZON               app.manifest.version
+//ZON            );
+//ZON         }
+//ZON         checkCredentials(state, app);
+//ZON      }
+//ZON   );
+//ZON   setInstallButton("z_btnInstall");
 
    window.addEventListener("resize", fitImages, false);
    fitImages();
@@ -197,19 +199,22 @@ window.onload = function() {
 
    elt.addEventListener("click", changeFilter);
    var principal = document.querySelector(".principal");
-   new GestureDetector(principal).startDetecting();
-   principal.addEventListener(
-      "swipe",
-      function(e) {
-         // alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
-         var direction = e.detail.direction;
-         if (direction === 'right') {
-            expandSidebarView(1);
-         }else if (direction === 'left') {
-            expandSidebarView(-1);
-         }
-      }
-   );
+
+   /*   Not understood by Amazon (i.e. by android WebViewer)
+   | new GestureDetector(principal).startDetecting();
+   | principal.addEventListener(
+   |    "swipe",
+   |    function(e) {
+   |       // alert("Swipe:" + "\n start: " + detail.start + "\n end: " + detail.end + "\n dx: " + detail.dx + "\n dy: " + detail.dy + "\n dt: " + detail.dt + "\n vx: " + detail.vx + "\n vy: " + detail.vy + "\n direction: " + detail.direction + "\n angle: " + detail.angle);
+   |       var direction = e.detail.direction;
+   |       if (direction === 'right') {
+   |          expandSidebarView(1);
+   |       }else if (direction === 'left') {
+   |          expandSidebarView(-1);
+   |       }
+   |    }
+   | );
+   */
    if (navigator.mozSetMessageHandler) {
       navigator.mozSetMessageHandler(
          "activity",

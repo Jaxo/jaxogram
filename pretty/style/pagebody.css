@@ -15,6 +15,7 @@ div.pagebody {
   font-size: 1.4rem;
   color: white;
   transition: opacity 0.2s;
+  -webkit-transition: opacity 0.2s;
 }
 
 div.pagebody[aria-expanded=true] {

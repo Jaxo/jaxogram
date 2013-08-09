@@ -8,9 +8,13 @@
   visibility: hidden;
 }
 
-progress {
-  background: url(images/progress.png) no-repeat center center / 100% auto;
+.progress div {
+  background-image: url(images/progress.png);
   animation: 0.9s rotate infinite steps(30);
+  -webkit-animation-name: rotate;
+  -webkit-animation-duration: 0.9s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
   width: 5.8rem;
   height: 5.8rem;
   border: none;
@@ -19,12 +23,13 @@ progress {
   left: -2.9rem;
 }
 
-progress::-moz-progress-bar {
-  background: none;
-}
-
 @keyframes rotate {
   from { transform: rotate(1deg); }
   to   { transform: rotate(360deg); }
+}
+
+@-webkit-keyframes rotate {
+  from { -webkit-transform: rotate(1deg); }
+  to   { -webkit-transform: rotate(360deg); }
 }
 

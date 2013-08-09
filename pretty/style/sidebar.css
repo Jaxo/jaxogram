@@ -10,7 +10,10 @@ section.principal {
   top: 0;
   bottom: 0;
   z-index:1;
-  transition: 1s;
+  transition-property: left 1s;
+  transition-duration: 1s;
+  -webkit-transition-property: left 1s;
+  -webkit-transition-duration: 1s;
 }
 
 section.principal[aria-expanded=false] {
@@ -25,7 +28,10 @@ section.sidebar {
    top: 0;
    bottom: 0;
    background: url("images/shadow.png") right top repeat-y;
-   transition: 1s;
+   transition-property: left 1s;
+   transition-duration: 1s;
+   -webkit-transition-property: left 1s;
+   -webkit-transition-duration: 1s;
 }
 
 section.sidebar[aria-expanded=true] {
