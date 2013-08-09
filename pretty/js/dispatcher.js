@@ -1,25 +1,23 @@
 /*
-| Dispatcher is a singleton in the window object to broadcast "events"
-| to registered listeners.
+| Dispatcher is a singleton to broadcast "events" to registered listeners.
 | Events are identified by their name ("somethingHappened" in the example
 | below.)
 |
-| - on the "server side" (the guy who generates the event)
-|      dispatcher.post("somethingHappened", "whatHappened", "how");
-|   broadcasts the event "somethingHappened" to the registered listeners
-|
-|
-| - the "client side" has registered a listener by doing:
+| - listener(s) declare their intent to receive an event by calling:
 |      dispatcher.on(
 |         "somethingHappened",
 |         function myAction(arg1, arg2) {
 |            alert(arg1, arg2);
 |         }
 |      }
-|   function(arg1, arg2) will be called after the "somethingHappened" event
-|   has been posted.
+|   myAction(arg1, arg2) will be called when the "somethingHappened" event
+|   is posted.
 |
-| To remove a listener, use
+| - the notifier calls:
+|      dispatcher.post("somethingHappened", "whatHappened", "how");
+|   to broadcast the event "somethingHappened" to the registered listeners
+|
+| - when a listener is no more interested in being notified, it calls:
 |      dispatcher.off("somethingHappened", myAction);
 |
 */
