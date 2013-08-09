@@ -1033,8 +1033,8 @@ function issueRequest(method, op, values, whenDone, whenFailed) {
       simpleMsg("z_error", "Sorry: can't do cross-site requests");
       return;
    }
-   xhr.withCredentials = true;
    xhr.open(method, server_url + query, true);
+   xhr.withCredentials = true;
    xhr.onreadystatechange = function () {
       if (this.readyState === 4) {
          showProgress(false);
