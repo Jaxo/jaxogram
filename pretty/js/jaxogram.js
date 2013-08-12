@@ -1,5 +1,6 @@
-var server_url = "http://jaxogram.appspot.com/jaxogram";
+// var server_url = "http://jaxogram.appspot.com/jaxogram";
 // -- only for our internal testing --
+var server_url = "http://10.jaxogram.appspot.com/jaxogram";
 // var server_url = "http://11.jaxogram.appspot.com/jaxogram";
 // var local_server_url = "http://localhost:8888";
 // var local_server_url = "http://ottokar"
@@ -606,17 +607,34 @@ function authorizeThruOAuth(net) {
       function(oauthUrl) {        // whenDone
          oauthNetwork.url = oauthUrl;
 //*/     console.error("browseTo..." + oauthNetwork.url);
-         browseTo(oauthNetwork);  // open a new browser window
-//*/     console.error("got a window " + oauthNetwork.win);
-         oauthNetwork.win.addEventListener(
-            "close",
-            function(event) {
-               oauthNetwork.win = null;
-               clearTimeout(oauthNetwork.timer);
-            },
-            false
+         confirmMsg(
+            i18n('Navigate to ' + net + '?'),
+            function() {
+               browseTo(oauthNetwork);  // open a new browser window
+               // the following does NOT work.
+               oauthNetwork.win.addEventListener(
+                  "close",
+                  function(event) {
+                     alert("Done");
+                     oauthNetwork.win = null;
+                     clearTimeout(oauthNetwork.timer);
+                  },
+                  false
+               );
+//             getVerifier();           // wait 'til it returns with the verifier
+            }
          );
-         getVerifier();           // wait 'til it returns with the verifier
+//       browseTo(oauthNetwork);  // open a new browser window
+//*/     console.error("got a window " + oauthNetwork.win);
+//       oauthNetwork.win.addEventListener(
+//          "close",
+//          function(event) {
+//             oauthNetwork.win = null;
+//             clearTimeout(oauthNetwork.timer);
+//          },
+//          false
+//       );
+//       getVerifier();           // wait 'til it returns with the verifier
       },
       function(rc, val) {         // whenFailed
          simpleMsg("z_error", "authorize RC:" + rc + "\n" + val);
@@ -625,12 +643,12 @@ function authorizeThruOAuth(net) {
 }
 
 function browseTo(network) {
-   if (!network.win || network.win.closed) {
+// if (!network.win || network.win.closed) {
 //*/  console.error("attempt to open window...");
-      network.win = window.open(network.url, network.name);
-   }else {
-      network.win.focus();
-   }
+      network.win = window.open(network.url); // , network.name);
+// }else {
+//    network.win.focus();
+// }
 }
 
 /*
