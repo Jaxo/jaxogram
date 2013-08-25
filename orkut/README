@@ -1,0 +1,183 @@
+             _______________________________________________
+            / The                                          /
+           /              k                               /
+          /               k            t    BETA         /
+         /    ooo    rrr  k k   u   u  ttt              /
+        /    o   o  r     kk    u   u  t               /
+       /     o   o  r     k k   u   u  t              /
+      /       ooo   r     k  k   uuu    tt           /
+     /                                              /
+    /                          Client Library      /
+   /______________________________________________/
+
+                      Version 2.0
+                      EXPERIMENTAL
+
+Copyright (c) 2009 - 2011 Google Inc. -  All rights reserved.
+
+
+WHAT'S NEW IN 2.0?
+   Now the orkut Client Library is much easier to use. A large
+   chunk of needed functionality was transferred from the samples
+   to the actual library -- this means that you'll now be able
+   to use the library "out of the box" without having to copy-paste
+   pieces of code from the samples.
+
+   A new class, OrkutAdapter, makes it much easier to interact with
+   the library and perform common operations.
+
+   More information at:
+   http://code.google.com/apis/orkut/docs/clientlib/intro.html
+
+
+INTRODUCTION
+   The orkut client library allows you to access and update orkut's social
+   data. This library is experimental at present and may change in the
+   future. We will try to maintain backward compatibility, but can't
+   make any guarantees.
+
+   Please make sure to read the Client Library Developer's Guide at:
+   http://code.google.com/apis/orkut/docs/clientlib/intro.html
+
+   You can download the latest version of this library from:
+   http://code.google.com/p/orkut-os-client
+
+   Usage of this library requires that you adhere to the orkut Developer
+   Terms of Service. Please check them at:
+   http://www.orkut.com/Main#DeveloperTerms.aspx
+
+   Please also be mindful of the Branding Guidelines:
+   http://www.orkut.com/html/en-US/branding.guidelines.html
+
+   For bug reports, feature requests, etc, please get in touch with us
+   through our developer forum at:
+   http://code.google.com/apis/orkut/forum
+
+
+GETTING OAUTH KEYS
+   orkut replies on OAuth for authentication. In order to use this library
+   at all (even for testing), you will need to have an OAuth consumer
+   key and secret. Please visit this URL for instructions on how to
+   register your domain to get these credentials.
+
+   http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html#new
+
+   The consumer key is typically the site url, e.g. "my.site.com",
+   while the secret is a sequence of randomly generated characters.
+
+
+PACKAGES
+   The library comes in two package formats. This README file is common
+   to both formats, so it has information that pertains to both. The
+   two possible formats are:
+
+   BINARY ONLY PACKAGE (orkut-os-client-bin-(version).zip)
+      This package only contains the library binaries in the form
+      of a single JAR file that you can easily compile with. Just
+      put it in your classpath and write code! This is the recommended
+      package for beginners and for developers who don't intend to
+      work with the library's source code.
+
+   FULL SOURCE PACKAGE (orkut-os-client-full-(version).zip)
+      This package contains the full source code and individual
+      JARs that make up the dependencies, and also several
+      of the past samples that are obsolete but can still provide
+      good insight into how things work.
+
+
+USING THE LIBRARY
+   If you only intend to USE the library, not to modify it, you are
+   better off with the BINARY ONLY PACKAGE. Please make sure your version
+   is that one. In this case, using the library is a simple matter:
+   just add orkut-os-client-(version).jar to your classpath to compile
+   and run. Your favorite development environment should have an easy
+   way to do that. If you are using the command line to compile, you
+   can simply add the JAR file to your CLASSPATH environment variable,
+   or feed it with the classpath parameters to the compiler and the
+   interpreter. Either way, it should be very straightforward.
+   
+   You will need a compatible Java Development Kit. This library has 
+   been built and runs on Java 1.5 (J2SE 5.0) and Java 1.6
+   (JDK6). YMMV on different Java version.
+
+
+SAMPLE
+   The library comes with a sample that does a bit of everything.
+   You can find it in the "sample" directory.
+
+
+MODIFYING AND RECOMPILING THE LIBRARY
+   Now this requires the FULL package (with source code). In this case,
+   you will need the ant build system as well. The library's source
+   code is located under the 'src' directory and there is a handy
+   build.xml to compile it. Compiling it will generate the JAR.
+
+
+DOCUMENTATION
+   Please make sure to read the Client Library Developer's Guide at:
+   http://code.google.com/apis/orkut/docs/clientlib/intro.html
+
+   Also, if you are looking for reference material, the library
+   comes with Javadoc documentation. In the BINARY package, this is
+   located in the "doc" directory. In the FULL package, you will have
+   to generate those yourself with the build.xml script and ant:
+   simply type "ant javadoc".
+   
+
+KNOWN ISSUES
+   1. Getting and setting activity comments is currently not possible.
+   2. Fetching activity updates beyond the first page doesn't 
+      yet work as expected and there may be a few updates missing 
+      from the list compared to what is visible on the website.
+   3. Internationalization of profile fields is not supported.
+   4. For more known issues (and an update on these), please refer
+      to the Orkut Developer Forum
+      http://code.google.com/apis/orkut/forum.html
+
+FAQ
+   1. The following information from the user profile can be obtained:
+   Name, Status, Emails, Gender, Phone Numbers, Birthday and Address.
+   
+   2. For a list of supported activity updates please refer to the class
+   ActivityEntry.
+   
+   3. Limits on photo uploads are the same as that on the web frontend:
+   you can upload photos upto 10MB in size. Each album can store 100
+   photos, and there can be up to 10,000 photos in an account. The
+   allowed file types are JPG, GIF and PNG.
+   
+   4. Captcha handling The API may occasionally throw Captchas to
+   validate that it's indeed a human issuing the requests, for example,
+   for the very frequent scrap posts. Captchas can be expected any time
+   and, in general, every transaction should ideally be checked for a
+   Captcha challenge.
+   
+   A brief overview of how to handle a captcha can be found here:
+   http://code.google.com/apis/orkut/clientlib/errors.html
+   
+   A typical image URL returned from the challenge is
+   /social/pages/captcha?xid=yyy. That must be prefixed with the endpoint
+   URL (http://www.orkut.com), and then the Captcha image must be
+   retrieved from the complete URL
+   (http://www.orkut.com/social/pages/captcha?xid=yyy) using OAuth.
+   The OrkutAdapter class will do that for you, though.
+   
+   5. If you wish to use this library commercially, you can do so without
+   seeking our permission as long as you conform to
+   
+           a. the Developer Terms of Service
+           (http://www.orkut.com/Main#DeveloperTerms.aspx), and 
+   	
+           b. the proper usage of the logo according to the branding
+           guidelines
+           (http://www.orkut.com/html/en-US/branding.guidelines.html). 
+   
+   But if you need to use the 'orkut' logo (instead of the 'Powered by
+   orkut' logo) and/or you hit the quota limits as defined in the
+   Developer ToS (see above). Please get in touch with us at
+   orkutapirequests@google.com for a contract.
+   
+   Enjoy! 
+   
+   The orkut team
+   

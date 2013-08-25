@@ -1,0 +1,93 @@
+<project name="Orkut Client Library" default="build" basedir=".">
+  <description>Orkut Client Library. </description>
+
+  <property name="app.name" value="orkut-os-client"/>
+  <property name="app.version" value="2.0.02"/>
+  <property name="jar.name" value="${app.name}-${app.version}.jar"/>
+  <property name="zip.bin.name" value="${app.name}-bin-${app.version}.zip"/>
+  <property name="zip.full.name" value="${app.name}-full-${app.version}.zip"/>
+
+  <property name="javadoc.overview" location="doc_src/overview.html" />
+  <property name="javadoc.css" location="doc_src/stylesheet.css" />
+  <property
+     name="javadoc.bottom"
+     value="&lt;div id=footerlogo&gt;&lt;img src=http://www.google.com/images/art.gif&gt;&lt;div&gt;"
+  />
+
+  <!-- Build the JAR -->
+  <target name="build" description="Build the main jar file">
+     <mkdir dir="bin"/>
+     <mkdir dir="dist"/>
+     <javac destdir="bin" debug="true" debuglevel="lines,vars,source">
+       <src path="java/src"/>
+     </javac>
+
+     <jar destfile="dist/${jar.name}">
+        <fileset dir="bin" />
+     </jar>
+     <copy
+        file="dist/${jar.name}"
+        todir="../../jaxoapps/jaxogram/war/WEB-INF/lib/"
+        preservelastmodified="true"
+     />
+  </target>
+
+  <!-- Binary distribution package -->
+  <target
+     name="bindist"
+     description="Make binary distribution ZIP"
+     depends="build,javadoc"
+  >
+     <zip destfile="dist/${zip.bin.name}">
+        <zipfileset dir="samples" prefix="samples/" />
+        <zipfileset dir="." includes="LICENSE" />
+        <zipfileset dir="." includes="README" />
+        <zipfileset dir="dist" includes="${jar.name}" />
+        <zipfileset dir="doc" prefix="doc/" />
+     </zip>
+  </target>
+
+  <!-- Source distribution package -->
+  <target
+     name="fulldist"
+     description="Make full distribution ZIP"
+     depends="build,javadoc"
+  >
+     <zip destfile="dist/${zip.full.name}">
+        <zipfileset dir="samples" prefix="samples/" />
+        <zipfileset dir="java/src" prefix="java/src/" />
+        <zipfileset dir="doc_src" prefix="doc_src/" />
+        <zipfileset dir="." includes="LICENCE" />
+        <zipfileset dir="." includes="README" />
+        <zipfileset dir="." includes="build.xml" />
+     </zip>
+  </target>
+
+  <!-- Make the javadoc -->
+  <target
+     name="javadoc"
+     depends="build"
+     description="Create Javadoc API documentation"
+  >
+     <mkdir dir="doc"/>
+     <delete><fileset dir="doc"/></delete>
+     <javadoc
+        doctitle="Orkut Client Library"
+        bottom="${javadoc.bottom}"
+        access="public"
+        stylesheetfile="${javadoc.css}"
+        overview="${javadoc.overview}"
+        sourcepath="java/src"
+        destdir="doc"
+        packagenames="*"
+     />
+  </target>
+
+  <!-- Clean up -->
+  <target name="clean" description="clean up" >
+    <delete dir="bin"/>
+    <delete dir="dist"/>
+    <delete dir="doc"/>
+  </target>
+</project>
+
