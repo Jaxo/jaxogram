@@ -236,7 +236,7 @@ public class Json
                         if ((ch <= '9') && (ch >= '0')) {
                            val = (val << 4) + (ch & 0xF);
                         }else if (((ch=(char)((ch & ~('a'-'A'))-'A')) < (char)6)) {
-                           val += (val << 4) + (ch + 10);
+                           val = (val << 4) + (ch + 10);
                         }else {
                            throw new Exception("Invalid hex digits", m_ofs-i);
                         }
